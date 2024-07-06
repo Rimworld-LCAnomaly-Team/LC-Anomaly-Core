@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <LCAnomalyLibrary.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
+    <thingClass>Building_HoldingPlatform</thingClass>
+    <containedPawnsSelectable>true</containedPawnsSelectable>
+    <passability>PassThroughOnly</passability>
+    <rotatable>false</rotatable>
+    <fillPercent>0.4</fillPercent>
+    <drawerType>RealtimeOnly</drawerType> <!-- Prevents items clipping into it -->
+    <tickerType>Normal</tickerType>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <uiOrder>100</uiOrder>
+    <pathCost>30</pathCost>
+    <canOverlapZones>false</canOverlapZones>
+    <size>(3, 3)</size>
+    <defaultPlacingRot>North</defaultPlacingRot>
+    <minMonolithLevel>1</minMonolithLevel>
+    <descriptionHyperlinks>
+      <ThingDef>QliphothIndicator</ThingDef>
+    </descriptionHyperlinks>
+    <thingCategories>
+      <li>LC_Building_Containment</li>
+    </thingCategories>
+    <inspectorTabs>
+      <li>ITab_Entity</li>
+    </inspectorTabs>
+    <designationCategory>Buildings_LC</designationCategory>
+    <statBases>
+      <MeditationFocusStrength>0</MeditationFocusStrength>
+    </statBases>
+    <building>
+      <buildingTags>
+        <li>Anomaly</li>
+      </buildingTags>
+    </building>
+    <comps>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>QliphothIndicator</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Void</li>
+        </focusTypes>
+        <offsets>
+          <li Class="FocusStrengthOffset_OccupiedHoldingPlatform">
+            <offset>0.16</offset>
+          </li>
+        </offsets>
+      </li>
+      <li Class="CompProperties_AttachPoints">
+        <points>
+          <!-- CABLES TO HARVESTERS/POWER -->
+          <li>
+            <offset>(0, 0, 0)</offset>
+            <type>CableConnection0</type>
+          </li>
+          <li>
+            <offset>(0, 0, 0)</offset>
+            <type>CableConnection1</type>
+          </li>
+          <li>
+            <offset>(0, 0, 0)</offset>
+            <type>CableConnection2</type>
+          </li>
+          <li>
+            <offset>(0, 0, 0)</offset>
+            <type>CableConnection3</type>
+          </li>
+
+          <!-- FOR HOLDING ENTITIES -->
+          <li>
+            <offset>(-1.32, 0, 1.3)</offset>
+            <type>PlatformRestraint0</type>
+          </li>
+          <li>
+            <offset>(1.32, 0, 1.3)</offset>
+            <type>PlatformRestraint1</type>
+          </li>
+          <li>
+            <offset>(1.32, 0, -1.3)</offset>
+            <type>PlatformRestraint2</type>
+          </li>
+          <li>
+            <offset>(-1.32, 0, -1.3)</offset>
+            <type>PlatformRestraint3</type>
+          </li>
+        </points>
+      </li>
+    </comps>
+  </LCAnomalyLibrary.Defs.LC_HoldingPlatformDef>
+
+  <LCAnomalyLibrary.Defs.LC_HoldingPlatformDef ParentName="LC_HoldingPlatformBase">
+    <defName>LC_HoldingPlatform</defName>
+    <label>lc holding platform</label>
+    <description>A platform for holding dangerous entities. The corners have eyelets where strong chains can be attached.\n\nDowned entities can be captured and secured on a holding platform, where they can be studied for Anomaly knowledge. Increase containment strength by building strong walls and doors, and other special containment devices.</description>
+    <graphicData>
+      <texPath>Things/Building/LC_HoldingPlatform/HoldingPlatform</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+    </graphicData>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <statBases>
+      <MaxHitPoints>500</MaxHitPoints>
+      <WorkToBuild>2000</WorkToBuild>
+      <Mass>30</Mass>
+      <Flammability>0.5</Flammability>
+    </statBases>
+    <costList>
+      <Steel>40</Steel>
+    </costList>
+    <comps>
+      <li Class="CompProperties_EntityHolderPlatform">
+        <untetheredGraphicTexPath>Things/Building/LC_HoldingPlatform/HoldingPlatform_ChainsUntethered</untetheredGraphicTexPath>
+        <tilingChainTexPath>Things/Building/LC_HoldingPlatform/HoldingPlatform_EntityChain_StrongOutline</tilingChainTexPath>
+        <baseChainFastenerTexPath>Things/Building/LC_HoldingPlatform/HoldingPlatform_ChainFastener</baseChainFastenerTexPath>
+        <targetChainFastenerTexPath>Things/Building/LC_HoldingPlatform/HoldingPlatform_ChainFastener_StrongOutline</targetChainFastenerTexPath>
+        <entityLungeSoundHi>EntityChainHigh</entityLungeSoundHi>
+        <entityLungeSoundLow>EntityChainLow</entityLungeSoundLow>
+      </li>
+    </comps>
+  </LCAnomalyLibrary.Defs.LC_HoldingPlatformDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <thingClass>LCAnomalyCore.Building.Building_QliphothIndicator</thingClass>
+    <defName>QliphothIndicator</defName>
+    <label>Qliphoth Indicator</label>
+    <description>Qliphoth Indicator</description>
+    <descriptionHyperlinks>
+      <ThingDef>LC_HoldingPlatform</ThingDef>
+    </descriptionHyperlinks>
+    <tickerType>Normal</tickerType>
+    <size>(1,1)</size>
+    <graphicData>
+      <texPath>Things/Building/QliphothIndicator/QliphothIndicator</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <uiIconScale>0.8</uiIconScale>
+    <castEdgeShadows>true</castEdgeShadows>
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+      <buildingTags>
+        <li>Anomaly</li>
+      </buildingTags>
+    </building>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.9</fillPercent>
+    <pathCost>50</pathCost>
+    <designationCategory>Anomaly</designationCategory>
+    <uiOrder>115</uiOrder>
+    <canOverlapZones>false</canOverlapZones>
+    <thingCategories>
+      <li>LC_Building_Containment</li>
+    </thingCategories>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <statBases>
+      <MaxHitPoints>200</MaxHitPoints>
+      <WorkToBuild>500</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Mass>5</Mass>
+    </statBases>
+    <costList>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <placeWorkers>
+      <li>PlaceWorker_ShowFacilitiesConnections</li>
+    </placeWorkers>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>50</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Facility">
+        <compClass>CompFacilityInactiveWhenElectricityDisabled</compClass>
+        <maxDistance>5</maxDistance>
+        <maxSimultaneous>1</maxSimultaneous>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+  </ThingDef>
+
+</Defs>

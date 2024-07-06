@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+	<!-- Cogito Extraction and Injection -->
+	<Operation Class="PatchOperationAdd">
+		<success>Always</success>
+		<xpath>Defs/ThingDef[defName = "Human"]/recipes</xpath>
+		<value>
+			<li>ExtractBrainSpinalNerve</li>
+		</value>
+	</Operation>
+
+</Patch>

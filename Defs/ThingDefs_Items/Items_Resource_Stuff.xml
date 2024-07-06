@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ThingDef Name="PeBoxBase" ParentName="ResourceBase" Abstract="True">
+    <graphicData>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <stackLimit>999</stackLimit>
+    <genericMarketSellable>false</genericMarketSellable>
+    <soundInteract>Metal_Drop</soundInteract>
+    <soundDrop>Metal_Drop</soundDrop>
+    <useHitPoints>false</useHitPoints>
+    <healthAffectsPrice>false</healthAffectsPrice>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>0.25</Mass>
+    </statBases>
+    <thingCategories>
+      <li>LC_Resource</li>
+    </thingCategories>
+    <burnableByRecipe>false</burnableByRecipe>
+    <smeltable>false</smeltable>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+  </ThingDef>
+
+  <ThingDef ParentName="PeBoxBase">
+    <defName>EnkephalinBox</defName>
+    <label>EnkephalinBox</label>
+    <description>EnkephalinBox</description>
+    <thingClass>ThingWithComps</thingClass>
+    <graphicData>
+      <texPath>Things/Item/Resource/PeBox/EnkephalinBox</texPath>
+    </graphicData>
+    <descriptionHyperlinks>
+      <ThingDef>EnkephalinGenerator</ThingDef>
+    </descriptionHyperlinks>
+    <researchPrerequisites>
+      <li>ExtractEnkephalin</li>
+    </researchPrerequisites>
+    <comps></comps>
+  </ThingDef>
+
+</Defs>

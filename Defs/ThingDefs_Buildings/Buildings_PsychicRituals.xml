@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>TheWell</defName>
+    <label>the well</label>
+    <description>.</description>
+    <tickerType>Normal</tickerType>
+    <passability>Standable</passability>
+    <scatterableOnMapGen>false</scatterableOnMapGen>
+    <building>
+      <sowTag>SupportPlantsOnly</sowTag>
+      <canPlaceOverImpassablePlant>false</canPlaceOverImpassablePlant>
+      <ai_chillDestination>false</ai_chillDestination>
+      <wakeDormantPawnsOnConstruction>false</wakeDormantPawnsOnConstruction>
+      <artificialForMeditationPurposes>false</artificialForMeditationPurposes>
+      <buildingTags>
+        <li>Anomaly</li>
+      </buildingTags>
+    </building>
+    <uiOrder>200</uiOrder>
+    <graphicData>
+      <texPath>Things/Building/TheWell/TheWell</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+    </graphicData>
+    <size>(3, 3)</size>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <researchPrerequisites>
+      <li>BasicPsychicRituals</li>
+    </researchPrerequisites>
+    <inspectorTabs>
+      <li>ITab_Entity</li>
+    </inspectorTabs>
+    <designationCategory>Buildings_LC</designationCategory>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <selectable>true</selectable>
+    <rotatable>false</rotatable>
+    <statBases>
+      <WorkToBuild>0</WorkToBuild>
+      <MeditationFocusStrength>0.08</MeditationFocusStrength>
+    </statBases>
+    <useHitPoints>false</useHitPoints>
+    <placeWorkers>
+      <li>PlaceWorker_NeverAdjacentUnstandableRadial</li>
+    </placeWorkers>
+    <drawPlaceWorkersWhileSelected>True</drawPlaceWorkersWhileSelected>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_ExtractRitualSpot"/>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+          <li>ShardBeacon</li>
+          <li>VoidSculpture</li>
+        </linkableFacilities>
+      </li>
+      <li Class="CompProperties_MeditationFocus">
+        <statDef>MeditationFocusStrength</statDef>
+        <focusTypes>
+          <li>Void</li>
+        </focusTypes>
+        <offsets>
+          <li Class="FocusStrengthOffset_BuildingDefs">
+            <defs>
+              <li>ShardBeacon</li>
+            </defs>
+            <offsetPerBuilding>0.02</offsetPerBuilding>
+            <radius>9.9</radius>
+            <maxBuildings>4</maxBuildings>
+            <explanationKey>MeditationFocusPerBuilding</explanationKey>
+            <explanationKeyAbstract>MeditationFocusPerBuildingAbstract</explanationKeyAbstract>
+          </li>
+          <li Class="FocusStrengthOffset_BuildingDefs">
+            <defs>
+              <li>VoidSculpture</li>
+            </defs>
+            <offsetPerBuilding>0.02</offsetPerBuilding>
+            <radius>9.9</radius>
+            <maxBuildings>6</maxBuildings>
+            <explanationKey>MeditationFocusPerBuilding</explanationKey>
+            <explanationKeyAbstract>MeditationFocusPerBuildingAbstract</explanationKeyAbstract>
+          </li>
+        </offsets>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>

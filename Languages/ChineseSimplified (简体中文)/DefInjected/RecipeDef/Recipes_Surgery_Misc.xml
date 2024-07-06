@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <ExtractCogito.label>提取Cogito</ExtractCogito.label>
+  <ExtractCogito.description>从受害者身上提取Cogito。</ExtractCogito.description>
+  <ExtractCogito.jobString>正在提取Cogito。</ExtractCogito.jobString>
+
+  <CogitoInjection.label>注入Cogito</CogitoInjection.label>
+  <CogitoInjection.description>向受害者体内注入Cogito。</CogitoInjection.description>
+  <CogitoInjection.jobString>正在注入Cogito。</CogitoInjection.jobString>
+  
+</LanguageData>

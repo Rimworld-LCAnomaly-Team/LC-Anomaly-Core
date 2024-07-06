@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>LC Anomaly Core</name>
+	<author>DarthCY</author>
+	<supportedVersions>
+		<li>1.5</li>
+	</supportedVersions>
+	<description>Core of DarthCY's LC Anomaly.</description>
+	<url>https://github.com/DarthCY-K/LC-Anomaly-Core</url>
+	<packageId>DarthCY.LC.AnomalyCore</packageId>
+	<modDependencies>
+		<li>
+			<packageId>Ludeon.RimWorld.Anomaly</packageId>
+			<displayName>DLC Anomaly</displayName>
+		</li>
+		<li>
+			<packageId>DarthCY.LC.AnomalyLibrary</packageId>
+			<displayName>LC AnomalyLibrary</displayName>
+			<downloadUrl>https://github.com/DarthCY-K/LC-Anomaly-Library/releases/latest</downloadUrl>
+		</li>
+	</modDependencies>
+	<loadAfter>
+		<li>DarthCY.LC.AnomalyLibrary</li>
+	</loadAfter>
+</ModMetaData>

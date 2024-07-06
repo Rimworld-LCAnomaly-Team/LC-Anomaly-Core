@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>BrainSpinalNerve</defName>
+    <label>BrainSpinalNerve</label>
+    <description>.</description>
+    <thingClass>ThingWithComps</thingClass>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <texPath>Things/Item/Special/BrainSpinalNerve</texPath>
+    </graphicData>
+    <stackLimit>1</stackLimit>
+    <genericMarketSellable>false</genericMarketSellable>
+    <soundInteract>Metal_Drop</soundInteract>
+    <soundDrop>Metal_Drop</soundDrop>
+    <useHitPoints>false</useHitPoints>
+    <healthAffectsPrice>false</healthAffectsPrice>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>1</Mass>
+    </statBases>
+    <thingCategories>
+      <li>LC_Resource</li>
+    </thingCategories>
+    <burnableByRecipe>false</burnableByRecipe>
+    <smeltable>false</smeltable>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <descriptionHyperlinks>
+      <RecipeDef>ExtractBrainSpinalNerve</RecipeDef>
+    </descriptionHyperlinks>
+    <researchPrerequisites>
+      <li>CogitoUsages</li>
+    </researchPrerequisites>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_BrainSpinalNerve">
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

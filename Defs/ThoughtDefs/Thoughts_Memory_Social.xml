@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThoughtDef>
+    <defName>ForcedMeToTakeEnkephalin</defName>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <durationDays>120</durationDays>
+    <stackLimit>10</stackLimit>
+    <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
+    <stages>
+      <li>
+        <label>forced me to take enkephalin</label>
+        <baseOpinionOffset>-30</baseOpinionOffset>
+      </li>
+    </stages>
+    <thoughtToMake>ForcedMeToTakeEnkephalinMood</thoughtToMake>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>ForcedMeToTakeEnkephalinMood</defName>
+    <durationDays>6.0</durationDays>
+    <stages>
+      <li>
+        <label>forced to take enkephalin</label>
+        <description>I'm a body purist; I would never take enkephalin by choice. But I was forced! I feel unclean.</description>
+        <baseMoodEffect>-20</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+  
+</Defs>

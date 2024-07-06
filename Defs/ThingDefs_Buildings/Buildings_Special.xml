@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>CogitoBucket</defName>
+    <label>Cogito Bucket</label>
+    <description>.</description>
+    <thingClass>LCAnomalyCore.Building.Building_CogitoBucket</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/TheBucket/TheBucket_WithFloor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+      <shadowData>
+        <volume>(1.8, 1.0, 0.2)</volume>
+        <offset>(0.0, 0.0, -0.4)</offset>
+      </shadowData>
+    </graphicData>
+    <thingCategories>
+      <li>LC_Building_Production</li>
+    </thingCategories>
+    <designationCategory>Buildings_LC</designationCategory>
+    <costList>
+      <Steel>200</Steel>
+      <ComponentSpacer>6</ComponentSpacer>
+    </costList>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>300</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="LCAnomalyCore.Comp.CompProperties_CogitoBucketSpawner">
+        <requiresPower>true</requiresPower>
+        <thingToSpawn>Cogito</thingToSpawn>
+        <thingRequire>BrainSpinalNerve</thingRequire>
+        <spawnCount>10</spawnCount>
+        <spawnIntervalRange><min>120000</min><max>120000</max></spawnIntervalRange>
+        <writeTimeLeftToSpawn>true</writeTimeLeftToSpawn>
+        <showMessageIfOwned>true</showMessageIfOwned>
+      </li>
+      <li Class="CompProperties_Explosive">
+        <explosiveRadius>16</explosiveRadius>
+        <damageAmountBase>10</damageAmountBase>
+        <armorPenetrationBase>0</armorPenetrationBase>
+        <explosiveDamageType>Psychic</explosiveDamageType>
+        <explosionSound>Pawn_Revenant_StartledScream</explosionSound>
+      </li>
+    </comps>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MarketValue>1500</MarketValue>
+      <MaxHitPoints>200</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <Beauty>-10</Beauty>
+      <Mass>35</Mass>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <placeWorkers>
+      <li>PlaceWorker_NoiseSource</li>
+    </placeWorkers>
+    <researchPrerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </researchPrerequisites>
+    <size>(3, 3)</size>
+    <fillPercent>1.0</fillPercent>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <passability>Impassable</passability>
+    <rotatable>true</rotatable>
+    <constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+    <canOverlapZones>false</canOverlapZones>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <tradeability>Sellable</tradeability>
+  </ThingDef>
+
+</Defs>

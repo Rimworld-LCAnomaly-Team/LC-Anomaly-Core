@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ResearchProjectDef>
+    <defName>CogitoUsages</defName>
+    <label>CogitoUsages</label>
+    <description>Carry out a research into the usage of cogito.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>1.20</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->CogitoUsages</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now learning how to use cogito.</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>ExtractEnkephalin</defName>
+    <label>Extract Enkephalin</label>
+    <description>Extract Enkephalin from Anomalies.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->ExtractEnkephalin</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Extracting Enkephalin</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+  
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGenerator</defName>
+    <label>ElectricGenerator of Enkephalin</label>
+    <description>ElectricGenerator of Enkephalin.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>80</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>ExtractEnkephalin</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin_ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>Enkephalin_Drug</defName>
+    <label>Drug of Enkephalin</label>
+    <description>Drug of Enkephalin.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>80</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>ExtractEnkephalin</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin_Drug</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Enkephalin_Drug</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <ResearchProjectDef>
+    <defName>LC_EntityContainment</defName>
+    <label>LC EntityContainment</label>
+    <description>.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>EntityContainment</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->CogitoUsages</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now learning how to use cogito.</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+</Defs>

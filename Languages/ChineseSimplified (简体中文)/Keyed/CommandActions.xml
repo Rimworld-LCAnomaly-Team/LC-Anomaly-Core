@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <ExtractEGOCommandText>提取数量：</ExtractEGOCommandText>
+  <IndiPeBoxAmountCommandText>独立PeBox数量：</IndiPeBoxAmountCommandText>
+  <ExtractEGONeedPeboxAmountCommandText>需求数量：</ExtractEGONeedPeboxAmountCommandText>
+  <ExtractEGOWeaponCommandText>提取E.G.O武器</ExtractEGOWeaponCommandText>
+  <ExtractEGOArmorCommandText>提取E.G.O装备</ExtractEGOArmorCommandText>
+
+</LanguageData>

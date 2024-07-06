@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <TerrainDef ParentName="FloorBase">
+    <defName>LC_HoldingPlatformPlate</defName>
+    <label>LC_HoldingPlatformPlate</label>
+    <description>.</description>
+    <texturePath>Terrain/Surfaces/BioferritePlateFloor</texturePath>
+    <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+    <constructEffect>ConstructMetal</constructEffect>
+    <edgeType>Hard</edgeType>
+    <renderPrecedence>240</renderPrecedence>
+    <color>(163, 163, 140)</color>
+    <fertility>0</fertility>
+    <statBases>
+      <WorkToBuild>800</WorkToBuild>
+      <Beauty>-2</Beauty>
+      <Cleanliness>0.2</Cleanliness>
+      <CleaningTimeFactor>0.6</CleaningTimeFactor>
+      <Flammability>0.15</Flammability>
+      <ContainmentStrength>15</ContainmentStrength>
+    </statBases>
+    <costList>
+      <EnkephalinBox>1</EnkephalinBox>
+    </costList>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <affordances>
+      <li>Light</li>
+      <li>Medium</li>
+      <li>Heavy</li>
+    </affordances>
+    <uiOrder>2050</uiOrder>
+  </TerrainDef>
+  
+</Defs>

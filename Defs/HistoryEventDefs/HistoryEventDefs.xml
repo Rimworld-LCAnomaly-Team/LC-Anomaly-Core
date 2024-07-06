@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  
+  <HistoryEventDef>
+    <defName>CogitoExtracted</defName>
+    <label>extracted cogito from member</label>
+  </HistoryEventDef>
+
+  <HistoryEventDef>
+    <defName>CogitoInjected</defName>
+    <label>injected cogito into member</label>
+  </HistoryEventDef>
+
+</Defs>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <PsychicRitualRoleDef ParentName="ChanterBase">
+    <defName>ExtractLCAnomalyZAYIN</defName>
+    <allowedCount>0~1</allowedCount>
+  </PsychicRitualRoleDef>
+
+  <PsychicRitualRoleDef ParentName="ChanterBase">
+    <defName>ExtractLCAnomalyTETH</defName>
+    <allowedCount>0~2</allowedCount>
+  </PsychicRitualRoleDef>
+
+  <PsychicRitualRoleDef ParentName="ChanterBase">
+    <defName>ExtractLCAnomalyHE</defName>
+    <allowedCount>0~4</allowedCount>
+  </PsychicRitualRoleDef>
+
+  <PsychicRitualRoleDef ParentName="ChanterBase">
+    <defName>ExtractLCAnomalyWAW</defName>
+    <allowedCount>0~6</allowedCount>
+  </PsychicRitualRoleDef>
+
+    <PsychicRitualRoleDef ParentName="ChanterBase">
+    <defName>ExtractLCAnomalyALEPH</defName>
+    <allowedCount>0~8</allowedCount>
+  </PsychicRitualRoleDef>
+
+</Defs>
