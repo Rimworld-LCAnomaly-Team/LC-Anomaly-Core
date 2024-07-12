@@ -8,39 +8,32 @@ using Verse;
 
 namespace LCAnomalyCore.Building
 {
-    /// <summary>
-    /// 逆卡巴拉计数器（建筑）
-    /// </summary>
-    public class Building_QliphothIndicator : Verse.Building
+    public class Building_IndiPeBoxIndicator : Verse.Building
     {
         #region 字段
 
         private bool initalized;
 
-        /// <summary>
-        /// 逆卡巴拉计数器值
-        /// </summary>
-        public int QliphothCounter
+        public int PeBoxCounter
         {
-            get => qliphothCounter;
+            get => peBoxCounter;
             set
             {
-                if (value == qliphothCounter)
+                if (value == peBoxCounter)
                     return;
 
-                if (value < 0)
+                if (value < -1)
                 {
-                    qliphothCounter = 0;
+                    peBoxCounter = -1;
+                    return;
                 }
-                else
-                {
-                    qliphothCounter = value;
-                    Log.Message($"逆卡巴拉计数器：设备值变更为：{qliphothCounter}");
-                }
+
+                peBoxCounter = value;
+                Log.Message($"独立PeBox计数器：设备值变更为：{peBoxCounter}");
             }
         }
 
-        private int qliphothCounter;
+        private int peBoxCounter = -1;
 
         /// <summary>
         /// 设施Comp
@@ -100,7 +93,7 @@ namespace LCAnomalyCore.Building
             //每 250Tick 更新一次计数器
             if (this.IsHashIntervalTick(250))
             {
-                UpdateQliphothCounter();
+                UpdatePeBoxCounter();
             }
         }
 
@@ -116,12 +109,20 @@ namespace LCAnomalyCore.Building
             {
                 Initialize();
             }
-
-            GraphicUtil.QliphothIndicator_GetCachedTopGraphic()[qliphothCounter]
-                .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            if(PeBoxCounter >= 0)
+            {
+                GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic()[PeBoxCounter]
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            }
+            else
+            {
+                GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_NotAllowed
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            }
         }
 
-        #endregion 生命周期
+        #endregion
+
 
         #region 工具方法
 
@@ -141,41 +142,74 @@ namespace LCAnomalyCore.Building
             {
                 if (platform is Building_HoldingPlatform building_HoldingPlatform)
                 {
-                    building_HoldingPlatform.innerContainer.OnContentsChanged += UpdateQliphothCounter;
+                    //如果收容平台不为空
+                    var pawn = building_HoldingPlatform.HeldPawn;
+                    LC_CompEntity compEntity;
+                    if (pawn != null)
+                    {
+                        //如果是脑叶实体
+                        compEntity = pawn.GetComp<LC_CompEntity>();
+                        if (compEntity != null )
+                        {
+                            //绑定事件触发
+                            var peBoxComp = compEntity.PeBoxComp;
+                            if (peBoxComp != null)
+                                compEntity.PeBoxComp.OnContentsChanged += UpdatePeBoxCounter;
+                            else
+                                peBoxCounter = -1;
+                        }
+                        else
+                        {
+                            peBoxCounter = -1;
+                        }
+                    }
+                    else
+                    {
+                        peBoxCounter = -1;
+                    }
                 }
             }
 
-            UpdateQliphothCounter();
+            UpdatePeBoxCounter();
         }
 
         /// <summary>
-        /// 更新逆卡巴拉计数器
+        /// 更新PeBox计数器
         /// </summary>
-        private void UpdateQliphothCounter()
+        private void UpdatePeBoxCounter()
         {
             foreach (Thing thing in Platforms)
             {
                 var platform = thing as Building_HoldingPlatform;
                 if (platform != null)
                 {
-                    var entity = platform.HeldPawn.TryGetComp<LC_CompEntity>();
-                    if (entity != null)
+                    var compEntity = platform.HeldPawn.TryGetComp<LC_CompEntity>();
+                    if (compEntity != null)
                     {
-                        QliphothCounter = entity.QliphothCountCurrent;
+                        var peBoxComp = compEntity.PeBoxComp;
+                        if (peBoxComp != null)
+                        {
+                            PeBoxCounter = peBoxComp.CurAmountIndiPebox;
+                        }
+                        else
+                        {
+                            Log.Message($"独立PeBox计数器：该异想体不提供独立PeBox，不显示技术器");
+                            PeBoxCounter = -1;
+                        }
                     }
                     else
                     {
-                        if (QliphothCounter != 0)
+                        if (PeBoxCounter != -1)
                         {
-                            Log.Message($"逆卡巴拉计数器：未找到实体组件，重置计数器");
-                            QliphothCounter = 0;
+                            Log.Message($"独立PeBox计数器：未找到实体组件，重置计数器");
+                            PeBoxCounter = -1;
                         }
                     }
                 }
             }
         }
 
-        #endregion 工具方法
+        #endregion
 
         #region UI
 
@@ -192,12 +226,12 @@ namespace LCAnomalyCore.Building
                 stringBuilder.AppendLine();
             }
 
-            stringBuilder.Append("QliphothCounterInspect".Translate());
-            stringBuilder.Append($"：{qliphothCounter}");
+            stringBuilder.Append("IndiPeBoxIndicatorInspect".Translate());
+            stringBuilder.Append($"：{PeBoxCounter}");
             return stringBuilder.ToString();
         }
 
-        #endregion UI
+        #endregion
 
         #region 事件
 
@@ -207,7 +241,7 @@ namespace LCAnomalyCore.Building
         public override void Notify_DefsHotReloaded()
         {
             base.Notify_DefsHotReloaded();
-            UpdateQliphothCounter();
+            UpdatePeBoxCounter();
         }
 
         #endregion 事件
@@ -220,9 +254,9 @@ namespace LCAnomalyCore.Building
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look(ref qliphothCounter, "qliphothCounterCurrent", 0);
+            Scribe_Values.Look(ref peBoxCounter, "peBoxCounter", -1);
         }
 
-        #endregion 存储
+        #endregion
     }
 }

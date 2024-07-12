@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Building\Building_CogitoBucket.cs" />
     <Compile Include="Building\Building_EnkephalinGenerator.cs" />
+    <Compile Include="Building\Building_IndiPeBoxIndicator.cs" />
     <Compile Include="Building\Building_QliphothIndicator.cs" />
     <Compile Include="Comp\CompBrainSpinalNerve.cs" />
     <Compile Include="Comp\CompCogitoBucketSpawner.cs" />

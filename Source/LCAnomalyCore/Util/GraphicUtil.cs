@@ -38,6 +38,39 @@ namespace LCAnomalyCore.Util
 
         #endregion 逆卡巴拉计数器
 
+        #region 独立PeBox计数器
+
+        /// <summary>
+        /// 缓存图集
+        /// </summary>
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator = new List<Graphic>();
+
+        public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_NotAllowed = 
+            GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/NotAllowed",
+            ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white);
+
+        /// <summary>
+        /// 获取图集
+        /// </summary>
+        /// <returns>图集</returns>
+        public static List<Graphic> IndiPeBoxIndicator_GetCachedTopGraphic()
+        {
+            if (CachedTopGraphic_IndiPeBoxIndicator.Empty())
+            {
+                for (int i = 0; i < 33; i++)
+                {
+                    Log.Message("贴图缓存：Things/Building/IndiPeBoxIndicator/Top" + i);
+
+                    CachedTopGraphic_IndiPeBoxIndicator.Add(GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/Top" + i,
+                        ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white));
+                }
+            }
+
+            return CachedTopGraphic_IndiPeBoxIndicator;
+        }
+
+        #endregion
+
         #region “水桶”
 
         /// <summary>

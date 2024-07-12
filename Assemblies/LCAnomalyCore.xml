@@ -22,6 +22,72 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.FacilityComp">
+            <summary>
+            设施Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Power">
+            <summary>
+            能源Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Platforms">
+            <summary>
+            已连接的平台（理论上只能有一个）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.SpawnSetup(Verse.Map,System.Boolean)">
+            <summary>
+            开始生成时的方法
+            </summary>
+            <param name="map">地图</param>
+            <param name="respawningAfterLoad">加载后重新生成</param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.DeSpawn(Verse.DestroyMode)">
+            <summary>
+            移除时的方法
+            </summary>
+            <param name="mode">销毁模式</param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Tick">
+            <summary>
+            每Tick调用
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.DrawAt(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            绘制方法
+            </summary>
+            <param name="drawLoc">位置</param>
+            <param name="flip">是否翻转</param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Initialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.UpdatePeBoxCounter">
+            <summary>
+            更新PeBox计数器
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.GetInspectString">
+            <summary>
+            Inspect面板信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Notify_DefsHotReloaded">
+            <summary>
+            热重载通知
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.ExposeData">
+            <summary>
+            和游戏内数据存储相关的方法
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Building.Building_QliphothIndicator">
             <summary>
             逆卡巴拉计数器（建筑）
@@ -85,12 +151,6 @@
         <member name="M:LCAnomalyCore.Building.Building_QliphothIndicator.GetInspectString">
             <summary>
             Inspect面板信息
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_QliphothIndicator.GetGizmos">
-            <summary>
-            Gizmos
             </summary>
             <returns></returns>
         </member>
@@ -331,6 +391,11 @@
             逆卡巴拉计数器（建筑）
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.IndiPeBoxIndicator">
+            <summary>
+            独立PeBox指示器（建筑）
+            </summary>
+        </member>
         <member name="F:LCAnomalyCore.Defs.ThingDefOf.CogitoBucket">
             <summary>
             Cogito水桶（建筑）
@@ -496,6 +561,17 @@
         <member name="M:LCAnomalyCore.Util.GraphicUtil.QliphothIndicator_GetCachedTopGraphic">
             <summary>
             获取逆卡巴拉计数器的图集
+            </summary>
+            <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator">
+            <summary>
+            缓存图集
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic">
+            <summary>
+            获取图集
             </summary>
             <returns>图集</returns>
         </member>

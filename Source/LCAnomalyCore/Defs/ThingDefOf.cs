@@ -46,6 +46,11 @@ namespace LCAnomalyCore.Defs
         public static ThingDef QliphothIndicator;
 
         /// <summary>
+        /// 独立PeBox指示器（建筑）
+        /// </summary>
+        public static ThingDef IndiPeBoxIndicator;
+
+        /// <summary>
         /// Cogito水桶（建筑）
         /// </summary>
         public static ThingDef CogitoBucket;
