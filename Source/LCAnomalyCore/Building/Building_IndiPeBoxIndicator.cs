@@ -8,32 +8,32 @@ using Verse;
 
 namespace LCAnomalyCore.Building
 {
+    /// <summary>
+    /// 独立PeBox指示器建筑
+    /// </summary>
     public class Building_IndiPeBoxIndicator : Verse.Building
     {
+
         #region 字段
 
         private bool initalized;
 
+        /// <summary>
+        /// 独立PeBox数量
+        /// </summary>
         public int PeBoxCounter
         {
-            get => peBoxCounter;
-            set
+            get
             {
-                if (value == peBoxCounter)
-                    return;
-
-                if (value < -1)
+                if (allowed)
                 {
-                    peBoxCounter = -1;
-                    return;
+                    LCAnomalyLibrary.Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntityDef, out var saved);
+                    return saved.IndiPeBoxAmount;
                 }
 
-                peBoxCounter = value;
-                Log.Message($"独立PeBox计数器：设备值变更为：{peBoxCounter}");
+                return 0;
             }
         }
-
-        private int peBoxCounter = -1;
 
         /// <summary>
         /// 设施Comp
@@ -48,6 +48,9 @@ namespace LCAnomalyCore.Building
         public CompPowerTrader Power => powerComp ?? (powerComp = GetComp<CompPowerTrader>());
 
         private CompPowerTrader powerComp;
+
+        private ThingDef cachedEntityDef;
+        private bool allowed => cachedEntityDef != null;
 
         /// <summary>
         /// 已连接的平台（理论上只能有一个）
@@ -109,20 +112,30 @@ namespace LCAnomalyCore.Building
             {
                 Initialize();
             }
-            if(PeBoxCounter >= 0)
+
+            //不可用显示
+            if (!allowed)
+            {
+                GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_NotAllowed
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                return;
+            }
+
+            //不大于100就显示对应数字
+            if (PeBoxCounter < 100)
             {
                 GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic()[PeBoxCounter]
                     .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
             }
+            //大于100就显示99+
             else
             {
-                GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_NotAllowed
+                GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max
                     .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
             }
         }
 
         #endregion
-
 
         #region 工具方法
 
@@ -142,31 +155,7 @@ namespace LCAnomalyCore.Building
             {
                 if (platform is Building_HoldingPlatform building_HoldingPlatform)
                 {
-                    //如果收容平台不为空
-                    var pawn = building_HoldingPlatform.HeldPawn;
-                    LC_CompEntity compEntity;
-                    if (pawn != null)
-                    {
-                        //如果是脑叶实体
-                        compEntity = pawn.GetComp<LC_CompEntity>();
-                        if (compEntity != null )
-                        {
-                            //绑定事件触发
-                            var peBoxComp = compEntity.PeBoxComp;
-                            if (peBoxComp != null)
-                                compEntity.PeBoxComp.OnContentsChanged += UpdatePeBoxCounter;
-                            else
-                                peBoxCounter = -1;
-                        }
-                        else
-                        {
-                            peBoxCounter = -1;
-                        }
-                    }
-                    else
-                    {
-                        peBoxCounter = -1;
-                    }
+                    building_HoldingPlatform.holdingOwner.OnContentsChanged += UpdatePeBoxCounter;
                 }
             }
 
@@ -186,25 +175,23 @@ namespace LCAnomalyCore.Building
                     var compEntity = platform.HeldPawn.TryGetComp<LC_CompEntity>();
                     if (compEntity != null)
                     {
+                        if (cachedEntityDef != null && cachedEntityDef == compEntity.parent.def)
+                            return;
+
                         var peBoxComp = compEntity.PeBoxComp;
                         if (peBoxComp != null)
                         {
-                            PeBoxCounter = peBoxComp.CurAmountIndiPebox;
-                        }
-                        else
-                        {
-                            Log.Message($"独立PeBox计数器：该异想体不提供独立PeBox，不显示技术器");
-                            PeBoxCounter = -1;
+                            cachedEntityDef = compEntity.parent.def;
                         }
                     }
                     else
                     {
-                        if (PeBoxCounter != -1)
-                        {
-                            Log.Message($"独立PeBox计数器：未找到实体组件，重置计数器");
-                            PeBoxCounter = -1;
-                        }
+                        cachedEntityDef = null;
                     }
+                }
+                else
+                {
+                    cachedEntityDef = null;
                 }
             }
         }
@@ -221,13 +208,16 @@ namespace LCAnomalyCore.Building
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(base.GetInspectString());
-            if (stringBuilder.Length != 0)
+
+            if (allowed)
             {
-                stringBuilder.AppendLine();
+                if (stringBuilder.Length != 0)
+                    stringBuilder.AppendLine();
+
+                stringBuilder.Append("IndiPeBoxIndicatorInspect".Translate());
+                stringBuilder.Append($"：{PeBoxCounter}");
             }
 
-            stringBuilder.Append("IndiPeBoxIndicatorInspect".Translate());
-            stringBuilder.Append($"：{PeBoxCounter}");
             return stringBuilder.ToString();
         }
 
@@ -245,18 +235,5 @@ namespace LCAnomalyCore.Building
         }
 
         #endregion 事件
-
-        #region 存储
-
-        /// <summary>
-        /// 和游戏内数据存储相关的方法
-        /// </summary>
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Values.Look(ref peBoxCounter, "peBoxCounter", -1);
-        }
-
-        #endregion
     }
 }

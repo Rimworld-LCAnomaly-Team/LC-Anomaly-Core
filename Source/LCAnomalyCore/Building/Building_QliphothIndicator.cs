@@ -22,25 +22,14 @@ namespace LCAnomalyCore.Building
         /// </summary>
         public int QliphothCounter
         {
-            get => qliphothCounter;
-            set
+            get
             {
-                if (value == qliphothCounter)
-                    return;
+                if(allowed)
+                    return cachedEntity.QliphothCountCurrent;
 
-                if (value < 0)
-                {
-                    qliphothCounter = 0;
-                }
-                else
-                {
-                    qliphothCounter = value;
-                    Log.Message($"逆卡巴拉计数器：设备值变更为：{qliphothCounter}");
-                }
+                return 0;
             }
         }
-
-        private int qliphothCounter;
 
         /// <summary>
         /// 设施Comp
@@ -60,6 +49,9 @@ namespace LCAnomalyCore.Building
         /// 已连接的平台（理论上只能有一个）
         /// </summary>
         public List<Thing> Platforms => FacilityComp.LinkedBuildings;
+
+        private LC_CompEntity cachedEntity;
+        private bool allowed => cachedEntity != null;
 
         #endregion 字段
 
@@ -117,8 +109,27 @@ namespace LCAnomalyCore.Building
                 Initialize();
             }
 
-            GraphicUtil.QliphothIndicator_GetCachedTopGraphic()[qliphothCounter]
-                .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            //显示不可用
+            if (!allowed)
+            {
+                GraphicUtil.CachedTopGraphic_QliphothIndicator_NotAllowed
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+
+                return;
+            }
+
+            //不大于10就显示对应数字
+            if (QliphothCounter < 10)
+            {
+                GraphicUtil.QliphothIndicator_GetCachedTopGraphic()[QliphothCounter]
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            }
+            //大于10就显示9+
+            else
+            {
+                GraphicUtil.CachedTopGraphic_QliphothIndicator_Max
+                    .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+            }
         }
 
         #endregion 生命周期
@@ -155,22 +166,24 @@ namespace LCAnomalyCore.Building
         {
             foreach (Thing thing in Platforms)
             {
-                var platform = thing as Building_HoldingPlatform;
-                if (platform != null)
+                if (thing is Building_HoldingPlatform platform)
                 {
                     var entity = platform.HeldPawn.TryGetComp<LC_CompEntity>();
-                    if (entity != null)
+
+                    if (entity == null)
                     {
-                        QliphothCounter = entity.QliphothCountCurrent;
+                        cachedEntity = null;
+                        return;
                     }
-                    else
-                    {
-                        if (QliphothCounter != 0)
-                        {
-                            Log.Message($"逆卡巴拉计数器：未找到实体组件，重置计数器");
-                            QliphothCounter = 0;
-                        }
-                    }
+
+                    if (cachedEntity == entity)
+                        return;
+
+                    cachedEntity = entity;
+                }
+                else
+                {
+                    cachedEntity = null;
                 }
             }
         }
@@ -187,13 +200,16 @@ namespace LCAnomalyCore.Building
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(base.GetInspectString());
-            if (stringBuilder.Length != 0)
+
+            if (allowed)
             {
-                stringBuilder.AppendLine();
+                if (stringBuilder.Length != 0)
+                    stringBuilder.AppendLine();
+
+                stringBuilder.Append("QliphothCounterInspect".Translate());
+                stringBuilder.Append($"：{cachedEntity.QliphothCountCurrent}");
             }
 
-            stringBuilder.Append("QliphothCounterInspect".Translate());
-            stringBuilder.Append($"：{qliphothCounter}");
             return stringBuilder.ToString();
         }
 
@@ -211,18 +227,5 @@ namespace LCAnomalyCore.Building
         }
 
         #endregion 事件
-
-        #region 存储
-
-        /// <summary>
-        /// 和游戏内数据存储相关的方法
-        /// </summary>
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Values.Look(ref qliphothCounter, "qliphothCounterCurrent", 0);
-        }
-
-        #endregion 存储
     }
 }

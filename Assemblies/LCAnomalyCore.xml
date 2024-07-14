@@ -22,6 +22,16 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Building.Building_IndiPeBoxIndicator">
+            <summary>
+            独立PeBox指示器建筑
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.PeBoxCounter">
+            <summary>
+            独立PeBox数量
+            </summary>
+        </member>
         <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.FacilityComp">
             <summary>
             设施Comp
@@ -81,11 +91,6 @@
         <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Notify_DefsHotReloaded">
             <summary>
             热重载通知
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.ExposeData">
-            <summary>
-            和游戏内数据存储相关的方法
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Building.Building_QliphothIndicator">
@@ -157,11 +162,6 @@
         <member name="M:LCAnomalyCore.Building.Building_QliphothIndicator.Notify_DefsHotReloaded">
             <summary>
             热重载通知
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_QliphothIndicator.ExposeData">
-            <summary>
-            和游戏内数据存储相关的方法
             </summary>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
@@ -558,6 +558,16 @@
             缓存的逆卡巴拉计数器的图集
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_NotAllowed">
+            <summary>
+            不可用贴图
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_Max">
+            <summary>
+            最大值贴图
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Util.GraphicUtil.QliphothIndicator_GetCachedTopGraphic">
             <summary>
             获取逆卡巴拉计数器的图集
@@ -567,6 +577,16 @@
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator">
             <summary>
             缓存图集
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_NotAllowed">
+            <summary>
+            不可用贴图
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max">
+            <summary>
+            最大值贴图
             </summary>
         </member>
         <member name="M:LCAnomalyCore.Util.GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic">

@@ -17,6 +17,20 @@ namespace LCAnomalyCore.Util
         private static List<Graphic> CachedTopGraphic = new List<Graphic>();
 
         /// <summary>
+        /// 不可用贴图
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_QliphothIndicator_NotAllowed =
+            GraphicDatabase.Get<Graphic_Single>("Things/Building/QliphothIndicator/NotAllowed",
+            ShaderDatabase.Transparent, Defs.ThingDefOf.QliphothIndicator.graphicData.drawSize, Color.white);
+
+        /// <summary>
+        /// 最大值贴图
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_QliphothIndicator_Max =
+            GraphicDatabase.Get<Graphic_Single>("Things/Building/QliphothIndicator/9+",
+                ShaderDatabase.Transparent, Defs.ThingDefOf.QliphothIndicator.graphicData.drawSize, Color.white);
+
+        /// <summary>
         /// 获取逆卡巴拉计数器的图集
         /// </summary>
         /// <returns>图集</returns>
@@ -24,7 +38,7 @@ namespace LCAnomalyCore.Util
         {
             if (CachedTopGraphic.Empty())
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     Log.Message("贴图缓存：Things/Building/QliphothIndicator/Top" + i);
 
@@ -45,9 +59,19 @@ namespace LCAnomalyCore.Util
         /// </summary>
         private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator = new List<Graphic>();
 
+        /// <summary>
+        /// 不可用贴图
+        /// </summary>
         public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_NotAllowed = 
             GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/NotAllowed",
             ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white);
+
+        /// <summary>
+        /// 最大值贴图
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_Max =
+            GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/99+",
+                ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white);
 
         /// <summary>
         /// 获取图集
@@ -57,7 +81,7 @@ namespace LCAnomalyCore.Util
         {
             if (CachedTopGraphic_IndiPeBoxIndicator.Empty())
             {
-                for (int i = 0; i < 33; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     Log.Message("贴图缓存：Things/Building/IndiPeBoxIndicator/Top" + i);
 
