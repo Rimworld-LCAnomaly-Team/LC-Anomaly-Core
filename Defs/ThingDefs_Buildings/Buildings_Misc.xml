@@ -19,6 +19,7 @@
     <descriptionHyperlinks>
       <ThingDef>QliphothIndicator</ThingDef>
       <ThingDef>IndiPeBoxIndicator</ThingDef>
+      <ThingDef>LevelIndicator</ThingDef>
     </descriptionHyperlinks>
     <thingCategories>
       <li>LC_Building_Containment</li>
@@ -40,6 +41,7 @@
         <linkableFacilities>
           <li>QliphothIndicator</li>
           <li>IndiPeBoxIndicator</li>
+          <li>LevelIndicator</li>
         </linkableFacilities>
       </li>
       <li Class="CompProperties_MeditationFocus">
@@ -208,6 +210,72 @@
     <size>(1,1)</size>
     <graphicData>
       <texPath>Things/Building/IndiPeBoxIndicator/IndiPeBoxIndicator</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <uiIconScale>0.8</uiIconScale>
+    <castEdgeShadows>true</castEdgeShadows>
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+      <buildingTags>
+        <li>Anomaly</li>
+      </buildingTags>
+    </building>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.9</fillPercent>
+    <pathCost>50</pathCost>
+    <designationCategory>Buildings_LC</designationCategory>
+    <uiOrder>115</uiOrder>
+    <canOverlapZones>false</canOverlapZones>
+    <thingCategories>
+      <li>LC_Building_Containment</li>
+    </thingCategories>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <statBases>
+      <MaxHitPoints>200</MaxHitPoints>
+      <WorkToBuild>500</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Mass>5</Mass>
+    </statBases>
+    <costList>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <placeWorkers>
+      <li>PlaceWorker_ShowFacilitiesConnections</li>
+    </placeWorkers>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>50</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Facility">
+        <compClass>CompFacilityInactiveWhenElectricityDisabled</compClass>
+        <maxDistance>5</maxDistance>
+        <maxSimultaneous>1</maxSimultaneous>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+  </ThingDef>
+
+  <!-- LevelIndicator -->
+  <ThingDef ParentName="BuildingBase">
+    <thingClass>LCAnomalyCore.Building.Building_LevelIndicator</thingClass>
+    <defName>LevelIndicator</defName>
+    <label>Level Indicator</label>
+    <description>Level Indicator</description>
+    <descriptionHyperlinks>
+      <ThingDef>LC_HoldingPlatform</ThingDef>
+    </descriptionHyperlinks>
+    <tickerType>Normal</tickerType>
+    <size>(1,1)</size>
+    <graphicData>
+      <texPath>Things/Building/LevelIndicator/LevelIndicator</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(1,1)</drawSize>
     </graphicData>

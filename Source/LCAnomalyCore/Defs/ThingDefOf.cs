@@ -51,6 +51,11 @@ namespace LCAnomalyCore.Defs
         public static ThingDef IndiPeBoxIndicator;
 
         /// <summary>
+        /// 异想体等级指示器（建筑）
+        /// </summary>
+        public static ThingDef LevelIndicator;
+
+        /// <summary>
         /// Cogito水桶（建筑）
         /// </summary>
         public static ThingDef CogitoBucket;

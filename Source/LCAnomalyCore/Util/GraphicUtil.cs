@@ -95,6 +95,35 @@ namespace LCAnomalyCore.Util
 
         #endregion
 
+        #region 异想体等级显示器
+
+        /// <summary>
+        /// 缓存图集
+        /// </summary>
+        private static List<Graphic> CachedTopGraphic_LevelIndicator = new List<Graphic>();
+
+        /// <summary>
+        /// 获取图集
+        /// </summary>
+        /// <returns>图集</returns>
+        public static List<Graphic> LevelIndicator_GetCachedTopGraphic()
+        {
+            if (CachedTopGraphic_LevelIndicator.Empty())
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    Log.Message("贴图缓存：Things/Building/LevelIndicator/Top" + i);
+
+                    CachedTopGraphic_LevelIndicator.Add(GraphicDatabase.Get<Graphic_Single>("Things/Building/LevelIndicator/Top" + i,
+                        ShaderDatabase.Transparent, Defs.ThingDefOf.LevelIndicator.graphicData.drawSize, Color.white));
+                }
+            }
+
+            return CachedTopGraphic_LevelIndicator;
+        }
+
+        #endregion
+
         #region “水桶”
 
         /// <summary>
