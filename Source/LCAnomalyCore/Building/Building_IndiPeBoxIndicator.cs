@@ -214,7 +214,7 @@ namespace LCAnomalyCore.Building
                 if (stringBuilder.Length != 0)
                     stringBuilder.AppendLine();
 
-                stringBuilder.Append("IndiPeBoxIndicatorInspect".Translate());
+                stringBuilder.Append("IndiPeBoxIndicatorInspectText".Translate());
                 stringBuilder.Append($"：{PeBoxCounter}");
             }
 

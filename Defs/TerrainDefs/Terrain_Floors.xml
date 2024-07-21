@@ -14,15 +14,16 @@
     <fertility>0</fertility>
     <statBases>
       <WorkToBuild>800</WorkToBuild>
-      <Beauty>-2</Beauty>
+      <Beauty>-1</Beauty>
       <Cleanliness>0.2</Cleanliness>
       <CleaningTimeFactor>0.6</CleaningTimeFactor>
       <Flammability>0.15</Flammability>
       <ContainmentStrength>15</ContainmentStrength>
     </statBases>
     <costList>
-      <EnkephalinBox>1</EnkephalinBox>
+      <EnkephalinBox>5</EnkephalinBox>
     </costList>
+    <designationCategory>Buildings_LC</designationCategory>
     <researchPrerequisites>
       <li>LC_EntityContainment</li>
     </researchPrerequisites>

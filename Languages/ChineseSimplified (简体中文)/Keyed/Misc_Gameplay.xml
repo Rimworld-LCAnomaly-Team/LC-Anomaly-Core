@@ -3,26 +3,12 @@
   
   <QliphothCounterInspect>逆卡巴拉计数</QliphothCounterInspect>
 
-  <Setting_LCAnomalyLibrary_Label>脑叶公司-异常框架</Setting_LCAnomalyLibrary_Label>
-  
-  <If_ShowWarningSettingsText>显示自定义警报系统参数</If_ShowWarningSettingsText> 
-  <If_EnableLCWarningText>启用警报系统</If_EnableLCWarningText> 
-  <If_EnableLCWarningMusicText>启用警报音乐</If_EnableLCWarningMusicText>
-
-  <If_EnableCustomWarningFadeOptionText>自定义警报下降间隔</If_EnableCustomWarningFadeOptionText> 
-  <PointsOfWarning_FadeDurationText>下降间隔（Tick）：</PointsOfWarning_FadeDurationText>
-  <PointsOfWarning_FadeAmountText>单次下降数量：</PointsOfWarning_FadeAmountText>
-
-  <If_EnableLCWarningDeathText>启用单位死亡提供警报点数</If_EnableLCWarningDeathText>
-  <If_EnableLCWarningMentalBreakText>启用单位崩溃提供警报点数</If_EnableLCWarningMentalBreakText>
-  <PointsOfWarning_PlayerFactionText>人形（玩家）：</PointsOfWarning_PlayerFactionText>
-  <PointsOfWarning_AllyFactionText>人形（友善）：</PointsOfWarning_AllyFactionText>
-  <PointsOfWarning_NeturalFactionText>人形（中立）：</PointsOfWarning_NeturalFactionText>
-
   <RequireThingNotInstalledText>缺失必要组件：</RequireThingNotInstalledText>
 
   <EGOExtractSucceedText>E.G.O提取成功：</EGOExtractSucceedText>
   <EGOExtractFailedByPeBoxConsumeText>E.G.O提取失败：所需独立PeBox数量不足</EGOExtractFailedByPeBoxConsumeText>
   <ExtractEGODisabledReasonText>E.G.O提取禁用：提取数量已达最大值</ExtractEGODisabledReasonText>
+
+  <IndiPeBoxIndicatorInspectText>独立PeBox计数：</IndiPeBoxIndicatorInspectText>
 
 </LanguageData>
