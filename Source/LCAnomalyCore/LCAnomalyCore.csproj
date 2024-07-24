@@ -86,7 +86,6 @@
     <Compile Include="Building\Building_EnkephalinGenerator.cs" />
     <Compile Include="Building\Building_HoldingPlatform.cs" />
     <Compile Include="Building\Building_IndiPeBoxIndicator.cs" />
-    <Compile Include="Building\Building_LevelIndicator.cs" />
     <Compile Include="Building\Building_QliphothIndicator.cs" />
     <Compile Include="Comp\CompBrainSpinalNerve.cs" />
     <Compile Include="Comp\CompCogitoBucketSpawner.cs" />

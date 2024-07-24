@@ -95,31 +95,31 @@ namespace LCAnomalyCore.Util
 
         #endregion
 
-        #region 异想体等级显示器
+        #region 异想体等级显示
 
         /// <summary>
-        /// 缓存图集
+        /// 缓存图集（异想体等级显示）
         /// </summary>
-        private static List<Graphic> CachedTopGraphic_LevelIndicator = new List<Graphic>();
+        private static Dictionary<string, Graphic> CachedGraphic_LevelIndicator = new Dictionary<string, Graphic>();
 
         /// <summary>
-        /// 获取图集
+        /// 获取图集（异想体等级显示）
         /// </summary>
         /// <returns>图集</returns>
-        public static List<Graphic> LevelIndicator_GetCachedTopGraphic()
+        public static Graphic LevelIndicator_GetCachedTopGraphic(string level)
         {
-            if (CachedTopGraphic_LevelIndicator.Empty())
+            if(CachedGraphic_LevelIndicator.NullOrEmpty())
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    Log.Message("贴图缓存：Things/Building/LevelIndicator/Top" + i);
+                string baseLoc = "Things/Building/LC_HoldingPlatform/Level/";
+                Vector2 drawSize = Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize;
+                List<string> list = new List<string>() { "NULL", "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
 
-                    CachedTopGraphic_LevelIndicator.Add(GraphicDatabase.Get<Graphic_Single>("Things/Building/LevelIndicator/Top" + i,
-                        ShaderDatabase.Transparent, Defs.ThingDefOf.LevelIndicator.graphicData.drawSize, Color.white));
-                }
+                foreach (string str in list)
+                    CachedGraphic_LevelIndicator.Add(str, GraphicDatabase.Get<Graphic_Single>(baseLoc + str,
+                        ShaderDatabase.Transparent, drawSize, Color.white));
             }
 
-            return CachedTopGraphic_LevelIndicator;
+            return CachedGraphic_LevelIndicator[level];
         }
 
         #endregion

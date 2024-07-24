@@ -93,51 +93,6 @@
             热重载通知
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_LevelIndicator.FacilityComp">
-            <summary>
-            设施Comp
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.Building.Building_LevelIndicator.Platforms">
-            <summary>
-            已连接的平台（理论上只能有一个）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.SpawnSetup(Verse.Map,System.Boolean)">
-            <summary>
-            开始生成时的方法
-            </summary>
-            <param name="map">地图</param>
-            <param name="respawningAfterLoad">加载后重新生成</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.DeSpawn(Verse.DestroyMode)">
-            <summary>
-            移除时的方法
-            </summary>
-            <param name="mode">销毁模式</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.DrawAt(UnityEngine.Vector3,System.Boolean)">
-            <summary>
-            绘制方法
-            </summary>
-            <param name="drawLoc">位置</param>
-            <param name="flip">是否翻转</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.Initialize">
-            <summary>
-            初始化
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.UpdateLevelIndicator">
-            <summary>
-            更新等级显示
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_LevelIndicator.Notify_DefsHotReloaded">
-            <summary>
-            热重载通知
-            </summary>
-        </member>
         <member name="T:LCAnomalyCore.Building.Building_QliphothIndicator">
             <summary>
             逆卡巴拉计数器（建筑）
@@ -451,11 +406,6 @@
             独立PeBox指示器（建筑）
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Defs.ThingDefOf.LevelIndicator">
-            <summary>
-            异想体等级指示器（建筑）
-            </summary>
-        </member>
         <member name="F:LCAnomalyCore.Defs.ThingDefOf.CogitoBucket">
             <summary>
             Cogito水桶（建筑）
@@ -655,14 +605,14 @@
             </summary>
             <returns>图集</returns>
         </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_LevelIndicator">
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedGraphic_LevelIndicator">
             <summary>
-            缓存图集
+            缓存图集（异想体等级显示）
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic">
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic(System.String)">
             <summary>
-            获取图集
+            获取图集（异想体等级显示）
             </summary>
             <returns>图集</returns>
         </member>

@@ -9,7 +9,5 @@
 
   <IndiPeBoxIndicator.label>独立PeBox计数器</IndiPeBoxIndicator.label>
   <IndiPeBoxIndicator.description>将该设备放置在收容平台附近，即可实时显示收容平台实体的独立PeBox计数。</IndiPeBoxIndicator.description>
-
-  <LevelIndicator.label>异想体等级指示器</LevelIndicator.label>
-  <LevelIndicator.description>将该设备放置在收容平台附近，即可实时显示收容平台的异想体等级。</LevelIndicator.description>
+  
 </LanguageData>

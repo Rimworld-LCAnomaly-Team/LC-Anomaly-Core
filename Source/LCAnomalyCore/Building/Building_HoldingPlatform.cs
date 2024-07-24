@@ -16,10 +16,9 @@ namespace LCAnomalyCore.Building
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             base.DrawAt(drawLoc, flip);
-
-            if (CompWorkable != null && CompWorkable.UIAllowed)
+            if (HeldPawn != null)
             {
-                if(HeldPawn != null)
+                if (CompWorkable != null && CompWorkable.UIAllowed)
                 {
                     var comp = HeldPawn.GetComp<CompStudiable>();
                     if (comp != null)
@@ -29,7 +28,12 @@ namespace LCAnomalyCore.Building
                         graphic.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
                     }
                 }
+
+                var category = HeldPawn.def.entityCodexEntry.category.defName;
+                var graphicLevel = Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic(category);
+                graphicLevel.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
             }
+
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
