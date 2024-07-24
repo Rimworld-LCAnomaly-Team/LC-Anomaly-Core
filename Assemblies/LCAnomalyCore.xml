@@ -234,6 +234,16 @@
             Comp
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_WorkableUI.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompWorkableUI.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected">
             <summary>
             Cogito被注射状态的HediffCompProperties

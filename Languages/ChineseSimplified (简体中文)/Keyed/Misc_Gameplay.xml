@@ -11,4 +11,7 @@
 
   <IndiPeBoxIndicatorInspectText>独立PeBox计数：</IndiPeBoxIndicatorInspectText>
 
+  <CommandToggleShowWorkableLabel>开关可工作UI显示</CommandToggleShowWorkableLabel>
+  <CommandToggleShowWorkableDesc>按下来切换异想体平台上关于是否可工作的UI显示状态</CommandToggleShowWorkableDesc>
+
 </LanguageData>

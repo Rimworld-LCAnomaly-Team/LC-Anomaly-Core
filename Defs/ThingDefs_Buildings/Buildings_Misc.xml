@@ -2,7 +2,7 @@
 <Defs>
 
   <LCAnomalyLibrary.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
-    <thingClass>Building_HoldingPlatform</thingClass>
+    <thingClass>LCAnomalyCore.Building.Building_HoldingPlatform</thingClass>
     <containedPawnsSelectable>true</containedPawnsSelectable>
     <passability>PassThroughOnly</passability>
     <rotatable>false</rotatable>
@@ -93,6 +93,9 @@
             <type>PlatformRestraint3</type>
           </li>
         </points>
+      </li>
+      <li Class="LCAnomalyCore.Comp.CompProperties_WorkableUI">
+
       </li>
     </comps>
   </LCAnomalyLibrary.Defs.LC_HoldingPlatformDef>

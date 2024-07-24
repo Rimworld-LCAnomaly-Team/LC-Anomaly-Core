@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Building\Building_CogitoBucket.cs" />
     <Compile Include="Building\Building_EnkephalinGenerator.cs" />
+    <Compile Include="Building\Building_HoldingPlatform.cs" />
     <Compile Include="Building\Building_IndiPeBoxIndicator.cs" />
     <Compile Include="Building\Building_LevelIndicator.cs" />
     <Compile Include="Building\Building_QliphothIndicator.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="Comp\CompProperties_CogitoBucketSpawner.cs" />
     <Compile Include="Comp\CompProperties_ExtractRitualSpot.cs" />
     <Compile Include="Comp\CompProperties_PeBoxProduce.cs" />
+    <Compile Include="Comp\CompProperties_WorkableUI.cs" />
+    <Compile Include="Comp\CompWorkableUI.cs" />
     <Compile Include="Comp\HediffCompProperties_CogitoInjected.cs" />
     <Compile Include="Comp\HediffComp_CogitoInjected.cs" />
     <Compile Include="Defs\ExtractRitualRoleDefOf.cs" />
