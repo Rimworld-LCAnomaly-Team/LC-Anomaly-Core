@@ -27,6 +27,11 @@
             逆卡巴拉计数器值
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounter">
+            <summary>
+            独立PeBox数量
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounterInit">
             <summary>
             初始化
@@ -37,75 +42,14 @@
             更新逆卡巴拉计数器
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Building.Building_IndiPeBoxIndicator">
-            <summary>
-            独立PeBox指示器建筑
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.PeBoxCounter">
-            <summary>
-            独立PeBox数量
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.FacilityComp">
-            <summary>
-            设施Comp
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Power">
-            <summary>
-            能源Comp
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Platforms">
-            <summary>
-            已连接的平台（理论上只能有一个）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.SpawnSetup(Verse.Map,System.Boolean)">
-            <summary>
-            开始生成时的方法
-            </summary>
-            <param name="map">地图</param>
-            <param name="respawningAfterLoad">加载后重新生成</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.DeSpawn(Verse.DestroyMode)">
-            <summary>
-            移除时的方法
-            </summary>
-            <param name="mode">销毁模式</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Tick">
-            <summary>
-            每Tick调用
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.DrawAt(UnityEngine.Vector3,System.Boolean)">
-            <summary>
-            绘制方法
-            </summary>
-            <param name="drawLoc">位置</param>
-            <param name="flip">是否翻转</param>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Initialize">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounterInit">
             <summary>
             初始化
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.UpdatePeBoxCounter">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounterUpdate">
             <summary>
             更新PeBox计数器
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.GetInspectString">
-            <summary>
-            Inspect面板信息
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LCAnomalyCore.Building.Building_IndiPeBoxIndicator.Notify_DefsHotReloaded">
-            <summary>
-            热重载通知
             </summary>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
@@ -340,11 +284,6 @@
             水井（建筑）
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Defs.ThingDefOf.IndiPeBoxIndicator">
-            <summary>
-            独立PeBox指示器（建筑）
-            </summary>
-        </member>
         <member name="F:LCAnomalyCore.Defs.ThingDefOf.CogitoBucket">
             <summary>
             Cogito水桶（建筑）
@@ -507,11 +446,6 @@
             缓存的逆卡巴拉计数器的图集
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_Bottom">
-            <summary>
-            底部贴图
-            </summary>
-        </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_TopNull">
             <summary>
             不可用贴图
@@ -531,11 +465,6 @@
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator">
             <summary>
             缓存图集
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_NotAllowed">
-            <summary>
-            不可用贴图
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max">

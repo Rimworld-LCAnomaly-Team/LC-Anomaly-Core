@@ -34,6 +34,23 @@ namespace LCAnomalyCore.Building
             }
         }
 
+        /// <summary>
+        /// 独立PeBox数量
+        /// </summary>
+        public int PeBoxCounter
+        {
+            get
+            {
+                if (entityCached)
+                {
+                    LCAnomalyLibrary.Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
+                    return saved.IndiPeBoxAmount;
+                }
+
+                return 0;
+            }
+        }
+
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -42,6 +59,9 @@ namespace LCAnomalyCore.Building
             if (!respawningAfterLoad)
             {
                 QliphothCounterInit();
+                PeBoxCounterInit();
+
+                initalized = true;
             }
         }
 
@@ -54,8 +74,6 @@ namespace LCAnomalyCore.Building
             {
                 return;
             }
-
-            initalized = true;
             
             innerContainer.OnContentsChanged += QliphothCounterUpdate;
 
@@ -70,6 +88,7 @@ namespace LCAnomalyCore.Building
             if (this.IsHashIntervalTick(250))
             {
                 QliphothCounterUpdate();
+                PeBoxCounterUpdate();
             }
         }
 
@@ -91,6 +110,45 @@ namespace LCAnomalyCore.Building
                 return;
 
             cachedEntity = entity;
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        private void PeBoxCounterInit()
+        {
+            if (initalized)
+            {
+                return;
+            }
+
+            innerContainer.OnContentsChanged += PeBoxCounterUpdate;
+
+            PeBoxCounterUpdate();
+        }
+
+        /// <summary>
+        /// 更新PeBox计数器
+        /// </summary>
+        private void PeBoxCounterUpdate()
+        {
+            var entity = HeldPawn?.TryGetComp<LC_CompEntity>();
+
+            if (entity != null)
+            {
+                if (cachedEntity != null && cachedEntity.parent.def == entity.parent.def)
+                    return;
+
+                var peBoxComp = entity.PeBoxComp;
+                if (peBoxComp != null)
+                {
+                    cachedEntity = entity;
+                }
+            }
+            else
+            {
+                cachedEntity = null;
+            }
         }
 
         public override void Notify_DefsHotReloaded()
@@ -116,15 +174,11 @@ namespace LCAnomalyCore.Building
                     {
                         var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
                         var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
-                        graphic.Draw(drawPosCached, base.Rotation, this, 0f);
+                        graphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                     }
                 }
 
                 #region 逆卡巴拉计数器
-
-                //底部贴图
-                GraphicUtil.CachedTopGraphic_QliphothIndicator_Bottom
-                    .Draw(drawPosCached, base.Rotation, this, 0f);
 
                 //显示不可用
                 if (!entityCached)
@@ -149,6 +203,32 @@ namespace LCAnomalyCore.Building
 
                 #endregion
 
+                #region Pebox计数器
+
+                //不大于100就显示对应数字
+                if (PeBoxCounter < 100)
+                {
+                    GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic()[PeBoxCounter]
+                        .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                }
+                //大于100就显示99+
+                else
+                {
+                    GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max
+                        .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                }
+
+                #endregion
+
+                #region 平台上的异常名字UI
+
+                if (entityCached)
+                {
+                    var graphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName);
+                    graphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                }
+
+                #endregion
 
                 #region 可工作UI
                 var category = HeldPawn.def.entityCodexEntry.category.defName;

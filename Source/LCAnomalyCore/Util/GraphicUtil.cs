@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using Verse;
 
@@ -20,13 +22,6 @@ namespace LCAnomalyCore.Util
         /// 缓存的逆卡巴拉计数器的图集
         /// </summary>
         private static List<Graphic> CachedTopGraphic = new List<Graphic>();
-
-        /// <summary>
-        /// 底部贴图
-        /// </summary>
-        public static readonly Graphic CachedTopGraphic_QliphothIndicator_Bottom =
-            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Bottom",
-            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
         /// <summary>
         /// 不可用贴图
@@ -72,18 +67,11 @@ namespace LCAnomalyCore.Util
         private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator = new List<Graphic>();
 
         /// <summary>
-        /// 不可用贴图
-        /// </summary>
-        public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_NotAllowed = 
-            GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/NotAllowed",
-            ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white);
-
-        /// <summary>
         /// 最大值贴图
         /// </summary>
         public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_Max =
-            GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/99+",
-                ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white);
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "PeBoxCounter/99+",
+                ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
         /// <summary>
         /// 获取图集
@@ -95,10 +83,10 @@ namespace LCAnomalyCore.Util
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    Log.Message("贴图缓存：Things/Building/IndiPeBoxIndicator/Top" + i);
+                    Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}PeBoxCounter/Top" + i);
 
-                    CachedTopGraphic_IndiPeBoxIndicator.Add(GraphicDatabase.Get<Graphic_Single>("Things/Building/IndiPeBoxIndicator/Top" + i,
-                        ShaderDatabase.Transparent, Defs.ThingDefOf.IndiPeBoxIndicator.graphicData.drawSize, Color.white));
+                    CachedTopGraphic_IndiPeBoxIndicator.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "PeBoxCounter/Top" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
             }
 
@@ -123,7 +111,7 @@ namespace LCAnomalyCore.Util
             if(CachedGraphic_LevelIndicator.NullOrEmpty())
             {
                 string baseLoc = baseLocOfHoldingPlatform + "Level/";
-                List<string> list = new List<string>() { "NULL", "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
+                List<string> list = new List<string>() { "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
 
                 foreach (string str in list)
                     CachedGraphic_LevelIndicator.Add(str, GraphicDatabase.Get<Graphic_Single>(baseLoc + str,
@@ -131,6 +119,25 @@ namespace LCAnomalyCore.Util
             }
 
             return CachedGraphic_LevelIndicator[level];
+        }
+
+        #endregion
+
+        #region 收容平台实体名字显示
+
+        private static Graphic CachedTopGraphic_EntityNamePlatformTop;
+        public static Graphic EntityNamePlatformTopGraphic_Get(string loc)
+        {
+            if (CachedTopGraphic_EntityNamePlatformTop == null)
+                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>("UI/HoldingPlatform/" + loc +"_" + LanguageDatabase.activeLanguage,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+
+            //对应语言的图片不存在就默认英文
+            if (CachedTopGraphic_EntityNamePlatformTop.data == null)
+                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English",
+                                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+
+            return CachedTopGraphic_EntityNamePlatformTop;
         }
 
         #endregion
