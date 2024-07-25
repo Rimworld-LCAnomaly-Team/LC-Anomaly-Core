@@ -4,11 +4,16 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+
+
     /// <summary>
     /// 图像工具类
     /// </summary>
     public static class GraphicUtil
     {
+        private static Vector2 drawSizeOfHoldingPlatform = Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize;
+        private static string baseLocOfHoldingPlatform = "Things/Building/LC_HoldingPlatform/";
+
         #region 逆卡巴拉计数器
 
         /// <summary>
@@ -17,18 +22,25 @@ namespace LCAnomalyCore.Util
         private static List<Graphic> CachedTopGraphic = new List<Graphic>();
 
         /// <summary>
+        /// 底部贴图
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_QliphothIndicator_Bottom =
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Bottom",
+            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+
+        /// <summary>
         /// 不可用贴图
         /// </summary>
-        public static readonly Graphic CachedTopGraphic_QliphothIndicator_NotAllowed =
-            GraphicDatabase.Get<Graphic_Single>("Things/Building/QliphothIndicator/NotAllowed",
-            ShaderDatabase.Transparent, Defs.ThingDefOf.QliphothIndicator.graphicData.drawSize, Color.white);
+        public static readonly Graphic CachedTopGraphic_QliphothIndicator_TopNull =
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/TopNull",
+            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
         /// <summary>
         /// 最大值贴图
         /// </summary>
-        public static readonly Graphic CachedTopGraphic_QliphothIndicator_Max =
-            GraphicDatabase.Get<Graphic_Single>("Things/Building/QliphothIndicator/9+",
-                ShaderDatabase.Transparent, Defs.ThingDefOf.QliphothIndicator.graphicData.drawSize, Color.white);
+        public static readonly Graphic CachedTopGraphic_QliphothIndicator_TopMax =
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Top9+",
+                ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
         /// <summary>
         /// 获取逆卡巴拉计数器的图集
@@ -40,10 +52,10 @@ namespace LCAnomalyCore.Util
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Log.Message("贴图缓存：Things/Building/QliphothIndicator/Top" + i);
+                    Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}QliphothIndicator/Top" + i);
 
-                    CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>("Things/Building/QliphothIndicator/Top" + i,
-                        ShaderDatabase.Transparent, Defs.ThingDefOf.QliphothIndicator.graphicData.drawSize, Color.white));
+                    CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Top" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
             }
 
@@ -110,13 +122,12 @@ namespace LCAnomalyCore.Util
         {
             if(CachedGraphic_LevelIndicator.NullOrEmpty())
             {
-                string baseLoc = "Things/Building/LC_HoldingPlatform/Level/";
-                Vector2 drawSize = Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize;
+                string baseLoc = baseLocOfHoldingPlatform + "Level/";
                 List<string> list = new List<string>() { "NULL", "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
 
                 foreach (string str in list)
                     CachedGraphic_LevelIndicator.Add(str, GraphicDatabase.Get<Graphic_Single>(baseLoc + str,
-                        ShaderDatabase.Transparent, drawSize, Color.white));
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
 
             return CachedGraphic_LevelIndicator[level];
