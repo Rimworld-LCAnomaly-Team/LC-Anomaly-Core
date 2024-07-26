@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -126,16 +124,26 @@ namespace LCAnomalyCore.Util
         #region 收容平台实体名字显示
 
         private static Graphic CachedTopGraphic_EntityNamePlatformTop;
+
         public static Graphic EntityNamePlatformTopGraphic_Get(string loc)
         {
+            //初始化
             if (CachedTopGraphic_EntityNamePlatformTop == null)
-                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>("UI/HoldingPlatform/" + loc +"_" + LanguageDatabase.activeLanguage,
-                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+            {
+                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
+                    .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage
+                    , ShaderDatabase.Transparent
+                    , drawSizeOfHoldingPlatform, Color.white);
 
-            //对应语言的图片不存在就默认英文
-            if (CachedTopGraphic_EntityNamePlatformTop.data == null)
-                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English",
-                                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+                //如果贴图为null就切换到英文版
+                if(CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
+                {
+                    CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
+                        .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
+                        , ShaderDatabase.Transparent
+                        , drawSizeOfHoldingPlatform, Color.white);
+                }
+            }
 
             return CachedTopGraphic_EntityNamePlatformTop;
         }

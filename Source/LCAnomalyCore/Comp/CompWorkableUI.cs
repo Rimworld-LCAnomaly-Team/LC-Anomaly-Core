@@ -13,14 +13,16 @@ namespace LCAnomalyCore.Comp
 
         public bool UIAllowed = true;
 
+        private string path = "Things/Building/LC_HoldingPlatform/Workable/";
+
         public Graphic AllowWorkGraphic => allowWorkGraphic ?? 
             (allowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
-            ("UI/Workable/Allow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+            (path + "Allow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
         private Graphic allowWorkGraphic;
 
         public Graphic NotAllowWorkGraphic => notAllowWorkGraphic ?? 
             (notAllowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
-            ("UI/Workable/NotAllow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+            (path + "NotAllow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
         private Graphic notAllowWorkGraphic;
 
         public override void PostExposeData()

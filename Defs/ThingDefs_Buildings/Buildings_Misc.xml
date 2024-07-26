@@ -100,7 +100,7 @@
     <graphicData>
       <texPath>Things/Building/LC_HoldingPlatform/HoldingPlatform</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(5, 5)</drawSize>
+      <drawSize>(4, 4)</drawSize>
     </graphicData>
     <researchPrerequisites>
       <li>LC_EntityContainment</li>
