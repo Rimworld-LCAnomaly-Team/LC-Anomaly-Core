@@ -125,10 +125,10 @@ namespace LCAnomalyCore.Util
 
         private static Graphic CachedTopGraphic_EntityNamePlatformTop;
 
-        public static Graphic EntityNamePlatformTopGraphic_Get(string loc)
+        public static Graphic EntityNamePlatformTopGraphic_Get(string loc, bool forced = false)
         {
             //初始化
-            if (CachedTopGraphic_EntityNamePlatformTop == null)
+            if (CachedTopGraphic_EntityNamePlatformTop == null || forced)
             {
                 CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
                     .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage

@@ -6,7 +6,7 @@
     <label>CogitoUsages</label>
     <description>Carry out a research into the usage of cogito.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCost>10</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>0.00</researchViewX>
     <researchViewY>1.20</researchViewY>
@@ -27,7 +27,7 @@
     <label>Extract Enkephalin</label>
     <description>Extract Enkephalin from Anomalies.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCost>5</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.60</researchViewY>
@@ -48,8 +48,8 @@
     <label>ElectricGenerator of Enkephalin</label>
     <description>ElectricGenerator of Enkephalin.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>80</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <knowledgeCost>10</knowledgeCost>
+    <knowledgeCategory>Advanced</knowledgeCategory>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
@@ -72,7 +72,7 @@
     <label>Drug of Enkephalin</label>
     <description>Drug of Enkephalin.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>80</knowledgeCost>
+    <knowledgeCost>10</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.00</researchViewY>
@@ -96,7 +96,7 @@
     <label>LC EntityContainment</label>
     <description>.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCost>10</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.00</researchViewY>

@@ -20,6 +20,12 @@ namespace LCAnomalyCore.Building
 
         private Vector3 altitudesCached = Altitudes.AltIncVect * 2f;
 
+        protected Graphic CachedEntityNameGraphic
+        {
+            get => cachedEntityNameGraphic ?? (cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true));
+        }
+        private Graphic cachedEntityNameGraphic;
+
         /// <summary>
         /// 逆卡巴拉计数器值
         /// </summary>
@@ -143,12 +149,19 @@ namespace LCAnomalyCore.Building
                 if (peBoxComp != null)
                 {
                     cachedEntity = entity;
+                    EntityNameUpdateForce();
                 }
             }
             else
             {
                 cachedEntity = null;
             }
+        }
+
+        private void EntityNameUpdateForce()
+        {
+            cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+            Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
         }
 
         public override void Notify_DefsHotReloaded()
@@ -224,8 +237,8 @@ namespace LCAnomalyCore.Building
 
                 if (entityCached)
                 {
-                    var graphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName);
-                    graphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                    //var graphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName);
+                    CachedEntityNameGraphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
                 #endregion
