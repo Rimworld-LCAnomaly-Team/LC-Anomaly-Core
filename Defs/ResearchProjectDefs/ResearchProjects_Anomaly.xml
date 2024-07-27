@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
 
+  <!-- CogitoUsages -->
   <ResearchProjectDef>
     <defName>CogitoUsages</defName>
     <label>CogitoUsages</label>
@@ -22,12 +23,13 @@
     </generalRules>
   </ResearchProjectDef>
 
+  <!-- Enkephalin Extract -->
   <ResearchProjectDef>
     <defName>ExtractEnkephalin</defName>
     <label>Extract Enkephalin</label>
     <description>Extract Enkephalin from Anomalies.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>5</knowledgeCost>
+    <knowledgeCost>10</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.60</researchViewY>
@@ -43,12 +45,13 @@
     </generalRules>
   </ResearchProjectDef>
   
+  <!-- Enkephalin Generator -->
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGenerator</defName>
-    <label>ElectricGenerator of Enkephalin</label>
-    <description>ElectricGenerator of Enkephalin.</description>
+    <label>EnkephalinGenerator</label>
+    <description>EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
+    <knowledgeCost>20</knowledgeCost>
     <knowledgeCategory>Advanced</knowledgeCategory>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.60</researchViewY>
@@ -67,13 +70,64 @@
     </generalRules>
   </ResearchProjectDef>
 
+  <!-- Enkephalin Generator (ECO) -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGeneratorECO</defName>
+    <label>ECO EnkephalinGenerator</label>
+    <description>ECO EnkephalinGenerator</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>20</knowledgeCost>
+    <knowledgeCategory>Advanced</knowledgeCategory>
+    <researchViewX>2.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin_ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Generator (Advanced) -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGeneratorAdvanced</defName>
+    <label>Advanced EnkephalinGenerator</label>
+    <description>Advanced EnkephalinGenerator</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>40</knowledgeCost>
+    <knowledgeCategory>Advanced</knowledgeCategory>
+    <researchViewX>2.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin_ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Drug -->
   <ResearchProjectDef>
     <defName>Enkephalin_Drug</defName>
     <label>Drug of Enkephalin</label>
     <description>Drug of Enkephalin.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <knowledgeCost>20</knowledgeCost>
+    <knowledgeCategory>Advanced</knowledgeCategory>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.00</researchViewY>
     <prerequisites>
@@ -91,12 +145,13 @@
     </generalRules>
   </ResearchProjectDef>
 
+  <!-- EntityContainment -->
   <ResearchProjectDef>
     <defName>LC_EntityContainment</defName>
     <label>LC EntityContainment</label>
     <description>.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
+    <knowledgeCost>5</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.00</researchViewY>

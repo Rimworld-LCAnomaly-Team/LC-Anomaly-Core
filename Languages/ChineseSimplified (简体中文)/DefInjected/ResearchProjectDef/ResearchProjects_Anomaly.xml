@@ -37,6 +37,24 @@
     <li>subject_gerund->正在研究利用脑啡肽发电</li>
   </Enkephalin_ElectricGenerator.generalRules.rulesStrings>
 
+  <Enkephalin_ElectricGeneratorECO.label>脑啡肽发电（节能）</Enkephalin_ElectricGeneratorECO.label>
+  <Enkephalin_ElectricGeneratorECO.description>研究如何优化脑啡肽发电机的能耗。</Enkephalin_ElectricGeneratorECO.description>
+  <Enkephalin_ElectricGeneratorECO.generalRules.rulesStrings>
+    <li>subject->脑啡肽发电</li>
+    <li>subject_story->L公司独有的发电方式</li>
+    <li>subject_story->能够产出大量清洁能源</li>
+    <li>subject_gerund->正在研究利用脑啡肽发电</li>
+  </Enkephalin_ElectricGeneratorECO.generalRules.rulesStrings>
+
+  <Enkephalin_ElectricGeneratorAdvanced.label>脑啡肽发电（先进）</Enkephalin_ElectricGeneratorAdvanced.label>
+  <Enkephalin_ElectricGeneratorAdvanced.description>研究如何利用脑啡肽大量发电。</Enkephalin_ElectricGeneratorAdvanced.description>
+  <Enkephalin_ElectricGeneratorAdvanced.generalRules.rulesStrings>
+    <li>subject->脑啡肽发电</li>
+    <li>subject_story->L公司独有的发电方式</li>
+    <li>subject_story->能够产出大量清洁能源</li>
+    <li>subject_gerund->正在研究利用脑啡肽发电</li>
+  </Enkephalin_ElectricGeneratorAdvanced.generalRules.rulesStrings>
+
   <Enkephalin_Drug.label>脑啡肽毒品</Enkephalin_Drug.label>
   <Enkephalin_Drug.description>研究如何利用脑啡肽制作可服用的毒品。</Enkephalin_Drug.description>
   <Enkephalin_Drug.generalRules.rulesStrings>

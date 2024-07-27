@@ -13,6 +13,25 @@ namespace LCAnomalyCore.Building
 
         private bool shouldUp = true;
 
+        private bool shouldUpdate = false;
+
+        public override void Tick()
+        {
+            base.Tick();
+
+            if (CompSpawner.HasRequireThingInstalled)
+            {
+                if (animOffset >= 0.05f)
+                    shouldUp = false;
+                if (animOffset <= -0.05f)
+                    shouldUp = true;
+                if (shouldUp)
+                    animOffset += 0.0001f;
+                else
+                    animOffset -= 0.0001f;
+            }
+        }
+
         /// <summary>
         /// 绘制方法
         /// </summary>
@@ -26,14 +45,7 @@ namespace LCAnomalyCore.Building
             {
                 if (CompSpawner.HasRequireThingInstalled)
                 {
-                    if (animOffset >= 0.05f)
-                        shouldUp = false;
-                    if (animOffset <= -0.05f)
-                        shouldUp = true;
-                    if (shouldUp)
-                        animOffset += 0.0001f;
-                    else
-                        animOffset -= 0.0001f;
+                    shouldUpdate = true;
 
                     GraphicUtil.CogitoBucket_GetCachedGraphic("BrainSpinalNerve")
                         .Draw(new Vector3(this.DrawPos.x, this.DrawPos.y, this.DrawPos.z + animOffset) + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
@@ -46,6 +58,8 @@ namespace LCAnomalyCore.Building
 
             GraphicUtil.CogitoBucket_GetCachedGraphic("Glass")
                 .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+
+            shouldUpdate = false;
         }
     }
 }

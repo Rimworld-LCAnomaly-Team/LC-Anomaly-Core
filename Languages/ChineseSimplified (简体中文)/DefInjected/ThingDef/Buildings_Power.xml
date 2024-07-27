@@ -4,4 +4,10 @@
   <EnkephalinGenerator.label>脑啡肽发电机</EnkephalinGenerator.label>
   <EnkephalinGenerator.description>清洁能源。</EnkephalinGenerator.description>
 
+  <EnkephalinGeneratorECO.label>脑啡肽发电机（节能）</EnkephalinGeneratorECO.label>
+  <EnkephalinGeneratorECO.description>节约燃料。</EnkephalinGeneratorECO.description>
+
+  <EnkephalinGeneratorAdvanced.label>脑啡肽发电机（先进）</EnkephalinGeneratorAdvanced.label>
+  <EnkephalinGeneratorAdvanced.description>更大发电量。</EnkephalinGeneratorAdvanced.description>
+
 </LanguageData>
