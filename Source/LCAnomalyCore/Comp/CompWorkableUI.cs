@@ -25,6 +25,11 @@ namespace LCAnomalyCore.Comp
             (path + "NotAllow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
         private Graphic notAllowWorkGraphic;
 
+        public Graphic AutoWorkGraphic => autoWorkGraphic ??
+            (autoWorkGraphic = GraphicDatabase.Get<Graphic_Single>
+            (path + "Auto", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+        private Graphic autoWorkGraphic;
+
         public override void PostExposeData()
         {
             Scribe_Values.Look<bool>(ref UIAllowed, "UIAllowed", true, false);

@@ -184,7 +184,15 @@ namespace LCAnomalyCore.Building
 
             if (HeldPawn != null)
             {
-                
+                #region 左右下角可工作状态
+
+                //如果分配工作者，就显示
+                if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
+                {
+                    CompWorkable.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                }
+
+                //工作状态更新
                 if (CompWorkable != null && CompWorkable.UIAllowed)
                 {
                     var comp = HeldPawn.GetComp<CompStudiable>();
@@ -195,6 +203,10 @@ namespace LCAnomalyCore.Building
                         graphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                     }
                 }
+
+                #endregion
+
+
 
                 #region 逆卡巴拉计数器
 
