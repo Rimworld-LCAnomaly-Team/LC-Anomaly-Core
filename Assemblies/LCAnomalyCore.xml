@@ -304,6 +304,11 @@
             脑啡肽状态中
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToEntityHolder">
+            <summary>
+            改自原版同名工作，是携带实体到平台的工作
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Patch.PatchMain">
             <summary>
             补丁主类
@@ -322,6 +327,11 @@
         <member name="M:LCAnomalyCore.Patch.Patch_CompStudyUnlocks.Postfix(RimWorld.CompStudyUnlocks,Verse.Pawn,System.Int32)">
             <summary>
             Postfix
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_WorkGiver_DarkStudyInteract">
+            <summary>
+            关于WorkGiver_DarkStudyInteract的补丁（用于禁止主动研究LC实体）
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">

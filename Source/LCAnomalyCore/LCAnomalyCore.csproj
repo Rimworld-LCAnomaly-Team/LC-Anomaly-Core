@@ -100,13 +100,17 @@
     <Compile Include="Defs\ExtractRitualRoleDefOf.cs" />
     <Compile Include="Defs\HediffDefOf.cs" />
     <Compile Include="Defs\HistoryEventDefOf.cs" />
+    <Compile Include="Defs\LC_HoldingPlatformDef.cs" />
     <Compile Include="Defs\PsychicRitualDef_ExtractAnomaly.cs" />
     <Compile Include="Defs\RecipeDefOf.cs" />
     <Compile Include="Defs\ResearchProjectDefOf.cs" />
     <Compile Include="Defs\ThingDefOf.cs" />
     <Compile Include="Defs\ThoughtDefOf.cs" />
+    <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
+    <Compile Include="Patch\Patch_TargetHoldingPlatformForEntity.cs" />
+    <Compile Include="Patch\Patch_WorkGiver_DarkStudyInteract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\Recipe_CogitoInjection.cs" />
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />

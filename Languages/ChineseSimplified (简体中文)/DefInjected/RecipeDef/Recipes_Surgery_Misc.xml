@@ -8,5 +8,9 @@
   <CogitoInjection.label>注入Cogito</CogitoInjection.label>
   <CogitoInjection.description>向受害者体内注入Cogito。</CogitoInjection.description>
   <CogitoInjection.jobString>正在注入Cogito。</CogitoInjection.jobString>
-  
+
+  <ExtractBrainSpinalNerve.label>提取脑-脊髓神经组</ExtractBrainSpinalNerve.label>
+  <ExtractBrainSpinalNerve.description>从受害者体内提取出脑-脊髓神经组，将会导致受害者立刻死亡。</ExtractBrainSpinalNerve.description>
+  <ExtractBrainSpinalNerve.jobString>正在提取脑-脊髓神经组。</ExtractBrainSpinalNerve.jobString>
+
 </LanguageData>
