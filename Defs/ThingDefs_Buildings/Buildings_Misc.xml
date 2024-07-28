@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
 
-  <LCAnomalyLibrary.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
+  <LCAnomalyCore.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
     <thingClass>LCAnomalyCore.Building.Building_HoldingPlatform</thingClass>
     <containedPawnsSelectable>true</containedPawnsSelectable>
     <passability>PassThroughOnly</passability>
@@ -86,14 +86,17 @@
           </li>
         </points>
       </li>
-      <li Class="LCAnomalyCore.Comp.CompProperties_WorkableUI">
-
+      <li Class="LCAnomalyCore.Comp.CompProperties_WorkableUI" />
+      <li Class="CompProperties_AssignableToPawn">
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity</compClass>
+        <maxAssignedPawnsCount>12</maxAssignedPawnsCount>
       </li>
     </comps>
-  </LCAnomalyLibrary.Defs.LC_HoldingPlatformDef>
+  </LCAnomalyCore.Defs.LC_HoldingPlatformDef>
 
   <!-- HoldingPlatform -->
-  <LCAnomalyLibrary.Defs.LC_HoldingPlatformDef ParentName="LC_HoldingPlatformBase">
+  <LCAnomalyCore.Defs.LC_HoldingPlatformDef ParentName="LC_HoldingPlatformBase">
     <defName>LC_HoldingPlatform</defName>
     <label>lc holding platform</label>
     <description>A platform for holding dangerous entities. The corners have eyelets where strong chains can be attached.\n\nDowned entities can be captured and secured on a holding platform, where they can be studied for Anomaly knowledge. Increase containment strength by building strong walls and doors, and other special containment devices.</description>
@@ -124,6 +127,6 @@
         <entityLungeSoundLow>EntityChainLow</entityLungeSoundLow>
       </li>
     </comps>
-  </LCAnomalyLibrary.Defs.LC_HoldingPlatformDef>
+  </LCAnomalyCore.Defs.LC_HoldingPlatformDef>
 
 </Defs>

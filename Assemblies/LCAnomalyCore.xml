@@ -143,6 +143,28 @@
             </summary>
             <param name="list">实体列表</param>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity">
+            <summary>
+            异想体研究平台分配单位自动研究的Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.AssigningCandidates">
+            <summary>
+            候选者列表
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CheckAssignedList">
+            <summary>
+            检测并移除列表中没有分配黑暗研究工作的单位
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CheckSkillRequire(Verse.Pawn)">
+            <summary>
+            检查是否满足最低技能需求
+            </summary>
+            <param name="pawn">单位</param>
+            <returns></returns>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ExtractRitualRoleDefOf">
             <summary>
             该Mod所有的ExtractRitualRoleDef
@@ -445,6 +467,16 @@
             <param name="billDoer">医生</param>
             <param name="ingredients">？</param>
             <param name="bill">手术</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
+            <summary>
+            自动研究分配对话框
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignEntity.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
         </member>
         <member name="T:LCAnomalyCore.Util.GraphicUtil">
             <summary>

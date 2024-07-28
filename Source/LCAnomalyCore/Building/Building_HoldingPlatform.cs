@@ -1,8 +1,11 @@
 ﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp;
+using LCAnomalyLibrary.Comp.Abstract;
 using RimWorld;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -20,11 +23,13 @@ namespace LCAnomalyCore.Building
 
         private Vector3 altitudesCached = Altitudes.AltIncVect * 2f;
 
-        protected Graphic CachedEntityNameGraphic
-        {
-            get => cachedEntityNameGraphic ?? (cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true));
-        }
+        protected Graphic CachedEntityNameGraphic => cachedEntityNameGraphic 
+            ?? (cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true));
         private Graphic cachedEntityNameGraphic;
+
+        public CompAssignableToPawn_LC_Entity CompAssignable => compAssignable
+            ?? (compAssignable = GetComp<CompAssignableToPawn_LC_Entity>());
+        private CompAssignableToPawn_LC_Entity compAssignable;
 
         /// <summary>
         /// 逆卡巴拉计数器值

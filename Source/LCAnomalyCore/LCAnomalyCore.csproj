@@ -2,6 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <LangVersion>preview</LangVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9C347FFE-92DD-4DBB-B5A7-76EA5C01BD85}</ProjectGuid>
@@ -64,6 +65,10 @@
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
@@ -115,6 +120,8 @@
     <Compile Include="Recipe\Recipe_CogitoInjection.cs" />
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />
     <Compile Include="Recipe\Recipe_ExtractCogito.cs" />
+    <Compile Include="Comp\CompAssignableToPawn_LC_Entity.cs" />
+    <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="Util\GraphicUtil.cs" />
   </ItemGroup>
   <ItemGroup />
