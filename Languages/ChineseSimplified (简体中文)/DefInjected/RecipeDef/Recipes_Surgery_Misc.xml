@@ -13,4 +13,12 @@
   <ExtractBrainSpinalNerve.description>从受害者体内提取出脑-脊髓神经组，将会导致受害者立刻死亡。</ExtractBrainSpinalNerve.description>
   <ExtractBrainSpinalNerve.jobString>正在提取脑-脊髓神经组。</ExtractBrainSpinalNerve.jobString>
 
+  <Make10Enkephalin.label>制作10份脑啡肽</Make10Enkephalin.label>
+  <Make10Enkephalin.description>批量制作脑啡肽（工作量减免20%）。</Make10Enkephalin.description>
+  <Make10Enkephalin.jobString>正在制作10份脑啡肽。</Make10Enkephalin.jobString>
+
+  <Make50Enkephalin.label>制作50份脑啡肽</Make50Enkephalin.label>
+  <Make50Enkephalin.description>批量制作脑啡肽（工作量减免20%）。</Make50Enkephalin.description>
+  <Make50Enkephalin.jobString>正在制作50份脑啡肽。</Make50Enkephalin.jobString>
+
 </LanguageData>

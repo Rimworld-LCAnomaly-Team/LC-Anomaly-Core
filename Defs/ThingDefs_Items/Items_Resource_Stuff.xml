@@ -5,7 +5,7 @@
     <graphicData>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
-    <stackLimit>999</stackLimit>
+    <stackLimit>500</stackLimit>
     <genericMarketSellable>false</genericMarketSellable>
     <soundInteract>Metal_Drop</soundInteract>
     <soundDrop>Metal_Drop</soundDrop>

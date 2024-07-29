@@ -15,6 +15,7 @@
     <researchPrerequisites>
       <li>Enkephalin_Drug</li>
     </researchPrerequisites>
+    <stackLimit>50</stackLimit>
     <graphicData>
       <texPath>Things/Item/Drug/Enkephalin</texPath>
       <shaderType>MoteGlow</shaderType> 
@@ -23,7 +24,8 @@
     <rotatable>false</rotatable>
     <statBases>
       <MarketValue>0</MarketValue>
-      <Mass>0.01</Mass>
+      <Mass>0.50</Mass>
+      <WorkToMake>500</WorkToMake>
     </statBases>
     <techLevel>Ultra</techLevel>
     <minRewardCount>10</minRewardCount>
@@ -42,6 +44,16 @@
         </li>
       </outcomeDoers>
     </ingestible>
+    <recipeMaker>
+      <researchPrerequisite>Enkephalin_Drug</researchPrerequisite>
+      <recipeUsers>
+        <li>LC_UniversalBench</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+    </recipeMaker>
+    <costList>
+      <EnkephalinBox>5</EnkephalinBox>
+    </costList>
     <comps>
       <li Class="CompProperties_Drug">
         <chemical>Enkephalin</chemical>
