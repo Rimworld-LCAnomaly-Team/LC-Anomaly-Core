@@ -22,6 +22,36 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Building.Building_HoldingPlatform">
+            <summary>
+            收容平台Building
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompWorkable">
+            <summary>
+            可工作UI Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompAssignable">
+            <summary>
+            可指派工作 Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.EntityCached">
+            <summary>
+            是否存在缓存对象
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.Building_HoldingPlatform.altitudesCached">
+            <summary>
+            缓存altitude
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CachedEntityNameGraphic">
+            <summary>
+            缓存名称贴图
+            </summary>
+        </member>
         <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounter">
             <summary>
             逆卡巴拉计数器值
@@ -32,25 +62,58 @@
             独立PeBox数量
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounterInit">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
             <summary>
-            初始化
+            生成时方法
+            </summary>
+            <param name="map"></param>
+            <param name="respawningAfterLoad"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DeSpawn(Verse.DestroyMode)">
+            <summary>
+            销毁时方法
+            </summary>
+            <param name="mode"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Tick">
+            <summary>
+            Tick
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounterUpdate">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
-            更新逆卡巴拉计数器
+            每帧绘制
+            </summary>
+            <param name="drawLoc"></param>
+            <param name="flip"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.OnContentChanged">
+            <summary>
+            收容内容改变时触发的方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounterInit">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Init">
             <summary>
-            初始化
+            初始化方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounterUpdate">
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.EntityNameUpdateForce">
             <summary>
-            更新PeBox计数器
+            强制更新名称贴图
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            绕开基类平台的绘制方法
+            </summary>
+            <param name="drawLoc"></param>
+            <param name="flip"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.GetGizmos">
+            <summary>
+            Gizmo
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
             <summary>

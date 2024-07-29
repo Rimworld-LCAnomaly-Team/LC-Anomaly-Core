@@ -1,8 +1,6 @@
 ﻿using LCAnomalyCore.Comp;
-using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Comp.Abstract;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +9,53 @@ using Verse;
 
 namespace LCAnomalyCore.Building
 {
+    /// <summary>
+    /// 收容平台Building
+    /// </summary>
     [StaticConstructorOnStartup]
     public class Building_HoldingPlatform : RimWorld.Building_HoldingPlatform
     {
-        protected CompWorkableUI CompWorkable => compWorkable ?? (compWorkable = GetComp<CompWorkableUI>());
+        #region 变量
+
+        #region 组件
+
+        /// <summary>
+        /// 可工作UI Comp
+        /// </summary>
+        protected CompWorkableUI CompWorkable => compWorkable ??= GetComp<CompWorkableUI>();
         private CompWorkableUI compWorkable;
 
-        private bool initalized;
+        /// <summary>
+        /// 可指派工作 Comp
+        /// </summary>
+        public CompAssignableToPawn_LC_Entity CompAssignable => compAssignable ??= GetComp<CompAssignableToPawn_LC_Entity>();
+        private CompAssignableToPawn_LC_Entity compAssignable;
+
+        #endregion
+
+        #region 缓存
+
+        /// <summary>
+        /// 是否存在缓存对象
+        /// </summary>
+        protected bool EntityCached => cachedEntity != null;
         private LC_CompEntity cachedEntity;
-        private bool entityCached => cachedEntity != null;
 
-        private Vector3 altitudesCached = Altitudes.AltIncVect * 2f;
+        /// <summary>
+        /// 缓存altitude
+        /// </summary>
+        protected Vector3 altitudesCached = Altitudes.AltIncVect * 2f;
 
+        /// <summary>
+        /// 缓存名称贴图
+        /// </summary>
         protected Graphic CachedEntityNameGraphic => cachedEntityNameGraphic 
-            ?? (cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true));
+            ??= Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
         private Graphic cachedEntityNameGraphic;
 
-        public CompAssignableToPawn_LC_Entity CompAssignable => compAssignable
-            ?? (compAssignable = GetComp<CompAssignableToPawn_LC_Entity>());
-        private CompAssignableToPawn_LC_Entity compAssignable;
+        #endregion
+
+        #region 字段
 
         /// <summary>
         /// 逆卡巴拉计数器值
@@ -38,7 +64,7 @@ namespace LCAnomalyCore.Building
         {
             get
             {
-                if (entityCached)
+                if (EntityCached)
                     return cachedEntity.QliphothCountCurrent;
 
                 return 0;
@@ -52,7 +78,7 @@ namespace LCAnomalyCore.Building
         {
             get
             {
-                if (entityCached)
+                if (EntityCached)
                 {
                     LCAnomalyLibrary.Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
                     return saved.IndiPeBoxAmount;
@@ -62,123 +88,64 @@ namespace LCAnomalyCore.Building
             }
         }
 
+        #endregion
 
+        #endregion
+
+        #region 生命周期
+
+        /// <summary>
+        /// 生成时方法
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="respawningAfterLoad"></param>
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
 
-            if (!respawningAfterLoad)
+            //加载存档后进行初始化和事件绑定
+            if (respawningAfterLoad)
             {
-                QliphothCounterInit();
-                PeBoxCounterInit();
-
-                initalized = true;
+                Init();
+                innerContainer.OnContentsChanged += OnContentChanged;
             }
         }
 
         /// <summary>
-        /// 初始化
+        /// 销毁时方法
         /// </summary>
-        private void QliphothCounterInit()
+        /// <param name="mode"></param>
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
-            if (initalized)
-            {
-                return;
-            }
-            
-            innerContainer.OnContentsChanged += QliphothCounterUpdate;
+            base.DeSpawn(mode);
 
-            QliphothCounterUpdate();
+            innerContainer.OnContentsChanged -= OnContentChanged;
         }
 
+        /// <summary>
+        /// Tick
+        /// </summary>
         public override void Tick()
         {
-            base.Tick();
+            //if (AllComps != null)
+            //{
+            //    int i = 0;
+            //    for (int count = AllComps.Count; i < count; i++)
+            //        AllComps[i].CompTick();
+            //}
 
-            //每 250Tick 更新一次计数器
-            if (this.IsHashIntervalTick(250))
-            {
-                QliphothCounterUpdate();
-                PeBoxCounterUpdate();
-            }
+            //innerContainer.ThingOwnerTick();
         }
 
         /// <summary>
-        /// 更新逆卡巴拉计数器
+        /// 每帧绘制
         /// </summary>
-        private void QliphothCounterUpdate()
-        {
-
-            var entity = HeldPawn?.TryGetComp<LC_CompEntity>();
-
-            if (entity == null)
-            {
-                cachedEntity = null;
-                return;
-            }
-
-            if (cachedEntity == entity)
-                return;
-
-            cachedEntity = entity;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        private void PeBoxCounterInit()
-        {
-            if (initalized)
-            {
-                return;
-            }
-
-            innerContainer.OnContentsChanged += PeBoxCounterUpdate;
-
-            PeBoxCounterUpdate();
-        }
-
-        /// <summary>
-        /// 更新PeBox计数器
-        /// </summary>
-        private void PeBoxCounterUpdate()
-        {
-            var entity = HeldPawn?.TryGetComp<LC_CompEntity>();
-
-            if (entity != null)
-            {
-                if (cachedEntity != null && cachedEntity.parent.def == entity.parent.def)
-                    return;
-
-                var peBoxComp = entity.PeBoxComp;
-                if (peBoxComp != null)
-                {
-                    cachedEntity = entity;
-                    EntityNameUpdateForce();
-                }
-            }
-            else
-            {
-                cachedEntity = null;
-            }
-        }
-
-        private void EntityNameUpdateForce()
-        {
-            cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
-            Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
-        }
-
-        public override void Notify_DefsHotReloaded()
-        {
-            base.Notify_DefsHotReloaded();
-
-            QliphothCounterUpdate();
-        }
-
+        /// <param name="drawLoc"></param>
+        /// <param name="flip"></param>
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
-            base.DrawAt(drawLoc, flip);
+            DrawAvoidParent(drawLoc, flip);
+
             Vector3 drawPosCached = this.DrawPos + altitudesCached;
             Vector3 drawPosUpperCached = drawPosCached + Vector3.up;
 
@@ -189,7 +156,7 @@ namespace LCAnomalyCore.Building
                 //如果分配工作者，就显示
                 if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
                 {
-                    CompWorkable.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                    CompWorkable?.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
                 //工作状态更新
@@ -200,21 +167,19 @@ namespace LCAnomalyCore.Building
                     {
                         var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
                         var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
-                        graphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                     }
                 }
 
                 #endregion
 
-
-
                 #region 逆卡巴拉计数器
 
                 //显示不可用
-                if (!entityCached)
+                if (!EntityCached)
                 {
                     GraphicUtil.CachedTopGraphic_QliphothIndicator_TopNull
-                        .Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
 
                     return;
                 }
@@ -222,13 +187,13 @@ namespace LCAnomalyCore.Building
                 if (QliphothCounter < 10)
                 {
                     GraphicUtil.QliphothIndicator_GetCachedTopGraphic()[QliphothCounter]
-                        .Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
                 //大于10就显示9+
                 else
                 {
                     GraphicUtil.CachedTopGraphic_QliphothIndicator_TopMax
-                        .Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
                 #endregion
@@ -239,22 +204,21 @@ namespace LCAnomalyCore.Building
                 if (PeBoxCounter < 100)
                 {
                     GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic()[PeBoxCounter]
-                        .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                        ?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
                 }
                 //大于100就显示99+
                 else
                 {
                     GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max
-                        .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                        ?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
                 }
 
                 #endregion
 
                 #region 平台上的异常名字UI
 
-                if (entityCached)
+                if (EntityCached)
                 {
-                    //var graphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName);
                     CachedEntityNameGraphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
@@ -267,9 +231,71 @@ namespace LCAnomalyCore.Building
 
                 #endregion
             }
-
         }
 
+        #endregion
+
+        #region 事件方法
+
+        /// <summary>
+        /// 收容内容改变时触发的方法
+        /// </summary>
+        protected void OnContentChanged()
+        {
+            Init();
+            EntityNameUpdateForce();
+        }
+
+        /// <summary>
+        /// 初始化方法
+        /// </summary>
+        protected void Init()
+        {
+            if (HeldPawn == null)
+                return;
+
+            var entity = HeldPawn.GetComp<LC_CompEntity>();
+            cachedEntity = entity ?? null;
+        }
+
+        #endregion
+
+        #region 工具方法
+
+        /// <summary>
+        /// 强制更新名称贴图
+        /// </summary>
+        protected void EntityNameUpdateForce()
+        {
+            cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+            Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
+        }
+
+        /// <summary>
+        /// 绕开基类平台的绘制方法
+        /// </summary>
+        /// <param name="drawLoc"></param>
+        /// <param name="flip"></param>
+        protected void DrawAvoidParent(Vector3 drawLoc, bool flip)
+        {
+            if (def.drawerType == DrawerType.RealtimeOnly || !Spawned)
+            {
+                Graphic.Draw(drawLoc, flip ? Rotation.Opposite : Rotation, this);
+            }
+
+            SilhouetteUtility.DrawGraphicSilhouette(this, drawLoc);
+
+            Comps_PostDraw();
+        }
+
+        #endregion
+
+        #region UI
+
+        /// <summary>
+        /// Gizmo
+        /// </summary>
+        /// <returns></returns>
         public override IEnumerable<Gizmo> GetGizmos()
         {
             foreach (Gizmo gizmo in base.GetGizmos())
@@ -277,7 +303,7 @@ namespace LCAnomalyCore.Building
                 yield return gizmo;
             }
 
-            if(CompWorkable != null)
+            if (CompWorkable != null)
             {
                 yield return new Command_Toggle
                 {
@@ -292,5 +318,7 @@ namespace LCAnomalyCore.Building
                 };
             }
         }
+
+        #endregion
     }
 }
