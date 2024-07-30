@@ -121,6 +121,7 @@
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />
     <Compile Include="Recipe\Recipe_ExtractCogito.cs" />
     <Compile Include="Comp\CompAssignableToPawn_LC_Entity.cs" />
+    <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="Util\GraphicUtil.cs" />
   </ItemGroup>

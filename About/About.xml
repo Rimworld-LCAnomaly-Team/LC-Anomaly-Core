@@ -5,7 +5,7 @@
 	<supportedVersions>
 		<li>1.5</li>
 	</supportedVersions>
-	<description>Core of DarthCY's LC Anomaly.</description>
+	<description>Core of LobotomyCorporation's Anomaly DLC Expansion.</description>
 	<url>https://github.com/DarthCY-K/LC-Anomaly-Core</url>
 	<packageId>DarthCY.LC.AnomalyCore</packageId>
 	<modDependencies>

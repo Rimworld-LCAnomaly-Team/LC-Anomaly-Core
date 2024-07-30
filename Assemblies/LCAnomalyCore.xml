@@ -87,6 +87,11 @@
             <param name="drawLoc"></param>
             <param name="flip"></param>
         </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.ExposeData">
+            <summary>
+            保存相关
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.OnContentChanged">
             <summary>
             收容内容改变时触发的方法
@@ -530,6 +535,11 @@
             <param name="billDoer">医生</param>
             <param name="ingredients">？</param>
             <param name="bill">手术</param>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
         </member>
         <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
             <summary>

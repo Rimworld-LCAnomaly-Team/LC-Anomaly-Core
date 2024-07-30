@@ -1,6 +1,9 @@
 ﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp;
+using LCAnomalyLibrary.Interface;
+using LCAnomalyLibrary.Util;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +16,7 @@ namespace LCAnomalyCore.Building
     /// 收容平台Building
     /// </summary>
     [StaticConstructorOnStartup]
-    public class Building_HoldingPlatform : RimWorld.Building_HoldingPlatform
+    public class Building_HoldingPlatform : RimWorld.Building_HoldingPlatform, IHoldingPlatformWorkTypeSelectable
     {
         #region 变量
 
@@ -87,6 +90,13 @@ namespace LCAnomalyCore.Building
                 return 0;
             }
         }
+
+        public EAnomalyWorkType CurWorkType
+        { 
+            get => curWorkType; 
+            set => curWorkType = value; 
+        }
+        protected EAnomalyWorkType curWorkType = EAnomalyWorkType.Instinct;
 
         #endregion
 
@@ -233,6 +243,16 @@ namespace LCAnomalyCore.Building
             }
         }
 
+        /// <summary>
+        /// 保存相关
+        /// </summary>
+        public override void ExposeData()
+        {
+            base.ExposeData();
+
+            Scribe_Values.Look(ref curWorkType, "curWorkType", EAnomalyWorkType.Instinct);
+        }
+
         #endregion
 
         #region 事件方法
@@ -316,6 +336,23 @@ namespace LCAnomalyCore.Building
                         this.CompWorkable.UIAllowed = !this.CompWorkable.UIAllowed;
                     }
                 };
+
+                Command_Action command_Action = new Command_Action();
+                command_Action.defaultLabel = "CommandAssignmentWorkTypeLabel".Translate();
+                command_Action.defaultDesc = "CommandAssignmentWorkTypeDesc".Translate();
+                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/" + CurWorkType.ToString(), true);
+                command_Action.onHover = () =>
+                {
+                    command_Action.defaultDesc = ("CommandAssignmentWorkTypeOnHoverDesc_" + CurWorkType.ToString()).Translate();
+                };
+                command_Action.action = () =>
+                {
+                    Find.WindowStack.Add(new Dialog_LC_AssignWorkType(this));
+                };
+                
+                //command_Action.Disable(base.Props.noAssignablePawnsDesc);
+
+                yield return command_Action;
             }
         }
 
