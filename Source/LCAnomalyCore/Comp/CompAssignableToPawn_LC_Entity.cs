@@ -13,7 +13,7 @@ namespace LCAnomalyCore.Comp
     /// </summary>
     public class CompAssignableToPawn_LC_Entity : CompAssignableToPawn
     {
-        List<Pawn> pawnToDelete = new List<Pawn>();
+        private List<Pawn> pawnToDelete = new List<Pawn>();
 
         /// <summary>
         /// 候选者列表
@@ -68,9 +68,9 @@ namespace LCAnomalyCore.Comp
                     pawnToDelete.Add(pawn);
             }
 
-            if(pawnToDelete.Count > 0)
+            if (pawnToDelete.Count > 0)
             {
-                foreach(Pawn pawn in pawnToDelete)
+                foreach (Pawn pawn in pawnToDelete)
                     assignedPawns.Remove(pawn);
 
                 pawnToDelete.Clear();

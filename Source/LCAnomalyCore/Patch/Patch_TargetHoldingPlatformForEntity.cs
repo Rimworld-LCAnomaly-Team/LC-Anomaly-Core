@@ -1,11 +1,11 @@
 ﻿using HarmonyLib;
 using LCAnomalyCore.Defs;
-using RimWorld;
-using Verse.AI;
-using Verse;
 using LCAnomalyLibrary.Comp;
 using LCAnomalyLibrary.Defs;
+using RimWorld;
 using UnityEngine;
+using Verse;
+using Verse.AI;
 
 namespace LCAnomalyCore.Patch
 {

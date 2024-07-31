@@ -1,10 +1,10 @@
-﻿using RimWorld;
+﻿using LCAnomalyCore.Comp;
+using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Verse.Sound;
 using Verse;
-using LCAnomalyCore.Comp;
+using Verse.Sound;
 
 namespace LCAnomalyCore.UI
 {
@@ -203,8 +203,8 @@ namespace LCAnomalyCore.UI
             labelCap += "\n" + intellectual.LabelCap + ": ";
 
             bool disabled = pawn.skills.GetSkill(intellectual).TotallyDisabled;
-            labelCap += disabled 
-                ? "LC_AssignableEntity_SkillDisabled".Translate() + SkillDefOf.Intellectual.label.Translate() 
+            labelCap += disabled
+                ? "LC_AssignableEntity_SkillDisabled".Translate() + SkillDefOf.Intellectual.label.Translate()
                 : pawn.skills.GetSkill(intellectual).GetLevel();
 
             if (Mouse.IsOver(rect))

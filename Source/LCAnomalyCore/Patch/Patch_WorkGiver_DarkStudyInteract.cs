@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using LCAnomalyCore.UI;
 using RimWorld;
 using System.Linq;
 using Verse;

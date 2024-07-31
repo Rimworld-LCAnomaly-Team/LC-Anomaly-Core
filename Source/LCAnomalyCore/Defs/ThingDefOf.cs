@@ -1,5 +1,4 @@
-﻿using LCAnomalyLibrary.Defs;
-using RimWorld;
+﻿using RimWorld;
 using Verse;
 
 namespace LCAnomalyCore.Defs

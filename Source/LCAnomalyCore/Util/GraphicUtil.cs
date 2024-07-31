@@ -5,8 +5,6 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
-
-
     /// <summary>
     /// 图像工具类
     /// </summary>
@@ -92,7 +90,7 @@ namespace LCAnomalyCore.Util
             return CachedTopGraphic_IndiPeBoxIndicator;
         }
 
-        #endregion
+        #endregion 独立PeBox计数器
 
         #region 异想体等级显示
 
@@ -107,7 +105,7 @@ namespace LCAnomalyCore.Util
         /// <returns>图集</returns>
         public static Graphic LevelIndicator_GetCachedTopGraphic(string level)
         {
-            if(CachedGraphic_LevelIndicator.NullOrEmpty())
+            if (CachedGraphic_LevelIndicator.NullOrEmpty())
             {
                 string baseLoc = baseLocOfHoldingPlatform + "Level/";
                 List<string> list = new List<string>() { "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
@@ -120,7 +118,7 @@ namespace LCAnomalyCore.Util
             return CachedGraphic_LevelIndicator[level];
         }
 
-        #endregion
+        #endregion 异想体等级显示
 
         #region 收容平台实体名字显示
 
@@ -137,7 +135,7 @@ namespace LCAnomalyCore.Util
                     , drawSizeOfHoldingPlatform, Color.white);
 
                 //如果贴图为null就切换到英文版
-                if(CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
+                if (CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
                 {
                     CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
                         .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
@@ -148,17 +146,18 @@ namespace LCAnomalyCore.Util
             return CachedTopGraphic_EntityNamePlatformTop;
         }
 
-        #endregion
+        #endregion 收容平台实体名字显示
 
         #region 收容平台工作类型显示
 
         private static Dictionary<EAnomalyWorkType, Graphic> CachedTopGraphicDict_WorkTypePlatformTop = new Dictionary<EAnomalyWorkType, Graphic>();
+
         private static List<EAnomalyWorkType> eAnomalyWorkTypes = new List<EAnomalyWorkType>()
         {
             EAnomalyWorkType.Instinct,
             EAnomalyWorkType.Insight,
             EAnomalyWorkType.Attachment,
-            EAnomalyWorkType.Repression 
+            EAnomalyWorkType.Repression
         };
 
         public static Graphic WorkTypePlatformTopGraphic_Get(EAnomalyWorkType workType)
@@ -166,7 +165,7 @@ namespace LCAnomalyCore.Util
             //初始化
             if (CachedTopGraphicDict_WorkTypePlatformTop.NullOrEmpty())
             {
-                foreach(var type in eAnomalyWorkTypes)
+                foreach (var type in eAnomalyWorkTypes)
                 {
                     var graphic = GraphicDatabase
                         .Get<Graphic_Single>("Things/Building/LC_HoldingPlatform/WorkType/" + type.ToString()
@@ -178,7 +177,7 @@ namespace LCAnomalyCore.Util
             return CachedTopGraphicDict_WorkTypePlatformTop[workType];
         }
 
-        #endregion
+        #endregion 收容平台工作类型显示
 
         #region 收容平台工作类型窗体显示
 
@@ -203,7 +202,7 @@ namespace LCAnomalyCore.Util
         public static Texture2D DialogAssignWorkTypeOnHoverTexture_Get(EAnomalyWorkType workType)
         {
             //未知类型直接返回未知贴图
-            if(workType == EAnomalyWorkType.Unknown)
+            if (workType == EAnomalyWorkType.Unknown)
                 return ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Dialog/" + workType.ToString() + "_OnHover", true);
 
             //非未知类型就按照语言获取贴图
@@ -217,7 +216,7 @@ namespace LCAnomalyCore.Util
             return tex;
         }
 
-        #endregion
+        #endregion 收容平台工作类型窗体显示
 
         #region “水桶”
 

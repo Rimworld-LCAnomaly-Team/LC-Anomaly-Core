@@ -26,15 +26,17 @@ namespace LCAnomalyCore.Building
         /// 可工作UI Comp
         /// </summary>
         protected CompWorkableUI CompWorkable => compWorkable ??= GetComp<CompWorkableUI>();
+
         private CompWorkableUI compWorkable;
 
         /// <summary>
         /// 可指派工作 Comp
         /// </summary>
         public CompAssignableToPawn_LC_Entity CompAssignable => compAssignable ??= GetComp<CompAssignableToPawn_LC_Entity>();
+
         private CompAssignableToPawn_LC_Entity compAssignable;
 
-        #endregion
+        #endregion 组件
 
         #region 缓存
 
@@ -42,6 +44,7 @@ namespace LCAnomalyCore.Building
         /// 是否存在缓存对象
         /// </summary>
         protected bool EntityCached => cachedEntity != null;
+
         private LC_CompEntity cachedEntity;
 
         /// <summary>
@@ -52,11 +55,12 @@ namespace LCAnomalyCore.Building
         /// <summary>
         /// 缓存名称贴图
         /// </summary>
-        protected Graphic CachedEntityNameGraphic => cachedEntityNameGraphic 
+        protected Graphic CachedEntityNameGraphic => cachedEntityNameGraphic
             ??= Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+
         private Graphic cachedEntityNameGraphic;
 
-        #endregion
+        #endregion 缓存
 
         #region 字段
 
@@ -92,15 +96,16 @@ namespace LCAnomalyCore.Building
         }
 
         public EAnomalyWorkType CurWorkType
-        { 
-            get => curWorkType; 
-            set => curWorkType = value; 
+        {
+            get => curWorkType;
+            set => curWorkType = value;
         }
+
         protected EAnomalyWorkType curWorkType = EAnomalyWorkType.Instinct;
 
-        #endregion
+        #endregion 字段
 
-        #endregion
+        #endregion 变量
 
         #region 生命周期
 
@@ -183,17 +188,17 @@ namespace LCAnomalyCore.Building
                     }
                 }
 
-                #endregion
+                #endregion 右下角可工作状态
 
                 #region 左下角工作类型
 
-                if(cachedEntity != null) 
+                if (cachedEntity != null)
                 {
                     var graphic = Util.GraphicUtil.WorkTypePlatformTopGraphic_Get(CurWorkType);
                     graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
-                #endregion
+                #endregion 左下角工作类型
 
                 #region 逆卡巴拉计数器
 
@@ -218,7 +223,7 @@ namespace LCAnomalyCore.Building
                         ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
-                #endregion
+                #endregion 逆卡巴拉计数器
 
                 #region Pebox计数器
 
@@ -235,7 +240,7 @@ namespace LCAnomalyCore.Building
                         ?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
                 }
 
-                #endregion
+                #endregion Pebox计数器
 
                 #region 平台上的异常名字UI
 
@@ -244,14 +249,15 @@ namespace LCAnomalyCore.Building
                     CachedEntityNameGraphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
-                #endregion
+                #endregion 平台上的异常名字UI
 
                 #region 可工作UI
+
                 var category = HeldPawn.def.entityCodexEntry.category.defName;
                 var graphicLevel = Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic(category);
                 graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
 
-                #endregion
+                #endregion 可工作UI
             }
         }
 
@@ -265,7 +271,7 @@ namespace LCAnomalyCore.Building
             Scribe_Values.Look(ref curWorkType, "curWorkType", EAnomalyWorkType.Instinct);
         }
 
-        #endregion
+        #endregion 生命周期
 
         #region 事件方法
 
@@ -290,7 +296,7 @@ namespace LCAnomalyCore.Building
             cachedEntity = entity ?? null;
         }
 
-        #endregion
+        #endregion 事件方法
 
         #region 工具方法
 
@@ -320,7 +326,7 @@ namespace LCAnomalyCore.Building
             Comps_PostDraw();
         }
 
-        #endregion
+        #endregion 工具方法
 
         #region UI
 
@@ -361,13 +367,13 @@ namespace LCAnomalyCore.Building
                 {
                     Find.WindowStack.Add(new Dialog_LC_AssignWorkType(this));
                 };
-                
+
                 //command_Action.Disable(base.Props.noAssignablePawnsDesc);
 
                 yield return command_Action;
             }
         }
 
-        #endregion
+        #endregion UI
     }
 }

@@ -1,5 +1,4 @@
-﻿using LCAnomalyLibrary.Setting;
-using UnityEngine;
+﻿using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Comp
@@ -15,19 +14,22 @@ namespace LCAnomalyCore.Comp
 
         private string path = "Things/Building/LC_HoldingPlatform/Workable/";
 
-        public Graphic AllowWorkGraphic => allowWorkGraphic ?? 
+        public Graphic AllowWorkGraphic => allowWorkGraphic ??
             (allowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
             (path + "Allow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+
         private Graphic allowWorkGraphic;
 
-        public Graphic NotAllowWorkGraphic => notAllowWorkGraphic ?? 
+        public Graphic NotAllowWorkGraphic => notAllowWorkGraphic ??
             (notAllowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
             (path + "NotAllow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+
         private Graphic notAllowWorkGraphic;
 
         public Graphic AutoWorkGraphic => autoWorkGraphic ??
             (autoWorkGraphic = GraphicDatabase.Get<Graphic_Single>
             (path + "Auto", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+
         private Graphic autoWorkGraphic;
 
         public override void PostExposeData()
