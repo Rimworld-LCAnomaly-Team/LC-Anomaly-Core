@@ -1,0 +1,624 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LCAnomalyCore</name>
+    </assembly>
+    <members>
+        <member name="M:LCAnomalyCore.Building.Building_CogitoBucket.DrawAt(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            绘制方法
+            </summary>
+            <param name="drawLoc">位置</param>
+            <param name="flip">是否翻转</param>
+        </member>
+        <member name="T:LCAnomalyCore.Building.Building_EnkephalinGenerator">
+            <summary>
+            脑啡肽发电机（建筑）（WIP）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_EnkephalinGenerator.IsWorking">
+            <summary>
+            是否正在工作
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Building.Building_HoldingPlatform">
+            <summary>
+            收容平台Building
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompWorkable">
+            <summary>
+            可工作UI Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompAssignable">
+            <summary>
+            可指派工作 Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.EntityCached">
+            <summary>
+            是否存在缓存对象
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.Building_HoldingPlatform.altitudesCached">
+            <summary>
+            缓存altitude
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CachedEntityNameGraphic">
+            <summary>
+            缓存名称贴图
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounter">
+            <summary>
+            逆卡巴拉计数器值
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounter">
+            <summary>
+            独立PeBox数量
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
+            <summary>
+            生成时方法
+            </summary>
+            <param name="map"></param>
+            <param name="respawningAfterLoad"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DeSpawn(Verse.DestroyMode)">
+            <summary>
+            销毁时方法
+            </summary>
+            <param name="mode"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Tick">
+            <summary>
+            Tick
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            每帧绘制
+            </summary>
+            <param name="drawLoc"></param>
+            <param name="flip"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.ExposeData">
+            <summary>
+            保存相关
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.OnContentChanged">
+            <summary>
+            收容内容改变时触发的方法
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Init">
+            <summary>
+            初始化方法
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.EntityNameUpdateForce">
+            <summary>
+            强制更新名称贴图
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            绕开基类平台的绘制方法
+            </summary>
+            <param name="drawLoc"></param>
+            <param name="flip"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.GetGizmos">
+            <summary>
+            Gizmo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompExtractRitualSpot">
+            <summary>
+            提取仪式点的Comp（和原版的基本一致）
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_ExtractRitualSpot">
+            <summary>
+            提取仪式点的CompProperties（和原版基本一致）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_WorkableUI.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompWorkableUI.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected">
+            <summary>
+            Cogito被注射状态的HediffCompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected.deadChance">
+            <summary>
+            XML：注射后直接死亡概率（单独判定）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected.sevenSinEnitityChance">
+            <summary>
+            XML：注射后大罪生物生成概率（单独判定）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected.zayinChance">
+            <summary>
+            XML：注射后ZAYIN异常生成概率（单独判定）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected.tethChance">
+            <summary>
+            XML：注射后TETH异常生成概率（单独判定）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.HediffComp_CogitoInjected">
+            <summary>
+            Cogito被注射状态的Hediff
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.HediffComp_CogitoInjected.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.CompPostPostRemoved">
+            <summary>
+            移除前调用
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.TurnIntoAnomaly">
+            <summary>
+            注射提取后变成异常的方法
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.SpawnEntity(System.Collections.Generic.List{LCAnomalyLibrary.Defs.ThingDef_LCAnomalyBase},System.Single)">
+            <summary>
+            生成实体
+            </summary>
+            <param name="list">实体列表</param>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity">
+            <summary>
+            异想体研究平台分配单位自动研究的Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.AssigningCandidates">
+            <summary>
+            候选者列表
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CheckAssignedList">
+            <summary>
+            检测并移除列表中没有分配黑暗研究工作的单位
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CheckSkillRequire(Verse.Pawn)">
+            <summary>
+            检查是否满足最低技能需求
+            </summary>
+            <param name="pawn">单位</param>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ExtractRitualRoleDefOf">
+            <summary>
+            该Mod所有的ExtractRitualRoleDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyZAYIN">
+            <summary>
+            ZAYIN异常提取仪式
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyTETH">
+            <summary>
+            TETH异常提取仪式
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyHE">
+            <summary>
+            HE异常提取仪式
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyWAW">
+            <summary>
+            WAW异常提取仪式
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyALEPH">
+            <summary>
+            ALEPH异常提取仪式
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.HediffDefOf">
+            <summary>
+            该mod的所有HediffDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.HediffDefOf.CogitoExtracted">
+            <summary>
+            被提取了Cogito
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.HediffDefOf.CogitoInjected">
+            <summary>
+            被注射了Cogito
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.HistoryEventDefOf">
+            <summary>
+            该mod的所有HistoryEventDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.HistoryEventDefOf.CogitoExtracted">
+            <summary>
+            被提取了Cogito
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.HistoryEventDefOf.CogitoInjected">
+            <summary>
+            被注射了Cogito
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly">
+            <summary>
+            提取异想体仪式
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.CreateToils(Verse.AI.Group.PsychicRitual,Verse.AI.Group.PsychicRitualGraph)">
+            <summary>
+            创建Toils
+            </summary>
+            <param name="psychicRitual">仪式</param>
+            <param name="parent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.GetPawnTooltipExtras(Verse.Pawn)">
+            <summary>
+            提示信息
+            </summary>
+            <param name="pawn">对象</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.CheckPsychicRitualCancelConditions(Verse.AI.Group.PsychicRitual)">
+            <summary>
+            检查仪式是否满足条件
+            </summary>
+            <param name="psychicRitual">仪式</param>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.RecipeDefOf">
+            <summary>
+            该mod的所有RecipeDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.RecipeDefOf.ExtractCogito">
+            <summary>
+            提取Cogito
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ResearchProjectDefOf">
+            <summary>
+            该mod的所有ResearchProjectDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ResearchProjectDefOf.ExtractEnkephalin">
+            <summary>
+            提取脑啡肽
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDefOf">
+            <summary>
+            该mod所有的ThingDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.EnkephalinBox">
+            <summary>
+            通用PeBox
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.Enkephalin">
+            <summary>
+            脑啡肽（成瘾品）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.Cogito">
+            <summary>
+            Cogito
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.BrainSpinalNerve">
+            <summary>
+            脑与脊髓神经
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.LC_HoldingPlatform">
+            <summary>
+            LC收容单元
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.TheWell">
+            <summary>
+            水井（建筑）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.CogitoBucket">
+            <summary>
+            Cogito水桶（建筑）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThoughtDefOf">
+            <summary>
+            该mod所有的ThoughtDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThoughtDefOf.ForcedMeToTakeEnkephalin">
+            <summary>
+            被强迫服用了脑啡肽
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThoughtDefOf.EnkephalinHigh">
+            <summary>
+            脑啡肽状态中
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToEntityHolder">
+            <summary>
+            改自原版同名工作，是携带实体到平台的工作
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.PatchMain">
+            <summary>
+            补丁主类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Patch.PatchMain.instance">
+            <summary>
+            补丁实例
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_CompStudyUnlocks">
+            <summary>
+            关于ConpStudyUnlocks的补丁（为了插入改名方法）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_CompStudyUnlocks.Postfix(RimWorld.CompStudyUnlocks,Verse.Pawn,System.Int32)">
+            <summary>
+            Postfix
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_WorkGiver_DarkStudyInteract">
+            <summary>
+            关于WorkGiver_DarkStudyInteract的补丁（用于禁止主动研究LC实体）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">
+            <summary>
+            提取Cogito的手术
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_CogitoInjection.CompletableEver(Verse.Pawn)">
+            <summary>
+            是否可执行
+            </summary>
+            <param name="surgeryTarget">被手术者</param>
+            <returns>是否可执行</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_CogitoInjection.AvailableOnNow(Verse.Thing,Verse.BodyPartRecord)">
+            <summary>
+            是否可用
+            </summary>
+            <param name="thing">被执行者</param>
+            <param name="part">身体部位</param>
+            <returns>是否可用</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_CogitoInjection.ApplyOnPawn(Verse.Pawn,Verse.BodyPartRecord,Verse.Pawn,System.Collections.Generic.List{Verse.Thing},RimWorld.Bill)">
+            <summary>
+            执行手术
+            </summary>
+            <param name="pawn">目标pawn</param>
+            <param name="part">身体部位</param>
+            <param name="billDoer">医生</param>
+            <param name="ingredients">？</param>
+            <param name="bill">手术</param>
+        </member>
+        <member name="T:LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve">
+            <summary>
+            提取脑脊髓神经的手术
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve.AvailableOnNow(Verse.Thing,Verse.BodyPartRecord)">
+            <summary>
+            是否可用
+            </summary>
+            <param name="thing">被执行者</param>
+            <param name="part">身体部位</param>
+            <returns>是否可用</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve.AvailableReport(Verse.Thing,Verse.BodyPartRecord)">
+            <summary>
+            是否可用的提示
+            </summary>
+            <param name="thing">被执行者</param>
+            <param name="part">身体部位</param>
+            <returns>提示内容</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve.ApplyOnPawn(Verse.Pawn,Verse.BodyPartRecord,Verse.Pawn,System.Collections.Generic.List{Verse.Thing},RimWorld.Bill)">
+            <summary>
+            执行手术
+            </summary>
+            <param name="pawn">目标pawn</param>
+            <param name="part">身体部位</param>
+            <param name="billDoer">医生</param>
+            <param name="ingredients">？</param>
+            <param name="bill">手术</param>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve.OnSurgerySuccess(Verse.Pawn,Verse.BodyPartRecord,Verse.Pawn,System.Collections.Generic.List{Verse.Thing},RimWorld.Bill)">
+            <summary>
+            执行手术成功后
+            </summary>
+            <param name="pawn">目标pawn</param>
+            <param name="part">身体部位</param>
+            <param name="billDoer">医生</param>
+            <param name="ingredients">？</param>
+            <param name="bill">手术</param>
+        </member>
+        <member name="T:LCAnomalyCore.Recipe.Recipe_ExtractCogito">
+            <summary>
+            提取Cogito的手术
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractCogito.AvailableOnNow(Verse.Thing,Verse.BodyPartRecord)">
+            <summary>
+            是否可用
+            </summary>
+            <param name="thing">被执行者</param>
+            <param name="part">身体部位</param>
+            <returns>是否可用</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractCogito.AvailableReport(Verse.Thing,Verse.BodyPartRecord)">
+            <summary>
+            是否可用的提示
+            </summary>
+            <param name="thing">被执行者</param>
+            <param name="part">身体部位</param>
+            <returns>提示内容</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractCogito.ApplyOnPawn(Verse.Pawn,Verse.BodyPartRecord,Verse.Pawn,System.Collections.Generic.List{Verse.Thing},RimWorld.Bill)">
+            <summary>
+            执行手术
+            </summary>
+            <param name="pawn">目标pawn</param>
+            <param name="part">身体部位</param>
+            <param name="billDoer">医生</param>
+            <param name="ingredients">？</param>
+            <param name="bill">手术</param>
+        </member>
+        <member name="M:LCAnomalyCore.Recipe.Recipe_ExtractCogito.OnSurgerySuccess(Verse.Pawn,Verse.BodyPartRecord,Verse.Pawn,System.Collections.Generic.List{Verse.Thing},RimWorld.Bill)">
+            <summary>
+            执行手术成功后
+            </summary>
+            <param name="pawn">目标pawn</param>
+            <param name="part">身体部位</param>
+            <param name="billDoer">医生</param>
+            <param name="ingredients">？</param>
+            <param name="bill">手术</param>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
+            <summary>
+            自动研究分配对话框
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignEntity.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.GraphicUtil">
+            <summary>
+            图像工具类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic">
+            <summary>
+            缓存的逆卡巴拉计数器的图集
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_TopNull">
+            <summary>
+            不可用贴图
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_QliphothIndicator_TopMax">
+            <summary>
+            最大值贴图
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.QliphothIndicator_GetCachedTopGraphic">
+            <summary>
+            获取逆卡巴拉计数器的图集
+            </summary>
+            <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator">
+            <summary>
+            缓存图集
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max">
+            <summary>
+            最大值贴图
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic">
+            <summary>
+            获取图集
+            </summary>
+            <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedGraphic_LevelIndicator">
+            <summary>
+            缓存图集（异想体等级显示）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic(System.String)">
+            <summary>
+            获取图集（异想体等级显示）
+            </summary>
+            <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_CachedGlassGraphic">
+            <summary>
+            缓存的玻璃图
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_CachedBrainSpinalNerve">
+            <summary>
+            缓存的脑-脊髓神经图
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_GetCachedGraphic(System.String)">
+            <summary>
+            获取逆卡巴拉计数器的图集
+            </summary>
+            <returns>图集</returns>
+        </member>
+    </members>
+</doc>

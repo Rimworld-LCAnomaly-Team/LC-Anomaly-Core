@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	
+	<!-- Malkuth -->
+	<ThingDef ParentName="FufuBase">
+		<defName>LC_Fufu_Malkuth</defName>
+		<label>"Malkuth" fufu</label>
+		<description>"Will To Stand Up To Straight!" \n\n-- from LobotomyCorporation</description>
+		<graphicData>
+			<texPath>Fufu/Malkuth/Malkuth</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<damageData>
+				<rect>(0.35,0.35,0.3,0.3)</rect>
+			</damageData>
+			<drawOffset>(0,0,0.4)</drawOffset>
+		</graphicData>
+	</ThingDef>
+
+</Defs>
