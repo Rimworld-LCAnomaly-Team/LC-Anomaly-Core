@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <CommandAssignmentWorkTypeLabel>设置工作类型</CommandAssignmentWorkTypeLabel>
+  <CommandAssignmentWorkTypeDesc>点击设置该平台的具体工作类型。\n小人将会按照设置好的工作类型对异想体进行工作。\n请注意，不合适的工作类型可能会导致危险的后果。</CommandAssignmentWorkTypeDesc>
+  
+  <TipDialogWorkType_Instinct>本能</TipDialogWorkType_Instinct>
+  <TipDialogWorkType_Insight>洞察</TipDialogWorkType_Insight>
+  <TipDialogWorkType_Attachment>沟通</TipDialogWorkType_Attachment>
+  <TipDialogWorkType_Repression>压迫</TipDialogWorkType_Repression>
+
+</LanguageData>

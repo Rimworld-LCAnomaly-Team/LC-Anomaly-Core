@@ -161,24 +161,36 @@ namespace LCAnomalyCore.Building
 
             if (HeldPawn != null)
             {
-                #region 左右下角可工作状态
+                #region 右下角可工作状态
 
-                //如果分配工作者，就显示
+                //如果分配工作者，就显示自动图标，否则就显示是否可工作
                 if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
                 {
                     CompWorkable?.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
-
-                //工作状态更新
-                if (CompWorkable != null && CompWorkable.UIAllowed)
+                else
                 {
-                    var comp = HeldPawn.GetComp<CompStudiable>();
-                    if (comp != null)
+                    //工作状态更新
+                    if (CompWorkable != null && CompWorkable.UIAllowed)
                     {
-                        var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
-                        var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
-                        graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        var comp = HeldPawn.GetComp<CompStudiable>();
+                        if (comp != null)
+                        {
+                            var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
+                            var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
+                            graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                        }
                     }
+                }
+
+                #endregion
+
+                #region 左下角工作类型
+
+                if(cachedEntity != null) 
+                {
+                    var graphic = Util.GraphicUtil.WorkTypePlatformTopGraphic_Get(CurWorkType);
+                    graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
 
                 #endregion

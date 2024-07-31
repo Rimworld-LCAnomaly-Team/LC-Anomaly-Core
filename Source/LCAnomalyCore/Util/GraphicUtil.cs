@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LCAnomalyLibrary.Util;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -140,12 +141,80 @@ namespace LCAnomalyCore.Util
                 {
                     CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
                         .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
-                        , ShaderDatabase.Transparent
-                        , drawSizeOfHoldingPlatform, Color.white);
+                        , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
                 }
             }
 
             return CachedTopGraphic_EntityNamePlatformTop;
+        }
+
+        #endregion
+
+        #region 收容平台工作类型显示
+
+        private static Dictionary<EAnomalyWorkType, Graphic> CachedTopGraphicDict_WorkTypePlatformTop = new Dictionary<EAnomalyWorkType, Graphic>();
+        private static List<EAnomalyWorkType> eAnomalyWorkTypes = new List<EAnomalyWorkType>()
+        {
+            EAnomalyWorkType.Instinct,
+            EAnomalyWorkType.Insight,
+            EAnomalyWorkType.Attachment,
+            EAnomalyWorkType.Repression 
+        };
+
+        public static Graphic WorkTypePlatformTopGraphic_Get(EAnomalyWorkType workType)
+        {
+            //初始化
+            if (CachedTopGraphicDict_WorkTypePlatformTop.NullOrEmpty())
+            {
+                foreach(var type in eAnomalyWorkTypes)
+                {
+                    var graphic = GraphicDatabase
+                        .Get<Graphic_Single>("Things/Building/LC_HoldingPlatform/WorkType/" + type.ToString()
+                        , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+                    CachedTopGraphicDict_WorkTypePlatformTop.Add(type, graphic);
+                }
+            }
+
+            return CachedTopGraphicDict_WorkTypePlatformTop[workType];
+        }
+
+        #endregion
+
+        #region 收容平台工作类型窗体显示
+
+        private static Dictionary<EAnomalyWorkType, Texture2D> CachedTextureDict_DialogAssignWorkTypeNormal = new Dictionary<EAnomalyWorkType, Texture2D>();
+
+        public static Texture2D DialogAssignWorkTypeNormalTexture_Get(EAnomalyWorkType workType)
+        {
+            //初始化
+            if (CachedTextureDict_DialogAssignWorkTypeNormal.NullOrEmpty())
+            {
+                foreach (var type in eAnomalyWorkTypes)
+                {
+                    Log.Message($"UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal");
+                    var tex = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal", true);
+                    CachedTextureDict_DialogAssignWorkTypeNormal.Add(type, tex);
+                }
+            }
+
+            return CachedTextureDict_DialogAssignWorkTypeNormal[workType];
+        }
+
+        public static Texture2D DialogAssignWorkTypeOnHoverTexture_Get(EAnomalyWorkType workType)
+        {
+            //未知类型直接返回未知贴图
+            if(workType == EAnomalyWorkType.Unknown)
+                return ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Dialog/" + workType.ToString() + "_OnHover", true);
+
+            //非未知类型就按照语言获取贴图
+            var tex = ContentFinder<Texture2D>
+                .Get("UI/Commands/WorkType/Dialog/" + workType.ToString() + "_OnHover_" + LanguageDatabase.activeLanguage, true);
+            //如果贴图为null就切换到英文版
+            if (tex == null)
+                tex = ContentFinder<Texture2D>
+                .Get("UI/Commands/WorkType/Dialog/" + workType.ToString() + "_OnHover_" + "English", true);
+
+            return tex;
         }
 
         #endregion
