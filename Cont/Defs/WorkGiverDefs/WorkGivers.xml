@@ -2,6 +2,17 @@
 <Defs>
 
   <WorkGiverDef>
+    <defName>LC_StudyInteract</defName>
+    <label>study</label>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_LC_StudyInteract</giverClass>
+    <workType>DarkStudy</workType>
+    <verb>study</verb>
+    <gerund>studying</gerund>
+    <priorityInType>110</priorityInType>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
     <defName>LC_UniversalBenchBill</defName>
     <label>craft at universal workbench</label>
     <giverClass>WorkGiver_DoBill</giverClass>

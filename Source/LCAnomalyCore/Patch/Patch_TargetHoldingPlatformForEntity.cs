@@ -48,7 +48,7 @@ namespace LCAnomalyCore.Patch
 
                     if (carrier != null)
                     {
-                        Job job = (transferBetweenPlatforms ? JobMaker.MakeJob(JobDefOf.TransferBetweenEntityHolders, sourcePlatform, t, entity) : JobMaker.MakeJob(JobDefOf.CarryToEntityHolder, t, entity));
+                        Job job = (transferBetweenPlatforms ? JobMaker.MakeJob(RimWorld.JobDefOf.TransferBetweenEntityHolders, sourcePlatform, t, entity) : JobMaker.MakeJob(RimWorld.JobDefOf.CarryToEntityHolder, t, entity));
                         job.count = 1;
                         carrier.jobs.TryTakeOrderedJob(job, JobTag.Misc);
                     }

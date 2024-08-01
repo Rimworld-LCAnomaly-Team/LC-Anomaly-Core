@@ -36,6 +36,20 @@ namespace LCAnomalyCore.Building
 
         private CompAssignableToPawn_LC_Entity compAssignable;
 
+        public LC_CompStudiable CompStudiable
+        {
+            get
+            {
+                if(HeldPawn != null)
+                {
+                    compStudiable ??= HeldPawn.GetComp<LC_CompStudiable>();
+                }
+
+                return compStudiable;
+            }
+        }
+        private LC_CompStudiable compStudiable;
+
         #endregion 组件
 
         #region 缓存
@@ -294,6 +308,9 @@ namespace LCAnomalyCore.Building
 
             var entity = HeldPawn.GetComp<LC_CompEntity>();
             cachedEntity = entity ?? null;
+
+            var studiable = HeldPawn.GetComp<LC_CompStudiable>();
+            compStudiable = studiable ?? null;
         }
 
         #endregion 事件方法

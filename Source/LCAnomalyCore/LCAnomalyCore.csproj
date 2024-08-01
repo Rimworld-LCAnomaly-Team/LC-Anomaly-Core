@@ -18,11 +18,11 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Assemblies\</OutputPath>
+    <OutputPath>..\..\Cont\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\Assemblies\LCAnomalyCore.xml</DocumentationFile>
+    <DocumentationFile>..\..\Cont\Assemblies\LCAnomalyCore.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -105,6 +105,7 @@
     <Compile Include="Defs\ExtractRitualRoleDefOf.cs" />
     <Compile Include="Defs\HediffDefOf.cs" />
     <Compile Include="Defs\HistoryEventDefOf.cs" />
+    <Compile Include="Defs\JobDefOf.cs" />
     <Compile Include="Defs\LC_HoldingPlatformDef.cs" />
     <Compile Include="Defs\PsychicRitualDef_ExtractAnomaly.cs" />
     <Compile Include="Defs\RecipeDefOf.cs" />
@@ -112,6 +113,8 @@
     <Compile Include="Defs\ThingDefOf.cs" />
     <Compile Include="Defs\ThoughtDefOf.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
+    <Compile Include="Jobs\JobDriver_LC_StudyInteract.cs" />
+    <Compile Include="Jobs\WorkGiver_LCEntityInteract.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
     <Compile Include="Patch\Patch_TargetHoldingPlatformForEntity.cs" />
