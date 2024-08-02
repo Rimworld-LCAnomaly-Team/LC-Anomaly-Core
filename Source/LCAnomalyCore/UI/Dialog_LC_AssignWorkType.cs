@@ -86,6 +86,7 @@ namespace LCAnomalyCore.UI
             if (Mouse.IsOver(rect))
             {
                 tex = Util.GraphicUtil.DialogAssignWorkTypeOnHoverTexture_Get(type);
+                //tex = Util.GraphicUtil.DialogAssignWorkTypeOnHoverTexture_Get(EAnomalyWorkType.Unknown);
                 //TooltipHandler.TipRegion(rect, ("TipDialogWorkType_" + type.ToString()).Translate());
             }
         }

@@ -2,6 +2,6 @@
 <loadFolders>
 	<v1.5>
 		<li>Cont</li>
-		<li IfModActive="fxz.myafufu">Fufu</li>
+		<li IfModActive="fxz.myafufu">Extension/Fufu</li>
     </v1.5>
 </loadFolders>
