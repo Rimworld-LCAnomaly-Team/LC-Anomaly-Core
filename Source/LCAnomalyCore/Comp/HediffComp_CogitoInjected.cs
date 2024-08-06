@@ -44,7 +44,7 @@ namespace LCAnomalyCore.Comp
             if (Rand.Chance(Props.deadChance))
             {
                 Pawn.Kill(null);
-                Log.Message("Cogito注射：判定死亡");
+                //Log.Message("Cogito注射：判定死亡");
                 return;
             }
 
@@ -63,21 +63,21 @@ namespace LCAnomalyCore.Comp
                         if (Pawn.Name != null)
                         {
                             pawn.Name = Pawn.Name;
-                            Log.Message($"Congito注射：{Pawn.Name}变成了大罪生物{pawn.def.defName.Translate()}");
+                            //Log.Message($"Congito注射：{Pawn.Name}变成了大罪生物{pawn.def.defName.Translate()}");
                         }
-                        else
-                            Log.Message($"Congito注射：???变成了大罪生物{pawn.def.defName.Translate()}");
+                        //else
+                        //    Log.Message($"Congito注射：???变成了大罪生物{pawn.def.defName.Translate()}");
 
                         GenSpawn.Spawn(pawn, Pawn.Position, Pawn.MapHeld);
 
                         Pawn.DeSpawn();
                         return;
                     }
-                    else
-                        Log.Message("Congito注射：概率判定不生成大罪生物");
+                    //else
+                    //    Log.Message("Congito注射：概率判定不生成大罪生物");
                 }
-                else
-                    Log.Warning("Congito注射：ZAYIN和TETH的大罪生物列表为空");
+                //else
+                //    Log.Warning("Congito注射：ZAYIN和TETH的大罪生物列表为空");
             }
 
             //判定生成ZAYIN级别异常
@@ -87,8 +87,8 @@ namespace LCAnomalyCore.Comp
                 Pawn.DeSpawn();
                 return;
             }
-            else
-                Log.Message("Congito注射：概率判定/生成失败不生成ZAYIN级别异常");
+            //else
+            //    Log.Message("Congito注射：概率判定/生成失败不生成ZAYIN级别异常");
 
             //判定生成ZAYIN级别异常
             list2 = ExtractUtil.Get_AnomlayLvl2DefList_Cogito("TETH").ToList();
@@ -97,10 +97,10 @@ namespace LCAnomalyCore.Comp
                 Pawn.DeSpawn();
                 return;
             }
-            else
-                Log.Message("Congito注射：概率判定/生成失败不生成TETH级别异常");
+            //else
+            //    Log.Message("Congito注射：概率判定/生成失败不生成TETH级别异常");
 
-            Log.Message("Congito注射：所有判定条件都不满足，无事发生");
+            //Log.Message("Congito注射：所有判定条件都不满足，无事发生");
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace LCAnomalyCore.Comp
                 }
                 else
                 {
-                    Log.Error("Cogito注射：生成异常实体失败，thing is null");
+                    //Log.Error("Cogito注射：生成异常实体失败，thing is null");
                     return false;
                 }
             }

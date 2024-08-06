@@ -4,12 +4,11 @@
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_ZAYIN</defName>
     <label>ExtractAnomaly (ZAYIN)</label>
-    <description>ExtractAnomaly_ZAYIN.</description>
+    <description>.</description>
     <anomalyLevelTag>ZAYIN</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_ZAYIN.</outcomeDescription>
-    <researchPrerequisite>Brainwipe</researchPrerequisite>
-    <hoursUntilOutcome>6</hoursUntilOutcome>
-    <targetRole>BrainwipeTarget</targetRole>
+    <researchPrerequisite>ExtractAbnormalityRiturals</researchPrerequisite>
+    <hoursUntilOutcome>2</hoursUntilOutcome>
     <requiredOffering>
       <filter>
         <thingDefs>
@@ -19,19 +18,17 @@
       <count>10</count>
     </requiredOffering>
     <cooldownHours>480</cooldownHours>
-    <chanterRole>ChanterAdvanced</chanterRole>
     <iconPath>UI/PsychicRituals/PsychicRitual_Brainwipe</iconPath>
   </LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_TETH</defName>
     <label>ExtractAnomaly (TETH)</label>
-    <description>ExtractAnomaly_TETH.</description>
+    <description>.</description>
     <anomalyLevelTag>TETH</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_TETH.</outcomeDescription>
-    <researchPrerequisite>Brainwipe</researchPrerequisite>
-    <hoursUntilOutcome>6</hoursUntilOutcome>
-    <targetRole>BrainwipeTarget</targetRole>
+    <researchPrerequisite>ExtractAbnormalityRiturals</researchPrerequisite>
+    <hoursUntilOutcome>4</hoursUntilOutcome>
     <requiredOffering>
       <filter>
         <thingDefs>
@@ -41,19 +38,17 @@
       <count>20</count>
     </requiredOffering>
     <cooldownHours>480</cooldownHours>
-    <chanterRole>ChanterAdvanced</chanterRole>
     <iconPath>UI/PsychicRituals/PsychicRitual_Brainwipe</iconPath>
   </LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_HE</defName>
     <label>ExtractAnomaly (HE)</label>
-    <description>ExtractAnomaly_HE.</description>
+    <description>.</description>
     <anomalyLevelTag>HE</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_HE.</outcomeDescription>
-    <researchPrerequisite>Brainwipe</researchPrerequisite>
+    <researchPrerequisite>ExtractAbnormalityRiturals</researchPrerequisite>
     <hoursUntilOutcome>6</hoursUntilOutcome>
-    <targetRole>BrainwipeTarget</targetRole>
     <requiredOffering>
       <filter>
         <thingDefs>
@@ -63,19 +58,17 @@
       <count>30</count>
     </requiredOffering>
     <cooldownHours>480</cooldownHours>
-    <chanterRole>ChanterAdvanced</chanterRole>
     <iconPath>UI/PsychicRituals/PsychicRitual_Brainwipe</iconPath>
   </LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_WAW</defName>
     <label>ExtractAnomaly (WAW)</label>
-    <description>ExtractAnomaly_WAW.</description>
+    <description>.</description>
     <anomalyLevelTag>WAW</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_WAW.</outcomeDescription>
-    <researchPrerequisite>Brainwipe</researchPrerequisite>
-    <hoursUntilOutcome>6</hoursUntilOutcome>
-    <targetRole>BrainwipeTarget</targetRole>
+    <researchPrerequisite>ExtractAbnormalityRiturals</researchPrerequisite>
+    <hoursUntilOutcome>8</hoursUntilOutcome>
     <requiredOffering>
       <filter>
         <thingDefs>
@@ -85,19 +78,17 @@
       <count>40</count>
     </requiredOffering>
     <cooldownHours>480</cooldownHours>
-    <chanterRole>ChanterAdvanced</chanterRole>
     <iconPath>UI/PsychicRituals/PsychicRitual_Brainwipe</iconPath>
   </LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_ALEPH</defName>
     <label>ExtractAnomaly (ALEPH)</label>
-    <description>ExtractAnomaly_ALEPH.</description>
+    <description>.</description>
     <anomalyLevelTag>ALEPH</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_ALEPH.</outcomeDescription>
-    <researchPrerequisite>Brainwipe</researchPrerequisite>
-    <hoursUntilOutcome>6</hoursUntilOutcome>
-    <targetRole>BrainwipeTarget</targetRole>
+    <researchPrerequisite>ExtractAbnormalityRiturals</researchPrerequisite>
+    <hoursUntilOutcome>10</hoursUntilOutcome>
     <requiredOffering>
       <filter>
         <thingDefs>
@@ -107,7 +98,6 @@
       <count>50</count>
     </requiredOffering>
     <cooldownHours>480</cooldownHours>
-    <chanterRole>ChanterAdvanced</chanterRole>
     <iconPath>UI/PsychicRituals/PsychicRitual_Brainwipe</iconPath>
   </LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
 

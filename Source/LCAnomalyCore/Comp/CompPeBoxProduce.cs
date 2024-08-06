@@ -15,7 +15,7 @@ namespace LCAnomalyCore.Comp
         {
             if (!Defs.ResearchProjectDefOf.ExtractEnkephalin.IsFinished)
             {
-                Log.Warning($"工作：未完成研究项目：{Defs.ResearchProjectDefOf.ExtractEnkephalin.label.Translate()}，无法生成PeBox");
+                //Log.Warning($"工作：未完成研究项目：{Defs.ResearchProjectDefOf.ExtractEnkephalin.label.Translate()}，无法生成PeBox");
                 return;
             }
 

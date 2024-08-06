@@ -23,7 +23,7 @@ namespace LCAnomalyCore.Defs
         public override List<PsychicRitualToil> CreateToils(PsychicRitual psychicRitual, PsychicRitualGraph parent)
         {
             List<PsychicRitualToil> list = base.CreateToils(psychicRitual, parent);
-            list.Add(new PsychicRitualToil_ExtractAnomaly(InvokerRole, TargetRole, anomalyLevelTag));
+            list.Add(new PsychicRitualToil_ExtractAnomaly(InvokerRole, anomalyLevelTag));
             return list;
         }
 
@@ -53,12 +53,14 @@ namespace LCAnomalyCore.Defs
             if (list == null)
             {
                 psychicRitual.CancelPsychicRitual("PsychicRitualDef_InvocationCircle_InvokerLost".Translate());
-                Log.Warning("提取仪式因Tag错误而失败");
+                //Log.Warning("提取仪式因Tag错误而失败");
+
+                return;
             }
             if (list.Count <= 0)
             {
                 psychicRitual.CancelPsychicRitual("PsychicRitualDef_InvocationCircle_InvokerLost".Translate());
-                Log.Warning("提取仪式因列表为空失败");
+                //Log.Warning("提取仪式因列表为空失败");
             }
         }
     }

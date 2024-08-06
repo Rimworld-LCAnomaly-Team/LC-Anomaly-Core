@@ -1,6 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
 
+  <!-- ExtractRituals -->
+  <ResearchProjectDef>
+    <defName>ExtractAbnormalityRiturals</defName>
+    <label>Extract abnormality Riturals</label>
+    <description>Extract abnormality from the Well.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>20</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>1.80</researchViewY>
+    <prerequisites>
+      <li>BasicPsychicRituals</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Extract Abnormalities</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Extracting Abnormalities</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
   <!-- CogitoUsages -->
   <ResearchProjectDef>
     <defName>CogitoUsages</defName>
@@ -13,7 +40,7 @@
     <researchViewY>1.20</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->CogitoUsages</li>
+        <li>subject->Cogito Usages</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -35,7 +62,7 @@
     <researchViewY>0.60</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->ExtractEnkephalin</li>
+        <li>subject->Extract Enkephalin</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -60,7 +87,7 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin_ElectricGenerator</li>
+        <li>subject->Enkephalin ElectricGenerator</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -85,7 +112,7 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin_ElectricGenerator</li>
+        <li>subject->Enkephalin ElectricGenerator</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -110,7 +137,7 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin_ElectricGenerator</li>
+        <li>subject->Enkephalin ElectricGenerator</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -135,7 +162,7 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin_Drug</li>
+        <li>subject->Enkephalin Drug</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>
@@ -160,7 +187,7 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->CogitoUsages</li>
+        <li>subject->Cogito Usages</li>
 
         <li>subject_story->empty</li>
         <li>subject_story->empty</li>

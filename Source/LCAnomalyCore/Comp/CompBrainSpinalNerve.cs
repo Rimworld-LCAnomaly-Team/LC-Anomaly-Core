@@ -66,33 +66,33 @@ namespace LCAnomalyCore.Comp
             return sb.ToString();
         }
 
-        public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
-        {
-            if (DebugSettings.ShowDevGizmos)
-            {
-                yield return new Command_Action
-                {
-                    defaultLabel = "PrintInfo",
-                    action = delegate
-                    {
-                        StringBuilder sb = new StringBuilder();
+        //public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
+        //{
+        //    if (DebugSettings.ShowDevGizmos)
+        //    {
+        //        yield return new Command_Action
+        //        {
+        //            defaultLabel = "PrintInfo",
+        //            action = delegate
+        //            {
+        //                StringBuilder sb = new StringBuilder();
 
-                        if (name != null)
-                        {
-                            sb.Append(name + "\n");
-                        }
-                        if (skill != null)
-                        {
-                            foreach (var s in skill)
-                            {
-                                sb.Append(s.def.label.Translate() + ": " + s.level + "\n");
-                            }
-                            Log.Message(sb);
-                        }
-                    }
-                };
-            }
-        }
+        //                if (name != null)
+        //                {
+        //                    sb.Append(name + "\n");
+        //                }
+        //                if (skill != null)
+        //                {
+        //                    foreach (var s in skill)
+        //                    {
+        //                        sb.Append(s.def.label.Translate() + ": " + s.level + "\n");
+        //                    }
+        //                    Log.Message(sb);
+        //                }
+        //            }
+        //        };
+        //    }
+        //}
     }
 
     public struct NerveSkill : IExposable

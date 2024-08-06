@@ -26,46 +26,46 @@ namespace LCAnomalyCore.Comp
                     }
                 };
 
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: WaringPoints +10",
-                    action = delegate
-                    {
-                        Current.Game.GetComponent<GameComponent_LC>().CurWarningPoints += 10;
-                    }
-                };
+                //yield return new Command_Action
+                //{
+                //    defaultLabel = "DEV: WaringPoints +10",
+                //    action = delegate
+                //    {
+                //        Current.Game.GetComponent<GameComponent_LC>().CurWarningPoints += 10;
+                //    }
+                //};
 
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: WaringPoints -10",
-                    action = delegate
-                    {
-                        Current.Game.GetComponent<GameComponent_LC>().CurWarningPoints -= 10;
-                    }
-                };
+                //yield return new Command_Action
+                //{
+                //    defaultLabel = "DEV: WaringPoints -10",
+                //    action = delegate
+                //    {
+                //        Current.Game.GetComponent<GameComponent_LC>().CurWarningPoints -= 10;
+                //    }
+                //};
 
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: GetDict",
-                    action = delegate
-                    {
-                        var component = Current.Game.GetComponent<GameComponent_LC>();
-                        if (component.AnomalyStatusSavedDict != null)
-                        {
-                            foreach (var key in component.AnomalyStatusSavedDict.Keys)
-                            {
-                                Log.Message($"key = {key.defName}" +
-                                    $"\nIndiPeBoxAmount = {component.AnomalyStatusSavedDict[key].IndiPeBoxAmount}" +
-                                    $"\nWeaponAmount = {component.AnomalyStatusSavedDict[key].ExtractedEgoWeaponAmount}" +
-                                    $"\nArmorAmount = {component.AnomalyStatusSavedDict[key].ExtractedEgoArmorAmount}");
-                            }
-                        }
-                        else
-                        {
-                            Log.Warning($"dict is null");
-                        }
-                    }
-                };
+                //yield return new Command_Action
+                //{
+                //    defaultLabel = "DEV: GetDict",
+                //    action = delegate
+                //    {
+                //        var component = Current.Game.GetComponent<GameComponent_LC>();
+                //        if (component.AnomalyStatusSavedDict != null)
+                //        {
+                //            foreach (var key in component.AnomalyStatusSavedDict.Keys)
+                //            {
+                //                Log.Message($"key = {key.defName}" +
+                //                    $"\nIndiPeBoxAmount = {component.AnomalyStatusSavedDict[key].IndiPeBoxAmount}" +
+                //                    $"\nWeaponAmount = {component.AnomalyStatusSavedDict[key].ExtractedEgoWeaponAmount}" +
+                //                    $"\nArmorAmount = {component.AnomalyStatusSavedDict[key].ExtractedEgoArmorAmount}");
+                //            }
+                //        }
+                //        else
+                //        {
+                //            Log.Warning($"dict is null");
+                //        }
+                //    }
+                //};
             }
 
             if (HasRequireThingInstalled)

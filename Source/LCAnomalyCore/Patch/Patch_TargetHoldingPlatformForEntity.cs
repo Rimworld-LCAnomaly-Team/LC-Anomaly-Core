@@ -16,7 +16,7 @@ namespace LCAnomalyCore.Patch
         {
             /* 新增方法开始 */
 
-            Log.Warning("TargetHoldingPlatformForEntity：正在使用LCAnomalyCore.Patch提供的特有方法，而非原版方法");
+            //Log.Warning("TargetHoldingPlatformForEntity：正在使用LCAnomalyCore.Patch提供的特有方法，而非原版方法");
             bool isLCEntity = entity.TryGetComp<LC_CompEntity>() != null || entity.def is ThingDef_AnomalyEgg;
 
             /* 新增方法结束 */

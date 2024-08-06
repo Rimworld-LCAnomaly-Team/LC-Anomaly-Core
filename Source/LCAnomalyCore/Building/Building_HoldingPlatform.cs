@@ -315,7 +315,7 @@ namespace LCAnomalyCore.Building
         protected void EntityNameUpdateForce()
         {
             cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
-            Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
+            //Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
         }
 
         /// <summary>

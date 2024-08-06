@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
 
+  <ExtractAbnormalityRiturals.label>提取异想体</ExtractAbnormalityRiturals.label>
+  <ExtractAbnormalityRiturals.description>研究如何提取异想体。</ExtractAbnormalityRiturals.description>
+  <ExtractAbnormalityRiturals.generalRules.rulesStrings>
+    <li>subject->提取异想体</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </ExtractAbnormalityRiturals.generalRules.rulesStrings>
+
   <CogitoUsages.label>Cogito应用</CogitoUsages.label>
   <CogitoUsages.description>研究如何利用Cogito。</CogitoUsages.description>
   <CogitoUsages.generalRules.rulesStrings>

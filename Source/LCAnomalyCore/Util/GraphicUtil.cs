@@ -44,7 +44,7 @@ namespace LCAnomalyCore.Util
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}QliphothIndicator/Top" + i);
+                    //Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}QliphothIndicator/Top" + i);
 
                     CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Top" + i,
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
@@ -252,7 +252,7 @@ namespace LCAnomalyCore.Util
             {
                 foreach (var type in eAnomalyWorkTypes)
                 {
-                    Log.Message($"UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal");
+                    //Log.Message($"UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal");
                     var tex = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal", true);
                     CachedTextureDict_DialogAssignWorkTypeNormal.Add(type, tex);
                 }
@@ -306,7 +306,7 @@ namespace LCAnomalyCore.Util
                         GraphicDatabase.Get<Graphic_Single>("Things/Building/TheBucket/TheBucket_Glass",
                         ShaderDatabase.MoteGlow, Defs.ThingDefOf.CogitoBucket.graphicData.drawSize, Color.white);
 
-                    Log.Message("贴图缓存：Things/Building/TheBucket/TheBucket_Glass");
+                    //Log.Message("贴图缓存：Things/Building/TheBucket/TheBucket_Glass");
                 }
 
                 return CogitoBucket_CachedGlassGraphic;
