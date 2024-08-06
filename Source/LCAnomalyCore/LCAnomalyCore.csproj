@@ -18,11 +18,11 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Cont\Assemblies\</OutputPath>
+    <OutputPath>..\..\1.5\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\Cont\Assemblies\LCAnomalyCore.xml</DocumentationFile>
+    <DocumentationFile>..\..\1.5\Assemblies\LCAnomalyCore.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,7 +46,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="LCAnomalyLibrary">
-      <HintPath>..\..\..\LC Anomaly Library\Assemblies\LCAnomalyLibrary.dll</HintPath>
+      <HintPath>..\..\..\LC Anomaly Library\1.5\Assemblies\LCAnomalyLibrary.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
