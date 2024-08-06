@@ -22,8 +22,8 @@
     </thingCategories>
     <designationCategory>Buildings_LC</designationCategory>
     <costList>
-      <Steel>200</Steel>
-      <ComponentSpacer>6</ComponentSpacer>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
     </costList>
     <building>
       <destroySound>BuildingDestroyed_Metal_Big</destroySound>
