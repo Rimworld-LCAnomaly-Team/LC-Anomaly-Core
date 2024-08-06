@@ -577,19 +577,9 @@
             </summary>
             <returns>图集</returns>
         </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator">
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic(System.Int32)">
             <summary>
-            缓存图集
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max">
-            <summary>
-            最大值贴图
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Util.GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic">
-            <summary>
-            获取图集
+            获取PeBoxCounter图集
             </summary>
             <returns>图集</returns>
         </member>

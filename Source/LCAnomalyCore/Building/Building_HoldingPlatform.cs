@@ -242,18 +242,9 @@ namespace LCAnomalyCore.Building
 
                 #region Pebox计数器
 
-                //不大于100就显示对应数字
-                if (PeBoxCounter < 100)
-                {
-                    GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic()[PeBoxCounter]
-                        ?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
-                }
-                //大于100就显示99+
-                else
-                {
-                    GraphicUtil.CachedTopGraphic_IndiPeBoxIndicator_Max
-                        ?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
-                }
+                var list = GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic(PeBoxCounter);
+                foreach (var graphic in list)
+                    graphic?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
                 #endregion Pebox计数器
 

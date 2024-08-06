@@ -58,36 +58,98 @@ namespace LCAnomalyCore.Util
 
         #region 独立PeBox计数器
 
-        /// <summary>
-        /// 缓存图集
-        /// </summary>
-        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator = new List<Graphic>();
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_Single = new List<Graphic>();
+
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft = new List<Graphic>();
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_DoubleRight = new List<Graphic>();
+
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft = new List<Graphic>();
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_ThirdMid = new List<Graphic>();
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_ThirdRight = new List<Graphic>();
+
+        private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_Mixed = new List<Graphic>();
+
+        private static bool IndiPeBoxIndicator_Initialized = false;
+
 
         /// <summary>
-        /// 最大值贴图
-        /// </summary>
-        public static readonly Graphic CachedTopGraphic_IndiPeBoxIndicator_Max =
-            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "PeBoxCounter/99+",
-                ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
-
-        /// <summary>
-        /// 获取图集
+        /// 获取PeBoxCounter图集
         /// </summary>
         /// <returns>图集</returns>
-        public static List<Graphic> IndiPeBoxIndicator_GetCachedTopGraphic()
+        public static List<Graphic> IndiPeBoxIndicator_GetCachedTopGraphic(int amount)
         {
-            if (CachedTopGraphic_IndiPeBoxIndicator.Empty())
+            //初始化
+            if (!IndiPeBoxIndicator_Initialized)
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}PeBoxCounter/Top" + i);
+                string loc = baseLocOfHoldingPlatform + "PeBoxCounter/";
 
-                    CachedTopGraphic_IndiPeBoxIndicator.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "PeBoxCounter/Top" + i,
+                for (int i = 0; i < 10; i++)
+                {
+                    //个位数
+                    CachedTopGraphic_IndiPeBoxIndicator_Single.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Single/mid_" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                    //两位数右侧
+                    CachedTopGraphic_IndiPeBoxIndicator_DoubleRight.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Double/right_" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                    //三位数中间
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdMid.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/mid_" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                    //三位数右侧
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdRight.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/right_" + i,
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
+
+                for (int i = 1; i < 10; i++)
+                {
+                    //两位数左侧
+                    CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Double/left_" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                    //三位数左侧
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/left_" + i,
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                }
+
+                Log.Warning("IndiPeBoxIndicator Graphic Initialized");
+                IndiPeBoxIndicator_Initialized = true;
             }
 
-            return CachedTopGraphic_IndiPeBoxIndicator;
+            CachedTopGraphic_IndiPeBoxIndicator_Mixed.Clear();
+
+            if (amount < 10)
+            {
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_Single[amount]);
+            }
+            else if(amount < 100)
+            {
+                //取模个位
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_DoubleRight[amount % 10]);
+
+                //十位
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft[amount / 10 - 1]);
+            }
+            else if(amount < 1000)
+            {
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdRight[amount % 10]);
+
+                //取模十位
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdMid[amount / 10 % 10]);
+
+                //百位
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft[amount / 100 - 1]);
+            }
+            else
+            {
+                //大于999则直接返回999
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdRight[9]);
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdMid[9]);
+                CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft[8]);
+            }
+
+            return CachedTopGraphic_IndiPeBoxIndicator_Mixed;
         }
 
         #endregion 独立PeBox计数器
