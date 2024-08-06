@@ -3,7 +3,7 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>CogitoBucket</defName>
-    <label>Cogito Bucket</label>
+    <label>"The Bucket"</label>
     <description>.</description>
     <thingClass>LCAnomalyCore.Building.Building_CogitoBucket</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>

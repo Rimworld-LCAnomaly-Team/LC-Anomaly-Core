@@ -3,7 +3,7 @@
 
   <ThingDef ParentName="ResourceBase">
     <defName>BrainSpinalNerve</defName>
-    <label>BrainSpinalNerve</label>
+    <label>Brain-Spinal-Nerve</label>
     <description>.</description>
     <thingClass>ThingWithComps</thingClass>
     <graphicData>

@@ -3,7 +3,7 @@
 
   <RecipeDef ParentName="SurgeryFlesh">
     <defName>ExtractCogito</defName>
-    <label>extract cogito</label>
+    <label>Extract Cogito</label>
     <description>Extract cogito from the target.</description>
     <workerClass>LCAnomalyCore.Recipe.Recipe_ExtractCogito</workerClass>
     <jobString>Extracting cogito.</jobString>
@@ -28,7 +28,7 @@
 
   <RecipeDef ParentName="SurgeryFlesh">
     <defName>CogitoInjection</defName>
-    <label>cogito injection</label>
+    <label>Inject Cogito</label>
     <description>CogitoInjection.</description>
     <jobString>injecting cogito into TargetA.</jobString>
     <workAmount>800</workAmount>
@@ -68,7 +68,7 @@
 
   <RecipeDef ParentName="SurgeryFlesh">
     <defName>ExtractBrainSpinalNerve</defName>
-    <label>extract BrainSpinalNerve</label>
+    <label>Extract BrainSpinalNerve</label>
     <description>Extract BrainSpinalNerve from the target.</description>
     <workerClass>LCAnomalyCore.Recipe.Recipe_ExtractBrainSpinalNerve</workerClass>
     <jobString>Extracting BrainSpinalNerve.</jobString>

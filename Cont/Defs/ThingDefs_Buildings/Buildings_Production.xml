@@ -3,7 +3,7 @@
 
   <ThingDef ParentName="BenchBase">
     <defName>LC_UniversalBench</defName>
-    <label>LC Universal Bench</label>
+    <label>LobotomyCorporation Universal Bench</label>
     <description>.</description>
     <thingClass>Building_WorkTable</thingClass>
     <graphicData>

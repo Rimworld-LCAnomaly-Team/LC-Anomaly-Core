@@ -3,7 +3,7 @@
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_ZAYIN</defName>
-    <label>ExtractAnomaly_ZAYIN</label>
+    <label>ExtractAnomaly (ZAYIN)</label>
     <description>ExtractAnomaly_ZAYIN.</description>
     <anomalyLevelTag>ZAYIN</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_ZAYIN.</outcomeDescription>
@@ -25,7 +25,7 @@
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_TETH</defName>
-    <label>ExtractAnomaly_TETH</label>
+    <label>ExtractAnomaly (TETH)</label>
     <description>ExtractAnomaly_TETH.</description>
     <anomalyLevelTag>TETH</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_TETH.</outcomeDescription>
@@ -47,7 +47,7 @@
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_HE</defName>
-    <label>ExtractAnomaly_HE</label>
+    <label>ExtractAnomaly (HE)</label>
     <description>ExtractAnomaly_HE.</description>
     <anomalyLevelTag>HE</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_HE.</outcomeDescription>
@@ -69,7 +69,7 @@
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_WAW</defName>
-    <label>ExtractAnomaly_WAW</label>
+    <label>ExtractAnomaly (WAW)</label>
     <description>ExtractAnomaly_WAW.</description>
     <anomalyLevelTag>WAW</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_WAW.</outcomeDescription>
@@ -91,7 +91,7 @@
 
   <LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly>
     <defName>ExtractAnomaly_ALEPH</defName>
-    <label>ExtractAnomaly_ALEPH</label>
+    <label>ExtractAnomaly (ALEPH)</label>
     <description>ExtractAnomaly_ALEPH.</description>
     <anomalyLevelTag>ALEPH</anomalyLevelTag>
     <outcomeDescription>ExtractAnomaly_ALEPH.</outcomeDescription>

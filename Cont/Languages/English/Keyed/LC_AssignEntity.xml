@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_AssignmentGizmoLabel>AutoWork Assign</LC_AssignmentGizmoLabel>
+  <LC_AssignmentGizmoDesc>Click to assign which pawn to work automatically on the platform with abnormality.\nThe assigned pawn will automatically start working when available, in case the dark research job has arranged.\nWarning, incorrect assignment may lead to dangerous result.</LC_AssignmentGizmoDesc>
+  
+  <LC_AssignableEntity_EntityUnassign>Unassign</LC_AssignableEntity_EntityUnassign>
+  <LC_AssignableEntity_EntityAssign>Assign</LC_AssignableEntity_EntityAssign>
+
+  <LC_AssignableEntity_SkillRequire>Requirement Satisfied</LC_AssignableEntity_SkillRequire>
+  <LC_AssignableEntity_SkillNotRequire>Requirement Not Satisfied </LC_AssignableEntity_SkillNotRequire>
+
+  <LC_AssignableEntity_SkillDisabled>Skill Forbiddien: </LC_AssignableEntity_SkillDisabled>
+
+</LanguageData>

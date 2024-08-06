@@ -4,7 +4,7 @@
   <ThingDef ParentName="DrugPillBase">
     <defName>Enkephalin</defName>
     <label>enkephalin</label>
-    <description>A concoction of mechanites that dramatically improve the body's functioning in all respects. Over time, it can even heal old scarred-over wounds or brain damage, though it cannot regenerate lost limbs. Unfortunately, without the moderating effects of regular doses every five or six days, the mechanites lose cohesion, causing continuous berserk rages and, eventually, death.\n\nAfter the first dose, there is no way to get the mechanites out, ever.\n\nOn the urbworlds, they call Luciferium the 'Devil's Bargain'. Many have been forced to kill friends when no more of the seductive red pills could be found.</description>
+    <description>.</description>
     <descriptionHyperlinks>
       <HediffDef>EnkephalinHigh</HediffDef>
       <HediffDef>EnkephalinAddiction</HediffDef>
@@ -73,7 +73,7 @@
     <defName>EnkephalinHigh</defName>
     <hediffClass>Hediff_High</hediffClass>
     <label>enkephalin</label>
-    <description>Active luciferium mechanites in the body. They improve the body's functioning in all respects. However, if they are not regularly replenished with more doses of luciferium, they lose cohesion and drive the user insane.</description>
+    <description>.</description>
     <defaultLabelColor>(1,1,0.5)</defaultLabelColor>
     <scenarioCanAdd>true</scenarioCanAdd>
     <maxSeverity>1.0</maxSeverity>

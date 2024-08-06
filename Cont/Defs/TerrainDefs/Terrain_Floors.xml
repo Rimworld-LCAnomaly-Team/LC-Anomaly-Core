@@ -3,7 +3,7 @@
 
   <TerrainDef ParentName="FloorBase">
     <defName>LC_HoldingPlatformPlate</defName>
-    <label>LC_HoldingPlatformPlate</label>
+    <label>LobotomyCorporation Plate</label>
     <description>.</description>
     <texturePath>Terrain/Surfaces/BioferritePlateFloor</texturePath>
     <constructionSkillPrerequisite>3</constructionSkillPrerequisite>

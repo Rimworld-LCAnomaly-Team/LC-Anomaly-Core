@@ -37,10 +37,9 @@
     <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
   
-  <!-- Default -->
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGenerator</defName>
-    <label>enkephalin generator</label>
+    <label>Enkephalin Generator</label>
     <description>.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGenerator</texPath>
@@ -92,7 +91,7 @@
   <!-- ECO -->
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGeneratorECO</defName>
-    <label>enkephalin generator (ECO)</label>
+    <label>Enkephalin Generator (ECO)</label>
     <description>.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGeneratorECO</texPath>
@@ -144,7 +143,7 @@
   <!-- Advanced -->
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGeneratorAdvanced</defName>
-    <label>advanced enkephalin generator </label>
+    <label>Enkephalin Generator (Advanced)</label>
     <description>.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGeneratorAdvanced</texPath>

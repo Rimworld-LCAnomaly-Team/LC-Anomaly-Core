@@ -3,7 +3,7 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>TheWell</defName>
-    <label>the well</label>
+    <label>"The Well"</label>
     <description>.</description>
     <tickerType>Normal</tickerType>
     <passability>Standable</passability>
@@ -83,4 +83,5 @@
       </li>
     </comps>
   </ThingDef>
+  
 </Defs>

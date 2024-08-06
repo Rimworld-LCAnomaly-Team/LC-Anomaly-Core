@@ -4,7 +4,7 @@
   <!-- CogitoUsages -->
   <ResearchProjectDef>
     <defName>CogitoUsages</defName>
-    <label>CogitoUsages</label>
+    <label>Cogito Usages</label>
     <description>Carry out a research into the usage of cogito.</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>10</knowledgeCost>
@@ -48,7 +48,7 @@
   <!-- Enkephalin Generator -->
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGenerator</defName>
-    <label>EnkephalinGenerator</label>
+    <label>Enkephalin Generator</label>
     <description>EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>20</knowledgeCost>
@@ -73,7 +73,7 @@
   <!-- Enkephalin Generator (ECO) -->
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGeneratorECO</defName>
-    <label>ECO EnkephalinGenerator</label>
+    <label>Enkephalin Generator (ECO)</label>
     <description>ECO EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>20</knowledgeCost>
@@ -98,7 +98,7 @@
   <!-- Enkephalin Generator (Advanced) -->
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGeneratorAdvanced</defName>
-    <label>Advanced EnkephalinGenerator</label>
+    <label>Enkephalin Generator (Advanced)</label>
     <description>Advanced EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>40</knowledgeCost>
@@ -148,7 +148,7 @@
   <!-- EntityContainment -->
   <ResearchProjectDef>
     <defName>LC_EntityContainment</defName>
-    <label>LC EntityContainment</label>
+    <label>LobotomyCorporation Containment</label>
     <description>.</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>5</knowledgeCost>

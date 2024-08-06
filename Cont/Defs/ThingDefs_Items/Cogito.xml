@@ -38,7 +38,7 @@
 
   <HediffDef>
     <defName>CogitoExtracted</defName>
-    <label>extracted cogito</label>
+    <label>Extracted Cogito</label>
     <labelNoun>extracted cogito</labelNoun>
     <description>extracted cogito</description>
     <hediffClass>Hediff_High</hediffClass>
@@ -66,7 +66,7 @@
 
   <HediffDef>
     <defName>CogitoInjected</defName>
-    <label>injected cogito</label>
+    <label>Injected Cogito</label>
     <labelNoun>injected cogito</labelNoun>
     <description>injteced cogito</description>
     <hediffClass>Hediff_High</hediffClass>
