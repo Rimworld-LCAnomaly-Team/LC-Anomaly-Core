@@ -218,15 +218,13 @@ namespace LCAnomalyCore.Building
                 #region 逆卡巴拉计数器
 
                 //显示不可用
-                if (!EntityCached)
+                if (!EntityCached || EntityCached && !cachedEntity.QliphothEnabled)
                 {
                     GraphicUtil.CachedTopGraphic_QliphothIndicator_TopNull
                         ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
-
-                    return;
                 }
                 //不大于10就显示对应数字
-                if (QliphothCounter < 10)
+                else if (QliphothCounter < 10)
                 {
                     GraphicUtil.QliphothIndicator_GetCachedTopGraphic()[QliphothCounter]
                         ?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
@@ -314,7 +312,8 @@ namespace LCAnomalyCore.Building
         /// </summary>
         protected void EntityNameUpdateForce()
         {
-            cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+            if(EntityCached)
+                cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
             //Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
         }
 
