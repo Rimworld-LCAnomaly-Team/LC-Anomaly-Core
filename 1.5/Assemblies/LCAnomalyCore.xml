@@ -97,6 +97,11 @@
             收容内容改变时触发的方法
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Notify_Studying(Verse.Pawn)">
+            <summary>
+            正在被研究时每Tick调用
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Init">
             <summary>
             初始化方法

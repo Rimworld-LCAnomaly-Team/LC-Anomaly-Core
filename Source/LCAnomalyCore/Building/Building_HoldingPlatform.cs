@@ -5,11 +5,11 @@ using LCAnomalyLibrary.Comp;
 using LCAnomalyLibrary.Interface;
 using LCAnomalyLibrary.Util;
 using RimWorld;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using Verse.Sound;
 
 namespace LCAnomalyCore.Building
 {
@@ -50,6 +50,8 @@ namespace LCAnomalyCore.Building
             }
         }
         private LC_CompStudiable compStudiable;
+
+        private Sustainer workingSustainer;
 
         #endregion 组件
 
@@ -286,6 +288,24 @@ namespace LCAnomalyCore.Building
         {
             Init();
             EntityNameUpdateForce();
+        }
+
+        /// <summary>
+        /// 正在被研究时每Tick调用
+        /// </summary>
+        public void Notify_Studying(Pawn pawn)
+        {
+            cachedEntity.Notify_Studying(pawn);
+
+            //收容室音乐播放
+            if (cachedEntity.Props.soundWorking != null) 
+            {
+                if (workingSustainer == null || workingSustainer.Ended)
+                {
+                    workingSustainer = cachedEntity.Props.soundWorking.TrySpawnSustainer(SoundInfo.InMap(this, MaintenanceType.PerTick));
+                }
+                workingSustainer.Maintain();
+            }
         }
 
         /// <summary>
