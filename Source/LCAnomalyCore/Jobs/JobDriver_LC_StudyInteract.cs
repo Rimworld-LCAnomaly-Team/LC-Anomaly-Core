@@ -24,7 +24,7 @@ namespace LCAnomalyCore.Jobs
 
         private Building.Building_HoldingPlatform Platform => base.TargetThingA as Building.Building_HoldingPlatform;
 
-        private Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
+        public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
 
         private LC_CompStudiable StudyComp => ThingToStudy?.TryGetComp<LC_CompStudiable>();
 
