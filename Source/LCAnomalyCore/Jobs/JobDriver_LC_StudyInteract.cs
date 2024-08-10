@@ -85,7 +85,7 @@ namespace LCAnomalyCore.Jobs
 
             studyToil.AddPreTickAction(delegate
             {
-                Log.Warning($"正在进行对 [{ThingToStudy.def.label.Translate()}] 的研究工作");
+                //Log.Warning($"正在进行对 [{ThingToStudy.def.label.Translate()}] 的研究工作");
                 Platform?.Notify_Studying(pawn);
 
                 pawn.skills.Learn(SkillDefOf.Intellectual, 0.1f);
