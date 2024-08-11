@@ -167,6 +167,12 @@ namespace LCAnomalyCore.Building
             //}
 
             //innerContainer.ThingOwnerTick();
+
+            if (EntityCached)
+            {
+                var entitiy = innerContainer[0] as LC_EntityBasePawn;
+                entitiy?.TickHolded();
+            }
         }
 
         /// <summary>
