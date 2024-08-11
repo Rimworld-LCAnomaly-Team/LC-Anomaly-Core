@@ -40,7 +40,7 @@
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGenerator</defName>
     <label>Enkephalin Generator</label>
-    <description>.</description>
+    <description>Clean energy.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGenerator</texPath>
       <drawSize>(2,2)</drawSize>
@@ -63,16 +63,16 @@
     <comps>
       <li Class="CompProperties_Power">
         <compClass>CompPowerPlant</compClass>
-        <basePowerConsumption>-2000</basePowerConsumption>
+        <basePowerConsumption>-4000</basePowerConsumption>
         <transmitsPower>true</transmitsPower>
         <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
       </li>
       <li Class="CompProperties_Refuelable">
-        <fuelConsumptionRate>10.0</fuelConsumptionRate>
+        <fuelConsumptionRate>4.0</fuelConsumptionRate>
         <fuelCapacity>75.0</fuelCapacity>
         <fuelFilter>
           <thingDefs>
-            <li>EnkephalinBox</li>
+            <li>EnkephalinModule</li>
           </thingDefs>
         </fuelFilter>
         <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
@@ -92,7 +92,7 @@
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGeneratorECO</defName>
     <label>Enkephalin Generator (ECO)</label>
-    <description>.</description>
+    <description>Economize on fuel.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGeneratorECO</texPath>
       <drawSize>(2,2)</drawSize>
@@ -115,16 +115,16 @@
     <comps>
       <li Class="CompProperties_Power">
         <compClass>CompPowerPlant</compClass>
-        <basePowerConsumption>-1500</basePowerConsumption>
+        <basePowerConsumption>-3000</basePowerConsumption>
         <transmitsPower>true</transmitsPower>
         <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
       </li>
       <li Class="CompProperties_Refuelable">
-        <fuelConsumptionRate>5.0</fuelConsumptionRate>
+        <fuelConsumptionRate>2.0</fuelConsumptionRate>
         <fuelCapacity>75.0</fuelCapacity>
         <fuelFilter>
           <thingDefs>
-            <li>EnkephalinBox</li>
+            <li>EnkephalinModule</li>
           </thingDefs>
         </fuelFilter>
         <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
@@ -144,7 +144,7 @@
   <ThingDef ParentName="EnkephalinGeneratorBase">
     <defName>EnkephalinGeneratorAdvanced</defName>
     <label>Enkephalin Generator (Advanced)</label>
-    <description>.</description>
+    <description>More power generation.</description>
     <graphicData>
       <texPath>Things/Building/Power/EnkephalinGeneratorAdvanced</texPath>
       <drawSize>(3,3)</drawSize>
@@ -167,16 +167,16 @@
     <comps>
       <li Class="CompProperties_Power">
         <compClass>CompPowerPlant</compClass>
-        <basePowerConsumption>-4000</basePowerConsumption>
+        <basePowerConsumption>-8000</basePowerConsumption>
         <transmitsPower>true</transmitsPower>
         <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
       </li>
       <li Class="CompProperties_Refuelable">
-        <fuelConsumptionRate>15.0</fuelConsumptionRate>
+        <fuelConsumptionRate>6.0</fuelConsumptionRate>
         <fuelCapacity>150.0</fuelCapacity>
         <fuelFilter>
           <thingDefs>
-            <li>EnkephalinBox</li>
+            <li>EnkephalinModule</li>
           </thingDefs>
         </fuelFilter>
         <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>

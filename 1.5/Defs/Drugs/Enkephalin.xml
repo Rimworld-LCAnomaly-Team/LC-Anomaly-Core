@@ -18,7 +18,6 @@
     <stackLimit>50</stackLimit>
     <graphicData>
       <texPath>Things/Item/Drug/Enkephalin</texPath>
-      <shaderType>MoteGlow</shaderType> 
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
     <rotatable>false</rotatable>

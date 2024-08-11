@@ -21,4 +21,12 @@
   <Make50Enkephalin.description>批量制作脑啡肽（工作量减免20%）。</Make50Enkephalin.description>
   <Make50Enkephalin.jobString>正在制作50份脑啡肽。</Make50Enkephalin.jobString>
 
+  <Make10EnkephalinModule.label>制作10份脑啡肽模块</Make10EnkephalinModule.label>
+  <Make10EnkephalinModule.description>批量制作脑啡肽模块（工作量减免20%）。</Make10EnkephalinModule.description>
+  <Make10EnkephalinModule.jobString>正在制作10份脑啡肽模块。</Make10EnkephalinModule.jobString>
+
+  <Make50EnkephalinModule.label>制作50份脑啡肽模块</Make50EnkephalinModule.label>
+  <Make50EnkephalinModule.description>批量制作脑啡肽模块（工作量减免20%）。</Make50EnkephalinModule.description>
+  <Make50EnkephalinModule.jobString>正在制作50份脑啡肽模块。</Make50EnkephalinModule.jobString>
+
 </LanguageData>

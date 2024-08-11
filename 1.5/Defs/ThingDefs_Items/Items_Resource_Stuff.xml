@@ -11,10 +11,6 @@
     <soundDrop>Metal_Drop</soundDrop>
     <useHitPoints>false</useHitPoints>
     <healthAffectsPrice>false</healthAffectsPrice>
-    <statBases>
-      <MarketValue>0</MarketValue>
-      <Mass>0.25</Mass>
-    </statBases>
     <thingCategories>
       <li>LC_Resource</li>
     </thingCategories>
@@ -26,10 +22,31 @@
   <ThingDef ParentName="PeBoxBase">
     <defName>EnkephalinBox</defName>
     <label>Enkephalin Box</label>
-    <description>.</description>
+    <description>The universal Enkephalin box, produced by employees working on abnormalities. Can be used to manufacture Enkephalin modules for power generation or addictive products.</description>
     <thingClass>ThingWithComps</thingClass>
     <graphicData>
       <texPath>Things/Item/Resource/PeBox/EnkephalinBox</texPath>
+    </graphicData>
+    <descriptionHyperlinks>
+      <ThingDef>Enkephalin</ThingDef>
+      <ThingDef>EnkephalinModule</ThingDef>
+    </descriptionHyperlinks>
+    <researchPrerequisites>
+      <li>ExtractEnkephalin</li>
+    </researchPrerequisites>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>0.05</Mass>
+    </statBases>
+  </ThingDef>
+
+  <ThingDef ParentName="PeBoxBase">
+    <defName>EnkephalinModule</defName>
+    <label>Enkephalin Module</label>
+    <description>The packaged Enkephalin module, made by processing the Enkephalin box. Can be used for power generation and sales.</description>
+    <thingClass>ThingWithComps</thingClass>
+    <graphicData>
+      <texPath>Things/Item/Resource/PeBox/EnkephalinModule</texPath>
     </graphicData>
     <descriptionHyperlinks>
       <ThingDef>EnkephalinGenerator</ThingDef>
@@ -37,7 +54,21 @@
     <researchPrerequisites>
       <li>ExtractEnkephalin</li>
     </researchPrerequisites>
-    <comps></comps>
+    <statBases>
+      <MarketValue>50</MarketValue>
+      <Mass>0.25</Mass>
+      <WorkToMake>500</WorkToMake>
+    </statBases>
+    <recipeMaker>
+      <researchPrerequisite>ExtractEnkephalin</researchPrerequisite>
+      <recipeUsers>
+        <li>LC_UniversalBench</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+    </recipeMaker>
+    <costList>
+      <EnkephalinBox>5</EnkephalinBox>
+    </costList>
   </ThingDef>
 
 </Defs>

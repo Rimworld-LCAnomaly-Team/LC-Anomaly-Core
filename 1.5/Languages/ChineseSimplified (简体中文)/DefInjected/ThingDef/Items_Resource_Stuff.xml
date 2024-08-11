@@ -2,6 +2,9 @@
 <LanguageData>
 
   <EnkephalinBox.label>脑啡肽盒子</EnkephalinBox.label>
-  <EnkephalinBox.description>一种通用脑啡肽盒子，通过员工对异想体工作产出。可以用于发电和成瘾品制造。</EnkephalinBox.description>
+  <EnkephalinBox.description>一种通用脑啡肽盒子，通过员工对异想体工作产出。可以用于制造脑啡肽模块用于发电和成瘾品制造。</EnkephalinBox.description>
+
+  <EnkephalinModule.label>脑啡肽模块</EnkephalinModule.label>
+  <EnkephalinModule.description>打包好的脑啡肽模块，通过对脑啡肽盒子进行加工获得。可以用于发电和售卖。</EnkephalinModule.description>
 
 </LanguageData>
