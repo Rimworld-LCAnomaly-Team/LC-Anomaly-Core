@@ -135,12 +135,13 @@ namespace LCAnomalyCore.Building
         {
             base.SpawnSetup(map, respawningAfterLoad);
 
-            //加载存档后进行初始化和事件绑定
-            if (respawningAfterLoad)
-            {
-                Init();
-                innerContainer.OnContentsChanged += OnContentChanged;
-            }
+            //建造和加载存档后进行初始化和事件绑定
+            Init();
+            innerContainer.OnContentsChanged += OnContentChanged;
+            //if (respawningAfterLoad)
+            //{
+
+            //}
         }
 
         /// <summary>
@@ -168,7 +169,7 @@ namespace LCAnomalyCore.Building
 
             //innerContainer.ThingOwnerTick();
 
-            if (EntityCached)
+            if (innerContainer.Count > 0)
             {
                 var entitiy = innerContainer[0] as LC_EntityBasePawn;
                 entitiy?.TickHolded();
