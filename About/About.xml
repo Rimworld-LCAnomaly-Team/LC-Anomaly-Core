@@ -21,5 +21,6 @@
 	</modDependencies>
 	<loadAfter>
 		<li>DarthCY.LC.AnomalyLibrary</li>
+		<li>fxz.myafufu</li>
 	</loadAfter>
 </ModMetaData>
