@@ -1,5 +1,6 @@
 ﻿using LCAnomalyCore.UI;
 using LCAnomalyLibrary.Comp;
+using LCAnomalyLibrary.Comp.Pawns;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace LCAnomalyCore.Comp
                 }
 
                 //只有安排了异想体研究工作的单位才会出现在列表中
-                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy));
+                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy) && x.GetComp<CompPawnStatus>() != null);
             }
         }
 
@@ -84,17 +85,17 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         /// <param name="pawn">单位</param>
         /// <returns></returns>
-        public bool CheckSkillRequire(Pawn pawn)
+        public float CheckSkillRequire(Pawn pawn)
         {
             var building = parent as Building.Building_HoldingPlatform;
             if (building != null && building.HeldPawn != null)
             {
                 var comp = building.HeldPawn.GetComp<LC_CompEntity>();
                 if (comp != null)
-                    return comp.CheckStudierSkillRequire(pawn);
+                    return comp.CheckStudierSkillRequire(pawn.GetComp<CompPawnStatus>(), building.CurWorkType);
             }
 
-            return true;
+            return 0;
         }
 
         /// <summary>

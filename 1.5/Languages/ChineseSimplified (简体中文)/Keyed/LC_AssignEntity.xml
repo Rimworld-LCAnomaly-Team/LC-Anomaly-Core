@@ -7,8 +7,10 @@
   <LC_AssignableEntity_EntityUnassign>解除分配</LC_AssignableEntity_EntityUnassign>
   <LC_AssignableEntity_EntityAssign>分配</LC_AssignableEntity_EntityAssign>
 
-  <LC_AssignableEntity_SkillRequire>满足要求</LC_AssignableEntity_SkillRequire>
-  <LC_AssignableEntity_SkillNotRequire>不满足要求</LC_AssignableEntity_SkillNotRequire>
+  <LC_AssignableEntity_StudySuccessRate>成功率：</LC_AssignableEntity_StudySuccessRate>
+  <LC_AssignableEntity_StudySuccessRate_High>高</LC_AssignableEntity_StudySuccessRate_High>
+  <LC_AssignableEntity_StudySuccessRate_Medium>中</LC_AssignableEntity_StudySuccessRate_Medium>
+  <LC_AssignableEntity_StudySuccessRate_Low>低</LC_AssignableEntity_StudySuccessRate_Low>
 
   <LC_AssignableEntity_SkillDisabled>技能禁用：</LC_AssignableEntity_SkillDisabled>
 

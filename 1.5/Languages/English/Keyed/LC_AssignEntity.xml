@@ -7,8 +7,10 @@
   <LC_AssignableEntity_EntityUnassign>Unassign</LC_AssignableEntity_EntityUnassign>
   <LC_AssignableEntity_EntityAssign>Assign</LC_AssignableEntity_EntityAssign>
 
-  <LC_AssignableEntity_SkillRequire>Requirement Satisfied</LC_AssignableEntity_SkillRequire>
-  <LC_AssignableEntity_SkillNotRequire>Requirement Not Satisfied </LC_AssignableEntity_SkillNotRequire>
+  <LC_AssignableEntity_StudySuccessRate>Success Rate: </LC_AssignableEntity_StudySuccessRate>
+  <LC_AssignableEntity_StudySuccessRate_High>High</LC_AssignableEntity_StudySuccessRate_High>
+  <LC_AssignableEntity_StudySuccessRate_Medium>Medium</LC_AssignableEntity_StudySuccessRate_Medium>
+  <LC_AssignableEntity_StudySuccessRate_Low>Low</LC_AssignableEntity_StudySuccessRate_Low>
 
   <LC_AssignableEntity_SkillDisabled>Skill Forbiddien: </LC_AssignableEntity_SkillDisabled>
 

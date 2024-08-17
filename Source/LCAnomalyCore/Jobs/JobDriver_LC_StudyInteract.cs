@@ -73,7 +73,7 @@ namespace LCAnomalyCore.Jobs
                     //每点自律提供1%工作速度加成
                     float statusRate = pawn.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status * 0.01f;
                     float unlockRate = ThingToStudy.TryGetComp<LC_CompStudiable>().GetWorkSpeedOffset();
-                    duration = (int)(300 * (1 - 1 / (1 + statusRate + unlockRate)));
+                    duration = (int)(300 * (1 / (1 + statusRate + unlockRate)));
                     numModified = duration * comp.Props.amountProdueMax + duration;
                     Log.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
 
@@ -120,7 +120,15 @@ namespace LCAnomalyCore.Jobs
                 }
                 //pawn.skills.Learn(SkillDefOf.Intellectual, 0.1f);
             });
-            studyToil.activeSkill = () => SkillDefOf.Intellectual;
+            studyToil.AddFinishAction(delegate
+            {
+                if (durationTicks < numModified - 1)
+                {
+                    Log.Warning($"Abnormality study inturrpted");
+                    ThingToStudy.TryGetComp<LC_CompEntity>()?.Notify_Studied(pawn);
+                }
+            });
+            //studyToil.activeSkill = () => SkillDefOf.Intellectual;
             if (StudyComp.KnowledgeCategory != null)
             {
                 studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);

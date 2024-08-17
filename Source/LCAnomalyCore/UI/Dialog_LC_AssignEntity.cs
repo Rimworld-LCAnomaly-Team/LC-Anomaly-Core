@@ -181,15 +181,23 @@ namespace LCAnomalyCore.UI
             {
                 string text = "";
 
-                //检查是否满足最低技能条件
-                if (assignable.CheckSkillRequire(pawn))
+                //检查并打印成功率
+                int rate = (int)(assignable.CheckSkillRequire(pawn) * 100);
+                text = "LC_AssignableEntity_StudySuccessRate".Translate();
+
+                if (rate > 70)
                 {
-                    text = "LC_AssignableEntity_SkillRequire".Translate();
+                    text += "LC_AssignableEntity_StudySuccessRate_High".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Green));
+                }
+                else if(rate > 40)
+                {
+                    text = "LC_AssignableEntity_StudySuccessRate_Medium".Translate();
+                    Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Yellow));
                 }
                 else
                 {
-                    text = "LC_AssignableEntity_SkillNotRequire".Translate();
+                    text = "LC_AssignableEntity_StudySuccessRate_Low".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Red));
                 }
             }
