@@ -2,6 +2,7 @@
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp;
+using LCAnomalyLibrary.Comp.Pawns;
 using LCAnomalyLibrary.Interface;
 using LCAnomalyLibrary.Util;
 using RimWorld;
@@ -76,6 +77,8 @@ namespace LCAnomalyCore.Building
             ??= Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
 
         private Graphic cachedEntityNameGraphic;
+
+        private List<Graphic> cachedBoxBarGraphics = new List<Graphic>();
 
         #endregion 缓存
 
@@ -267,10 +270,22 @@ namespace LCAnomalyCore.Building
                 #region 可工作UI
 
                 var category = HeldPawn.def.entityCodexEntry.category.defName;
-                var graphicLevel = Util.GraphicUtil.LevelIndicator_GetCachedTopGraphic(category);
+                var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(category);
                 graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
 
                 #endregion 可工作UI
+
+                #region 左侧Box条
+
+                if(EntityCached && cachedBoxBarGraphics != null && cachedBoxBarGraphics.Count > 0)
+                {
+                    for(int i = 0; i < cachedBoxBarGraphics.Count; i++)
+                    {
+                        cachedBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.forward * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                    }
+                }
+
+                #endregion
             }
         }
 
@@ -295,6 +310,10 @@ namespace LCAnomalyCore.Building
         {
             Init();
             EntityNameUpdateForce();
+
+            //清理原先平台的分配对象
+            GetComp<CompAssignableToPawn_LC_Entity>()?.ClearAllAssignments();
+                
         }
 
         /// <summary>
@@ -313,6 +332,21 @@ namespace LCAnomalyCore.Building
                 }
                 workingSustainer.Maintain();
             }
+        }
+
+        public void Notify_StudyInterval(CompPawnStatus studier)
+        {
+            bool success = cachedEntity.Notify_StudyInterval(studier, CurWorkType);
+
+            if (success)
+                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_PE);
+            else
+                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_NE);
+        }
+
+        public void Notify_StudyStart(Pawn studier)
+        {
+            cachedBoxBarGraphics.Clear();
         }
 
         /// <summary>
@@ -403,7 +437,8 @@ namespace LCAnomalyCore.Building
                     Find.WindowStack.Add(new Dialog_LC_AssignWorkType(this));
                 };
 
-                //command_Action.Disable(base.Props.noAssignablePawnsDesc);
+                if(!EntityCached)
+                    command_Action.Disable("LC_NoAbnormalityOnPlatformDesc".Translate());
 
                 yield return command_Action;
             }

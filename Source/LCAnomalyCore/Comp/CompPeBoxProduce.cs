@@ -11,7 +11,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public new CompProperties_PeBoxProduce Props => (CompProperties_PeBoxProduce)props;
 
-        public override void CheckSpawnPeBox(Pawn studier, LC_StudyResult result)
+        public override void CheckSpawnPeBox(Pawn studier, int amount)
         {
             if (!Defs.ResearchProjectDefOf.ExtractEnkephalin.IsFinished)
             {
@@ -19,7 +19,7 @@ namespace LCAnomalyCore.Comp
                 return;
             }
 
-            base.CheckSpawnPeBox(studier, result);
+            base.CheckSpawnPeBox(studier, amount);
         }
     }
 }

@@ -27,8 +27,8 @@ namespace LCAnomalyCore.Comp
                     return Enumerable.Empty<Pawn>();
                 }
 
-                //只有安排了黑暗研究工作的单位才会出现在列表中
-                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(WorkTypeDefOf.DarkStudy));
+                //只有安排了异想体研究工作的单位才会出现在列表中
+                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy));
             }
         }
 
@@ -46,9 +46,11 @@ namespace LCAnomalyCore.Comp
                     Find.WindowStack.Add(new Dialog_LC_AssignEntity(this));
                 };
 
-                //不存在可分配单位就禁用按钮
+                //不存在可分配工作的单位，或平台上没有实体，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
-                    command_Action.Disable(base.Props.noAssignablePawnsDesc);
+                    command_Action.Disable("LC_NoAssignablePawnsDesc".Translate());
+                else if(((Building_HoldingPlatform)parent).HeldPawn == null)
+                    command_Action.Disable("LC_NoAbnormalityOnPlatformDesc".Translate());
 
                 yield return command_Action;
             }
@@ -64,7 +66,7 @@ namespace LCAnomalyCore.Comp
             //从列表中移除没有安排黑暗研究工作的单位
             foreach (Pawn pawn in assignedPawns)
             {
-                if (!pawn.workSettings.WorkIsActive(WorkTypeDefOf.DarkStudy))
+                if (!pawn.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy))
                     pawnToDelete.Add(pawn);
             }
 
@@ -93,6 +95,14 @@ namespace LCAnomalyCore.Comp
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 清理所有分配人员
+        /// </summary>
+        public void ClearAllAssignments()
+        {
+            assignedPawns.Clear();
         }
     }
 }

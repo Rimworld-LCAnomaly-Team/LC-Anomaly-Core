@@ -5,7 +5,7 @@
     <defName>LC_StudyInteract</defName>
     <label>study</label>
     <giverClass>LCAnomalyCore.Jobs.WorkGiver_LC_StudyInteract</giverClass>
-    <workType>DarkStudy</workType>
+    <workType>AbnormalityStudy</workType>
     <verb>study</verb>
     <gerund>studying</gerund>
     <priorityInType>110</priorityInType>

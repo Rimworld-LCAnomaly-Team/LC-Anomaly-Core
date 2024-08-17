@@ -238,6 +238,11 @@
             <param name="pawn">单位</param>
             <returns></returns>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.ClearAllAssignments">
+            <summary>
+            清理所有分配人员
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ExtractRitualRoleDefOf">
             <summary>
             该Mod所有的ExtractRitualRoleDef
@@ -598,6 +603,16 @@
             获取图集（异想体等级显示）
             </summary>
             <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_BoxBarUnit_PE">
+            <summary>
+            PeBox
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_BoxBarUnit_NE">
+            <summary>
+            NeBox
+            </summary>
         </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_CachedGlassGraphic">
             <summary>

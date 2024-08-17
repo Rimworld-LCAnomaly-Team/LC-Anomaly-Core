@@ -71,6 +71,31 @@
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
+
+  <!-- Enkephalin Convert -->
+  <ResearchProjectDef>
+    <defName>EnkephalinConvert</defName>
+    <label>EEnkephalin Convert</label>
+    <description>Convert Enkephalin to other things.</description>
+    <tab>LCAnomaly</tab>
+    <knowledgeCost>10</knowledgeCost>
+    <knowledgeCategory>Basic</knowledgeCategory>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>ExtractEnkephalin</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin Convert</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Converting Enkephalin</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
   
   <!-- Enkephalin Generator -->
   <ResearchProjectDef>
@@ -79,11 +104,11 @@
     <description>EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>20</knowledgeCost>
-    <knowledgeCategory>Advanced</knowledgeCategory>
+    <knowledgeCategory>Basic</knowledgeCategory>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
-      <li>ExtractEnkephalin</li>
+      <li>EnkephalinConvert</li>
     </prerequisites>
     <generalRules>
       <rulesStrings>

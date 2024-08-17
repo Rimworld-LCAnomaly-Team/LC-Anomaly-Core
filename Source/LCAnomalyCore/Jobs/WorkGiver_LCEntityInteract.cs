@@ -2,6 +2,7 @@
 using Verse.AI;
 using Verse;
 using System.Linq;
+using LCAnomalyLibrary.Comp.Pawns;
 
 namespace LCAnomalyCore.Jobs
 {
@@ -60,6 +61,13 @@ namespace LCAnomalyCore.Jobs
                             JobFailReason.IsSilent();
                         }
 
+                        return false;
+                    }
+
+                    //如果没有CompPawnStatus组件就不兼容
+                    if (pawn.GetComp<CompPawnStatus>() == null)
+                    {
+                        JobFailReason.IsSilent();
                         return false;
                     }
 

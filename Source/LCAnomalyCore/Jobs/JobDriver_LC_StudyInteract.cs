@@ -1,5 +1,6 @@
-﻿using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Interface;
+﻿using LCAnomalyCore.Comp;
+using LCAnomalyLibrary.Comp;
+using LCAnomalyLibrary.Comp.Pawns;
 using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,11 @@ namespace LCAnomalyCore.Jobs
 
         private int studyInteractions;
 
+        //public new bool PlayerInterruptable = true;
+
+        public override bool PlayerInterruptable => playerInterruptable;
+        protected bool playerInterruptable = true;
+
         private Building.Building_HoldingPlatform Platform => base.TargetThingA as Building.Building_HoldingPlatform;
 
         public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
@@ -36,7 +42,6 @@ namespace LCAnomalyCore.Jobs
                 {
                     return pawn.Reserve(ThingToStudy, job, 1, -1, null, errorOnFailed);
                 }
-
                 return false;
             }
 
@@ -55,12 +60,28 @@ namespace LCAnomalyCore.Jobs
                     StudyComp.studyInteractions += studyInteractions;
                 }
             });
-            StatDef stat = ((Platform != null) ? StatDefOf.EntityStudyRate : StatDefOf.ResearchSpeed);
-            int num = Mathf.RoundToInt(600f / pawn.GetStatValue(stat));
-            if (targetIsPawn || Platform != null)
+
+            int numModified = 0;
+            int durationTicks = 0;
+            int duration = 0;
+            //Log.Warning(base.TargetThingA.def.defName);
+            if (ThingToStudy != null)
             {
-                num *= 2;
+                CompPeBoxProduce comp = ThingToStudy.TryGetComp<CompPeBoxProduce>();
+                if(comp != null)
+                {
+                    //每点自律提供1%工作速度加成
+                    float statusRate = pawn.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status * 0.01f;
+                    float unlockRate = ThingToStudy.TryGetComp<LC_CompStudiable>().GetWorkSpeedOffset();
+                    duration = (int)(300 * (1 - 1 / (1 + statusRate + unlockRate)));
+                    numModified = duration * comp.Props.amountProdueMax + duration;
+                    Log.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
+
+                    Platform.Notify_StudyStart(pawn);
+                }
             }
+
+            CompPawnStatus compPawnStatus = pawn.GetComp<CompPawnStatus>();
 
             Toil findAdjacentCell = Toils_General.Do(delegate
             {
@@ -72,11 +93,11 @@ namespace LCAnomalyCore.Jobs
             Toil studyToil;
             if (targetIsPawn)
             {
-                studyToil = StudyPawn(TargetIndex.A, num);
+                studyToil = StudyPawn(TargetIndex.A, numModified);
             }
             else
             {
-                studyToil = Toils_General.WaitWith(TargetIndex.A, num, useProgressBar: true, maintainPosture: false, maintainSleep: false, TargetIndex.A);
+                studyToil = Toils_General.WaitWith(TargetIndex.A, numModified, useProgressBar: true, maintainPosture: false, maintainSleep: false, TargetIndex.A);
                 studyToil.AddPreTickAction(delegate
                 {
                     ThingToStudy.TryGetComp<CompObelisk>()?.Notify_InteractedTick(pawn);
@@ -86,9 +107,18 @@ namespace LCAnomalyCore.Jobs
             studyToil.AddPreTickAction(delegate
             {
                 //Log.Warning($"正在进行对 [{ThingToStudy.def.label.Translate()}] 的研究工作");
+                playerInterruptable = false;
                 Platform?.Notify_Studying(pawn);
-
-                pawn.skills.Learn(SkillDefOf.Intellectual, 0.1f);
+                if (duration != 0)
+                {
+                    durationTicks++;
+                    if (durationTicks % duration == 0)
+                    {
+                        //Log.Warning("触发一次成功率判断");
+                        Platform?.Notify_StudyInterval(compPawnStatus);
+                    }
+                }
+                //pawn.skills.Learn(SkillDefOf.Intellectual, 0.1f);
             });
             studyToil.activeSkill = () => SkillDefOf.Intellectual;
             if (StudyComp.KnowledgeCategory != null)

@@ -280,6 +280,24 @@ namespace LCAnomalyCore.Util
 
         #endregion 收容平台工作类型窗体显示
 
+        #region 收容平台Box显示
+
+        /// <summary>
+        /// PeBox
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_BoxBarUnit_PE =
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "Box/PEBOX_16",
+            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+
+        /// <summary>
+        /// NeBox
+        /// </summary>
+        public static readonly Graphic CachedTopGraphic_BoxBarUnit_NE =
+            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "Box/NEBOX_16",
+            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+
+        #endregion
+
         #region “水桶”
 
         /// <summary>

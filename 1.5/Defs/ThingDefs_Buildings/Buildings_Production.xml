@@ -9,7 +9,7 @@
     <graphicData>
       <texPath>Things/Building/Production/LCUniversalBench</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(1, 1)</drawSize>
+      <drawSize>(2,1.2)</drawSize>
       <damageData>
         <cornerTL>Damage/Corner</cornerTL>
         <cornerTR>Damage/Corner</cornerTR>
@@ -17,10 +17,11 @@
         <cornerBR>Damage/Corner</cornerBR>
       </damageData>
     </graphicData>
-    <castEdgeShadows>false</castEdgeShadows>
+    <castEdgeShadows>true</castEdgeShadows>
     <staticSunShadowHeight>0.20</staticSunShadowHeight>
     <costList>
       <Plasteel>50</Plasteel>
+      <ComponentIndustrial>2</ComponentIndustrial>
     </costList>
     <altitudeLayer>Building</altitudeLayer>
     <minifiedDef>MinifiedThing</minifiedDef>
@@ -31,12 +32,12 @@
       <MaxHitPoints>500</MaxHitPoints>
       <Flammability>0</Flammability>
     </statBases>
-    <size>(1,1)</size>
+    <size>(2,1)</size>
     <designationCategory>Buildings_LC</designationCategory>
     <passability>PassThroughOnly</passability>
     <pathCost>50</pathCost>
     <hasInteractionCell>True</hasInteractionCell>
-    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
+    <interactionCellOffset>(1,0,-1)</interactionCellOffset>
     <surfaceType>Item</surfaceType>
     <inspectorTabs>
       <li>ITab_Bills</li>

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <Defs>
 
-  <!-- Make EnkephalinModule x10 -->
+  <!-- Convert Enkephalin To Bioferrite x10 -->
   <RecipeDef>
-    <defName>Make10EnkephalinModule</defName>
-    <label>Make Enkephalin Module x10</label>
+    <defName>ConvertEnkephalinToBioferrite10</defName>
+    <label>Convert Enkephalin To Bioferrite x10</label>
     <description>.</description>
-    <jobString>Making Enkephalin Module.</jobString>
+    <jobString>Converting Bioferrite.</jobString>
     <workAmount>4000</workAmount>
     <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
     <soundWorking>Recipe_Drug</soundWorking>
@@ -17,11 +17,11 @@
             <li>EnkephalinBox</li>
           </thingDefs>
         </filter>
-        <count>50</count>
+        <count>20</count>
       </li>
     </ingredients>
     <products>
-      <EnkephalinModule>10</EnkephalinModule>
+      <Bioferrite>10</Bioferrite>
     </products>
 	<recipeUsers>
 		<li>LC_UniversalBench</li>
@@ -34,12 +34,12 @@
   <workSkill>Intellectual</workSkill>
   </RecipeDef>
 
-  <!-- Make EnkephalinModule x50 -->
+  <!-- Convert Enkephalin To Bioferrite x50 -->
   <RecipeDef>
-    <defName>Make50EnkephalinModule</defName>
-    <label>Make Enkephalin Module x50</label>
+    <defName>ConvertEnkephalinToBioferrite50</defName>
+    <label>Convert Enkephalin To Bioferrite x50</label>
     <description>.</description>
-    <jobString>Making Enkephalin Module.</jobString>
+    <jobString>Converting Bioferrite.</jobString>
     <workAmount>20000</workAmount>
     <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
     <soundWorking>Recipe_Drug</soundWorking>
@@ -50,11 +50,11 @@
             <li>EnkephalinBox</li>
           </thingDefs>
         </filter>
-        <count>250</count>
+        <count>100</count>
       </li>
     </ingredients>
     <products>
-      <EnkephalinModule>50</EnkephalinModule>
+      <Bioferrite>50</Bioferrite>
     </products>
 	<recipeUsers>
 		<li>LC_UniversalBench</li>
