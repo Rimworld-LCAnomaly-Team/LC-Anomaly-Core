@@ -192,12 +192,12 @@ namespace LCAnomalyCore.UI
                 }
                 else if(rate > 40)
                 {
-                    text = "LC_AssignableEntity_StudySuccessRate_Medium".Translate();
+                    text += "LC_AssignableEntity_StudySuccessRate_Medium".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Yellow));
                 }
                 else
                 {
-                    text = "LC_AssignableEntity_StudySuccessRate_Low".Translate();
+                    text += "LC_AssignableEntity_StudySuccessRate_Low".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Red));
                 }
             }
@@ -205,18 +205,18 @@ namespace LCAnomalyCore.UI
 
         private void DrawToolTipRow(Pawn pawn, Rect rect)
         {
-            SkillDef intellectual = SkillDefOf.Intellectual;
+            //SkillDef intellectual = SkillDefOf.Intellectual;
 
-            string labelCap = pawn.LabelCap;
-            labelCap += "\n" + intellectual.LabelCap + ": ";
+            //string labelCap = pawn.LabelCap;
+            //labelCap += "\n" + intellectual.LabelCap + ": ";
 
-            bool disabled = pawn.skills.GetSkill(intellectual).TotallyDisabled;
-            labelCap += disabled
-                ? "LC_AssignableEntity_SkillDisabled".Translate() + SkillDefOf.Intellectual.label.Translate()
-                : pawn.skills.GetSkill(intellectual).GetLevel();
+            //bool disabled = pawn.skills.GetSkill(intellectual).TotallyDisabled;
+            //labelCap += disabled
+            //    ? "LC_AssignableEntity_SkillDisabled".Translate() + SkillDefOf.Intellectual.label.Translate()
+            //    : pawn.skills.GetSkill(intellectual).GetLevel();
 
-            if (Mouse.IsOver(rect))
-                TooltipHandler.TipRegion(rect, labelCap);
+            //if (Mouse.IsOver(rect))
+            //    TooltipHandler.TipRegion(rect, labelCap);
         }
     }
 }
