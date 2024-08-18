@@ -282,19 +282,30 @@ namespace LCAnomalyCore.Util
 
         #region 收容平台Box显示
 
-        /// <summary>
-        /// PeBox
-        /// </summary>
-        public static readonly Graphic CachedTopGraphic_BoxBarUnit_PE =
-            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "Box/PEBOX_16",
-            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+        private static Dictionary<int, Graphic> CachedTopGraphicDict_BoxBarUnit_PE = new Dictionary<int, Graphic>();
+        private static Dictionary<int, Graphic> CachedTopGraphicDict_BoxBarUnit_NE = new Dictionary<int, Graphic>();
 
-        /// <summary>
-        /// NeBox
-        /// </summary>
-        public static readonly Graphic CachedTopGraphic_BoxBarUnit_NE =
-            GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "Box/NEBOX_16",
-            ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+        public static Graphic CachedTopGraphic_BoxBarUnit_Get(string BoxType, int maxNum)
+        {
+            string baseLoc = baseLocOfHoldingPlatform + "Box/";
+
+            //初始化
+            if (CachedTopGraphicDict_BoxBarUnit_PE.NullOrEmpty())
+            {
+                CachedTopGraphicDict_BoxBarUnit_PE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                CachedTopGraphicDict_BoxBarUnit_PE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+            }
+            if (CachedTopGraphicDict_BoxBarUnit_NE.NullOrEmpty())
+            {
+                CachedTopGraphicDict_BoxBarUnit_NE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                CachedTopGraphicDict_BoxBarUnit_NE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+            }
+
+            if(BoxType == "PE")
+                return CachedTopGraphicDict_BoxBarUnit_PE[maxNum];
+            else
+                return CachedTopGraphicDict_BoxBarUnit_NE[maxNum];
+        }
 
         #endregion
 

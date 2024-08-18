@@ -339,9 +339,9 @@ namespace LCAnomalyCore.Building
             bool success = cachedEntity.Notify_StudyInterval(studier, CurWorkType);
 
             if (success)
-                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_PE);
+                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("PE", cachedEntity.PeBoxComp.Props.amountProdueMax));
             else
-                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_NE);
+                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("NE", cachedEntity.PeBoxComp.Props.amountProdueMax));
         }
 
         public void Notify_StudyStart(Pawn studier)

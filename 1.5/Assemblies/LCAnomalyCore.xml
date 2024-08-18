@@ -604,16 +604,6 @@
             </summary>
             <returns>图集</returns>
         </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_BoxBarUnit_PE">
-            <summary>
-            PeBox
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_BoxBarUnit_NE">
-            <summary>
-            NeBox
-            </summary>
-        </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_CachedGlassGraphic">
             <summary>
             缓存的玻璃图
