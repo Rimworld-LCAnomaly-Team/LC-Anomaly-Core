@@ -37,6 +37,15 @@
     <li>subject_gerund->正在提取脑啡肽</li>
   </ExtractEnkephalin.generalRules.rulesStrings>
 
+  <EnkephalinConvert.label>转化脑啡肽</EnkephalinConvert.label>
+  <EnkephalinConvert.description>研究如何将脑啡肽转化成其他产物。</EnkephalinConvert.description>
+  <EnkephalinConvert.generalRules.rulesStrings>
+    <li>subject->转化脑啡肽</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </EnkephalinConvert.generalRules.rulesStrings>
+
   <Enkephalin_ElectricGenerator.label>脑啡肽发电</Enkephalin_ElectricGenerator.label>
   <Enkephalin_ElectricGenerator.description>研究如何利用脑啡肽发电。</Enkephalin_ElectricGenerator.description>
   <Enkephalin_ElectricGenerator.generalRules.rulesStrings>

@@ -78,7 +78,8 @@ namespace LCAnomalyCore.Building
 
         private Graphic cachedEntityNameGraphic;
 
-        private List<Graphic> cachedBoxBarGraphics = new List<Graphic>();
+        private List<Graphic> cachedPeBoxBarGraphics = new List<Graphic>();
+        private List<Graphic> cachedNeBoxBarGraphics = new List<Graphic>();
 
         #endregion 缓存
 
@@ -277,11 +278,24 @@ namespace LCAnomalyCore.Building
 
                 #region 左侧Box条
 
-                if(EntityCached && cachedBoxBarGraphics != null && cachedBoxBarGraphics.Count > 0)
+                if(EntityCached)
                 {
-                    for(int i = 0; i < cachedBoxBarGraphics.Count; i++)
+                    //NE-BOX
+                    if(cachedNeBoxBarGraphics != null && cachedNeBoxBarGraphics.Count > 0)
                     {
-                        cachedBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.forward * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                        for (int i = 0; i < cachedNeBoxBarGraphics.Count; i++)
+                        {
+                            cachedNeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.back * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                        }
+                    }
+
+                    //PE-BOX
+                    if (cachedPeBoxBarGraphics != null && cachedPeBoxBarGraphics.Count > 0)
+                    {
+                        for (int i = 0; i < cachedPeBoxBarGraphics.Count; i++)
+                        {
+                            cachedPeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.forward * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                        }
                     }
                 }
 
@@ -339,14 +353,15 @@ namespace LCAnomalyCore.Building
             bool success = cachedEntity.Notify_StudyInterval(studier, CurWorkType);
 
             if (success)
-                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("PE", cachedEntity.PeBoxComp.Props.amountProdueMax));
+                cachedPeBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("PE", cachedEntity.PeBoxComp.Props.amountProdueMax));
             else
-                cachedBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("NE", cachedEntity.PeBoxComp.Props.amountProdueMax));
+                cachedNeBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("NE", cachedEntity.PeBoxComp.Props.amountProdueMax));
         }
 
         public void Notify_StudyStart(Pawn studier)
         {
-            cachedBoxBarGraphics.Clear();
+            cachedPeBoxBarGraphics.Clear();
+            cachedNeBoxBarGraphics.Clear();
         }
 
         /// <summary>

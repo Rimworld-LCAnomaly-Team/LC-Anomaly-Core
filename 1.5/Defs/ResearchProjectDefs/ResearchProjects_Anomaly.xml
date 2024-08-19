@@ -75,12 +75,12 @@
   <!-- Enkephalin Convert -->
   <ResearchProjectDef>
     <defName>EnkephalinConvert</defName>
-    <label>EEnkephalin Convert</label>
+    <label>Enkephalin Convert</label>
     <description>Convert Enkephalin to other things.</description>
     <tab>LCAnomaly</tab>
     <knowledgeCost>10</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
-    <researchViewX>0.00</researchViewX>
+    <researchViewX>1.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
       <li>ExtractEnkephalin</li>
@@ -105,7 +105,7 @@
     <tab>LCAnomaly</tab>
     <knowledgeCost>20</knowledgeCost>
     <knowledgeCategory>Basic</knowledgeCategory>
-    <researchViewX>1.00</researchViewX>
+    <researchViewX>2.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
       <li>EnkephalinConvert</li>
@@ -130,7 +130,7 @@
     <tab>LCAnomaly</tab>
     <knowledgeCost>20</knowledgeCost>
     <knowledgeCategory>Advanced</knowledgeCategory>
-    <researchViewX>2.00</researchViewX>
+    <researchViewX>3.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
       <li>Enkephalin_ElectricGenerator</li>
@@ -155,7 +155,7 @@
     <tab>LCAnomaly</tab>
     <knowledgeCost>40</knowledgeCost>
     <knowledgeCategory>Advanced</knowledgeCategory>
-    <researchViewX>2.00</researchViewX>
+    <researchViewX>3.00</researchViewX>
     <researchViewY>0.00</researchViewY>
     <prerequisites>
       <li>Enkephalin_ElectricGenerator</li>
