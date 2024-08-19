@@ -43,12 +43,9 @@ namespace LCAnomalyCore.Util
             if (CachedTopGraphic.Empty())
             {
                 for (int i = 0; i < 10; i++)
-                {
-                    //Log.Message($"贴图缓存：{baseLocOfHoldingPlatform}QliphothIndicator/Top" + i);
-
                     CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Top" + i,
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
-                }
+                LogUtil.Message("QliphothIndicatorTex initialized");
             }
 
             return CachedTopGraphic;
@@ -70,7 +67,6 @@ namespace LCAnomalyCore.Util
         private static List<Graphic> CachedTopGraphic_IndiPeBoxIndicator_Mixed = new List<Graphic>();
 
         private static bool IndiPeBoxIndicator_Initialized = false;
-
 
         /// <summary>
         /// 获取PeBoxCounter图集
@@ -113,7 +109,7 @@ namespace LCAnomalyCore.Util
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
 
-                Log.Warning("IndiPeBoxIndicator Graphic Initialized");
+                LogUtil.Warning("IndiPeBoxIndicator Graphic Initialized");
                 IndiPeBoxIndicator_Initialized = true;
             }
 
@@ -175,6 +171,8 @@ namespace LCAnomalyCore.Util
                 foreach (string str in list)
                     CachedGraphic_LevelIndicator.Add(str, GraphicDatabase.Get<Graphic_Single>(baseLoc + str,
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                LogUtil.Message("LevelIndicatorTex initialized");
             }
 
             return CachedGraphic_LevelIndicator[level];
@@ -199,10 +197,13 @@ namespace LCAnomalyCore.Util
                 //如果贴图为null就切换到英文版
                 if (CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
                 {
+                    LogUtil.Warning("EntityNamePlatformTex cant find local language tex, try to use english ver");
                     CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
                         .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
                         , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
                 }
+
+                LogUtil.Message("EntityNamePlatformTex initialized");
             }
 
             return CachedTopGraphic_EntityNamePlatformTop;
@@ -234,6 +235,8 @@ namespace LCAnomalyCore.Util
                         , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
                     CachedTopGraphicDict_WorkTypePlatformTop.Add(type, graphic);
                 }
+
+                LogUtil.Message("WorkTypePlatformTex initialized");
             }
 
             return CachedTopGraphicDict_WorkTypePlatformTop[workType];
@@ -252,10 +255,11 @@ namespace LCAnomalyCore.Util
             {
                 foreach (var type in eAnomalyWorkTypes)
                 {
-                    //Log.Message($"UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal");
                     var tex = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Dialog/" + type.ToString() + "_Normal", true);
                     CachedTextureDict_DialogAssignWorkTypeNormal.Add(type, tex);
                 }
+
+                LogUtil.Message("DialogAssignWorkTypeNormalTexture initialized");
             }
 
             return CachedTextureDict_DialogAssignWorkTypeNormal[workType];
@@ -337,7 +341,7 @@ namespace LCAnomalyCore.Util
                         GraphicDatabase.Get<Graphic_Single>("Things/Building/TheBucket/TheBucket_Glass",
                         ShaderDatabase.MoteGlow, Defs.ThingDefOf.CogitoBucket.graphicData.drawSize, Color.white);
 
-                    //Log.Message("贴图缓存：Things/Building/TheBucket/TheBucket_Glass");
+                    LogUtil.Message("CogitoBucketTex initialized");
                 }
 
                 return CogitoBucket_CachedGlassGraphic;
@@ -349,6 +353,8 @@ namespace LCAnomalyCore.Util
                     CogitoBucket_CachedBrainSpinalNerve =
                         GraphicDatabase.Get<Graphic_Single>("Things/Building/TheBucket/TheBucket_BrainSpinalNerve",
                         ShaderDatabase.Transparent, Defs.ThingDefOf.CogitoBucket.graphicData.drawSize, Color.white);
+                    
+                    LogUtil.Message("BrainSpinalNerveTex initialized");
                 }
 
                 return CogitoBucket_CachedBrainSpinalNerve;

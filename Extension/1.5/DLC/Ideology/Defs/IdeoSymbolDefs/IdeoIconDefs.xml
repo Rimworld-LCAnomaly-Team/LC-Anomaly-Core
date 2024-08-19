@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	
+	<!--================= 公司图标 ===================-->
+	
+	<IdeoIconDef>
+		<defName>Ideoligion_LCorp</defName>
+		<iconPath>UI/IdeoIcons/Corp/Ideoligion_LCorp</iconPath>	
+		<memes>
+			<li>Structure_Ideological</li>
+		</memes>
+	</IdeoIconDef>
+
+</Defs>

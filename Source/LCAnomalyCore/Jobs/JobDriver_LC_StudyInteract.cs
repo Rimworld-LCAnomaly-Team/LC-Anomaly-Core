@@ -1,6 +1,7 @@
 ﻿using LCAnomalyCore.Comp;
 using LCAnomalyLibrary.Comp;
 using LCAnomalyLibrary.Comp.Pawns;
+using LCAnomalyLibrary.Util;
 using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
@@ -75,7 +76,7 @@ namespace LCAnomalyCore.Jobs
                     float unlockRate = ThingToStudy.TryGetComp<LC_CompStudiable>().GetWorkSpeedOffset();
                     duration = (int)(300 * (1 / (1 + statusRate + unlockRate)));
                     numModified = duration * comp.Props.amountProdueMax + duration;
-                    Log.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
+                    LogUtil.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
 
                     Platform.Notify_StudyStart(pawn);
                 }
@@ -124,7 +125,7 @@ namespace LCAnomalyCore.Jobs
             {
                 if (durationTicks < numModified - 1)
                 {
-                    Log.Warning($"Abnormality study inturrpted");
+                    LogUtil.Warning($"Abnormality study inturrpted");
                     ThingToStudy.TryGetComp<LC_CompEntity>()?.Notify_Studied(pawn);
                 }
             });

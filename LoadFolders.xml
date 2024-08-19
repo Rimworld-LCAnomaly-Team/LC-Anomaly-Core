@@ -3,6 +3,7 @@
 	<v1.5>
 		<li>Cont</li>
 		<li>1.5</li>
+		<li IfModActive="ludeon.rimworld.ideology">Extension/1.5/DLC/Ideology</li>
 		<li IfModActive="fxz.myafufu">Extension/1.5/Fufu</li>
     </v1.5>
 </loadFolders>
