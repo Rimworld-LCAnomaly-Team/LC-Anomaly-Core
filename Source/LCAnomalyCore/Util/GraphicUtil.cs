@@ -292,11 +292,13 @@ namespace LCAnomalyCore.Util
             //初始化
             if (CachedTopGraphicDict_BoxBarUnit_PE.NullOrEmpty())
             {
+                CachedTopGraphicDict_BoxBarUnit_PE.Add(10, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_10", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_PE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_PE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
             if (CachedTopGraphicDict_BoxBarUnit_NE.NullOrEmpty())
             {
+                CachedTopGraphicDict_BoxBarUnit_NE.Add(10, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_10", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
