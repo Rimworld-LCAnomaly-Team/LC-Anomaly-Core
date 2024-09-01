@@ -5,5 +5,10 @@
 		<li>1.5</li>
 		<li IfModActive="ludeon.rimworld.ideology">Extension/1.5/DLC/Ideology</li>
 		<li IfModActive="fxz.myafufu">Extension/1.5/Fufu</li>
+		<li IfModActive="Ancot.KiiroRace">Extension/1.5/HAR/Kiiro</li>
+		<li IfModActive="ancot.milirarace">Extension/1.5/HAR/Milira</li>
+		<li IfModActive="miho.fortifiedoutremer">Extension/1.5/HAR/Miho</li>
+		<li IfModActive="seioch.kurin.har">Extension/1.5/HAR/KurinHAR</li>
+		<li IfModActive="hentailoliteam.axolotl">Extension/1.5/HAR/MoeLotl</li>
     </v1.5>
 </loadFolders>

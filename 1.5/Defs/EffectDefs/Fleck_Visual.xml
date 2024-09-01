@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <FleckDef ParentName="FleckBase_Thrown">
+    <defName>WorkResult_Good</defName>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.2</fadeInTime>
+    <solidTime>1.8</solidTime>
+    <fadeOutTime>0.2</fadeOutTime>
+    <growthRate>0.0</growthRate>
+    <graphicData>
+      <graphicClass>Graphic_FleckPulse</graphicClass>
+      <shaderType>TransparentAnimated</shaderType>
+      <texPath>Fleck/WorkResult_Good</texPath>
+      <drawSize>(4, 4)</drawSize>
+      <shaderParameters>
+        <_NumFrames>22</_NumFrames>        <!--一共几帧-->
+        <_FramesPerSec>10</_FramesPerSec>        <!--一秒几帧-->
+      </shaderParameters>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="FleckBase_Thrown">
+    <defName>WorkResult_Normal</defName>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.2</fadeInTime>
+    <solidTime>1.8</solidTime>
+    <fadeOutTime>0.2</fadeOutTime>
+    <growthRate>0.0</growthRate>
+    <graphicData>
+      <graphicClass>Graphic_FleckPulse</graphicClass>
+      <shaderType>TransparentAnimated</shaderType>
+      <texPath>Fleck/WorkResult_Normal</texPath>
+      <drawSize>(4, 4)</drawSize>
+      <shaderParameters>
+        <_NumFrames>22</_NumFrames>
+        <_FramesPerSec>10</_FramesPerSec>
+      </shaderParameters>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="FleckBase_Thrown">
+    <defName>WorkResult_Bad</defName>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.2</fadeInTime>
+    <solidTime>1.8</solidTime>
+    <fadeOutTime>0.2</fadeOutTime>
+    <growthRate>0.0</growthRate>
+    <graphicData>
+      <graphicClass>Graphic_FleckPulse</graphicClass>
+      <shaderType>TransparentAnimated</shaderType>
+      <texPath>Fleck/WorkResult_Bad</texPath>
+      <drawSize>(4, 4)</drawSize>
+      <shaderParameters>
+        <_NumFrames>22</_NumFrames>
+        <_FramesPerSec>10</_FramesPerSec>
+      </shaderParameters>
+    </graphicData>
+  </FleckDef>
+
+</Defs>

@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B589DFC8-EF88-4803-AB35-65FCFC3AE865}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LCAnomalyLibrary</RootNamespace>
+    <AssemblyName>0LCAnomalyLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\1.5\Assemblies\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>none</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\1.5\Assemblies\0LCAnomalyLibrary.xml</DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Assemblies\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\Assemblies\0LCAnomalyLibrary.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HarmonyMod">
+      <HintPath>..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Comp\Concrete\LC_CompEgg.cs" />
+    <Compile Include="Comp\Concrete\LC_CompEntity.cs" />
+    <Compile Include="Comp\Pawns\CompProperties_PawnStatus.cs" />
+    <Compile Include="Comp\Pawns\CompPawnStatus.cs" />
+    <Compile Include="Comp\Concrete\LC_CompProperties_Entity.cs" />
+    <Compile Include="Comp\Concrete\LC_CompProperties_InteractableEgg.cs" />
+    <Compile Include="Comp\Abstract\LC_CompProperties_RequireThingSpawner.cs" />
+    <Compile Include="Comp\Concrete\LC_CompProperties_Studiable.cs" />
+    <Compile Include="Comp\Concrete\LC_CompProperties_StudyUnlocks.cs" />
+    <Compile Include="Comp\Abstract\LC_CompRequireThingSpawner.cs" />
+    <Compile Include="Comp\Concrete\LC_CompStudiable.cs" />
+    <Compile Include="Comp\Concrete\LC_CompStudyUnlocks.cs" />
+    <Compile Include="Comp\Concrete\LC_EntityBase.cs" />
+    <Compile Include="Comp\Concrete\CompAccessoryable.cs" />
+    <Compile Include="Comp\Concrete\CompEgoExtractable.cs" />
+    <Compile Include="Comp\Concrete\LC_CompPeBoxProduce.cs" />
+    <Compile Include="Comp\Concrete\CompEgoSuit.cs" />
+    <Compile Include="Comp\Concrete\CompEgoWeapon.cs" />
+    <Compile Include="Comp\Concrete\CompPoperties_EgoSuit.cs" />
+    <Compile Include="Comp\Concrete\CompProperties_Accessoryable.cs" />
+    <Compile Include="Comp\Concrete\CompProperties_EgoExtractable.cs" />
+    <Compile Include="Comp\Concrete\LC_CompProperties_PeBoxProduce.cs" />
+    <Compile Include="Comp\Concrete\CompProperties_EgoWeapon.cs" />
+    <Compile Include="Defs\HediffDefOf.cs" />
+    <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
+    <Compile Include="DamageWorker\DamageWorker_LC_Red.cs" />
+    <Compile Include="Defs\ApparelLayerDefOf.cs" />
+    <Compile Include="Defs\DutyDefOf.cs" />
+    <Compile Include="Defs\DamageDefOf.cs" />
+    <Compile Include="Defs\EntityCodexEntryDef.cs" />
+    <Compile Include="Defs\FleckDefOf.cs" />
+    <Compile Include="Defs\LCShaderTypeDefOf.cs" />
+    <Compile Include="Defs\ResearchTabDefOf.cs" />
+    <Compile Include="Defs\SongDefOf.cs" />
+    <Compile Include="Defs\EGO_TYPE.cs" />
+    <Compile Include="Defs\ThingDef_LCAnomalyBase.cs" />
+    <Compile Include="Defs\WorkTypeDefOf.cs" />
+    <Compile Include="GameComponent\GameComponent_LC.cs" />
+    <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
+    <Compile Include="Patch\Patch_ApparelProperties.cs" />
+    <Compile Include="Patch\Patch_AnomalyUtility.cs" />
+    <Compile Include="Patch\Patch_Dialog_EntityCodex.cs" />
+    <Compile Include="Patch\Patch_MentalBreak.cs" />
+    <Compile Include="Patch\Patch_TickManager.cs" />
+    <Compile Include="Patch\Patch_Pawn.cs" />
+    <Compile Include="PsychicRituals\PsychicRitualToil_ExtractAnomaly.cs" />
+    <Compile Include="Render\Hediff\PawnRenderNodeProperties_HediffUpHead.cs" />
+    <Compile Include="Render\Hediff\PawnRenderNodeWorker_HediffUpHead.cs" />
+    <Compile Include="Render\Hediff\PawnRenderNode_HediffUpHead.cs" />
+    <Compile Include="Render\Normal\PawnRenderNodeProperties_StillState.cs" />
+    <Compile Include="Render\Normal\PawnRenderNodeWorker_StillState.cs" />
+    <Compile Include="Render\Normal\PawnRenderNode_StillState.cs" />
+    <Compile Include="Setting\Setting_LCAnomalyLibrary.cs" />
+    <Compile Include="Setting\Setting_LCAnomalyLibrary_Main.cs" />
+    <Compile Include="Shader\ImageEffect_Mosaic.cs" />
+    <Compile Include="Singleton\LCCanvasSingleton.cs" />
+    <Compile Include="Sounds\ExtractRitualTransition.cs" />
+    <Compile Include="Jobs\JobGiver_GatherOfferingsForExtractRitual.cs" />
+    <Compile Include="Defs\ExtractRitualDef.cs" />
+    <Compile Include="Jobs\LordJob_ExtractRitual.cs" />
+    <Compile Include="Misc\LC_FX_Standard.cs" />
+    <Compile Include="Patch\PatchMain.cs" />
+    <Compile Include="Patch\Patch_CompHoldingPlatformTarget.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Defs\ExtractRitualDef_InvocationCircle.cs" />
+    <Compile Include="Gizmo\PsychicRitualGizmo.cs" />
+    <Compile Include="Test\ThrowTextController.cs" />
+    <Compile Include="Toils\ExtractRitualToil_GatherOfferings.cs" />
+    <Compile Include="Toils\ExtractRitualToil_GatherForInvocation.cs" />
+    <Compile Include="UI\Dialog_LC_EntityCodex.cs" />
+    <Compile Include="UI\ITab_PawnStatus.cs" />
+    <Compile Include="Util\ColorUtil.cs" />
+    <Compile Include="Util\Components.cs" />
+    <Compile Include="Util\Curves.cs" />
+    <Compile Include="Util\DamageUtils.cs" />
+    <Compile Include="Util\ExpansionActive.cs" />
+    <Compile Include="Util\ExtractUtil.cs" />
+    <Compile Include="Util\Gizmos.cs" />
+    <Compile Include="Util\LogUtil.cs" />
+    <Compile Include="Util\MusicUtils.cs" />
+    <Compile Include="Util\SightUtil.cs" />
+    <Compile Include="Util\StudyUtils.cs" />
+    <Compile Include="Util\Types.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

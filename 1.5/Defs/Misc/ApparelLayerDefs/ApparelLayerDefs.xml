@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- BackHead -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryBackHead</defName>
+    <label>Anomaly Accessory (BackHead)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Neck -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryNeck</defName>
+    <label>Anomaly Accessory (Neck)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Mouth -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryMouth</defName>
+    <label>Anomaly Accessory (Mouth)</label>
+    <drawOrder>400</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Mask -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryMask</defName>
+    <label>Anomaly Accessory (Mask)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Cheek -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryCheek</defName>
+    <label>Anomaly Accessory (Cheek)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Face -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryFace</defName>
+    <label>Anomaly Accessory (Face)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Hand -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryHand</defName>
+    <label>Anomaly Accessory (Hand)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Glove -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryGlove</defName>
+    <label>Anomaly Accessory (Glove)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Head -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryHead</defName>
+    <label>Anomaly Accessory (Head)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Hat -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryHat</defName>
+    <label>Anomaly Accessory (Hat)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Chest -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryChest</defName>
+    <label>Anomaly Accessory (Chest)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- Eye -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryEye</defName>
+    <label>Anomaly Accessory (Eye)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- RightBack -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryBack_Right</defName>
+    <label>Anomaly Accessory (Right Back)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+
+  <!-- LeftBack -->
+  <ApparelLayerDef>
+    <defName>LC_AccessoryBack_Left</defName>
+    <label>Anomaly Accessory (Left Back)</label>
+    <drawOrder>600</drawOrder>
+  </ApparelLayerDef>
+  
+</Defs>

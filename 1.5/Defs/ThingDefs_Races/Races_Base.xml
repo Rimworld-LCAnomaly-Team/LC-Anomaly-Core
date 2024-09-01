@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  
+  <ThingDef ParentName="BasePawn" Name="LC_EntityBase" Abstract="True">
+    <thingClass>LCAnomalyLibrary.Comp.Abstract.LC_EntityBasePawn</thingClass>
+    <hiddenWhileUndiscovered>true</hiddenWhileUndiscovered>
+    <tradeability>None</tradeability>
+    <hideStats>true</hideStats>
+    <onlyShowInspectString>true</onlyShowInspectString>
+    <hideMainDesc>true</hideMainDesc>
+    <comps>
+      <li Class="CompProperties_AttachPoints">
+        <points>
+          <li>
+            <offset>(-.35, 0, .35)</offset>
+            <type>PlatformRestraint0</type>
+          </li>
+          <li>
+            <offset>(.35, 0, .35)</offset>
+            <type>PlatformRestraint1</type>
+          </li>
+          <li>
+            <offset>(.2, 0, -.71)</offset>
+            <type>PlatformRestraint2</type>
+          </li>
+          <li>
+            <offset>(-.2, 0, -.71)</offset>
+            <type>PlatformRestraint3</type>
+          </li>
+        </points>
+      </li>
+    </comps>
+    <inspectorTabs>
+      <li>ITab_StudyNotes</li>
+    </inspectorTabs>
+  </ThingDef>
+
+</Defs>

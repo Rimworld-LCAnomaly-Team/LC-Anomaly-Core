@@ -37,16 +37,17 @@
       <HintPath>..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="0LCAnomalyLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\1.5\Assemblies\0LCAnomalyLibrary.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="HarmonyMod">
       <HintPath>..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="LCAnomalyLibrary">
-      <HintPath>..\..\..\LC Anomaly Library\1.5\Assemblies\LCAnomalyLibrary.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

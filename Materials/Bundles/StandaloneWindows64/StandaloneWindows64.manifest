@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 2458112394
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: mosaicshader
+      Dependencies: {}

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <Setting_LCAnomalyLibrary_Label>LCAnomaly Library</Setting_LCAnomalyLibrary_Label>
+  
+  <If_ShowWarningSettingsText>Show Custom Arguments Settings</If_ShowWarningSettingsText> 
+  <If_EnableLCWarningText>Enable Warning System</If_EnableLCWarningText> 
+  <If_EnableLCWarningMusicText>Enable Warning Music</If_EnableLCWarningMusicText>
+
+  <If_EnableCustomWarningFadeOptionText>Show Custom Warning Fall Settings</If_EnableCustomWarningFadeOptionText> 
+  <PointsOfWarning_FadeDurationText>Fall Duration (Tick): </PointsOfWarning_FadeDurationText>
+  <PointsOfWarning_FadeAmountText>Fall Amount: </PointsOfWarning_FadeAmountText>
+
+  <If_EnableLCWarningDeathText>Enable Death Warning Points</If_EnableLCWarningDeathText>
+  <If_EnableLCWarningMentalBreakText>Enable Mental Break Warning Points</If_EnableLCWarningMentalBreakText>
+  <PointsOfWarning_PlayerFactionText>Human (Player): </PointsOfWarning_PlayerFactionText>
+  <PointsOfWarning_AllyFactionText>Human (Ally): </PointsOfWarning_AllyFactionText>
+  <PointsOfWarning_NeturalFactionText>Human (Neutral): </PointsOfWarning_NeturalFactionText>
+
+</LanguageData>

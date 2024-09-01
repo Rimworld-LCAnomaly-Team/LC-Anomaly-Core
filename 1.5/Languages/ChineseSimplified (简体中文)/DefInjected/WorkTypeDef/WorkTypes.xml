@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <AbnormalityStudy.description>对收容平台上的异想体进行研究。</AbnormalityStudy.description>
+  <AbnormalityStudy.gerundLabel>正在研究</AbnormalityStudy.gerundLabel>
+  <AbnormalityStudy.labelShort>异想体研究</AbnormalityStudy.labelShort>
+  <AbnormalityStudy.pawnLabel>员工</AbnormalityStudy.pawnLabel>
+  <AbnormalityStudy.verb>研究</AbnormalityStudy.verb>
+  
+</LanguageData>

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef Name="LC_Apparel_EGO" Abstract="True">
+    <thingClass>Apparel</thingClass>
+    <category>Item</category>
+    <selectable>true</selectable>
+    <pathCost>14</pathCost>
+    <techLevel>Industrial</techLevel>
+    <generateAllowChance>0</generateAllowChance>
+    <generateCommonality>0</generateCommonality>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1.0</drawSize>
+      <drawOffset>(0,0,0)</drawOffset>
+      <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <useHitPoints>false</useHitPoints>
+    <statBases>
+      <Flammability>0</Flammability>
+      <DeteriorationRate>0</DeteriorationRate>
+    </statBases>
+    <apparel>
+      <tags>
+        <li>Apparel_EGO</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useWornGraphicMask>false</useWornGraphicMask>
+      <wearPerDay>0</wearPerDay>
+      <canBeDesiredForIdeo>false</canBeDesiredForIdeo>
+      <drawData>
+        <dataNorth><layer>40</layer></dataNorth>
+      </drawData>
+    </apparel>
+    <thingCategories>
+      <li>LC_Apparel_EGO</li>
+    </thingCategories>
+    <altitudeLayer>Item</altitudeLayer>
+    <alwaysHaulable>True</alwaysHaulable>
+    <tickerType>Never</tickerType>
+    <burnableByRecipe>false</burnableByRecipe>
+    <smeltable>false</smeltable>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+    </comps>
+  </ThingDef>
+  
+</Defs>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<LCAnomalyLibrary.Defs.LCShaderTypeDef>
+		<defName>LC_Mosaic</defName>	
+		<shaderPath>MosaicShader</shaderPath>
+	</LCAnomalyLibrary.Defs.LCShaderTypeDef>
+
+</Defs>

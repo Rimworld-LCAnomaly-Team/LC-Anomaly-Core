@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_TabPawnStatusContents>员工等级</LC_TabPawnStatusContents>
+  <LC_ITab_PawnStatus_AvgLevel>等级：</LC_ITab_PawnStatus_AvgLevel>
+
+  <LC_ITab_PawnStatus_Fortitude>勇气</LC_ITab_PawnStatus_Fortitude>
+  <LC_ITab_PawnStatus_Prudence>谨慎</LC_ITab_PawnStatus_Prudence>
+  <LC_ITab_PawnStatus_Temperance>自律</LC_ITab_PawnStatus_Temperance>
+  <LC_ITab_PawnStatus_Justice>正义</LC_ITab_PawnStatus_Justice>
+
+  <LC_ITab_PawnStatus_NonTriggered>属性未激活</LC_ITab_PawnStatus_NonTriggered>
+
+</LanguageData>
