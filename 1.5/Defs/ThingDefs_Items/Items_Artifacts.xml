@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>LC_EmployeeActivator</defName>
+    <label>LobotomyCorp Employee Activator</label>
+    <description>Use to activate the status of LobotomyCorp employee status.</description>
+    <graphicData>
+      <texPath>Things/Item/Artifact/PsychicAnimalPulser</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1</drawSize>
+    </graphicData>
+    <thingClass>ThingWithComps</thingClass>
+    <useHitPoints>true</useHitPoints>
+    <stackLimit>1</stackLimit>
+    <tradeNeverStack>true</tradeNeverStack>
+    <thingCategories>
+      <li>LC_Resource</li>
+    </thingCategories>
+    <relicChance>0</relicChance>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <MaxHitPoints>80</MaxHitPoints>
+    </statBases>
+    <costList>
+      <Cogito>5</Cogito>
+    </costList>
+    <recipeMaker>
+      <workAmount>200</workAmount>
+      <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
+      <workSkill>Crafting</workSkill>
+      <recipeUsers>
+        <li>LC_UniversalBench</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+    </recipeMaker>
+    <drawGUIOverlay>false</drawGUIOverlay>
+    <comps>
+      <li Class="CompProperties_Usable">
+        <useJob>UseItem</useJob>
+        <useLabel>Use {0_label}</useLabel>
+        <useDuration>120</useDuration>
+        <showUseGizmo>true</showUseGizmo>
+      </li>
+      <li Class="LCAnomalyCore.Comp.CompProperties_TriggerPawnStatusAndDestroy" />
+      <!-- <li Class="CompProperties_UseEffectArtifact">
+        <sound>PsychicAnimalPulserCast</sound>
+      </li>
+      <li Class="CompProperties_UseEffectPlayWarmupSound">
+        <warmupSound>PsychicArtifactWarmupSustained</warmupSound>
+      </li> -->
+    </comps>
+  </ThingDef>
+  
+</Defs>

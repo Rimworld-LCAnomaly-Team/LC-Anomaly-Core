@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
 
-  <ThingDef Name="PeBoxBase" ParentName="ResourceBase" Abstract="True">
+  <!-- base -->
+  <ThingDef Name="LC_ResourceBase" ParentName="ResourceBase" Abstract="True">
     <graphicData>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
@@ -19,7 +20,8 @@
     <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
   </ThingDef>
 
-  <ThingDef ParentName="PeBoxBase">
+  <!-- Enkephalin Box -->
+  <ThingDef ParentName="LC_ResourceBase">
     <defName>EnkephalinBox</defName>
     <label>Enkephalin Box</label>
     <description>The universal Enkephalin box, produced by employees working on abnormalities. Can be used to manufacture Enkephalin modules for power generation or addictive products.</description>
@@ -40,7 +42,8 @@
     </statBases>
   </ThingDef>
 
-  <ThingDef ParentName="PeBoxBase">
+  <!-- Enkephalin Module -->
+  <ThingDef ParentName="LC_ResourceBase">
     <defName>EnkephalinModule</defName>
     <label>Enkephalin Module</label>
     <description>The packaged Enkephalin module, made by processing the Enkephalin box. Can be used for power generation and sales.</description>
@@ -69,6 +72,38 @@
     <costList>
       <EnkephalinBox>5</EnkephalinBox>
     </costList>
+  </ThingDef>
+
+  <!-- KCorp Ampoule -->
+  <ThingDef ParentName="LC_ResourceBase">
+    <defName>KCorpAmpoule</defName>
+    <label>KCorp Ampoule</label>
+    <description>.</description>
+    <thingClass>ThingWithComps</thingClass>
+    <graphicData>
+      <texPath>Things/Item/Resource/KCorpAmpoule</texPath>
+      <drawSize>(0.5, 0.5)</drawSize>
+    </graphicData>
+    <!-- <descriptionHyperlinks>
+      <ThingDef>EnkephalinGenerator</ThingDef>
+    </descriptionHyperlinks> -->
+    <!-- <researchPrerequisites>
+      <li>ExtractEnkephalin</li>
+    </researchPrerequisites> -->
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>0.1</Mass>
+    </statBases>
+    <!-- <recipeMaker>
+      <researchPrerequisite>ExtractEnkephalin</researchPrerequisite>
+      <recipeUsers>
+        <li>LC_UniversalBench</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+    </recipeMaker>
+    <costList>
+      <EnkephalinBox>5</EnkephalinBox>
+    </costList> -->
   </ThingDef>
 
 </Defs>

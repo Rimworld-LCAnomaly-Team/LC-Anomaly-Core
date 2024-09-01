@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+  <!-- Cogito Bucket -->
   <ThingDef ParentName="BuildingBase">
     <defName>CogitoBucket</defName>
     <label>"The Bucket"</label>
@@ -77,6 +78,82 @@
     <canOverlapZones>false</canOverlapZones>
     <minifiedDef>MinifiedThing</minifiedDef>
     <tradeability>Sellable</tradeability>
+  </ThingDef>
+
+  <!-- Base Department Core -->
+  <ThingDef Name="LC_DepartmentCoreBase" ParentName="BuildingBase" Abstract="true">
+    <thingClass>LCAnomalyCore.Building.Building_DepartmentCore</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+    </graphicData>
+    <designationCategory>Buildings_LC</designationCategory>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>10000</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <Beauty>10</Beauty>
+      <Mass>35</Mass>
+    </statBases>
+    <size>(3, 3)</size>
+    <fillPercent>1.0</fillPercent>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <passability>Impassable</passability>
+    <rotatable>true</rotatable>
+    <canOverlapZones>false</canOverlapZones>
+    <tradeability>None</tradeability>
+  </ThingDef>
+
+  <!-- Control Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_ControlTeam</defName>
+    <label>Core of Control Team</label>
+    <description>.</description>
+    <graphicData>
+      <texPath>Things/Building/DepartmentCore/ControlTeam_empty</texPath>
+    </graphicData>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>ControlTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelConsumptionRate>0</fuelConsumptionRate>
+        <fuelCapacity>120.0</fuelCapacity>
+        <autoRefuelPercent>1</autoRefuelPercent>
+        <showFuelGizmo>true</showFuelGizmo>
+        <fuelFilter>
+          <thingDefs>
+            <li>KCorpAmpoule</li>
+          </thingDefs>
+        </fuelFilter>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
 </Defs>

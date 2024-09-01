@@ -64,8 +64,9 @@ namespace LCAnomalyCore.Jobs
                         return false;
                     }
 
-                    //如果没有CompPawnStatus组件就不兼容
-                    if (pawn.GetComp<CompPawnStatus>() == null)
+                    var comp = pawn.GetComp<CompPawnStatus>();
+                    //如果没有CompPawnStatus组件或属性未激活，则不兼容
+                    if (comp == null || !comp.Triggered)
                     {
                         JobFailReason.IsSilent();
                         return false;

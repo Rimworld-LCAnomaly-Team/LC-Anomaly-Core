@@ -5,6 +5,9 @@ using Verse;
 
 namespace LCAnomalyCore.Building
 {
+    /// <summary>
+    /// 水桶
+    /// </summary>
     public class Building_CogitoBucket : Verse.Building
     {
         public CompCogitoBucketSpawner CompSpawner => this.GetComp<CompCogitoBucketSpawner>();

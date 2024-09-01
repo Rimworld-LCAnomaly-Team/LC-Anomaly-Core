@@ -88,17 +88,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Building\Building_CogitoBucket.cs" />
+    <Compile Include="Building\Building_DepartmentCore.cs" />
     <Compile Include="Building\Building_EnkephalinGenerator.cs" />
     <Compile Include="Building\Building_HoldingPlatform.cs" />
+    <Compile Include="Comp\CompAssignableDepartmentCore.cs" />
     <Compile Include="Comp\CompBrainSpinalNerve.cs" />
     <Compile Include="Comp\CompCogitoBucketSpawner.cs" />
     <Compile Include="Comp\CompExtractRitualSpot.cs" />
     <Compile Include="Comp\CompPeBoxProduce.cs" />
+    <Compile Include="Comp\CompProperties_AssignableDepartmentCore.cs" />
     <Compile Include="Comp\CompProperties_BrainSpinalNerve.cs" />
     <Compile Include="Comp\CompProperties_CogitoBucketSpawner.cs" />
     <Compile Include="Comp\CompProperties_ExtractRitualSpot.cs" />
     <Compile Include="Comp\CompProperties_PeBoxProduce.cs" />
+    <Compile Include="Comp\CompProperties_TriggerPawnStatusAndDestroy.cs" />
     <Compile Include="Comp\CompProperties_WorkableUI.cs" />
+    <Compile Include="Comp\CompUseEffect_TriggerPawnStatusAndDestory.cs" />
     <Compile Include="Comp\CompWorkableUI.cs" />
     <Compile Include="Comp\HediffCompProperties_CogitoInjected.cs" />
     <Compile Include="Comp\HediffComp_CogitoInjected.cs" />

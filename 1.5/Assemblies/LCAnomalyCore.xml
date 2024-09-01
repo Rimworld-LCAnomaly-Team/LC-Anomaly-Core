@@ -4,12 +4,54 @@
         <name>LCAnomalyCore</name>
     </assembly>
     <members>
+        <member name="T:LCAnomalyCore.Building.Building_CogitoBucket">
+            <summary>
+            水桶
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Building.Building_CogitoBucket.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绘制方法
             </summary>
             <param name="drawLoc">位置</param>
             <param name="flip">是否翻转</param>
+        </member>
+        <member name="T:LCAnomalyCore.Building.Building_DepartmentCore">
+            <summary>
+            部门核心建筑
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompDepartment">
+            <summary>
+            部门comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompRefuelable">
+            <summary>
+            燃料Comp
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.TryHeal">
+            <summary>
+            房间内的员工治疗
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.DrawAt(UnityEngine.Vector3,System.Boolean)">
+            <summary>
+            绘制方法
+            </summary>
+            <param name="drawLoc">位置</param>
+            <param name="flip">是否翻转</param>
+        </member>
+        <member name="T:LCAnomalyCore.Building.EDepartmentType">
+            <summary>
+            部门类型枚举
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.ControlTeam">
+            <summary>
+            控制部
+            </summary>
         </member>
         <member name="T:LCAnomalyCore.Building.Building_EnkephalinGenerator">
             <summary>
@@ -125,6 +167,31 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompAssignableDepartmentCore">
+            <summary>
+            部门核心Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAssignableDepartmentCore.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHeal(Verse.Pawn)">
+            <summary>
+            进行治疗
+            </summary>
+            <param name="employee">员工</param>
+            <returns>是否执行了治疗</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHealEffect(Verse.Pawn,System.Single,System.Int32)">
+            <summary>
+            触发治疗特效
+            </summary>
+            <param name="employee">pawn</param>
+            <param name="amount">单位治疗量</param>
+            <param name="count">治疗部位数量</param>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
             <summary>
             CompProperties
@@ -138,6 +205,11 @@
         <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.Props">
             <summary>
             CompProperties
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+            <summary>
+            部门核心CompProperties
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_ExtractRitualSpot">
