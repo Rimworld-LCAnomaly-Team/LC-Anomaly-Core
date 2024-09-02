@@ -133,6 +133,7 @@
     <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="Util\GraphicUtil.cs" />
+    <Compile Include="Util\HealthUtil.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

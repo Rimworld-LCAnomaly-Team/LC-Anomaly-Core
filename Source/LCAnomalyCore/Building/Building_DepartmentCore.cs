@@ -26,6 +26,19 @@ namespace LCAnomalyCore.Building
         private CompAssignableDepartmentCore compDepartment;
 
         /// <summary>
+        /// 电力comp
+        /// </summary>
+        public CompPowerTrader CompPower
+        {
+            get
+            {
+                compPower ??= GetComp<CompPowerTrader>();
+                return compPower;
+            }
+        }
+        private CompPowerTrader compPower;
+
+        /// <summary>
         /// 燃料Comp
         /// </summary>
         public CompRefuelable CompRefuelable
@@ -41,10 +54,14 @@ namespace LCAnomalyCore.Building
         public override void Tick()
         {
             base.Tick();
-            
-            //按设定的时间间隔进行房间治疗
-            if (Find.TickManager.TicksGame % CompDepartment.Props.healDuration == 0)
-                TryHeal();
+
+            //通电才能工作
+            if (CompPower.PowerOn)
+            {
+                //按设定的时间间隔进行房间治疗
+                if (Find.TickManager.TicksGame % CompDepartment.Props.healDuration == 0)
+                    TryHeal();
+            }
         }
 
         /// <summary>
@@ -71,9 +88,7 @@ namespace LCAnomalyCore.Building
                 if (comp == null || !comp.Triggered)
                     continue;
 
-
-                if(CompDepartment.DoHeal(employee))
-                    healTimes++;
+                healTimes = CompDepartment.DoHeal(employee, CompRefuelable.Fuel);
             }
 
             //按照治疗次数消耗燃料

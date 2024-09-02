@@ -26,6 +26,11 @@
             部门comp
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompPower">
+            <summary>
+            电力comp
+            </summary>
+        </member>
         <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompRefuelable">
             <summary>
             燃料Comp
@@ -177,12 +182,20 @@
             CompProperties
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHeal(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHeal(Verse.Pawn,System.Single)">
             <summary>
             进行治疗
             </summary>
             <param name="employee">员工</param>
-            <returns>是否执行了治疗</returns>
+            <param name="curFuel">当前燃料数量</param>
+            <returns>治疗消耗倍率</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoRestoreEffect(Verse.Pawn,Verse.BodyPartRecord)">
+            <summary>
+            触发断肢修复特效
+            </summary>
+            <param name="employee">pawn</param>
+            <param name="part">部位</param>
         </member>
         <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHealEffect(Verse.Pawn,System.Single,System.Int32)">
             <summary>
@@ -691,6 +704,13 @@
             获取逆卡巴拉计数器的图集
             </summary>
             <returns>图集</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.HealthUtil.FindAllMissingBodyPart(Verse.Pawn)">
+            <summary>
+            获取pawn所有缺失的肢体
+            </summary>
+            <param name="pawn"></param>
+            <returns></returns>
         </member>
     </members>
 </doc>

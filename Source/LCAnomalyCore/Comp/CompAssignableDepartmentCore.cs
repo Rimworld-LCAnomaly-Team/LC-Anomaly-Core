@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using LCAnomalyCore.Util;
+using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
@@ -19,25 +20,62 @@ namespace LCAnomalyCore.Comp
         /// 进行治疗
         /// </summary>
         /// <param name="employee">员工</param>
-        /// <returns>是否执行了治疗</returns>
-        public bool DoHeal(Pawn employee)
+        /// <param name="curFuel">当前燃料数量</param>
+        /// <returns>治疗消耗倍率</returns>
+        public int DoHeal(Pawn employee, float curFuel)
         {
-            List<Hediff_Injury> list = [];
-            employee.health.hediffSet.GetHediffs(ref list);
+            int times = 0;
+            int maxTimes = (int)(curFuel / Props.healConsumeAmount);
 
-            if (list.Count > 0)
+            //治疗断肢
+            List<BodyPartRecord> list_missingPart = HealthUtil.FindAllMissingBodyPart(employee);
+            if (list_missingPart.Count > 0)
             {
-                foreach(Hediff_Injury injury in list)
+                foreach (BodyPartRecord part in list_missingPart)
                 {
-                    injury.Heal(Props.healAmount);
-                    DoHealEffect(employee, Props.healAmount, list.Count);
-                }
-                    
+                    //检查燃料是否够用
+                    if (times + 2 > maxTimes)
+                        return times;
 
-                return true;
+                    //以两倍率消耗来修复肢体
+                    employee.health.RestorePart(part);
+                    times += 2;
+
+                    DoRestoreEffect(employee, part);
+                }
             }
-            else
-                return false;
+
+            //治疗伤口
+            List<Hediff_Injury> list_injury = [];
+            employee.health.hediffSet.GetHediffs(ref list_injury);
+            if (list_injury.Count > 0)
+            {
+                foreach(Hediff_Injury injury in list_injury)
+                {
+                    //检查燃料是否够用
+                    if (times + 1 > maxTimes)
+                        return times;
+
+                    //以1倍率和指定耐久来治疗伤口
+                    injury.Heal(Props.healAmount);
+                    times++;
+                }
+
+                DoHealEffect(employee, Props.healAmount, list_injury.Count);
+            }
+
+            return times;
+        }
+
+        /// <summary>
+        /// 触发断肢修复特效
+        /// </summary>
+        /// <param name="employee">pawn</param>
+        /// <param name="part">部位</param>
+        protected void DoRestoreEffect(Pawn employee, BodyPartRecord part)
+        {
+            MoteMaker.ThrowText(employee.PositionHeld.ToVector3(), employee.MapHeld, $"{part.def.label.Translate()}", Color.cyan);
+            FleckMaker.ThrowMetaIcon(employee.PositionHeld, employee.MapHeld, FleckDefOf.HealingCross, 0.42f);
         }
 
         /// <summary>
