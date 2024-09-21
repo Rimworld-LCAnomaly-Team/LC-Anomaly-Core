@@ -48,6 +48,11 @@
             <param name="drawLoc">位置</param>
             <param name="flip">是否翻转</param>
         </member>
+        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.ProgressBarDraw(UnityEngine.Vector3)">
+            <summary>
+            绘制再生进度条
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Building.EDepartmentType">
             <summary>
             部门类型枚举

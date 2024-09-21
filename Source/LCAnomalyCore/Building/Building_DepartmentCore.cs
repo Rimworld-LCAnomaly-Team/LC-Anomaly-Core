@@ -51,6 +51,9 @@ namespace LCAnomalyCore.Building
         }
         private CompRefuelable compRefuelable;
 
+        private GenDraw.FillableBarRequest fillableBarRequest;
+        private int healTimer = 0;
+
         public override void Tick()
         {
             base.Tick();
@@ -58,9 +61,14 @@ namespace LCAnomalyCore.Building
             //通电才能工作
             if (CompPower.PowerOn)
             {
+                healTimer++;
+
                 //按设定的时间间隔进行房间治疗
-                if (Find.TickManager.TicksGame % CompDepartment.Props.healDuration == 0)
+                if (healTimer >= CompDepartment.Props.healDuration)
+                {
+                    healTimer = 0;
                     TryHeal();
+                }
             }
         }
 
@@ -101,8 +109,6 @@ namespace LCAnomalyCore.Building
             }
         }
 
-
-
         /// <summary>
         /// 绘制方法
         /// </summary>
@@ -111,6 +117,29 @@ namespace LCAnomalyCore.Building
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             base.DrawAt(drawLoc, flip);
+
+            ProgressBarDraw(drawLoc);
+        }
+
+        /// <summary>
+        /// 绘制再生进度条
+        /// </summary>
+        private void ProgressBarDraw(Vector3 drawLoc)
+        {
+            if(fillableBarRequest.filledMat == null)
+            {
+                LogUtil.Warning("部门核心建筑进度条为null，准备初始化");
+
+                fillableBarRequest = default;
+                fillableBarRequest.center = drawLoc + Vector3.back * 1.294f + Vector3.left * 0.12f;
+                fillableBarRequest.size = new Vector2(1.94f, 0.29f);
+                fillableBarRequest.filledMat = SolidColorMaterials.SimpleSolidColorMaterial(ColorLibrary.Brown);
+                fillableBarRequest.unfilledMat = SolidColorMaterials.SimpleSolidColorMaterial(Color.clear);
+                fillableBarRequest.margin = 0.15f;
+            }
+
+            fillableBarRequest.fillPercent = 1.0f * healTimer / CompDepartment.Props.healDuration;
+            GenDraw.DrawFillableBar(fillableBarRequest);
         }
     }
 
