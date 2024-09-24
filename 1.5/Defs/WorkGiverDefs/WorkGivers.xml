@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+  <!-- Study abnormal -->
   <WorkGiverDef>
     <defName>LC_StudyInteract</defName>
     <label>study</label>
-    <giverClass>LCAnomalyCore.Jobs.WorkGiver_LC_StudyInteract</giverClass>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_StudyInteract</giverClass>
     <workType>AbnormalityStudy</workType>
     <verb>study</verb>
     <gerund>studying</gerund>
@@ -12,6 +13,21 @@
     <canBeDoneByMechs>false</canBeDoneByMechs>
   </WorkGiverDef>
 
+  <!-- Become employee -->
+  <WorkGiverDef>
+    <defName>LC_BD</defName>
+    <label>become employee</label>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_BecomeEmployee</giverClass>
+    <workType>Research</workType>
+    <verb>study</verb>
+    <gerund>studying</gerund>
+    <priorityInType>64</priorityInType>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+  </WorkGiverDef>
+
+  <!-- Craft on UniversalBench -->
   <WorkGiverDef>
     <defName>LC_UniversalBenchBill</defName>
     <label>craft at universal workbench</label>

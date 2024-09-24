@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <ThingDef ParentName="ResourceBase">
+  <!-- <ThingDef ParentName="ResourceBase">
     <defName>LC_EmployeeActivator</defName>
     <label>LobotomyCorp Employee Activator</label>
     <description>Use to activate the status of LobotomyCorp employee status.</description>
@@ -43,13 +43,7 @@
         <showUseGizmo>true</showUseGizmo>
       </li>
       <li Class="LCAnomalyCore.Comp.CompProperties_TriggerPawnStatusAndDestroy" />
-      <!-- <li Class="CompProperties_UseEffectArtifact">
-        <sound>PsychicAnimalPulserCast</sound>
-      </li>
-      <li Class="CompProperties_UseEffectPlayWarmupSound">
-        <warmupSound>PsychicArtifactWarmupSustained</warmupSound>
-      </li> -->
     </comps>
-  </ThingDef>
+  </ThingDef> -->
   
 </Defs>

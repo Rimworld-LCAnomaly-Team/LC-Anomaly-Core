@@ -119,8 +119,10 @@
     <Compile Include="Defs\ThingDefOf.cs" />
     <Compile Include="Defs\ThoughtDefOf.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
-    <Compile Include="Jobs\JobDriver_LC_StudyInteract.cs" />
-    <Compile Include="Jobs\WorkGiver_LCEntityInteract.cs" />
+    <Compile Include="Jobs\JobDriver_BecomeEmployee.cs" />
+    <Compile Include="Jobs\JobDriver_StudyInteract.cs" />
+    <Compile Include="Jobs\WorkGiver_BecomeEmployee.cs" />
+    <Compile Include="Jobs\WorkGiver_StudyInteract.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
     <Compile Include="Patch\Patch_TargetHoldingPlatformForEntity.cs" />

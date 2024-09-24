@@ -7,5 +7,6 @@ namespace LCAnomalyCore.Defs
     public class JobDefOf
     {
         public static JobDef LC_StudyInteract;
+        public static JobDef LC_BecomeEmployee;
     }
 }

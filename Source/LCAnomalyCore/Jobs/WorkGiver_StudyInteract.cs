@@ -6,7 +6,7 @@ using LCAnomalyLibrary.Comp.Pawns;
 
 namespace LCAnomalyCore.Jobs
 {
-    public class WorkGiver_LC_StudyInteract : WorkGiver_StudyBase
+    public class WorkGiver_StudyInteract : WorkGiver_StudyBase
     {
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {

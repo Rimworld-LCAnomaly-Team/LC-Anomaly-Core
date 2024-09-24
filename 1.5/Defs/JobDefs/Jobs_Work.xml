@@ -3,8 +3,15 @@
 
   <JobDef>
     <defName>LC_StudyInteract</defName>
-    <driverClass>LCAnomalyCore.Jobs.JobDriver_LC_StudyInteract</driverClass>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_StudyInteract</driverClass>
     <reportString>Studying TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <JobDef>
+    <defName>LC_BecomeEmployee</defName>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_BecomeEmployee</driverClass>
+    <reportString>TargetA is becoming employee.</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 

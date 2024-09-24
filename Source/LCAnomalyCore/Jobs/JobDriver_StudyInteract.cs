@@ -4,13 +4,12 @@ using LCAnomalyLibrary.Comp.Pawns;
 using LCAnomalyLibrary.Util;
 using RimWorld;
 using System.Collections.Generic;
-using UnityEngine;
 using Verse;
 using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {
-    public class JobDriver_LC_StudyInteract : JobDriver
+    public class JobDriver_StudyInteract : JobDriver
     {
         private const TargetIndex ThingToStudyIndex = TargetIndex.A;
 

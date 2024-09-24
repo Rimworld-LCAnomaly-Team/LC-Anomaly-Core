@@ -133,7 +133,7 @@ namespace LCAnomalyCore.Building
                 fillableBarRequest = default;
                 fillableBarRequest.center = drawLoc + Vector3.back * 1.294f + Vector3.left * 0.12f;
                 fillableBarRequest.size = new Vector2(1.94f, 0.29f);
-                fillableBarRequest.filledMat = SolidColorMaterials.SimpleSolidColorMaterial(ColorLibrary.Brown);
+                fillableBarRequest.filledMat = SolidColorMaterials.SimpleSolidColorMaterial(CompDepartment.Props.fillableBarColor);
                 fillableBarRequest.unfilledMat = SolidColorMaterials.SimpleSolidColorMaterial(Color.clear);
                 fillableBarRequest.margin = 0.15f;
             }
