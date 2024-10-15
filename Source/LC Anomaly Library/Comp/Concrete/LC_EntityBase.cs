@@ -42,7 +42,12 @@ namespace LCAnomalyLibrary.Comp
         public override void Notify_Studied(Pawn studier, float amount, KnowledgeCategoryDef category = null)
         {
             LogUtil.Warning("研究了一次");
-            EntityComp?.Notify_Studied(studier);
+
+            if (EntityComp != null)
+            {
+                EntityComp.Notify_Studied(studier);
+                EntityComp.StudyUnlocksComp.OnStudied(studier, amount, category);
+            }
         }
 
         /// <summary>
