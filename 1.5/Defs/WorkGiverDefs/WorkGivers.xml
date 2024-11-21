@@ -13,20 +13,6 @@
     <canBeDoneByMechs>false</canBeDoneByMechs>
   </WorkGiverDef>
 
-  <!-- Become employee -->
-  <WorkGiverDef>
-    <defName>LC_BD</defName>
-    <label>become employee</label>
-    <giverClass>LCAnomalyCore.Jobs.WorkGiver_BecomeEmployee</giverClass>
-    <workType>Research</workType>
-    <verb>study</verb>
-    <gerund>studying</gerund>
-    <priorityInType>64</priorityInType>
-    <requiredCapacities>
-      <li>Manipulation</li>
-    </requiredCapacities>
-  </WorkGiverDef>
-
   <!-- Craft on UniversalBench -->
   <WorkGiverDef>
     <defName>LC_UniversalBenchBill</defName>

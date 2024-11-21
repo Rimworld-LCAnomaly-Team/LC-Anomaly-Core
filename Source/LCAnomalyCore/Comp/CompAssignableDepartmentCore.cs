@@ -1,6 +1,9 @@
-﻿using LCAnomalyCore.Util;
+﻿using LCAnomalyCore.UI;
+using LCAnomalyCore.Util;
+using LCAnomalyLibrary.Comp.Pawns;
 using RimWorld;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -9,12 +12,80 @@ namespace LCAnomalyCore.Comp
     /// <summary>
     /// 部门核心Comp
     /// </summary>
-    public class CompAssignableDepartmentCore : ThingComp
+    public class CompAssignableDepartmentCore : CompAssignableToPawn
     {
         /// <summary>
         /// CompProperties
         /// </summary>
         public CompProperties_AssignableDepartmentCore Props => (CompProperties_AssignableDepartmentCore)props;
+
+        /// <summary>
+        /// 候选者列表
+        /// </summary>
+        public override IEnumerable<Pawn> AssigningCandidates
+        {
+            get
+            {
+                if (!parent.Spawned)
+                {
+                    return Enumerable.Empty<Pawn>();
+                }
+
+                //只有拥有员工属性Comp的单位才会出现在分配列表中
+                return parent.Map.mapPawns.FreeColonists.Where(x => x.GetComp<CompPawnStatus>() != null);
+            }
+        }
+
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        {
+            if (ShouldShowAssignmentGizmo())
+            {
+                Command_Action command_Action = new Command_Action();
+                command_Action.defaultLabel = "LC_AssignmentGizmoLabel".Translate();
+                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/AssignmentGizmo", true);
+                command_Action.defaultDesc = "LC_AssignmentGizmoDesc".Translate();
+                command_Action.action = delegate ()
+                {
+                    Find.WindowStack.Add(new Dialog_LC_DepartmentCoreAssign(this));
+                };
+
+                //不存在可分配工作的单位，就禁用按钮
+                if (!AssigningCandidates.Any<Pawn>())
+                    command_Action.Disable("LC_NoAssignablePawnsDesc".Translate());
+
+                yield return command_Action;
+            }
+        }
+
+        public override void TryAssignPawn(Pawn pawn)
+        {
+            uninstalledAssignedPawns.Remove(pawn);
+            if (!assignedPawns.Contains(pawn))
+            {
+                assignedPawns.Add(pawn);
+                pawn.GetComp<CompPawnStatus>()?.SetPawnStatusEnabled(true);
+
+                SortAssignedPawns();
+            }
+        }
+
+        public override void TryUnassignPawn(Pawn pawn, bool sort = true, bool uninstall = false)
+        {
+            if (assignedPawns.Contains(pawn))
+            {
+                assignedPawns.Remove(pawn);
+                pawn.GetComp<CompPawnStatus>()?.SetPawnStatusEnabled(false);
+
+                if (uninstall && pawn != null && !uninstalledAssignedPawns.Contains(pawn))
+                {
+                    uninstalledAssignedPawns.Add(pawn);
+                }
+                if (sort)
+                {
+                    SortAssignedPawns();
+                }
+            }
+        }
 
         /// <summary>
         /// 进行治疗

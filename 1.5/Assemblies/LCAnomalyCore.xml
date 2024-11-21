@@ -187,6 +187,11 @@
             CompProperties
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Comp.CompAssignableDepartmentCore.AssigningCandidates">
+            <summary>
+            候选者列表
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHeal(Verse.Pawn,System.Single)">
             <summary>
             进行治疗
@@ -635,6 +640,16 @@
             <param name="billDoer">医生</param>
             <param name="ingredients">？</param>
             <param name="bill">手术</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
+            <summary>
+            自动研究分配对话框
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
         </member>
         <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
             <summary>

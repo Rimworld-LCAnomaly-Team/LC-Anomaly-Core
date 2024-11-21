@@ -137,6 +137,9 @@
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
         <fillableBarColor>(0.39, 0.21, 0, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
       </li>
       <li Class="CompProperties_Refuelable">
         <fuelConsumptionRate>0</fuelConsumptionRate>

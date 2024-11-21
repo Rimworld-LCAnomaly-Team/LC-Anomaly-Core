@@ -102,9 +102,7 @@
     <Compile Include="Comp\CompProperties_CogitoBucketSpawner.cs" />
     <Compile Include="Comp\CompProperties_ExtractRitualSpot.cs" />
     <Compile Include="Comp\CompProperties_PeBoxProduce.cs" />
-    <Compile Include="Comp\CompProperties_TriggerPawnStatusAndDestroy.cs" />
     <Compile Include="Comp\CompProperties_WorkableUI.cs" />
-    <Compile Include="Comp\CompUseEffect_TriggerPawnStatusAndDestory.cs" />
     <Compile Include="Comp\CompWorkableUI.cs" />
     <Compile Include="Comp\HediffCompProperties_CogitoInjected.cs" />
     <Compile Include="Comp\HediffComp_CogitoInjected.cs" />
@@ -119,9 +117,7 @@
     <Compile Include="Defs\ThingDefOf.cs" />
     <Compile Include="Defs\ThoughtDefOf.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
-    <Compile Include="Jobs\JobDriver_BecomeEmployee.cs" />
     <Compile Include="Jobs\JobDriver_StudyInteract.cs" />
-    <Compile Include="Jobs\WorkGiver_BecomeEmployee.cs" />
     <Compile Include="Jobs\WorkGiver_StudyInteract.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
@@ -132,6 +128,7 @@
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />
     <Compile Include="Recipe\Recipe_ExtractCogito.cs" />
     <Compile Include="Comp\CompAssignableToPawn_LC_Entity.cs" />
+    <Compile Include="UI\Dialog_LC_DepartmentCoreAssign.cs" />
     <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="Util\GraphicUtil.cs" />

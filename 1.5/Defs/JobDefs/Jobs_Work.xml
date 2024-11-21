@@ -8,11 +8,4 @@
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 
-  <JobDef>
-    <defName>LC_BecomeEmployee</defName>
-    <driverClass>LCAnomalyCore.Jobs.JobDriver_BecomeEmployee</driverClass>
-    <reportString>TargetA is becoming employee.</reportString>
-    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
-  </JobDef>
-
 </Defs>

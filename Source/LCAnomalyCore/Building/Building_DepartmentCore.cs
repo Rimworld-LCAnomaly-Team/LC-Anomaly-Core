@@ -93,7 +93,7 @@ namespace LCAnomalyCore.Building
 
                 //不存在或者没激活员工状态则禁止恢复
                 var comp = employee.GetComp<CompPawnStatus>();
-                if (comp == null || !comp.Triggered)
+                if (comp == null || !comp.Enabled)
                     continue;
 
                 healTimes = CompDepartment.DoHeal(employee, CompRefuelable.Fuel);

@@ -33,7 +33,7 @@ namespace LCAnomalyLibrary.UI
 
         protected override void FillTab()
         {
-            if (StatusComp.Triggered)
+            if (StatusComp.Enabled)
             {
                 Rect rectAvgLevel = new Rect(10f, 20f, size.x, 20f);
                 //rectAvgLevel = rectAvgLevel.ContractedBy(10f);

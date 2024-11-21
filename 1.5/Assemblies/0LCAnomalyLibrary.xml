@@ -219,7 +219,7 @@
             是否已经初始化
             </summary>
         </member>
-        <member name="P:LCAnomalyLibrary.Comp.Pawns.CompPawnStatus.Triggered">
+        <member name="P:LCAnomalyLibrary.Comp.Pawns.CompPawnStatus.Enabled">
             <summary>
             是否已经激活
             </summary>
@@ -260,11 +260,10 @@
             <param name="statusType">属性类型</param>
             <returns></returns>
         </member>
-        <member name="M:LCAnomalyLibrary.Comp.Pawns.CompPawnStatus.TriggerPawnStatus">
+        <member name="M:LCAnomalyLibrary.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean)">
             <summary>
             激活员工属性
             </summary>
-            <returns>激活是否成功</returns>
         </member>
         <member name="M:LCAnomalyLibrary.Comp.Pawns.CompPawnStatus.StatusInit(System.Boolean)">
             <summary>

@@ -42,8 +42,29 @@ namespace LCAnomalyLibrary.Comp.Pawns
         /// <summary>
         /// 是否已经激活
         /// </summary>
-        public bool Triggered => triggered;
-        private bool triggered;
+        public bool Enabled
+        {
+            get => enabled;
+            protected set
+            {
+                if(value != enabled)
+                {
+                    if(value == true)
+                    {
+                        (parent as Pawn)?.health?.GetOrAddHediff(HediffDefOf.LC_PawnStatus);
+                    }
+                    else
+                    {
+                        var hediff = (parent as Pawn)?.health?.hediffSet?.GetFirstHediffOfDef(HediffDefOf.LC_PawnStatus);
+                        if(hediff != null)
+                            (parent as Pawn)?.health?.RemoveHediff(hediff);
+                    }
+
+                    enabled = value;
+                }
+            }
+        }
+        private bool enabled;
 
         /// <summary>
         /// 综合等级
@@ -95,7 +116,7 @@ namespace LCAnomalyLibrary.Comp.Pawns
         /// </summary>
         public override void PostExposeData()
         {
-            Scribe_Values.Look(ref triggered, "triggered");
+            Scribe_Values.Look(ref enabled, "triggered");
             Scribe_Values.Look(ref Inited, "inited");
             Scribe_Deep.Look(ref status_Fortitude, "pawnStatus_Fortitude");
             Scribe_Deep.Look(ref status_Prudence, "pawnStatus_Prudence");
@@ -218,16 +239,9 @@ namespace LCAnomalyLibrary.Comp.Pawns
         /// <summary>
         /// 激活员工属性
         /// </summary>
-        /// <returns>激活是否成功</returns>
-        public bool TriggerPawnStatus()
+        public void SetPawnStatusEnabled(bool state)
         {
-            if (Triggered) return false;
-
-            //检查hediff存在情况
-            (parent as Pawn)?.health?.GetOrAddHediff(HediffDefOf.LC_PawnStatus);
-            triggered = true;
-
-            return true;
+            Enabled = state;
         }
 
         #endregion
