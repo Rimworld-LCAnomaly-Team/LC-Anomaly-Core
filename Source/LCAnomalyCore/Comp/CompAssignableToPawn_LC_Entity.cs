@@ -28,8 +28,8 @@ namespace LCAnomalyCore.Comp
                     return Enumerable.Empty<Pawn>();
                 }
 
-                //只有安排了异想体研究工作的单位才会出现在列表中
-                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy) && x.GetComp<CompPawnStatus>() != null);
+                //只有安排了异想体研究工作，且拥有脑叶员工属性，并且处于激活状态的小人，才能够出现在实体自动研究分配列表里
+                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy) && x.GetComp<CompPawnStatus>() != null && x.GetComp<CompPawnStatus>().Enabled);
             }
         }
 
@@ -38,9 +38,9 @@ namespace LCAnomalyCore.Comp
             if (ShouldShowAssignmentGizmo())
             {
                 Command_Action command_Action = new Command_Action();
-                command_Action.defaultLabel = "LC_AssignmentGizmoLabel".Translate();
-                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/AssignmentGizmo", true);
-                command_Action.defaultDesc = "LC_AssignmentGizmoDesc".Translate();
+                command_Action.defaultLabel = "LC_AssignmentGizmo_HoldingPlatform_Label".Translate();
+                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/Assignment/HoldingPlatform", true);
+                command_Action.defaultDesc = "LC_AssignmentGizmo_HoldingPlatform_Desc".Translate();
                 command_Action.action = delegate ()
                 {
                     CheckAssignedList();
@@ -49,9 +49,9 @@ namespace LCAnomalyCore.Comp
 
                 //不存在可分配工作的单位，或平台上没有实体，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
-                    command_Action.Disable("LC_NoAssignablePawnsDesc".Translate());
+                    command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc".Translate());
                 else if(((Building_HoldingPlatform)parent).HeldPawn == null)
-                    command_Action.Disable("LC_NoAbnormalityOnPlatformDesc".Translate());
+                    command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
             }

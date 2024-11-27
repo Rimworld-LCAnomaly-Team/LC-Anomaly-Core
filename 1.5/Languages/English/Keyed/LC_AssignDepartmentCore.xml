@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_AssignmentGizmo_DepartmentCore_Label>Employee Assign...</LC_AssignmentGizmo_DepartmentCore_Label>
+  <LC_AssignmentGizmo_DepartmentCore_Desc>Click to assign pawns to Department, pawn assigned's employee buff will be enabled.\nUnassign will disable the buff.</LC_AssignmentGizmo_DepartmentCore_Desc>
+  <LC_AssignmentGizmo_NoAssignablePawns_Desc>No assignable pawn</LC_AssignmentGizmo_NoAssignablePawns_Desc>
+
+</LanguageData>

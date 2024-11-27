@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_AssignmentGizmo_DepartmentCore_Label>分配殖民者...</LC_AssignmentGizmo_DepartmentCore_Label>
+  <LC_AssignmentGizmo_DepartmentCore_Desc>点击以分配殖民者到该部门，被分配的殖民者将会被激活员工属性增益。\n取消分配后，增益自动解除。</LC_AssignmentGizmo_DepartmentCore_Desc>
+  <LC_AssignmentGizmo_NoAssignablePawns_Desc>没有可分配的殖民者</LC_AssignmentGizmo_NoAssignablePawns_Desc>
+
+</LanguageData>

@@ -121,7 +121,7 @@
   <!-- Control Team Core-->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_ControlTeam</defName>
-    <label>Core of Control Team</label>
+    <label>Department Core (Control Team)</label>
     <description>.</description>
     <graphicData>
       <texPath>Things/Building/DepartmentCore/ControlTeam_empty</texPath>

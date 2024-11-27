@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
 
-  <LC_AssignmentGizmoLabel>设置自动工作列表</LC_AssignmentGizmoLabel>
-  <LC_AssignmentGizmoDesc>点击来安排哪些小人负责对该平台的异想体进行自动工作。\n被安排的小人将会在可用时自动进行工作，前提是安排了黑暗研究工作类型。\n请注意，错误的分配可能会导致危险的后果。</LC_AssignmentGizmoDesc>
-  
+  <LC_AssignmentGizmo_HoldingPlatform_Label>设置自动工作列表...</LC_AssignmentGizmo_HoldingPlatform_Label>
+  <LC_AssignmentGizmo_HoldingPlatform_Desc>点击来安排哪些小人负责对该平台的异想体进行自动工作。\n被安排的小人将会在可用时自动进行工作，前提是安排了黑暗研究工作类型。\n请注意，错误的分配可能会导致危险的后果。</LC_AssignmentGizmo_HoldingPlatform_Desc>
+  <LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc>没有可分配的员工\n请检查是否安排工作且已经分配给部门核心</LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc>
+  <LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc>平台上没有可研究的异想体</LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc>
+
   <LC_AssignableEntity_EntityUnassign>解除分配</LC_AssignableEntity_EntityUnassign>
   <LC_AssignableEntity_EntityAssign>分配</LC_AssignableEntity_EntityAssign>
 
@@ -13,5 +15,5 @@
   <LC_AssignableEntity_StudySuccessRate_Low>低</LC_AssignableEntity_StudySuccessRate_Low>
 
   <LC_AssignableEntity_SkillDisabled>技能禁用：</LC_AssignableEntity_SkillDisabled>
-
+  
 </LanguageData>

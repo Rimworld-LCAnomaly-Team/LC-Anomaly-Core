@@ -41,9 +41,9 @@ namespace LCAnomalyCore.Comp
             if (ShouldShowAssignmentGizmo())
             {
                 Command_Action command_Action = new Command_Action();
-                command_Action.defaultLabel = "LC_AssignmentGizmoLabel".Translate();
-                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/AssignmentGizmo", true);
-                command_Action.defaultDesc = "LC_AssignmentGizmoDesc".Translate();
+                command_Action.defaultLabel = "LC_AssignmentGizmo_DepartmentCore_Label".Translate();
+                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/Assignment/DepartmentCore", true);
+                command_Action.defaultDesc = "LC_AssignmentGizmo_DepartmentCore_Desc".Translate();
                 command_Action.action = delegate ()
                 {
                     Find.WindowStack.Add(new Dialog_LC_DepartmentCoreAssign(this));
@@ -51,7 +51,7 @@ namespace LCAnomalyCore.Comp
 
                 //不存在可分配工作的单位，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
-                    command_Action.Disable("LC_NoAssignablePawnsDesc".Translate());
+                    command_Action.Disable("LC_AssignmentGizmo_NoAssignablePawns_Desc".Translate());
 
                 yield return command_Action;
             }
