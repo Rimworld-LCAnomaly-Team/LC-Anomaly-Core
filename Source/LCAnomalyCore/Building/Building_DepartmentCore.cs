@@ -3,7 +3,6 @@ using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp.Pawns;
 using LCAnomalyLibrary.Util;
 using RimWorld;
-using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -118,13 +117,18 @@ namespace LCAnomalyCore.Building
         /// <param name="flip">是否翻转</param>
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
-            base.DrawAt(drawLoc, flip);
+            //base.DrawAt(drawLoc, flip);
+            var offsetPos = drawLoc + Vector3.up * 0.1f;
+
+            GraphicUtil
+                .DepartmentCore_GetCachedBaseGraphic(CompRefuelable.FuelPercentOfMax)
+                .Draw(drawLoc + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
             GraphicUtil
                 .DepartmentCore_GetCachedTopGraphic()[CompDepartment.Props.departmentType.ToString()]
-                .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                .Draw(offsetPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
-            ProgressBarDraw(drawLoc);
+            ProgressBarDraw(offsetPos);
         }
 
         /// <summary>

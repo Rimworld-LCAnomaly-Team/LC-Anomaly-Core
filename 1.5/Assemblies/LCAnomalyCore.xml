@@ -732,12 +732,12 @@
         </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.cachedTopGraphic_DepartmentCore">
             <summary>
-            缓存的逆卡巴拉计数器的图集
+            缓存的部门核心覆盖层图集
             </summary>
         </member>
         <member name="M:LCAnomalyCore.Util.GraphicUtil.DepartmentCore_GetCachedTopGraphic">
             <summary>
-            获取逆卡巴拉计数器的图集
+            获取部门核心覆盖层
             </summary>
             <returns>图集</returns>
         </member>

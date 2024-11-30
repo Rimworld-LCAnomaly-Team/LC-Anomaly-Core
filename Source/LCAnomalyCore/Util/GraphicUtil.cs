@@ -369,13 +369,16 @@ namespace LCAnomalyCore.Util
 
         private static Vector2 drawSizeOfDepartmentCore = Defs.ThingDefOf.LC_DepartmentCore_ControlTeam.graphicData.drawSize;
         private static string baseLocOfDepartmentCoreOverlay = "Things/Building/DepartmentCore/Overlay/";
+        private static string baseLocOfDepartmentCoreBase = "Things/Building/DepartmentCore/";
         /// <summary>
-        /// 缓存的逆卡巴拉计数器的图集
+        /// 缓存的部门核心覆盖层图集
         /// </summary>
         private static Dictionary<string, Graphic> cachedTopGraphic_DepartmentCore = new Dictionary<string, Graphic>();
 
+        private static List<Graphic> cachedBaseGraphic_DepartmentCore = new List<Graphic>();
+
         /// <summary>
-        /// 获取逆卡巴拉计数器的图集
+        /// 获取部门核心覆盖层
         /// </summary>
         /// <returns>图集</returns>
         public static Dictionary<string, Graphic> DepartmentCore_GetCachedTopGraphic()
@@ -388,6 +391,34 @@ namespace LCAnomalyCore.Util
             }
 
             return cachedTopGraphic_DepartmentCore;
+        }
+
+        public static Graphic DepartmentCore_GetCachedBaseGraphic(float percent)
+        {
+            if (cachedBaseGraphic_DepartmentCore.Count <= 0)
+            { 
+                cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_0p",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_25p",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_50p",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_75p",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_100p",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+            }
+
+            if (percent > 0.75f)
+                return cachedBaseGraphic_DepartmentCore[4];
+            else if (percent > 0.50f)
+                return cachedBaseGraphic_DepartmentCore[3];
+            else if (percent > 0.25f)
+                return cachedBaseGraphic_DepartmentCore[2];
+            else if (percent > 0f)
+                return cachedBaseGraphic_DepartmentCore[1];
+            else 
+                return cachedBaseGraphic_DepartmentCore[0];
         }
 
         #endregion

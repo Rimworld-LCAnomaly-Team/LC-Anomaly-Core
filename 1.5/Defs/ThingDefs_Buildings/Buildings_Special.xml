@@ -86,6 +86,7 @@
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>
     <graphicData>
+      <texPath>Things/Building/DepartmentCore/Base_0p</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(3, 3)</drawSize>
     </graphicData>
@@ -123,9 +124,6 @@
     <defName>LC_DepartmentCore_ControlTeam</defName>
     <label>Department Core (Control Team)</label>
     <description>.</description>
-    <graphicData>
-      <texPath>Things/Building/DepartmentCore/ControlTeam_empty</texPath>
-    </graphicData>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
