@@ -43,5 +43,10 @@ namespace LCAnomalyCore.Defs
         /// Cogito水桶（建筑）
         /// </summary>
         public static ThingDef CogitoBucket;
+
+        /// <summary>
+        /// 控制部核心（建筑）
+        /// </summary>
+        public static ThingDef LC_DepartmentCore_ControlTeam;
     }
 }

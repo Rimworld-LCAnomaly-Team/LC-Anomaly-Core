@@ -1,17 +1,28 @@
 ﻿using LCAnomalyLibrary.Comp.Pawns;
 using LCAnomalyLibrary.Util;
 using RimWorld;
-using System;
 using UnityEngine;
 using Verse;
 
 namespace LCAnomalyLibrary.UI
 {
+    /// <summary>
+    /// 脑叶员工属性Tab
+    /// </summary>
     public class ITab_PawnStatus : ITab
     {
+        /// <summary>
+        /// comp
+        /// </summary>
         protected CompPawnStatus StatusComp => base.SelPawn.GetComp<CompPawnStatus>();
-        protected bool IsEmployee => StatusComp != null;
+        /// <summary>
+        /// 是否是职员（comp不为空且阵营为殖民者）
+        /// </summary>
+        protected bool IsEmployee => StatusComp != null && SelPawn.Faction.IsPlayer;
 
+        /// <summary>
+        /// 是否显示在面板上
+        /// </summary>
         public override bool IsVisible
         {
             get
@@ -31,6 +42,9 @@ namespace LCAnomalyLibrary.UI
             labelKey = "LC_TabPawnStatusContents";
         }
 
+        /// <summary>
+        /// Tab内容绘制
+        /// </summary>
         protected override void FillTab()
         {
             if (StatusComp.Enabled)
@@ -61,6 +75,9 @@ namespace LCAnomalyLibrary.UI
             }
         }
 
+        /// <summary>
+        /// 具体内容绘制
+        /// </summary>
         protected void DrawStatusTab()
         {
             float yOffset = 50;

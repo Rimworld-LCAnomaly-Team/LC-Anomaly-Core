@@ -1,7 +1,9 @@
 ﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Util;
 using LCAnomalyLibrary.Comp.Pawns;
 using LCAnomalyLibrary.Util;
 using RimWorld;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -117,6 +119,10 @@ namespace LCAnomalyCore.Building
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             base.DrawAt(drawLoc, flip);
+
+            GraphicUtil
+                .DepartmentCore_GetCachedTopGraphic()[CompDepartment.Props.departmentType.ToString()]
+                .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
             ProgressBarDraw(drawLoc);
         }

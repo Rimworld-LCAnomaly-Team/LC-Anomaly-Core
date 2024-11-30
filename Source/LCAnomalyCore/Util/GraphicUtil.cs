@@ -364,5 +364,32 @@ namespace LCAnomalyCore.Util
         }
 
         #endregion “水桶”
+
+        #region 部门核心
+
+        private static Vector2 drawSizeOfDepartmentCore = Defs.ThingDefOf.LC_DepartmentCore_ControlTeam.graphicData.drawSize;
+        private static string baseLocOfDepartmentCoreOverlay = "Things/Building/DepartmentCore/Overlay/";
+        /// <summary>
+        /// 缓存的逆卡巴拉计数器的图集
+        /// </summary>
+        private static Dictionary<string, Graphic> cachedTopGraphic_DepartmentCore = new Dictionary<string, Graphic>();
+
+        /// <summary>
+        /// 获取逆卡巴拉计数器的图集
+        /// </summary>
+        /// <returns>图集</returns>
+        public static Dictionary<string, Graphic> DepartmentCore_GetCachedTopGraphic()
+        {
+            if (cachedTopGraphic_DepartmentCore.Count <= 0)
+            {
+                cachedTopGraphic_DepartmentCore.Add("ControlTeam", GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "ControlTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                LogUtil.Message("QliphothIndicatorTex initialized");
+            }
+
+            return cachedTopGraphic_DepartmentCore;
+        }
+
+        #endregion
     }
 }

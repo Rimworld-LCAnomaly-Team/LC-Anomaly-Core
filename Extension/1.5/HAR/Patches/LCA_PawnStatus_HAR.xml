@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<!-- AlienRace Mods -->
+	<Operation Class="PatchOperationSequence">
+		<operations>
+			<!-- 插入员工数值Comp -->
+			<li Class="PatchOperationConditional">
+				<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/comps</xpath>
+				<nomatch Class="PatchOperationAdd">
+					<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]</xpath>
+					<value>
+						<comps />
+					</value>
+				</nomatch>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/comps</xpath>
+				<value>
+					<li Class="LCAnomalyLibrary.Comp.Pawns.CompProperties_PawnStatus">
+						<statusNumMax>100</statusNumMax>
+						<initialRange_Fortitude>17~20</initialRange_Fortitude>
+						<initialRange_Prudence>17~20</initialRange_Prudence>
+						<initialRange_Temperance>17~20</initialRange_Temperance>
+						<initialRange_Justice>17~20</initialRange_Justice>
+					</li>
+				</value>
+			</li>
+			<!-- 插入员工面板tab -->
+			<li Class="PatchOperationConditional">
+				<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/inspectorTabs</xpath>
+				<nomatch Class="PatchOperationAdd">
+					<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]</xpath>
+					<value>
+						<inspectorTabs />
+					</value>
+				</nomatch>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/inspectorTabs</xpath>
+				<value>
+					<li>LCAnomalyLibrary.UI.ITab_PawnStatus</li>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+</Patch>

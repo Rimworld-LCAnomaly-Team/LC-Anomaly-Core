@@ -484,6 +484,11 @@
             Cogito水桶（建筑）
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDefOf.LC_DepartmentCore_ControlTeam">
+            <summary>
+            控制部核心（建筑）
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ThoughtDefOf">
             <summary>
             该mod所有的ThoughtDef
@@ -720,6 +725,17 @@
             </summary>
         </member>
         <member name="M:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_GetCachedGraphic(System.String)">
+            <summary>
+            获取逆卡巴拉计数器的图集
+            </summary>
+            <returns>图集</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.GraphicUtil.cachedTopGraphic_DepartmentCore">
+            <summary>
+            缓存的逆卡巴拉计数器的图集
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.DepartmentCore_GetCachedTopGraphic">
             <summary>
             获取逆卡巴拉计数器的图集
             </summary>

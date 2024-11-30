@@ -1288,6 +1288,36 @@
             <param name="cat">类型</param>
             <param name="rect">rect</param>
         </member>
+        <member name="T:LCAnomalyLibrary.UI.ITab_PawnStatus">
+            <summary>
+            脑叶员工属性Tab
+            </summary>
+        </member>
+        <member name="P:LCAnomalyLibrary.UI.ITab_PawnStatus.StatusComp">
+            <summary>
+            comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyLibrary.UI.ITab_PawnStatus.IsEmployee">
+            <summary>
+            是否是职员（comp不为空且阵营为殖民者）
+            </summary>
+        </member>
+        <member name="P:LCAnomalyLibrary.UI.ITab_PawnStatus.IsVisible">
+            <summary>
+            是否显示在面板上
+            </summary>
+        </member>
+        <member name="M:LCAnomalyLibrary.UI.ITab_PawnStatus.FillTab">
+            <summary>
+            Tab内容绘制
+            </summary>
+        </member>
+        <member name="M:LCAnomalyLibrary.UI.ITab_PawnStatus.DrawStatusTab">
+            <summary>
+            具体内容绘制
+            </summary>
+        </member>
         <member name="T:LCAnomalyLibrary.Util.Curves">
             <summary>
             曲线工具类
