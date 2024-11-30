@@ -21,7 +21,7 @@
             部门核心建筑
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompDepartment">
+        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompDepartmentCore">
             <summary>
             部门comp
             </summary>

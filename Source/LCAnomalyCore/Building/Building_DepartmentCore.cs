@@ -16,15 +16,15 @@ namespace LCAnomalyCore.Building
         /// <summary>
         /// 部门comp
         /// </summary>
-        public CompAssignableDepartmentCore CompDepartment
+        public CompAssignableDepartmentCore CompDepartmentCore
         {
             get
             {
-                compDepartment ??= GetComp<CompAssignableDepartmentCore>();
-                return compDepartment;
+                compDepartmentCore ??= GetComp<CompAssignableDepartmentCore>();
+                return compDepartmentCore;
             }
         }
-        private CompAssignableDepartmentCore compDepartment;
+        private CompAssignableDepartmentCore compDepartmentCore;
 
         /// <summary>
         /// 电力comp
@@ -65,7 +65,7 @@ namespace LCAnomalyCore.Building
                 healTimer++;
 
                 //按设定的时间间隔进行房间治疗
-                if (healTimer >= CompDepartment.Props.healDuration)
+                if (healTimer >= CompDepartmentCore.Props.healDuration)
                 {
                     healTimer = 0;
                     TryHeal();
@@ -97,13 +97,13 @@ namespace LCAnomalyCore.Building
                 if (comp == null || !comp.Enabled)
                     continue;
 
-                healTimes = CompDepartment.DoHeal(employee, CompRefuelable.Fuel);
+                healTimes = CompDepartmentCore.DoHeal(employee, CompRefuelable.Fuel);
             }
 
             //按照治疗次数消耗燃料
             if (healTimes > 0)
             {
-                float amount = CompDepartment.Props.healConsumeAmount * healTimes;
+                float amount = CompDepartmentCore.Props.healConsumeAmount * healTimes;
                 CompRefuelable.ConsumeFuel(amount);
 
                 LogUtil.Message($"{def.defName} consumed {amount} KCorpAmpoule.");
@@ -125,7 +125,7 @@ namespace LCAnomalyCore.Building
                 .Draw(drawLoc + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
             GraphicUtil
-                .DepartmentCore_GetCachedTopGraphic()[CompDepartment.Props.departmentType.ToString()]
+                .DepartmentCore_GetCachedTopGraphic()[CompDepartmentCore.Props.departmentType.ToString()]
                 .Draw(offsetPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
             ProgressBarDraw(offsetPos);
@@ -143,12 +143,12 @@ namespace LCAnomalyCore.Building
                 fillableBarRequest = default;
                 fillableBarRequest.center = drawLoc + Vector3.back * 1.294f + Vector3.left * 0.12f;
                 fillableBarRequest.size = new Vector2(1.94f, 0.29f);
-                fillableBarRequest.filledMat = SolidColorMaterials.SimpleSolidColorMaterial(CompDepartment.Props.fillableBarColor);
+                fillableBarRequest.filledMat = SolidColorMaterials.SimpleSolidColorMaterial(CompDepartmentCore.Props.fillableBarColor);
                 fillableBarRequest.unfilledMat = SolidColorMaterials.SimpleSolidColorMaterial(Color.clear);
                 fillableBarRequest.margin = 0.15f;
             }
 
-            fillableBarRequest.fillPercent = 1.0f * healTimer / CompDepartment.Props.healDuration;
+            fillableBarRequest.fillPercent = 1.0f * healTimer / CompDepartmentCore.Props.healDuration;
             GenDraw.DrawFillableBar(fillableBarRequest);
         }
     }

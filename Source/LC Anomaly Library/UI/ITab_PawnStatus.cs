@@ -18,7 +18,7 @@ namespace LCAnomalyLibrary.UI
         /// <summary>
         /// 是否是职员（comp不为空且阵营为殖民者）
         /// </summary>
-        protected bool IsEmployee => StatusComp != null && SelPawn.Faction.IsPlayer;
+        protected bool IsEmployee => StatusComp != null && SelPawn.Faction == Faction.OfPlayer;
 
         /// <summary>
         /// 是否显示在面板上
