@@ -3,7 +3,7 @@
 
   <MusicTransitionDef>
     <defName>ExtractRitual</defName>
-    <workerType>LCAnomalyLibrary.Sounds.ExtractRitualTransition</workerType>
+    <workerType>LCAnomalyCore.Sounds.ExtractRitualTransition</workerType>
     <sequence>ExtractRitual</sequence>
     <dangerRequirement>RequiresNoDanger</dangerRequirement>
     <priority>150</priority>

@@ -1,7 +1,6 @@
 ﻿using LCAnomalyCore.Building;
 using RimWorld;
 using UnityEngine;
-using Verse;
 
 namespace LCAnomalyCore.Comp
 {

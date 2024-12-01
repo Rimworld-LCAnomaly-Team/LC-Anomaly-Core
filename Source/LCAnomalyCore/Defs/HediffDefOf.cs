@@ -20,5 +20,7 @@ namespace LCAnomalyCore.Defs
         /// </summary>
         [MayRequireAnomaly]
         public static HediffDef CogitoInjected;
+
+        public static HediffDef LC_PawnStatus;
     }
 }

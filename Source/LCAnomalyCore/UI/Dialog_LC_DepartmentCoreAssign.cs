@@ -1,5 +1,5 @@
 ﻿using LCAnomalyCore.Comp;
-using LCAnomalyLibrary.Comp.Pawns;
+using LCAnomalyCore.Comp.Pawns;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,4 @@
-﻿using LCAnomalyLibrary.Comp;
-
-namespace LCAnomalyCore.Comp
+﻿namespace LCAnomalyCore.Comp
 {
     public class CompProperties_CogitoBucketSpawner : LC_CompProperties_RequireThingSpawner
     {

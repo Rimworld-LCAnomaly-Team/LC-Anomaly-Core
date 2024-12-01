@@ -2,7 +2,7 @@
 <Defs>
   
   <ThingDef ParentName="BasePawn" Name="LC_EntityBase" Abstract="True">
-    <thingClass>LCAnomalyLibrary.Comp.Abstract.LC_EntityBasePawn</thingClass>
+    <thingClass>LCAnomalyCore.Comp.Abstract.LC_EntityBasePawn</thingClass>
     <hiddenWhileUndiscovered>true</hiddenWhileUndiscovered>
     <tradeability>None</tradeability>
     <hideStats>true</hideStats>

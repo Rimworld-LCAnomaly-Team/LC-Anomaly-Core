@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.GameComponent;
+using LCAnomalyCore.Comp;
+using LCAnomalyCore.GameComponent;
 using RimWorld;
 using Verse;
 
@@ -21,7 +21,7 @@ namespace LCAnomalyCore.Patch
 
             //更新研究进度
 
-            var component = LCAnomalyLibrary.Util.Components.LC;
+            var component = Util.Components.LC;
             component.TryGetAnomalyStatusSaved(__instance.parent.def, out AnomalyStatusSaved saved);
             saved.StudyProgress = i + 1;
             component.AnomalyStatusSavedDict[__instance.parent.def] = saved;

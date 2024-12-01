@@ -1,7 +1,6 @@
 ﻿using LCAnomalyCore.Comp;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Comp.Pawns;
-using LCAnomalyLibrary.Util;
+using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Util;
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
@@ -68,7 +67,7 @@ namespace LCAnomalyCore.Jobs
             if (ThingToStudy != null)
             {
                 CompPeBoxProduce comp = ThingToStudy.TryGetComp<CompPeBoxProduce>();
-                if(comp != null)
+                if (comp != null)
                 {
                     //每点自律提供1%工作速度加成
                     float statusRate = pawn.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status * 0.01f;

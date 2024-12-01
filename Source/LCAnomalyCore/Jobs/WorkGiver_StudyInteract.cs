@@ -1,8 +1,8 @@
-﻿using RimWorld;
-using Verse.AI;
-using Verse;
+﻿using LCAnomalyCore.Comp.Pawns;
+using RimWorld;
 using System.Linq;
-using LCAnomalyLibrary.Comp.Pawns;
+using Verse;
+using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {

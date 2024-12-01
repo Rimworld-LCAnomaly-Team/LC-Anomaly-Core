@@ -1,6 +1,5 @@
-﻿using LCAnomalyLibrary.Defs;
-using LCAnomalyLibrary.PsychicRituals;
-using LCAnomalyLibrary.Util;
+﻿using LCAnomalyCore.PsychicRituals;
+using LCAnomalyCore.Util;
 using System.Collections.Generic;
 using Verse;
 using Verse.AI.Group;

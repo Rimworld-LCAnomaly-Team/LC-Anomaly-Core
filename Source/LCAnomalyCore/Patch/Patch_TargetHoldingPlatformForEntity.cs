@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
+using LCAnomalyCore.Comp;
 using LCAnomalyCore.Defs;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Defs;
 using RimWorld;
 using UnityEngine;
 using Verse;

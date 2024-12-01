@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
   
-  <Setting_LCAnomalyLibrary_Label>脑叶公司-异常框架</Setting_LCAnomalyLibrary_Label>
+  <Setting_LCAnomalyCore_Label>脑叶公司-异常框架</Setting_LCAnomalyCore_Label>
   
   <If_ShowWarningSettingsText>显示自定义警报系统参数</If_ShowWarningSettingsText> 
   <If_EnableLCWarningText>启用警报系统</If_EnableLCWarningText> 

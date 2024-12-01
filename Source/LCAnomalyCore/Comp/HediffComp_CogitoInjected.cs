@@ -1,6 +1,6 @@
-﻿using LCAnomalyLibrary.Defs;
-using LCAnomalyLibrary.Misc;
-using LCAnomalyLibrary.Util;
+﻿using LCAnomalyCore.Defs;
+using LCAnomalyCore.Misc;
+using LCAnomalyCore.Util;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;

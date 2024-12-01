@@ -1,6 +1,5 @@
-﻿using LCAnomalyCore.Defs;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Defs;
+﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Defs;
 using RimWorld;
 using System.Collections.Generic;
 using Verse;

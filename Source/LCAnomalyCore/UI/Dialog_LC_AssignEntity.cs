@@ -190,7 +190,7 @@ namespace LCAnomalyCore.UI
                     text += "LC_AssignableEntity_StudySuccessRate_High".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Green));
                 }
-                else if(rate > 40)
+                else if (rate > 40)
                 {
                     text += "LC_AssignableEntity_StudySuccessRate_Medium".Translate();
                     Widgets.LabelEllipses(rect, ColoredText.Colorize(text, ColorLibrary.Yellow));

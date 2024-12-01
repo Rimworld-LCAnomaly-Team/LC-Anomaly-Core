@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
   
-  <Setting_LCAnomalyLibrary_Label>LCAnomaly Library</Setting_LCAnomalyLibrary_Label>
+  <Setting_LCAnomalyCore_Label>LCAnomaly Library</Setting_LCAnomalyCore_Label>
   
   <If_ShowWarningSettingsText>Show Custom Arguments Settings</If_ShowWarningSettingsText> 
   <If_EnableLCWarningText>Enable Warning System</If_EnableLCWarningText> 

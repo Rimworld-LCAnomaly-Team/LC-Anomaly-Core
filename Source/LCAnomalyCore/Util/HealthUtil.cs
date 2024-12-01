@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Verse;
 using System.Linq;
+using Verse;
 
 namespace LCAnomalyCore.Util
 {

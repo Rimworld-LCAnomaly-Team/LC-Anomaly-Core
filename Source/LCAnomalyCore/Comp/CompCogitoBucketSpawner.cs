@@ -1,6 +1,4 @@
-﻿using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.GameComponent;
-using RimWorld;
+﻿using RimWorld;
 using System.Collections.Generic;
 using Verse;
 
@@ -8,7 +6,7 @@ namespace LCAnomalyCore.Comp
 {
     public class CompCogitoBucketSpawner : LC_CompRequireThingSpawner
     {
-        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             foreach (var gizmo in base.CompGetGizmosExtra())
             {

@@ -1,6 +1,5 @@
-﻿using LCAnomalyCore.UI;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Comp.Pawns;
+﻿using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.UI;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +28,11 @@ namespace LCAnomalyCore.Comp
                 }
 
                 //只有安排了异想体研究工作，且拥有脑叶员工属性，并且处于激活状态的小人，才能够出现在实体自动研究分配列表里
-                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy) && x.GetComp<CompPawnStatus>() != null && x.GetComp<CompPawnStatus>().Enabled);
+                return parent.Map.mapPawns.FreeColonists.Where(x => x.workSettings.WorkIsActive(Defs.WorkTypeDefOf.AbnormalityStudy) && x.GetComp<CompPawnStatus>() != null && x.GetComp<CompPawnStatus>().Enabled);
             }
         }
 
-        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             if (ShouldShowAssignmentGizmo())
             {
@@ -50,7 +49,7 @@ namespace LCAnomalyCore.Comp
                 //不存在可分配工作的单位，或平台上没有实体，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc".Translate());
-                else if(((Building_HoldingPlatform)parent).HeldPawn == null)
+                else if (((Building_HoldingPlatform)parent).HeldPawn == null)
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
@@ -67,7 +66,7 @@ namespace LCAnomalyCore.Comp
             //从列表中移除没有安排黑暗研究工作的单位
             foreach (Pawn pawn in assignedPawns)
             {
-                if (!pawn.workSettings.WorkIsActive(LCAnomalyLibrary.Defs.WorkTypeDefOf.AbnormalityStudy))
+                if (!pawn.workSettings.WorkIsActive(Defs.WorkTypeDefOf.AbnormalityStudy))
                     pawnToDelete.Add(pawn);
             }
 

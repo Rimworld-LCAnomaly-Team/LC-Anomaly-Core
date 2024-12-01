@@ -1,5 +1,4 @@
-﻿using LCAnomalyLibrary.Util;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -119,7 +118,7 @@ namespace LCAnomalyCore.Util
             {
                 CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_Single[amount]);
             }
-            else if(amount < 100)
+            else if (amount < 100)
             {
                 //取模个位
                 CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_DoubleRight[amount % 10]);
@@ -127,7 +126,7 @@ namespace LCAnomalyCore.Util
                 //十位
                 CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft[amount / 10 - 1]);
             }
-            else if(amount < 1000)
+            else if (amount < 1000)
             {
                 CachedTopGraphic_IndiPeBoxIndicator_Mixed.Add(CachedTopGraphic_IndiPeBoxIndicator_ThirdRight[amount % 10]);
 
@@ -307,13 +306,13 @@ namespace LCAnomalyCore.Util
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
 
-            if(BoxType == "PE")
+            if (BoxType == "PE")
                 return CachedTopGraphicDict_BoxBarUnit_PE[maxNum];
             else
                 return CachedTopGraphicDict_BoxBarUnit_NE[maxNum];
         }
 
-        #endregion
+        #endregion 收容平台Box显示
 
         #region “水桶”
 
@@ -353,7 +352,7 @@ namespace LCAnomalyCore.Util
                     CogitoBucket_CachedBrainSpinalNerve =
                         GraphicDatabase.Get<Graphic_Single>("Things/Building/TheBucket/TheBucket_BrainSpinalNerve",
                         ShaderDatabase.Transparent, Defs.ThingDefOf.CogitoBucket.graphicData.drawSize, Color.white);
-                    
+
                     LogUtil.Message("BrainSpinalNerveTex initialized");
                 }
 
@@ -370,6 +369,7 @@ namespace LCAnomalyCore.Util
         private static Vector2 drawSizeOfDepartmentCore = Defs.ThingDefOf.LC_DepartmentCore_ControlTeam.graphicData.drawSize;
         private static string baseLocOfDepartmentCoreOverlay = "Things/Building/DepartmentCore/Overlay/";
         private static string baseLocOfDepartmentCoreBase = "Things/Building/DepartmentCore/";
+
         /// <summary>
         /// 缓存的部门核心覆盖层图集
         /// </summary>
@@ -396,7 +396,7 @@ namespace LCAnomalyCore.Util
         public static Graphic DepartmentCore_GetCachedBaseGraphic(float percent)
         {
             if (cachedBaseGraphic_DepartmentCore.Count <= 0)
-            { 
+            {
                 cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_0p",
                     ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 cachedBaseGraphic_DepartmentCore.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreBase + "Base_25p",
@@ -417,10 +417,10 @@ namespace LCAnomalyCore.Util
                 return cachedBaseGraphic_DepartmentCore[2];
             else if (percent > 0f)
                 return cachedBaseGraphic_DepartmentCore[1];
-            else 
+            else
                 return cachedBaseGraphic_DepartmentCore[0];
         }
 
-        #endregion
+        #endregion 部门核心
     }
 }

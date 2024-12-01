@@ -1,6 +1,4 @@
-﻿using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Util;
-using Verse;
+﻿using Verse;
 
 namespace LCAnomalyCore.Comp
 {

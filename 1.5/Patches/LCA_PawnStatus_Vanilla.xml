@@ -16,7 +16,7 @@
 			<li Class="PatchOperationAdd">
 				<xpath>Defs/ThingDef[defName="Human"]/comps</xpath>
 				<value>
-					<li Class="LCAnomalyLibrary.Comp.Pawns.CompProperties_PawnStatus">
+					<li Class="LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus">
 						<statusNumMax>100</statusNumMax>
 						<initialRange_Fortitude>17~20</initialRange_Fortitude>
 						<initialRange_Prudence>17~20</initialRange_Prudence>
@@ -38,7 +38,7 @@
 			<li Class="PatchOperationAdd">
 				<xpath>Defs/ThingDef[defName="Human"]/inspectorTabs</xpath>
 				<value>
-					<li>LCAnomalyLibrary.UI.ITab_PawnStatus</li>
+					<li>LCAnomalyCore.UI.ITab_PawnStatus</li>
 				</value>
 			</li>
 		</operations>

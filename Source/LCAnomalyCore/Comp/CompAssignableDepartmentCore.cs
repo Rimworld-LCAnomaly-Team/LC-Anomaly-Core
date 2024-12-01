@@ -1,6 +1,6 @@
-﻿using LCAnomalyCore.UI;
+﻿using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
-using LCAnomalyLibrary.Comp.Pawns;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,7 +121,7 @@ namespace LCAnomalyCore.Comp
             employee.health.hediffSet.GetHediffs(ref list_injury);
             if (list_injury.Count > 0)
             {
-                foreach(Hediff_Injury injury in list_injury)
+                foreach (Hediff_Injury injury in list_injury)
                 {
                     //检查燃料是否够用
                     if (times + 1 > maxTimes)

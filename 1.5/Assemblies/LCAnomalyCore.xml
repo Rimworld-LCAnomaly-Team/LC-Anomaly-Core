@@ -177,6 +177,44 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompAccessoryable">
+            <summary>
+            可获取饰品的Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAccessoryable.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAccessoryable.EntityComp">
+            <summary>
+            CompEntity
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAccessoryable.CheckGiveAccessory(Verse.Pawn)">
+            <summary>
+            检查是否给予饰品
+            </summary>
+            <param name="studier">研究者</param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAccessoryable.SpawnAccessory(Verse.Pawn)">
+            <summary>
+            生成饰品
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAccessoryable.CheckIfEGOExtractUnlocked">
+            <summary>
+            EGO提取是否已解锁
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAccessoryable.CompGetGizmosExtra">
+            <summary>
+            Gizmos
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:LCAnomalyCore.Comp.CompAssignableDepartmentCore">
             <summary>
             部门核心Comp
@@ -220,6 +258,74 @@
             CompProperties
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.EntityComp">
+            <summary>
+            CompEntity
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.PeBoxComp">
+            <summary>
+            提取所需PeBox的Def
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.HoldingTargetComp">
+            <summary>
+            CompHoldingPlatformTarget
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.CurAmountWeapon">
+            <summary>
+            当前已被提取的EGO武器数量
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.CurAmountArmor">
+            <summary>
+            当前已被提取的EGO护甲数量
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.ConsumePebox(LCAnomalyCore.Defs.EGO_TYPE)">
+            <summary>
+            EGO提取的PeBox消耗
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.CheckIfExtractEGO(LCAnomalyCore.Defs.EGO_TYPE)">
+            <summary>
+            EGO提取检查
+            </summary>
+            <param name="type">EGO类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.ExtractEGO(LCAnomalyCore.Defs.EGO_TYPE)">
+            <summary>
+            提取EGO
+            </summary>
+            <param name="type">EGO类型</param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.CheckIfEGOExtractUnlocked">
+            <summary>
+            EGO提取是否已解锁
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.HasReachedMaxExtractAmount(LCAnomalyCore.Defs.EGO_TYPE)">
+            <summary>
+            E.G.O是否已经达到提取最大量
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoExtractable.CompGetGizmosExtra">
+            <summary>
+            Gizmos
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:LCAnomalyCore.Comp.CompExtractRitualSpot">
             <summary>
             提取仪式点的Comp（和原版的基本一致）
@@ -230,9 +336,89 @@
             CompProperties
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_Accessoryable">
+            <summary>
+            可获取饰品的CompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Accessoryable.accessoryDef">
+            <summary>
+            XML：饰品Def
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Accessoryable.accessoryChance">
+            <summary>
+            XML：获取饰品的概率
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Accessoryable.unlockLevel">
+            <summary>
+            XML: 饰品解锁所需观察等级
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_Accessoryable.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
             <summary>
             部门核心CompProperties
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_EgoExtractable">
+            <summary>
+            LC可提取EGO CompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.weaponExtracted">
+            <summary>
+            XML：EGO武器
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.armorExtracted">
+            <summary>
+            XML：EGO装备
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.weaponIconPath">
+            <summary>
+            XML: EGO武器提取图标路径
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.armorIconPath">
+            <summary>
+            XML: EGO装备提取图标路径
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.amountMaxWeapon">
+            <summary>
+            XML：可提取EGO武器的上限数量
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.amountMaxArmor">
+            <summary>
+            XML：可提取EGO装备的上限数量
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.weaponExtractedNeed">
+            <summary>
+            XML: 提取EGO武器所需PeBox数量
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.armorExtractedNeed">
+            <summary>
+            XML: 提取EGO装备所需PeBox数量
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoExtractable.unlockLevel">
+            <summary>
+            XML: EGO解锁所需观察等级
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_EgoExtractable.#ctor">
+            <summary>
+            Comp
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_ExtractRitualSpot">
@@ -305,11 +491,467 @@
             注射提取后变成异常的方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.SpawnEntity(System.Collections.Generic.List{LCAnomalyLibrary.Defs.ThingDef_LCAnomalyBase},System.Single)">
+        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.SpawnEntity(System.Collections.Generic.List{LCAnomalyCore.Defs.ThingDef_LCAnomalyBase},System.Single)">
             <summary>
             生成实体
             </summary>
             <param name="list">实体列表</param>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompEgg">
+            <summary>
+            LC异想体蛋基础Comp
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEgg.OnInteracted(Verse.Pawn)">
+            <summary>
+            交互时触发
+            </summary>
+            <param name="caster"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEgg.CompFloatMenuOptions(Verse.Pawn)">
+            <summary>
+            浮动菜单选项
+            </summary>
+            <param name="selPawn"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompEntity">
+            <summary>
+            LC基础实体Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.StudyUnlocksComp">
+            <summary>
+            研究阶段解锁
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.StudiableComp">
+            <summary>
+            研究组件
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.AccessoryableComp">
+            <summary>
+            首饰组件
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.PeBoxComp">
+            <summary>
+            PeBox组件
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.HoldingPlaformTargetComp">
+            <summary>
+            收容控制组件
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompEntity.biosignature">
+            <summary>
+            生物特征
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothCountMax">
+            <summary>
+            XML引用：逆卡巴拉计数器最大值
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothEnabled">
+            <summary>
+            逆卡巴拉机制是否启用
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.WarningPoints">
+            <summary>
+            XML引用：警报点数
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothCountCurrent">
+            <summary>
+            逆卡巴拉计数器当前值
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.BiosignatureName">
+            <summary>
+            生物特征名
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.Escaped">
+            <summary>
+            是否已出逃
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.PostPostMake">
+            <summary>
+            PostPostMake初始化
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Escaped">
+            <summary>
+            逃脱收容后执行的操作
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Studied(Verse.Pawn,System.Boolean)">
+            <summary>
+            被研究后执行的操作
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Studying(Verse.Pawn)">
+            <summary>
+            正在被研究时执行的操作
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Holded">
+            <summary>
+            绑到收容平台上的操作
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Good(Verse.Pawn)">
+            <summary>
+            研究质量：优秀
+            </summary>
+            <param name="studier">研究者</param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Normal(Verse.Pawn)">
+            <summary>
+            研究质量：良好
+            </summary>
+            <param name="studier">研究者</param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Bad(Verse.Pawn)">
+            <summary>
+            研究质量：差
+            </summary>
+            <param name="studier">研究者</param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.QliphothMeltdown">
+            <summary>
+            逆卡巴拉熔毁事件
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.PostExposeData">
+            <summary>
+            我不知道这是什么，好像和数据保存有关
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudySuccessRateCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>
+            获取研究成功率
+            </summary>
+            <param name="studier">研究者</param>
+            <param name="workType">工作类型</param>
+            <returns>研究成功率</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudierExpCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>
+            工作后的数值经验增长
+            </summary>
+            <param name="studier"></param>
+            <param name="workType"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.CheckStudierSkillRequire(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>
+            检查研究者研究成功率百分比
+            </summary>
+            <param name="studier">研究者</param>
+            <param name="workType">工作类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.ForceQliphothMeltdown">
+            <summary>
+            Debug：调试用逆卡巴拉强制熔毁
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.CompGetGizmosExtra">
+            <summary>
+            Gizmos
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompPeBoxProduce">
+            <summary>
+            LC可产PeBox的基类Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompPeBoxProduce.Props">
+            <summary>
+            CompProperties
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompPeBoxProduce.CurAmountIndiPebox">
+            <summary>
+            当前独立PeBox数量
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompPeBoxProduce.CheckSpawnPeBox(Verse.Pawn,System.Int32)">
+            <summary>
+            检查生成Pebox
+            </summary>
+            <param name="studier">研究者</param>
+            <param name="amount">生产量</param>
+        </member>
+        <member name="E:LCAnomalyCore.Comp.LC_CompPeBoxProduce.OnContentsChanged">
+            <summary>
+            值发生变化时调用
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_Entity">
+            <summary>
+            LC基础实体CompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.qliphothCountMax">
+            <summary>
+            XML：最大逆卡巴拉值
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.studySucessRateBase">
+            <summary>
+            XML：学习基础成功率
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.shouldNotifyWhenEscape">
+            <summary>
+            XML：出逃时是否通知
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.ifProvideWarningPoints">
+            <summary>
+            XML：提供出逃点数（决定是否提供点数，不提供的情况下自定义点数无效）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.customWarningPoints">
+            <summary>
+            XML：自定义出逃警报点数（填大于0则启用自定义点数，否则按异常等级计算）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.soundWorking">
+            <summary>
+            XML：被研究时播放的音效
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_Entity.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_InteractableEgg">
+            <summary>
+            LC可交互蛋交互性基础CompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_InteractableEgg.shouldTransferBioSignature">
+            <summary>
+            XML：是否保持生物特征
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_InteractableEgg.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce">
+            <summary>
+            LC可产PeBox的CompProperties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce.peBoxDef">
+            <summary>
+            XML：工作产生PeBox的类型
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce.#ctor">
+            <summary>
+            Comp
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompStudiable.GetWorkSpeedOffset">
+            <summary>
+            研究解锁带来的工作速度加成
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompStudiable.GetWorkSuccessRateOffset">
+            <summary>
+            研究解锁带来的成功率加成
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_EntityBaseThing">
+            <summary>
+            LC实体Thing基类
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_EntityBasePawn">
+            <summary>
+            LC实体Pawn基类
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_EntityBasePawn.EntityComp">
+            <summary>
+            LC的实体Comp
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_EntityBasePawn.TickHolded">
+            <summary>
+            被收容时的Tick
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.Pawns.CompPawnStatus">
+            <summary>
+            LC员工基本属性Comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.Pawns.CompPawnStatus.Props">
+            <summary>
+            Properties
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.status_Fortitude">
+            <summary>
+            勇气
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.status_Prudence">
+            <summary>
+            谨慎
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.status_Temperance">
+            <summary>
+            自律
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.status_Justice">
+            <summary>
+            正义
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.Inited">
+            <summary>
+            是否已经初始化
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.Pawns.CompPawnStatus.Enabled">
+            <summary>
+            是否已经激活
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SingleLevel">
+            <summary>
+            综合等级
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.PostExposeData">
+            <summary>
+            保存
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.CompGetGizmosExtra">
+            <summary>
+            Gizmo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.Initialize(Verse.CompProperties)">
+            <summary>
+            初始化
+            </summary>
+            <param name="props"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.GetPawnStatusLevel(LCAnomalyCore.Comp.Pawns.EPawnStatus)">
+            <summary>
+            获取员工属性结构
+            </summary>
+            <param name="statusType">属性类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.GetPawnStatusELevel(LCAnomalyCore.Comp.Pawns.EPawnStatus)">
+            <summary>
+            获取员工属性等级枚举
+            </summary>
+            <param name="statusType">属性类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean)">
+            <summary>
+            激活员工属性
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.StatusInit(System.Boolean)">
+            <summary>
+            员工属性初始化
+            </summary>
+            <param name="force">是否为强制初始化</param>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.Pawns.EPawnStatus">
+            <summary>
+            LC员工基本属性类型
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnStatus.Fortitude">
+            <summary>
+            勇气
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnStatus.Prudence">
+            <summary>
+            谨慎
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnStatus.Temperance">
+            <summary>
+            自律
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnStatus.Justice">
+            <summary>
+            正义
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.Pawns.EPawnLevel">
+            <summary>
+            LC员工基本属性等级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.I">
+            <summary>
+            1级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.II">
+            <summary>
+            2级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.III">
+            <summary>
+            3级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.IV">
+            <summary>
+            4级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.V">
+            <summary>
+            5级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.EPawnLevel.EX">
+            <summary>
+            6级
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus">
+            <summary>
+            LC员工基本属性CompProperties
+            </summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity">
             <summary>
@@ -336,6 +978,148 @@
         <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.ClearAllAssignments">
             <summary>
             清理所有分配人员
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ApparelLayerDefOf">
+            <summary>
+            所有的服装层Def
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryBackHead">
+            <summary>
+            后脑
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryNeck">
+            <summary>
+            颈部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryMouth">
+            <summary>
+            口部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryMask">
+            <summary>
+            口罩
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryCheek">
+            <summary>
+            脸颊
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryFace">
+            <summary>
+            面部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryHand">
+            <summary>
+            手部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryGlove">
+            <summary>
+            手套
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryHead">
+            <summary>
+            头部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryHat">
+            <summary>
+            头饰
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryChest">
+            <summary>
+            胸部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryEye">
+            <summary>
+            眼部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryBack_Right">
+            <summary>
+            右背
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ApparelLayerDefOf.LC_AccessoryBack_Left">
+            <summary>
+            左背
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.DamageDefOf">
+            <summary>
+            该Mod所有的DamageDef（WIP）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage">
+            <summary>
+            红伤（WIP）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_WhiteDamage">
+            <summary>
+            白伤（WIP）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_BlackDamage">
+            <summary>
+            黑伤（WIP）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_PaleDamage">
+            <summary>
+            蓝伤（WIP）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.DutyDefOf">
+            <summary>
+            该Mod所有的DutyDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.DutyDefOf.GatherOfferingsForExtractRitual">
+            <summary>
+            为了执行提取仪式而收集祭品
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.EGO_TYPE">
+            <summary>
+            EGO类型枚举
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.EGO_TYPE.Weapon">
+            <summary>
+            EGO武器
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.EGO_TYPE.Armor">
+            <summary>
+            EGO装备
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ExtractRitualDef">
+            <summary>
+            提取仪式Def
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Defs.ExtractRitualDef.MakeNewLord(Verse.AI.Group.PsychicRitualRoleAssignments)">
+            <summary>
+            开一个新的Lord
+            </summary>
+            <param name="assignments"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ExtractRitualDef_InvocationCircle">
+            <summary>
+            提取仪式Def：圆形模式（和原版基本一致）
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.ExtractRitualRoleDefOf">
@@ -366,6 +1150,26 @@
         <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyALEPH">
             <summary>
             ALEPH异常提取仪式
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.FleckDefOf">
+            <summary>
+            该Mod所有的FleckDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.FleckDefOf.WorkResult_Good">
+            <summary>
+            工作质量为好
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.FleckDefOf.WorkResult_Normal">
+            <summary>
+            工作质量为普通
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.FleckDefOf.WorkResult_Bad">
+            <summary>
+            工作质量为差
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.HediffDefOf">
@@ -444,6 +1248,31 @@
             提取脑啡肽
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.ResearchTabDefOf">
+            <summary>
+            该mod的所有ResearchTabDef
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ResearchTabDefOf.LCAnomaly">
+            <summary>
+            异想体研究面板
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.SongDefOf.FirstWarning">
+            <summary>
+            一级警报
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.SongDefOf.SecondWarning">
+            <summary>
+            二级警报
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.SongDefOf.ThirdWarning">
+            <summary>
+            三级警报
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ThingDefOf">
             <summary>
             该mod所有的ThingDef
@@ -489,6 +1318,51 @@
             控制部核心（建筑）
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_LCAnomalyBase">
+            <summary>
+            LC异想体ThingDef基类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.ThingDef_LCAnomalyBase.anomalyLevelTag">
+            <summary>
+            异想体评估等级标签
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.PawnKindDef_LCAnomalyBase">
+            <summary>
+            LC异想体PawnKind基类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.PawnKindDef_LCAnomalyBase.anomalyLevelTag">
+            <summary>
+            异想体评估等级标签
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEntity">
+            <summary>
+            LC异想体PawnKind基类（活动实体类）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEgg">
+            <summary>
+            LC异想体ThingDef基类（蛋类）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyTool">
+            <summary>
+            LC异想体ThingDef基类（工具类）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEntity_Spawn">
+            <summary>
+            LC异想体ThingDef基类（生成特效类）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.PawnKindDef_AnomalyEntity_SevenSin">
+            <summary>
+            LC异想体（大罪生物）（WIP）
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ThoughtDefOf">
             <summary>
             该mod所有的ThoughtDef
@@ -504,9 +1378,116 @@
             脑啡肽状态中
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.GameComponent.GameComponent_LC">
+            <summary>
+            LC游戏组件
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.GameComponent_LC.CurWarningPoints">
+            <summary>
+            当前的警报点数
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.GameComponent_LC.AnomalyStatusSavedDict">
+            <summary>
+            异想体独立数据字典
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.GameComponentTick">
+            <summary>
+            Tick
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.GameComponent.AnomalyStatusSaved">
+            <summary>
+            异想体独立数据
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.AnomalyStatusSaved.ExtractedEgoWeaponAmount">
+            <summary>
+            已提取EGO武器数量
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.AnomalyStatusSaved.ExtractedEgoArmorAmount">
+            <summary>
+            已提取EGO护甲数量
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.AnomalyStatusSaved.IndiPeBoxAmount">
+            <summary>
+            已提取独立PeBox数量
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.GameComponent.AnomalyStatusSaved.StudyProgress">
+            <summary>
+            研究进度
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Gizmos.ExtractRitualGizmo">
+            <summary>
+            仪式Gizmo（和原版基本一致）
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToEntityHolder">
             <summary>
             改自原版同名工作，是携带实体到平台的工作
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.JobGiver_GatherOfferingsForExtractRitual">
+            <summary>
+            仪式收集祭品工作（和原版基本一致）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.LordJob_ExtractRitual">
+            <summary>
+            仪式工作（和原版基本一致）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Misc.LC_FX_Standard">
+            <summary>
+            LC标准基本效果类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Misc.LC_FX_Standard.bioSignature">
+            <summary>
+            生物特征
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Misc.LC_FX_Standard.completeTick">
+            <summary>
+            完成所需Tick
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Misc.LC_FX_Standard.isEscaping">
+            <summary>
+            是否是逃脱效果
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Misc.LC_FX_Standard.hasInited">
+            <summary>
+            是否已经初始化过
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Misc.LC_FX_Standard.Tick">
+            <summary>
+            每Tick执行
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Misc.LC_FX_Standard.Complete">
+            <summary>
+            倒计时结束后执行
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:LCAnomalyCore.Misc.LC_FX_Standard.InitWith(Verse.Pawn)">
+            <summary>
+            对对应的Pawn初始化效果
+            </summary>
+            <param name="targetPawn"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Misc.LC_FX_Standard.ExposeData">
+            <summary>
+            和保存有关
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Patch.PatchMain">
@@ -519,6 +1500,68 @@
             补丁实例
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_AnomalyUtility">
+            <summary>
+            关于AnomalyUtility的补丁（用于移除和添加图鉴）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_AnomalyUtility.Prefix(Verse.Thing,Verse.Gizmo@)">
+            <summary>
+            Prefix方法
+            </summary>
+            <param name="thing">实体</param>
+            <param name="__result">gizmo</param>
+            <returns>是否中断原方法</returns>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_ApparelProperties">
+            <summary>
+            服装层Patch（用于解决头部服装渲染问题）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Notify_HeldOnPlatform">
+            <summary>
+            关于CompHoldingPlatformTarget的补丁（为了提供生物特征可传递的特性）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Notify_HeldOnPlatform.Prefix(Verse.ThingOwner,RimWorld.CompHoldingPlatformTarget)">
+            <summary>
+            Prefix方法
+            </summary>
+            <param name="newOwner">新的所有者</param>
+            <param name="__instance">原来的反射对象</param>
+            <returns>false 终止原方法（会和同样的prefix产生可能的不兼容）</returns>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Escape">
+            <summary>
+            关于CompHoldingPlatformTarget的补丁（为了提供出逃回调方法）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Escape.Prefix(System.Boolean,RimWorld.CompHoldingPlatformTarget)">
+            <summary>
+            Prefix方法
+            </summary>
+            <param name="initiator">是否是初始化</param>
+            <param name="__instance">原来的反射对象</param>
+            <returns>视情况而定</returns>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick">
+            <summary>
+            关于CompHoldingPlatformTarget的补丁（为了提供异想体不可随机逃跑的特性）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick.#ctor">
+            <summary>
+            关于CompHoldingPlatformTarget的补丁（为了提供异想体不可随机逃跑的特性）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick.Prefix(Verse.Pawn,RimWorld.CompHoldingPlatformTarget)">
+            <summary>
+            Prefix方法
+            </summary>
+            <param name="pawn">异想体</param>
+            <param name="__instance">原来的反射对象</param>
+            <returns>false 终止原方法（会和同样的prefix产生可能的不兼容）</returns>
+        </member>
         <member name="T:LCAnomalyCore.Patch.Patch_CompStudyUnlocks">
             <summary>
             关于ConpStudyUnlocks的补丁（为了插入改名方法）
@@ -529,9 +1572,101 @@
             Postfix
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_Dialog_EntityCodex">
+            <summary>
+            关于Dialog_EntityCodex的补丁（将脑叶异常从原版图鉴列表中移除）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_MentalBreak">
+            <summary>
+            关于MentalStateHandler的补丁（为了提供崩溃警报点数）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_MentalBreak.Postfix(Verse.AI.MentalStateHandler,System.Boolean,Verse.MentalStateDef,System.String,System.Boolean,System.Boolean,System.Boolean,Verse.Pawn,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Postfix
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_PawnKill">
+            <summary>
+            关于Pawn的补丁（为了提供死亡警报点数）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_PawnKill.Postfix(Verse.Pawn,System.Nullable{Verse.DamageInfo},Verse.Hediff)">
+            <summary>
+            Postfix
+            </summary>
+            <param name="__instance">原来的反射对象</param>
+            <param name="dinfo">伤害信息</param>
+            <param name="exactCulprit">?</param>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_PawnDespawn">
+            <summary>
+            关于Pawn的补丁（为了提供DeSpawn警报点数）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_PawnDespawn.Postfix(Verse.Pawn,Verse.DestroyMode)">
+            <summary>
+            PostFix
+            </summary>
+            <param name="__instance">原来的反射对象</param>
+            <param name="mode">消失模式</param>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_TickManager">
+            <summary>
+            关于Pawn的补丁（为了提供暂停机制处理）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_TickManager.Postfix(Verse.TickManager)">
+            <summary>
+            Postfix
+            </summary>
+            <param name="__instance">原来的反射对象</param>
+        </member>
         <member name="T:LCAnomalyCore.Patch.Patch_WorkGiver_DarkStudyInteract">
             <summary>
             关于WorkGiver_DarkStudyInteract的补丁（用于禁止主动研究LC实体）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly">
+            <summary>
+            提取异想体仪式的Toil
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.invokerRole">
+            <summary>
+            触发角色
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.anomalyLevelTag">
+            <summary>
+            异常等级标签
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.#ctor(RimWorld.PsychicRitualRoleDef,System.String)">
+            <summary>
+            提取仪式
+            </summary>
+            <param name="invokerRole">触发角色</param>
+            <param name="anomalyLevelTag">异常等级标签</param>
+        </member>
+        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.Start(Verse.AI.Group.PsychicRitual,Verse.AI.Group.PsychicRitualGraph)">
+            <summary>
+            开始仪式
+            </summary>
+            <param name="psychicRitual">仪式</param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.ApplyOutcome(Verse.AI.Group.PsychicRitual,Verse.Pawn)">
+            <summary>
+            仪式结果
+            </summary>
+            <param name="psychicRitual">仪式</param>
+            <param name="invoker">触发者</param>
+        </member>
+        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.ExposeData">
+            <summary>
+            和保存有关
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">
@@ -646,6 +1781,138 @@
             <param name="ingredients">？</param>
             <param name="bill">手术</param>
         </member>
+        <member name="T:LCAnomalyCore.Settings.Setting_LCAnomalyCore">
+            <summary>
+            游戏内配置文件
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_ShowWarningSettings">
+            <summary>
+            是否显示警报相关自定义选项
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_EnableLCWarning">
+            <summary>
+            是否启用LC警报系统
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_EnableLCWarningMusic">
+            <summary>
+            是否启用LC警报音乐
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_EnableCustomWarningFadeOption">
+            <summary>
+            是否启用自定义警报点数降低选项
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_FadeDuration">
+            <summary>
+            警报点数降低间隔（Tick）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_FadeAmount">
+            <summary>
+            每次降低的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_EnableLCWarningDeath">
+            <summary>
+            是否启用死亡警报点数计算
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_PlayerFactionDie">
+            <summary>
+            玩家派系死亡提供的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_AllyFactionDie">
+            <summary>
+            友军派系死亡提供的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_NeturalFactionDie">
+            <summary>
+            中立派系死亡提供的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_EnableLCWarningMentalBreak">
+            <summary>
+            是否启用精神崩溃警报点数计算
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_PlayerFactionMentalBreak">
+            <summary>
+            玩家派系精神崩溃提供的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_AllyFactionMentalBreak">
+            <summary>
+            友军派系精神崩溃提供的警报点数
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.PointsOfWarning_NeturalFactionMentalBreak">
+            <summary>
+            中立派系精神崩溃提供的警报点数
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore.ExposeData">
+            <summary>
+            保存相关
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.Settings">
+            <summary>
+            设置文件对象
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.#ctor(Verse.ModContentPack)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="content"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.SettingsCategory">
+            <summary>
+            mod配置文件列表名称
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.DoSettingsWindowContents(UnityEngine.Rect)">
+            <summary>
+            界面绘制
+            </summary>
+            <param name="inRect"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.ShowWarningSettings(System.Boolean,System.Single@,UnityEngine.Rect)">
+            <summary>
+            警报相关菜单
+            </summary>
+            <param name="state"></param>
+            <param name="y"></param>
+            <param name="inRect"></param>
+        </member>
+        <member name="T:LCAnomalyCore.Sounds.ExtractRitualTransition">
+            <summary>
+            提取仪式时自动播放脑叶选择音乐
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Sounds.ExtractRitualTransition.IsTransitionSatisfied">
+            <summary>
+            是否满足过渡条件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Toils.ExtractRitualToil_GatherForInvocation">
+            <summary>
+            提取意识的聚集Toil（和原版基本一致）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Toils.ExtractRitualToil_GatherOfferings">
+            <summary>
+            提取意识的聚集Toil（和原版基本一致）
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
             <summary>
             自动研究分配对话框
@@ -670,6 +1937,121 @@
             <summary>
             窗体的尺寸
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(RimWorld.EntityCategoryDef,UnityEngine.Rect)">
+            <summary>
+            绘制Tip
+            </summary>
+            <param name="cat">类型</param>
+            <param name="rect">rect</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.ITab_PawnStatus">
+            <summary>
+            脑叶员工属性Tab
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.StatusComp">
+            <summary>
+            comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsEmployee">
+            <summary>
+            是否是职员（comp不为空且阵营为殖民者）
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsVisible">
+            <summary>
+            是否显示在面板上
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.FillTab">
+            <summary>
+            Tab内容绘制
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.DrawStatusTab">
+            <summary>
+            具体内容绘制
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.Curves.JoinEscapeChanceFromEscapeIntervalCurve">
+            <summary>
+            出逃曲线（和原版一致）
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.ExpansionActive">
+            <summary>
+            拓展Mod激活状态
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Util.ExpansionActive.SevenSinEntityActive">
+            <summary>
+            大罪生物是否激活
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Util.ExpansionActive.MeatLanternActive">
+            <summary>
+            肉食提灯是否激活
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.ExtractUtil">
+            <summary>
+            提取仪式相关操作的工具类
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ExtractUtil.anomlayLvl2DefList_Ritual">
+            <summary>
+            字典：异想体等级->所有指定等级异想体的列表（仅限仪式召唤）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ExtractUtil.anomlayLvl2DefList_Cogito">
+            <summary>
+            字典：异想体等级->所有指定等级异想体的列表（仅限Cogito注射）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ExtractUtil.anomlayLvl2DefList_SevenSin">
+            <summary>
+            字典：异想体等级->所有指定等级异想体的列表（仅限大罪生物）
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.Init">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.CheckHasInitial">
+            <summary>
+            检查是否已经初始化过
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.Get_AnomlayLvl2DefList_Ritual(System.String)">
+            <summary>
+            通过 异想体等级 获取 所有指定等级异想体的列表（仅限仪式召唤）
+            </summary>
+            <param name="level">异想体等级</param>
+            <returns>指定等级异想体的列表（仅限仪式召唤）</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.Get_AnomlayLvl2DefList_Cogito(System.String)">
+            <summary>
+            通过 异想体等级 获取 所有指定等级异想体的列表（仅限Cogito注射）
+            </summary>
+            <param name="level">异想体等级</param>
+            <returns>指定等级异想体的列表（仅限Cogito注射）</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.Get_AnomlayLvl2DefList_SevenSin(System.String)">
+            <summary>
+            通过 异想体等级 获取 所有指定等级异想体的列表（仅限大罪生物）
+            </summary>
+            <param name="level">异想体等级</param>
+            <returns>指定等级异想体的列表（仅限大罪生物）</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.ExtractUtil.CheckIfLevelLegal(System.String)">
+            <summary>
+            检查等级是否合法
+            </summary>
+            <param name="s">等级字符串</param>
+            <returns>是否合法</returns>
         </member>
         <member name="T:LCAnomalyCore.Util.GraphicUtil">
             <summary>
@@ -747,6 +2129,130 @@
             </summary>
             <param name="pawn"></param>
             <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Util.MusicUtils">
+            <summary>
+            音乐工具
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.SightUtil.IsOutsideView(Verse.Thing,RimWorld.Faction)">
+            <summary>
+            判断目标是否在视野里
+            </summary>
+            <param name="thing">目标</param>
+            <param name="faction">派系</param>
+            <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Util.StudyUtil">
+            <summary>
+            研究工作工具类
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.DoStudyResultEffect(Verse.Pawn,Verse.Pawn,LCAnomalyCore.Util.LC_StudyResult)">
+            <summary>
+            播放工作质量特效
+            </summary>
+            <param name="studier">研究者</param>
+            <param name="entity">被研究者</param>
+            <param name="result">研究质量</param>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.CalculatePawnLevel(System.Single)">
+            <summary>
+            根据数值计算员工属性等级
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.GetPawnStatusIncreaseValue(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType,System.String)">
+            <summary>
+            计算处理脑叶员工数值变化量
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.LC_StudyResult">
+            <summary>
+            研究质量枚举
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.LC_StudyResult.Good">
+            <summary>
+            良好
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.LC_StudyResult.Normal">
+            <summary>
+            一般
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.LC_StudyResult.Bad">
+            <summary>
+            差
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.Types">
+            <summary>
+            类型转换工具
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.Types.CheckIfLCEntity(Verse.Thing)">
+            <summary>
+            检查是否是LC实体
+            </summary>
+            <param name="thing">实体</param>
+            <returns>是则返回true，反之false</returns>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAnomalyWorkType.Unknown">
+            <summary>
+            未知
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAnomalyWorkType.Instinct">
+            <summary>
+            本能
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAnomalyWorkType.Attachment">
+            <summary>
+            沟通
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAnomalyWorkType.Insight">
+            <summary>
+            洞察
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAnomalyWorkType.Repression">
+            <summary>
+            压迫
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.EAbnormalLevelType">
+            <summary>
+            异想体等级
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAbnormalLevelType.ZAYIN">
+            <summary>
+            Z
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAbnormalLevelType.TETH">
+            <summary>
+            T
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAbnormalLevelType.HE">
+            <summary>
+            H
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAbnormalLevelType.WAW">
+            <summary>
+            W
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.EAbnormalLevelType.ALEPH">
+            <summary>
+            A
+            </summary>
         </member>
     </members>
 </doc>

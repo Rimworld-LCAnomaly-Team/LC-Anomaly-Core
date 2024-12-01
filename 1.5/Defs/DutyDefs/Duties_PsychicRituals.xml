@@ -3,7 +3,7 @@
 
   <DutyDef>
     <defName>GatherOfferingsForExtractRitual</defName>
-    <thinkNode Class="LCAnomalyLibrary.Jobs.JobGiver_GatherOfferingsForExtractRitual" />
+    <thinkNode Class="LCAnomalyCore.Jobs.JobGiver_GatherOfferingsForExtractRitual" />
   </DutyDef>
 
 </Defs>

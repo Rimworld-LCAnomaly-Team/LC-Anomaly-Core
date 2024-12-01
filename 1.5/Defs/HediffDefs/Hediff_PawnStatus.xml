@@ -7,7 +7,7 @@
     <label>LobotomyCorp Employee Status</label>
     <labelNoun>Modify vanilla status based on four types of LobotomyCorp pawn status.</labelNoun>
     <description>Modify vanilla status based on four types of LobotomyCorp pawn status.</description>
-    <hediffClass>LCAnomalyLibrary.Hediffs.HediffComp_PawnStatus</hediffClass>
+    <hediffClass>LCAnomalyCore.Hediffs.HediffComp_PawnStatus</hediffClass>
     <isBad>false</isBad>
   </HediffDef>
 

@@ -1,6 +1,4 @@
-﻿using LCAnomalyLibrary.Comp;
-
-namespace LCAnomalyCore.Comp
+﻿namespace LCAnomalyCore.Comp
 {
     public class CompProperties_PeBoxProduce : LC_CompProperties_PeBoxProduce
     {

@@ -1,10 +1,8 @@
 ﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
-using LCAnomalyLibrary.Comp;
-using LCAnomalyLibrary.Comp.Pawns;
-using LCAnomalyLibrary.Interface;
-using LCAnomalyLibrary.Util;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +40,7 @@ namespace LCAnomalyCore.Building
         {
             get
             {
-                if(HeldPawn != null)
+                if (HeldPawn != null)
                 {
                     compStudiable ??= HeldPawn.GetComp<LC_CompStudiable>();
                 }
@@ -50,6 +48,7 @@ namespace LCAnomalyCore.Building
                 return compStudiable;
             }
         }
+
         private LC_CompStudiable compStudiable;
 
         private Sustainer workingSustainer;
@@ -108,7 +107,7 @@ namespace LCAnomalyCore.Building
             {
                 if (EntityCached)
                 {
-                    LCAnomalyLibrary.Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
+                    Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
                     return saved.IndiPeBoxAmount;
                 }
 
@@ -144,7 +143,6 @@ namespace LCAnomalyCore.Building
             innerContainer.OnContentsChanged += OnContentChanged;
             //if (respawningAfterLoad)
             //{
-
             //}
         }
 
@@ -278,10 +276,10 @@ namespace LCAnomalyCore.Building
 
                 #region 左侧Box条
 
-                if(EntityCached)
+                if (EntityCached)
                 {
                     //NE-BOX
-                    if(cachedNeBoxBarGraphics != null && cachedNeBoxBarGraphics.Count > 0)
+                    if (cachedNeBoxBarGraphics != null && cachedNeBoxBarGraphics.Count > 0)
                     {
                         for (int i = 0; i < cachedNeBoxBarGraphics.Count; i++)
                         {
@@ -299,7 +297,7 @@ namespace LCAnomalyCore.Building
                     }
                 }
 
-                #endregion
+                #endregion 左侧Box条
             }
         }
 
@@ -327,7 +325,6 @@ namespace LCAnomalyCore.Building
 
             //清理原先平台的分配对象
             GetComp<CompAssignableToPawn_LC_Entity>()?.ClearAllAssignments();
-                
         }
 
         /// <summary>
@@ -338,7 +335,7 @@ namespace LCAnomalyCore.Building
             cachedEntity.Notify_Studying(pawn);
 
             //收容室音乐播放
-            if (cachedEntity.Props.soundWorking != null) 
+            if (cachedEntity.Props.soundWorking != null)
             {
                 if (workingSustainer == null || workingSustainer.Ended)
                 {
@@ -388,7 +385,7 @@ namespace LCAnomalyCore.Building
         /// </summary>
         protected void EntityNameUpdateForce()
         {
-            if(EntityCached)
+            if (EntityCached)
                 cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
             //Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
         }
@@ -418,9 +415,9 @@ namespace LCAnomalyCore.Building
         /// Gizmo
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<Gizmo> GetGizmos()
+        public override IEnumerable<Verse.Gizmo> GetGizmos()
         {
-            foreach (Gizmo gizmo in base.GetGizmos())
+            foreach (Verse.Gizmo gizmo in base.GetGizmos())
             {
                 yield return gizmo;
             }
@@ -452,7 +449,7 @@ namespace LCAnomalyCore.Building
                     Find.WindowStack.Add(new Dialog_LC_AssignWorkType(this));
                 };
 
-                if(!EntityCached)
+                if (!EntityCached)
                     command_Action.Disable("LC_NoAbnormalityOnPlatformDesc".Translate());
 
                 yield return command_Action;

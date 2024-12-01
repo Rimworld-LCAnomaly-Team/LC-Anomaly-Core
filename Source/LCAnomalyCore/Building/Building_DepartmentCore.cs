@@ -1,7 +1,6 @@
 ﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Util;
-using LCAnomalyLibrary.Comp.Pawns;
-using LCAnomalyLibrary.Util;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -24,6 +23,7 @@ namespace LCAnomalyCore.Building
                 return compDepartmentCore;
             }
         }
+
         private CompAssignableDepartmentCore compDepartmentCore;
 
         /// <summary>
@@ -37,6 +37,7 @@ namespace LCAnomalyCore.Building
                 return compPower;
             }
         }
+
         private CompPowerTrader compPower;
 
         /// <summary>
@@ -50,6 +51,7 @@ namespace LCAnomalyCore.Building
                 return compRefuelable;
             }
         }
+
         private CompRefuelable compRefuelable;
 
         private GenDraw.FillableBarRequest fillableBarRequest;
@@ -136,7 +138,7 @@ namespace LCAnomalyCore.Building
         /// </summary>
         private void ProgressBarDraw(Vector3 drawLoc)
         {
-            if(fillableBarRequest.filledMat == null)
+            if (fillableBarRequest.filledMat == null)
             {
                 LogUtil.Warning("部门核心建筑进度条为null，准备初始化");
 
