@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.GameComponent;
+﻿using LCAnomalyCore.Util;
 using UnityEngine;
 using Verse;
 
@@ -33,7 +33,7 @@ namespace LCAnomalyCore.Shaders
         // Use this for initialization
         private void Start()
         {
-            MosaicShader = Current.Game.GetComponent<GameComponent_LC>().MainBundle.LoadAsset<Shader>("MosaicShader");
+            MosaicShader = Components.LC.MainBundle.LoadAsset<Shader>("MosaicShader");
 
             // Disable if we don't support image effects
             if (!SystemInfo.supportsImageEffects)

@@ -70,7 +70,7 @@ namespace LCAnomalyCore.GameComponent
                         text = "StandaloneWindows64";
                     }
 
-                    string bundlePath = Path.Combine(Setting_LCAnomalyCore_Main.ContentDir, "Materials\\Bundles\\" + text + "\\mosaicshader");
+                    string bundlePath = Path.Combine(Setting_LCAnomalyCore_Main.ContentDir, "1.5\\Assets\\Bundles\\" + text + "\\mosaicshader");
                     AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
                     mainBundle = bundle;
 
@@ -85,6 +85,35 @@ namespace LCAnomalyCore.GameComponent
         }
 
         private AssetBundle mainBundle;
+
+        public AssetBundle UGUIBundle
+        {
+            get
+            {
+                if (uguiBundle == null)
+                {
+                    string text = "";
+
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        text = "StandaloneWindows64";
+                    }
+
+                    string bundlePath = Path.Combine(Setting_LCAnomalyCore_Main.ContentDir, "1.5\\Assets\\Bundles\\" + text + "\\rimworld.lc.ugui");
+                    AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
+                    uguiBundle = bundle;
+
+                    if (bundle == null)
+                    {
+                        Log.Error("Failed to load bundle at path: " + bundlePath);
+                    }
+                }
+
+                return uguiBundle;
+            }
+        }
+
+        private AssetBundle uguiBundle;
 
         public GameComponent_LC(Game game)
         {

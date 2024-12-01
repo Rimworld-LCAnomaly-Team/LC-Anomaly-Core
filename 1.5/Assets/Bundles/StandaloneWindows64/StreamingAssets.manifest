@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 929511023
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: rimworld.lc.ugui
+      Dependencies: {}
