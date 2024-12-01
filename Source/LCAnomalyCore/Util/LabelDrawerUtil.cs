@@ -1,4 +1,5 @@
 ﻿using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Settings;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -10,19 +11,14 @@ namespace LCAnomalyCore.Util
         public static void DrawLabels(Pawn colonist, Vector2 pos, ColonistBar bar, Rect rect, float truncateToWidth = 9999f)
         {
             var comp = colonist.GetComp<CompPawnStatus>();
-            if (comp != null && comp.Enabled)
+            if (comp != null && comp.Enabled && comp.AssignedCore != null)
             {
-                float tempExtraOffsetPerLine = 0.1f;
-                Vector2 vector = new Vector2(0f, Text.LineHeightOf(0) + tempExtraOffsetPerLine);
+                Vector2 vector = new Vector2(0f
+                    , Text.LineHeightOf(0) + Setting_LCAnomalyCore_Main.Settings.DepartmentLabel_ColonistBar_VerticalOffsetPerLine);
                 pos += vector;
 
-                DrawCustomLabel(pos, "控制部", ColorUtil.ControlTeam);
-                //if (Settings.DrawCurrentJob && Mouse.IsOver(rect))
-                //{
-                //    pos += vector;
-                //    LabelDrawer.DrawCurrentJobLabel(pos, colonist, 9999f);
-                //    pos += vector;
-                //}
+                var department = comp.AssignedCore.CompDepartmentCore.Props.departmentType;
+                DrawCustomLabel(pos, department.ToString().Translate(), ColorUtil.TeamStyleColorDict[department]);
             }
         }
 

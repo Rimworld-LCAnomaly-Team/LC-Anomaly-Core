@@ -50,10 +50,17 @@ namespace LCAnomalyCore.Settings
         {
             float y = 0;
 
+            //警报选项
             y += 40;
             Widgets.Checkbox(0f, y, ref Settings.If_ShowWarningSettings, 25f, false, false, null, null);
             Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), Translator.Translate("If_ShowWarningSettingsText"));
             ShowWarningSettings(Settings.If_ShowWarningSettings, ref y, inRect);
+
+            //部门选项
+            y += 40;
+            Widgets.Checkbox(0f, y, ref Settings.If_ShowDepartmentSettings, 25f, false, false, null, null);
+            Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), Translator.Translate("If_ShowDepartmentSettingsText"));
+            ShowDepartmentSettings(Settings.If_ShowDepartmentSettings, ref y, inRect);
 
             base.DoSettingsWindowContents(inRect);
         }
@@ -147,6 +154,36 @@ namespace LCAnomalyCore.Settings
                         , ref Settings.PointsOfWarning_NeturalFactionMentalBreak
                         , ref this.PointsOfWarning_NeturalFactionMentalBreakEditBuffer);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 部门相关菜单
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="y"></param>
+        /// <param name="inRect"></param>
+        private void ShowDepartmentSettings(bool state, ref float y, Rect inRect)
+        {
+            if (!state)
+                return;
+
+            y += 40;
+            Widgets.Checkbox(35f, y, ref Settings.If_ShowDepartmentLabel_ColonistBar, 25f, false, false, null, null);
+            Widgets.Label(new Rect(70f, y + 1f, inRect.width - 50f, 25f), Translator.Translate("If_ShowDepartmentLabel_ColonistBarText"));
+            if (Settings.If_ShowDepartmentLabel_ColonistBar)
+            {
+                y += 40;
+                Widgets.HorizontalSlider(new Rect(70f, y, inRect.width * 0.5f, 25f)
+                    , ref Settings.DepartmentLabel_ColonistBar_VerticalOffset
+                    , new FloatRange(-5, 5)
+                    , Translator.Translate("DepartmentLabel_ColonistBar_VerticalOffsetText"));
+
+                y += 40;
+                Widgets.HorizontalSlider(new Rect(70f, y, inRect.width * 0.5f, 25f)
+                    , ref Settings.DepartmentLabel_ColonistBar_VerticalOffsetPerLine
+                    , new FloatRange(-5, 5)
+                    , Translator.Translate("DepartmentLabel_ColonistBar_VerticalOffsetPerLineText"));
             }
         }
     }

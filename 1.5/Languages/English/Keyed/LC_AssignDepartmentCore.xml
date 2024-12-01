@@ -5,4 +5,17 @@
   <LC_AssignmentGizmo_DepartmentCore_Desc>Click to assign pawns to Department, pawn assigned's employee buff will be enabled.\nUnassign will disable the buff.</LC_AssignmentGizmo_DepartmentCore_Desc>
   <LC_AssignmentGizmo_NoAssignablePawns_Desc>No assignable pawn</LC_AssignmentGizmo_NoAssignablePawns_Desc>
 
+  <ControlTeam>ControlTeam</ControlTeam>
+  <InformationTeam>InformationTeam</InformationTeam>
+  <TrainingTeam>TrainingTeam</TrainingTeam>
+  <SafetyTeam>SafetyTeam</SafetyTeam>
+
+  <CentralCommandTeam>CentralCommandTeam</CentralCommandTeam>
+  <WelfareTeam>WelfareTeam</WelfareTeam>
+  <DisciplinaryTeam>DisciplinaryTeam</DisciplinaryTeam>
+
+  <RecordTeam>RecordTeam</RecordTeam>
+  <ExtractionTeam>ExtractionTeam</ExtractionTeam>
+  <ArchitectureTeam>ArchitectureTeam</ArchitectureTeam>
+
 </LanguageData>

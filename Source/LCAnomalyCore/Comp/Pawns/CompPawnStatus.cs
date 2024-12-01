@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Defs;
+﻿using LCAnomalyCore.Building;
+using LCAnomalyCore.Defs;
 using LCAnomalyCore.Util;
 using System.Collections.Generic;
 using Verse;
@@ -105,6 +106,8 @@ namespace LCAnomalyCore.Comp.Pawns
             }
         }
 
+        public Building_DepartmentCore AssignedCore;
+
         #endregion 变量
 
         #region 生命周期
@@ -122,6 +125,7 @@ namespace LCAnomalyCore.Comp.Pawns
         {
             Scribe_Values.Look(ref enabled, "triggered");
             Scribe_Values.Look(ref Inited, "inited");
+            Scribe_References.Look(ref AssignedCore, "assignedCore");
             Scribe_Deep.Look(ref status_Fortitude, "pawnStatus_Fortitude");
             Scribe_Deep.Look(ref status_Prudence, "pawnStatus_Prudence");
             Scribe_Deep.Look(ref status_Temperance, "pawnStatus_Temperance");
@@ -243,8 +247,12 @@ namespace LCAnomalyCore.Comp.Pawns
         /// <summary>
         /// 激活员工属性
         /// </summary>
-        public void SetPawnStatusEnabled(bool state)
+        public void SetPawnStatusEnabled(bool state, Building_DepartmentCore core = null)
         {
+            if (state)
+                AssignedCore = core;
+            else
+                AssignedCore = null;
             Enabled = state;
         }
 

@@ -75,6 +75,13 @@ namespace LCAnomalyCore.Building
             }
         }
 
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        {
+            //清理所有已分配员工
+            CompDepartmentCore.UnassignAllPawn();
+            base.DeSpawn(mode);
+        }
+
         /// <summary>
         /// 房间内的员工治疗
         /// </summary>
@@ -161,8 +168,48 @@ namespace LCAnomalyCore.Building
     public enum EDepartmentType
     {
         /// <summary>
+        /// null
+        /// </summary>
+        Null = 0,
+        /// <summary>
         /// 控制部
         /// </summary>
-        ControlTeam = 0,
+        ControlTeam = 1,
+        /// <summary>
+        /// 情报部
+        /// </summary>
+        InformationTeam,
+        /// <summary>
+        /// 培训部
+        /// </summary>
+        TrainingTeam,
+        /// <summary>
+        /// 安保部
+        /// </summary>
+        SafetyTeam,
+        /// <summary>
+        /// 中央本部
+        /// </summary>
+        CentralCommandTeam,
+        /// <summary>
+        /// 福利部
+        /// </summary>
+        WelfareTeam,
+        /// <summary>
+        /// 惩戒部
+        /// </summary>
+        DisciplinaryTeam,
+        /// <summary>
+        /// 记录部
+        /// </summary>
+        RecordTeam,
+        /// <summary>
+        /// 研发部
+        /// </summary>
+        ExtractionTeam,
+        /// <summary>
+        /// 构筑部
+        /// </summary>
+        ArchitectureTeam
     }
 }

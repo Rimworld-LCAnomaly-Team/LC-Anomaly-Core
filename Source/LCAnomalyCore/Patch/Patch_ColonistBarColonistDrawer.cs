@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LCAnomalyCore.Settings;
 using LCAnomalyCore.Util;
 using RimWorld;
 using UnityEngine;
@@ -11,17 +12,19 @@ namespace LCAnomalyCore.Patch
     {
         private static void Postfix(Rect rect, Pawn colonist, Map pawnMap, bool highlight, bool reordering)
         {
-            var colonistBar = Find.ColonistBar;
-            float num = 4 * colonistBar.Scale;
+            if (Setting_LCAnomalyCore_Main.Settings.If_ShowDepartmentLabel_ColonistBar)
+            {
+                var colonistBar = Find.ColonistBar;
+                float num = 4 * colonistBar.Scale;
 
-            float tempVOffset = -1f;
+                Vector2 pos = new Vector2(rect.center.x
+                    , rect.yMax - num + Setting_LCAnomalyCore_Main.Settings.DepartmentLabel_ColonistBar_VerticalOffset);
 
-            Vector2 pos = new Vector2(rect.center.x, rect.yMax - num + tempVOffset);
+                if (colonist == null)
+                    return;
 
-            if (colonist == null)
-                return;
-
-            LabelDrawerUtil.DrawLabels(colonist, pos, colonistBar, rect, rect.width + colonistBar.SpaceBetweenColonistsHorizontal);
+                LabelDrawerUtil.DrawLabels(colonist, pos, colonistBar, rect, rect.width + colonistBar.SpaceBetweenColonistsHorizontal);
+            }
         }
     }
 }

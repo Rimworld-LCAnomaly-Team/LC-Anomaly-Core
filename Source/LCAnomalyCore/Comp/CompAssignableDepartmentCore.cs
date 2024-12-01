@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Comp.Pawns;
+﻿using LCAnomalyCore.Building;
+using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -63,7 +64,7 @@ namespace LCAnomalyCore.Comp
             if (!assignedPawns.Contains(pawn))
             {
                 assignedPawns.Add(pawn);
-                pawn.GetComp<CompPawnStatus>()?.SetPawnStatusEnabled(true);
+                pawn.GetComp<CompPawnStatus>()?.SetPawnStatusEnabled(true, (Building_DepartmentCore)parent);
 
                 SortAssignedPawns();
             }
@@ -84,6 +85,19 @@ namespace LCAnomalyCore.Comp
                 {
                     SortAssignedPawns();
                 }
+            }
+        }
+
+        public void UnassignAllPawn()
+        {
+            if (assignedPawns.Count > 0) 
+            {
+                foreach (var pawn in assignedPawns) 
+                {
+                    pawn.GetComp<CompPawnStatus>()?.SetPawnStatusEnabled(false);
+                }
+
+                assignedPawns.Clear();
             }
         }
 

@@ -83,6 +83,23 @@ namespace LCAnomalyCore.Settings
 
         #endregion 警报相关
 
+        #region 部门分配显示
+
+        /// <summary>
+        /// 是否显示部门分配列表
+        /// </summary>
+        public bool If_ShowDepartmentSettings = false;
+
+        /// <summary>
+        /// 是否在殖民者栏显示
+        /// </summary>
+        public bool If_ShowDepartmentLabel_ColonistBar = true;
+
+        public float DepartmentLabel_ColonistBar_VerticalOffset = -1f;
+        public float DepartmentLabel_ColonistBar_VerticalOffsetPerLine = 0.1f;
+
+        #endregion
+
         #endregion 字段
 
         /// <summary>
@@ -91,6 +108,7 @@ namespace LCAnomalyCore.Settings
         public override void ExposeData()
         {
             base.ExposeData();
+
             #region 警报相关
 
             //是否显示
@@ -118,6 +136,21 @@ namespace LCAnomalyCore.Settings
             Scribe_Values.Look<int>(ref this.PointsOfWarning_NeturalFactionMentalBreak, "PointsOfWarning_NeturalFactionMentalBreak", 0, false);
 
             #endregion 警报相关
+
+            #region 部门分配显示
+
+            //是否显示分配列表
+            Scribe_Values.Look<bool>(ref this.If_ShowDepartmentSettings, "If_ShowDepartmentSettings", false, false);
+
+            //是否在殖民者栏显示
+            Scribe_Values.Look<bool>(ref this.If_ShowDepartmentLabel_ColonistBar, "If_ShowDepartmentLabel_ColonistBar", true, false);
+            
+            //殖民者栏垂直偏移量
+            Scribe_Values.Look<float>(ref this.DepartmentLabel_ColonistBar_VerticalOffset, "DepartmentLabel_ColonistBar_VerticalOffset", -1f, false);
+            //殖民者栏每行垂直偏移量
+            Scribe_Values.Look<float>(ref this.DepartmentLabel_ColonistBar_VerticalOffsetPerLine, "DepartmentLabel_ColonistBar_VerticalOffsetPerLine", 0.1f, false);
+
+            #endregion
         }
     }
 }

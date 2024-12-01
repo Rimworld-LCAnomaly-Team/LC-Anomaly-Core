@@ -58,9 +58,59 @@
             部门类型枚举
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.Null">
+            <summary>
+            null
+            </summary>
+        </member>
         <member name="F:LCAnomalyCore.Building.EDepartmentType.ControlTeam">
             <summary>
             控制部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.InformationTeam">
+            <summary>
+            情报部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.TrainingTeam">
+            <summary>
+            培训部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.SafetyTeam">
+            <summary>
+            安保部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.CentralCommandTeam">
+            <summary>
+            中央本部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.WelfareTeam">
+            <summary>
+            福利部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.DisciplinaryTeam">
+            <summary>
+            惩戒部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.RecordTeam">
+            <summary>
+            记录部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.ExtractionTeam">
+            <summary>
+            研发部
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Building.EDepartmentType.ArchitectureTeam">
+            <summary>
+            构筑部
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Building.Building_EnkephalinGenerator">
@@ -877,7 +927,7 @@
             <param name="statusType">属性类型</param>
             <returns></returns>
         </member>
-        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean)">
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean,LCAnomalyCore.Building.Building_DepartmentCore)">
             <summary>
             激活员工属性
             </summary>
@@ -1856,6 +1906,16 @@
             中立派系精神崩溃提供的警报点数
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_ShowDepartmentSettings">
+            <summary>
+            是否显示部门分配列表
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.If_ShowDepartmentLabel_ColonistBar">
+            <summary>
+            是否在殖民者栏显示
+            </summary>
+        </member>
         <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore.ExposeData">
             <summary>
             保存相关
@@ -1887,6 +1947,14 @@
         <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.ShowWarningSettings(System.Boolean,System.Single@,UnityEngine.Rect)">
             <summary>
             警报相关菜单
+            </summary>
+            <param name="state"></param>
+            <param name="y"></param>
+            <param name="inRect"></param>
+        </member>
+        <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.ShowDepartmentSettings(System.Boolean,System.Single@,UnityEngine.Rect)">
+            <summary>
+            部门相关菜单
             </summary>
             <param name="state"></param>
             <param name="y"></param>
@@ -1973,6 +2041,11 @@
         <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.DrawStatusTab">
             <summary>
             具体内容绘制
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.TeamStyleColorDict">
+            <summary>
+            部门配色字典
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Util.Curves.JoinEscapeChanceFromEscapeIntervalCurve">

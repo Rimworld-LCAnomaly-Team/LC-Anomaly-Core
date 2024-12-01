@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- Base Department Core -->
+  <ThingDef Name="LC_DepartmentCoreBase" ParentName="BuildingBase" Abstract="true">
+    <thingClass>LCAnomalyCore.Building.Building_DepartmentCore</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/DepartmentCore/Base_0p</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+    </graphicData>
+    <designationCategory>Buildings_LC</designationCategory>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>1000</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelConsumptionRate>0</fuelConsumptionRate>
+        <fuelCapacity>5000.0</fuelCapacity>
+        <autoRefuelPercent>1</autoRefuelPercent>
+        <showFuelGizmo>true</showFuelGizmo>
+        <fuelFilter>
+          <thingDefs>
+            <li>KCorpAmpoule</li>
+          </thingDefs>
+        </fuelFilter>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>10000</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <Beauty>10</Beauty>
+      <Mass>35</Mass>
+    </statBases>
+    <size>(3, 3)</size>
+    <fillPercent>1.0</fillPercent>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <passability>Impassable</passability>
+    <rotatable>true</rotatable>
+    <canOverlapZones>false</canOverlapZones>
+    <tradeability>None</tradeability>
+  </ThingDef>
+
+  <!-- Control Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_ControlTeam</defName>
+    <label>Department Core (Control Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>ControlTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+  
+  <!-- Information Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_InformationTeam</defName>
+    <label>Department Core (Information Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>InformationTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Training Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_TrainingTeam</defName>
+    <label>Department Core (Training Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>TrainingTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Safety Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_SafetyTeam</defName>
+    <label>Department Core (Safety Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>SafetyTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- CentralCommand Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_CentralCommandTeam</defName>
+    <label>Department Core (CentralCommand Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>CentralCommandTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>10</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Welfare Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_WelfareTeam</defName>
+    <label>Department Core (Welfare Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>WelfareTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Disciplinary Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_DisciplinaryTeam</defName>
+    <label>Department Core (Disciplinary Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>DisciplinaryTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Record Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_RecordTeam</defName>
+    <label>Department Core (RecordTeam)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>RecordTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Extraction Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_ExtractionTeam</defName>
+    <label>Department Core (Extraction Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>ExtractionTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Architecture Team Core-->
+  <ThingDef ParentName="LC_DepartmentCoreBase">
+    <defName>LC_DepartmentCore_ArchitectureTeam</defName>
+    <label>Department Core (Architecture Team)</label>
+    <description>.</description>
+    <costList>
+      <Steel>2000</Steel>
+      <ComponentSpacer>10</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
+        <departmentType>ArchitectureTeam</departmentType>
+        <healConsumeAmount>10</healConsumeAmount>
+        <healAmount>10</healAmount>
+        <healDuration>600</healDuration>
+        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
+        <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
+      </li>
+    </comps>
+    <statBases>
+      <WorkToBuild>8000</WorkToBuild>
+    </statBases>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+</Defs>

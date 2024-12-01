@@ -385,8 +385,39 @@ namespace LCAnomalyCore.Util
         {
             if (cachedTopGraphic_DepartmentCore.Count <= 0)
             {
-                cachedTopGraphic_DepartmentCore.Add("ControlTeam", GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "ControlTeam",
+                cachedTopGraphic_DepartmentCore.Add("ControlTeam", 
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "ControlTeam", 
                     ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("InformationTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "InformationTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("TrainingTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "TrainingTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("SafetyTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "SafetyTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                cachedTopGraphic_DepartmentCore.Add("CentralCommandTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "CentralCommandTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("WelfareTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "WelfareTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("DisciplinaryTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "DisciplinaryTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
+                cachedTopGraphic_DepartmentCore.Add("RecordTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "RecordTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("ExtractionTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "ExtractionTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                cachedTopGraphic_DepartmentCore.Add("ArchitectureTeam",
+                    GraphicDatabase.Get<Graphic_Single>(baseLocOfDepartmentCoreOverlay + "ArchitectureTeam",
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+
                 LogUtil.Message("QliphothIndicatorTex initialized");
             }
 

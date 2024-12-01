@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Settings;
+﻿using LCAnomalyCore.Building;
+using LCAnomalyCore.Settings;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
