@@ -30,7 +30,6 @@ namespace LCAnomalyCore.Shaders
             }
         }
 
-        // Use this for initialization
         private void Start()
         {
             MosaicShader = AssetBundleUtil.MainBundle.LoadAsset<Shader>("MosaicShader");

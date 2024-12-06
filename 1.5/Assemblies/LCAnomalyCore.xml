@@ -2221,6 +2221,16 @@
             <param name="pawn"></param>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Util.MaterialDatabase">
+            <summary>
+            材质库
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.MaterialDatabase.SilhouetteMat">
+            <summary>
+            剪影材质
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Util.MusicUtils">
             <summary>
             音乐工具
