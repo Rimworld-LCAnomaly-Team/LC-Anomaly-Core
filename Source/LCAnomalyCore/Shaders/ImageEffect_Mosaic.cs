@@ -33,7 +33,7 @@ namespace LCAnomalyCore.Shaders
         // Use this for initialization
         private void Start()
         {
-            MosaicShader = Components.LC.MainBundle.LoadAsset<Shader>("MosaicShader");
+            MosaicShader = AssetBundleUtil.MainBundle.LoadAsset<Shader>("MosaicShader");
 
             // Disable if we don't support image effects
             if (!SystemInfo.supportsImageEffects)

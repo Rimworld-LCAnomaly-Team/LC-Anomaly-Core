@@ -2043,6 +2043,16 @@
             具体内容绘制
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Util.AssetBundleUtil">
+            <summary>
+            AB包工具类
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Util.AssetBundleUtil.MainBundle">
+            <summary>
+            主AB包
+            </summary>
+        </member>
         <member name="F:LCAnomalyCore.Util.ColorUtil.TeamStyleColorDict">
             <summary>
             部门配色字典
@@ -2125,6 +2135,14 @@
             </summary>
             <param name="s">等级字符串</param>
             <returns>是否合法</returns>
+        </member>
+        <member name="M:LCAnomalyCore.Util.FileUtil.RenderTexture_Save2Local(UnityEngine.RenderTexture,System.String,System.String)">
+            <summary>
+            保存RenderTexture对象到本地png文件
+            </summary>
+            <param name="tex">贴图</param>
+            <param name="filePath">文件路径</param>
+            <param name="fileName">文件名</param>
         </member>
         <member name="T:LCAnomalyCore.Util.GraphicUtil">
             <summary>

@@ -1,17 +1,21 @@
 ManifestFileVersion: 0
-CRC: 3160331292
+CRC: 3298943357
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: da33ab11ef3aff8e5d02ddcc5219d375
+    Hash: 53487372732ac9dc793d212e2aa64795
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 850a4b75aec711f8e18028d349bc1bd6
+    Hash: 6893722305690c6aa69c9e400b45587b
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
 - Class: 28
+  Script: {instanceID: 0}
+- Class: 48
   Script: {instanceID: 0}
 - Class: 74
   Script: {instanceID: 0}
@@ -38,12 +42,15 @@ Assets:
 - Assets/Resource/Animator/ShowTextBG_FadeIn.anim
 - Assets/Resource/Animator/DarkEffect_FadeIn.anim
 - Assets/Resource/Textures/CreatureSelect 1.png
+- Assets/Resource/Shader/CustomSilhouette.shader
 - Assets/Resource/Animator/SelectCreature/SelectCreature_UnSelected.anim
 - Assets/Resource/Animator/ShowTextBGAnimator.controller
 - Assets/Resource/Animator/DarkEffectAnimator.controller
 - Assets/Resource/Prefab/Window_SelectCreature.prefab
 - Assets/Resource/Animator/SelectCreature/SelectCreature_Selected.anim
+- Assets/Resource/Material/SilhouetteMat.mat
 - Assets/Resource/Animator/SelectCreature/SelectCreature_Normal.anim
+- Assets/Resource/Shader/NewSurfaceShader.shader
 - Assets/Resource/Animator/SelectCreature/SelectCreatureAnimator.controller
 - Assets/Resource/Textures/CreatureSelect_BG.png
 Dependencies: []

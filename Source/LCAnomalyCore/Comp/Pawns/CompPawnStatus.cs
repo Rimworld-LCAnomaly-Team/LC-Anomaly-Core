@@ -3,6 +3,7 @@ using LCAnomalyCore.Defs;
 using LCAnomalyCore.Singleton;
 using LCAnomalyCore.Util;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Verse;
 
@@ -156,7 +157,7 @@ namespace LCAnomalyCore.Comp.Pawns
                     defaultLabel = "UITest",
                     action = delegate
                     {
-                        var go = Components.LC.UGUIBundle.LoadAsset<GameObject>("Window_SelectCreature");
+                        var go = AssetBundleUtil.MainBundle.LoadAsset<GameObject>("Window_SelectCreature");
                         LCMonoSingleton.Instance.InitPrefab(go, LCCanvasNormalSingleton.Instance.GameObject.transform);
                     }
                 };

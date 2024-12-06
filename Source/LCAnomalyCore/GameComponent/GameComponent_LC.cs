@@ -57,64 +57,6 @@ namespace LCAnomalyCore.GameComponent
 
         protected Dictionary<ThingDef, AnomalyStatusSaved> anomalyStatusSavedDict;
 
-        public AssetBundle MainBundle
-        {
-            get
-            {
-                if (mainBundle == null)
-                {
-                    string text = "";
-
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        text = "StandaloneWindows64";
-                    }
-
-                    string bundlePath = Path.Combine(Setting_LCAnomalyCore_Main.ContentDir, "1.5\\Assets\\Bundles\\" + text + "\\mosaicshader");
-                    AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
-                    mainBundle = bundle;
-
-                    if (bundle == null)
-                    {
-                        Log.Error("Failed to load bundle at path: " + bundlePath);
-                    }
-                }
-
-                return mainBundle;
-            }
-        }
-
-        private AssetBundle mainBundle;
-
-        public AssetBundle UGUIBundle
-        {
-            get
-            {
-                if (uguiBundle == null)
-                {
-                    string text = "";
-
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        text = "StandaloneWindows64";
-                    }
-
-                    string bundlePath = Path.Combine(Setting_LCAnomalyCore_Main.ContentDir, "1.5\\Assets\\Bundles\\" + text + "\\rimworld.lc.ugui");
-                    AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
-                    uguiBundle = bundle;
-
-                    if (bundle == null)
-                    {
-                        Log.Error("Failed to load bundle at path: " + bundlePath);
-                    }
-                }
-
-                return uguiBundle;
-            }
-        }
-
-        private AssetBundle uguiBundle;
-
         public GameComponent_LC(Game game)
         {
         }
@@ -122,8 +64,6 @@ namespace LCAnomalyCore.GameComponent
         public override void LoadedGame()
         {
             base.LoadedGame();
-
-            //Current.Camera.gameObject.AddComponent<ImageEffect_Mosaic>();
         }
 
         /// <summary>

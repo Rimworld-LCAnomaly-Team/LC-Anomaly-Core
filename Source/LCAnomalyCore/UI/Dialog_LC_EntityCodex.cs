@@ -1,10 +1,14 @@
-﻿using RimWorld;
+﻿using LCAnomalyCore.Util;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.UIElements;
 using Verse;
 using Verse.Sound;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace LCAnomalyCore.UI
 {
