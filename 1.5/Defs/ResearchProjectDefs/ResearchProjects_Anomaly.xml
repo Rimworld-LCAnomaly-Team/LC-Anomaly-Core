@@ -7,13 +7,10 @@
     <label>Extract abnormality Riturals</label>
     <description>Extract abnormality from the Well.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>20</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>0.00</researchViewX>
     <researchViewY>1.80</researchViewY>
-    <prerequisites>
-      <li>BasicPsychicRituals</li>
-    </prerequisites>
     <generalRules>
       <rulesStrings>
         <li>subject->Extract Abnormalities</li>
@@ -34,8 +31,8 @@
     <label>Cogito Usages</label>
     <description>Carry out a research into the usage of cogito.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>0.00</researchViewX>
     <researchViewY>1.20</researchViewY>
     <generalRules>
@@ -56,8 +53,8 @@
     <label>Extract Enkephalin</label>
     <description>Extract Enkephalin from Anomalies.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <generalRules>
@@ -78,8 +75,8 @@
     <label>Enkephalin Convert</label>
     <description>Convert Enkephalin to other things.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>10</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
@@ -103,8 +100,8 @@
     <label>Enkephalin Generator</label>
     <description>EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>20</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>2.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
@@ -128,8 +125,8 @@
     <label>Enkephalin Generator (ECO)</label>
     <description>ECO EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>20</knowledgeCost>
-    <knowledgeCategory>Advanced</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>3.00</researchViewX>
     <researchViewY>0.60</researchViewY>
     <prerequisites>
@@ -153,8 +150,8 @@
     <label>Enkephalin Generator (Advanced)</label>
     <description>Advanced EnkephalinGenerator</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>40</knowledgeCost>
-    <knowledgeCategory>Advanced</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>3.00</researchViewX>
     <researchViewY>0.00</researchViewY>
     <prerequisites>
@@ -178,8 +175,8 @@
     <label>Drug of Enkephalin</label>
     <description>Drug of Enkephalin.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>20</knowledgeCost>
-    <knowledgeCategory>Advanced</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>1.00</researchViewX>
     <researchViewY>0.00</researchViewY>
     <prerequisites>
@@ -203,13 +200,10 @@
     <label>LobotomyCorporation Containment</label>
     <description>.</description>
     <tab>LCAnomaly</tab>
-    <knowledgeCost>5</knowledgeCost>
-    <knowledgeCategory>Basic</knowledgeCategory>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
     <researchViewX>0.00</researchViewX>
     <researchViewY>0.00</researchViewY>
-    <prerequisites>
-      <li>EntityContainment</li>
-    </prerequisites>
     <generalRules>
       <rulesStrings>
         <li>subject->Cogito Usages</li>

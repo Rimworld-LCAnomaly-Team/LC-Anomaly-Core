@@ -25,7 +25,7 @@ Shader "Custom/shader2D/CustomSilhouette"
             
             #pragma vertex vert
             #pragma fragment frag
-
+            #pragma multi_compile_instancing //Use this to instruct Unity to generate instancing variants. It is not necessary for surface Shaders.
             #include "UnityCG.cginc"
             //顶点着色器输入结构体 
             struct VertexInput

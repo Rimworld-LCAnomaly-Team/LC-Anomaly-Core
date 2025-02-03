@@ -83,7 +83,6 @@
         <statFactors>
           <RestFallRateFactor>1.5</RestFallRateFactor>
           <JoyFallRateFactor>0.2</JoyFallRateFactor>
-          <StudyEfficiency>0.5</StudyEfficiency>
           <PsychicSensitivity>0.5</PsychicSensitivity>
           <WorkSpeedGlobal>2</WorkSpeedGlobal>
           <MoveSpeed>1.5</MoveSpeed>

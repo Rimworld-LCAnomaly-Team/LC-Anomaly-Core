@@ -376,11 +376,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:LCAnomalyCore.Comp.CompExtractRitualSpot">
-            <summary>
-            提取仪式点的Comp（和原版的基本一致）
-            </summary>
-        </member>
         <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.Props">
             <summary>
             CompProperties
@@ -469,11 +464,6 @@
         <member name="M:LCAnomalyCore.Comp.CompProperties_EgoExtractable.#ctor">
             <summary>
             Comp
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Comp.CompProperties_ExtractRitualSpot">
-            <summary>
-            提取仪式点的CompProperties（和原版基本一致）
             </summary>
         </member>
         <member name="M:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.#ctor">
@@ -1135,11 +1125,6 @@
             该Mod所有的DutyDef
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Defs.DutyDefOf.GatherOfferingsForExtractRitual">
-            <summary>
-            为了执行提取仪式而收集祭品
-            </summary>
-        </member>
         <member name="T:LCAnomalyCore.Defs.EGO_TYPE">
             <summary>
             EGO类型枚举
@@ -1153,53 +1138,6 @@
         <member name="F:LCAnomalyCore.Defs.EGO_TYPE.Armor">
             <summary>
             EGO装备
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.ExtractRitualDef">
-            <summary>
-            提取仪式Def
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Defs.ExtractRitualDef.MakeNewLord(Verse.AI.Group.PsychicRitualRoleAssignments)">
-            <summary>
-            开一个新的Lord
-            </summary>
-            <param name="assignments"></param>
-            <returns></returns>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.ExtractRitualDef_InvocationCircle">
-            <summary>
-            提取仪式Def：圆形模式（和原版基本一致）
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.ExtractRitualRoleDefOf">
-            <summary>
-            该Mod所有的ExtractRitualRoleDef
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyZAYIN">
-            <summary>
-            ZAYIN异常提取仪式
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyTETH">
-            <summary>
-            TETH异常提取仪式
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyHE">
-            <summary>
-            HE异常提取仪式
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyWAW">
-            <summary>
-            WAW异常提取仪式
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ExtractRitualRoleDefOf.ExtractLCAnomalyALEPH">
-            <summary>
-            ALEPH异常提取仪式
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.FleckDefOf">
@@ -1237,6 +1175,11 @@
             被注射了Cogito
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Defs.HediffDefOf.LC_PawnStatus">
+            <summary>
+            员工Hediff
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.HistoryEventDefOf">
             <summary>
             该mod的所有HistoryEventDef
@@ -1251,32 +1194,6 @@
             <summary>
             被注射了Cogito
             </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly">
-            <summary>
-            提取异想体仪式
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.CreateToils(Verse.AI.Group.PsychicRitual,Verse.AI.Group.PsychicRitualGraph)">
-            <summary>
-            创建Toils
-            </summary>
-            <param name="psychicRitual">仪式</param>
-            <param name="parent"></param>
-            <returns></returns>
-        </member>
-        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.GetPawnTooltipExtras(Verse.Pawn)">
-            <summary>
-            提示信息
-            </summary>
-            <param name="pawn">对象</param>
-            <returns></returns>
-        </member>
-        <member name="M:LCAnomalyCore.Defs.PsychicRitualDef_ExtractAnomaly.CheckPsychicRitualCancelConditions(Verse.AI.Group.PsychicRitual)">
-            <summary>
-            检查仪式是否满足条件
-            </summary>
-            <param name="psychicRitual">仪式</param>
         </member>
         <member name="T:LCAnomalyCore.Defs.RecipeDefOf">
             <summary>
@@ -1351,11 +1268,6 @@
         <member name="F:LCAnomalyCore.Defs.ThingDefOf.LC_HoldingPlatform">
             <summary>
             LC收容单元
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.Defs.ThingDefOf.TheWell">
-            <summary>
-            水井（建筑）
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.ThingDefOf.CogitoBucket">
@@ -1473,24 +1385,9 @@
             研究进度
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Gizmos.ExtractRitualGizmo">
-            <summary>
-            仪式Gizmo（和原版基本一致）
-            </summary>
-        </member>
         <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToEntityHolder">
             <summary>
             改自原版同名工作，是携带实体到平台的工作
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Jobs.JobGiver_GatherOfferingsForExtractRitual">
-            <summary>
-            仪式收集祭品工作（和原版基本一致）
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Jobs.LordJob_ExtractRitual">
-            <summary>
-            仪式工作（和原版基本一致）
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Misc.LC_FX_Standard">
@@ -1676,47 +1573,6 @@
         <member name="T:LCAnomalyCore.Patch.Patch_WorkGiver_DarkStudyInteract">
             <summary>
             关于WorkGiver_DarkStudyInteract的补丁（用于禁止主动研究LC实体）
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly">
-            <summary>
-            提取异想体仪式的Toil
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.invokerRole">
-            <summary>
-            触发角色
-            </summary>
-        </member>
-        <member name="F:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.anomalyLevelTag">
-            <summary>
-            异常等级标签
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.#ctor(RimWorld.PsychicRitualRoleDef,System.String)">
-            <summary>
-            提取仪式
-            </summary>
-            <param name="invokerRole">触发角色</param>
-            <param name="anomalyLevelTag">异常等级标签</param>
-        </member>
-        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.Start(Verse.AI.Group.PsychicRitual,Verse.AI.Group.PsychicRitualGraph)">
-            <summary>
-            开始仪式
-            </summary>
-            <param name="psychicRitual">仪式</param>
-            <param name="parent"></param>
-        </member>
-        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.ApplyOutcome(Verse.AI.Group.PsychicRitual,Verse.Pawn)">
-            <summary>
-            仪式结果
-            </summary>
-            <param name="psychicRitual">仪式</param>
-            <param name="invoker">触发者</param>
-        </member>
-        <member name="M:LCAnomalyCore.PsychicRituals.PsychicRitualToil_ExtractAnomaly.ExposeData">
-            <summary>
-            和保存有关
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">
@@ -1959,27 +1815,6 @@
             <param name="state"></param>
             <param name="y"></param>
             <param name="inRect"></param>
-        </member>
-        <member name="T:LCAnomalyCore.Sounds.ExtractRitualTransition">
-            <summary>
-            提取仪式时自动播放脑叶选择音乐
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Sounds.ExtractRitualTransition.IsTransitionSatisfied">
-            <summary>
-            是否满足过渡条件
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:LCAnomalyCore.Toils.ExtractRitualToil_GatherForInvocation">
-            <summary>
-            提取意识的聚集Toil（和原版基本一致）
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Toils.ExtractRitualToil_GatherOfferings">
-            <summary>
-            提取意识的聚集Toil（和原版基本一致）
-            </summary>
         </member>
         <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
             <summary>

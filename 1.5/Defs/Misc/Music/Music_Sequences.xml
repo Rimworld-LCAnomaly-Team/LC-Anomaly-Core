@@ -2,7 +2,7 @@
 <Defs>
 
   <!-- Short term, tense music -->
-  <MusicSequenceDef>
+  <!-- <MusicSequenceDef>
     <defName>ExtractRitual</defName>
     <loopDelayRange>1~2</loopDelayRange>
     <fadeoutLastSongDuration>5</fadeoutLastSongDuration>
@@ -11,6 +11,6 @@
     <songs>
       <li>Anomaly_Extract</li>
     </songs>
-  </MusicSequenceDef>
+  </MusicSequenceDef> -->
 
 </Defs>

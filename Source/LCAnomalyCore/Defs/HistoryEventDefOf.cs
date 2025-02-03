@@ -11,13 +11,11 @@ namespace LCAnomalyCore.Defs
         /// <summary>
         /// 被提取了Cogito
         /// </summary>
-        [MayRequireAnomaly]
         public static HistoryEventDef CogitoExtracted;
 
         /// <summary>
         /// 被注射了Cogito
         /// </summary>
-        [MayRequireAnomaly]
         public static HistoryEventDef CogitoInjected;
     }
 }

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <MusicTransitionDef>
+  <!-- <MusicTransitionDef>
     <defName>ExtractRitual</defName>
     <workerType>LCAnomalyCore.Sounds.ExtractRitualTransition</workerType>
     <sequence>ExtractRitual</sequence>
     <dangerRequirement>RequiresNoDanger</dangerRequirement>
     <priority>150</priority>
-  </MusicTransitionDef>
+  </MusicTransitionDef> -->
 
 </Defs>

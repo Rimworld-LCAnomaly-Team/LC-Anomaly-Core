@@ -12,15 +12,16 @@ namespace LCAnomalyCore.Defs
         /// <summary>
         /// 被提取了Cogito
         /// </summary>
-        [MayRequireAnomaly]
         public static HediffDef CogitoExtracted;
 
         /// <summary>
         /// 被注射了Cogito
         /// </summary>
-        [MayRequireAnomaly]
         public static HediffDef CogitoInjected;
 
+        /// <summary>
+        /// 员工Hediff
+        /// </summary>
         public static HediffDef LC_PawnStatus;
     }
 }

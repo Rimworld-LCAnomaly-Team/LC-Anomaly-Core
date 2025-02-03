@@ -13,10 +13,5 @@ namespace LCAnomalyCore.Defs
         {
             DefOfHelper.EnsureInitializedInCtor(typeof(DutyDefOf));
         }
-
-        /// <summary>
-        /// 为了执行提取仪式而收集祭品
-        /// </summary>
-        public static DutyDef GatherOfferingsForExtractRitual;
     }
 }

@@ -43,7 +43,6 @@
       <MaxHitPoints>600</MaxHitPoints>
       <WorkToBuild>135</WorkToBuild>
       <Flammability>0</Flammability>
-      <MeditationFocusStrength>0.22</MeditationFocusStrength>
     </statBases>
     <costStuffCount>5</costStuffCount>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
@@ -85,17 +84,9 @@
         <li>Door</li>
         <li>Autodoor</li>
         <li>OrnateDoor</li>
-        <li MayRequire="Ludeon.RimWorld.Anomaly">SecurityDoor</li>
+        <!-- <li MayRequire="Ludeon.RimWorld.Anomaly">SecurityDoor</li> -->
       </relatedBuildCommands>
     </building>
-    <comps>
-      <li Class="CompProperties_MeditationFocus">
-        <statDef>MeditationFocusStrength</statDef>
-        <focusTypes>
-          <li>Minimal</li>
-        </focusTypes>
-      </li>
-    </comps>
     <damageMultipliers>
       <li>
         <damageDef>Bomb</damageDef>

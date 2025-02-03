@@ -45,13 +45,6 @@
         <writeTimeLeftToSpawn>true</writeTimeLeftToSpawn>
         <showMessageIfOwned>true</showMessageIfOwned>
       </li>
-      <li Class="CompProperties_Explosive">
-        <explosiveRadius>16</explosiveRadius>
-        <damageAmountBase>10</damageAmountBase>
-        <armorPenetrationBase>0</armorPenetrationBase>
-        <explosiveDamageType>Psychic</explosiveDamageType>
-        <explosionSound>Pawn_Revenant_StartledScream</explosionSound>
-      </li>
     </comps>
     <altitudeLayer>Building</altitudeLayer>
     <statBases>

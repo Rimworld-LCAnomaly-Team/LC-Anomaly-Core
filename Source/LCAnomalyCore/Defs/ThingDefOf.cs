@@ -35,11 +35,6 @@ namespace LCAnomalyCore.Defs
         public static LC_HoldingPlatformDef LC_HoldingPlatform;
 
         /// <summary>
-        /// 水井（建筑）
-        /// </summary>
-        public static ThingDef TheWell;
-
-        /// <summary>
         /// Cogito水桶（建筑）
         /// </summary>
         public static ThingDef CogitoBucket;

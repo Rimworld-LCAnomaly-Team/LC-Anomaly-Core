@@ -1,6 +1,107 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+  <!-- MeatExplosionSplatter -->
+  <FleckDef ParentName="FleckBase_RandomGraphic">
+    <defName>MeatExplosionSplatter</defName>
+    <altitudeLayer>MoteLow</altitudeLayer>
+    <solidTime>3</solidTime>
+    <fadeOutTime>1</fadeOutTime>
+    <randomGraphics>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterA</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterB</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterC</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+    </randomGraphics>
+  </FleckDef>
+
+  <!-- MeatExplosionSplatterTerrain -->
+  <FleckDef ParentName="FleckBase_RandomGraphic">
+    <defName>MeatExplosionSplatterTerrain</defName>
+    <altitudeLayer>Terrain</altitudeLayer>
+    <solidTime>6</solidTime>
+    <fadeOutTime>1</fadeOutTime>
+    <fadeInTime>.25</fadeInTime>
+    <randomGraphics>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterA</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterB</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>Things/Filth/Spatter/SpatterC</texPath>
+        <shaderType>Transparent</shaderType>
+        <color>(171, 27, 17, 170)</color>
+        <drawSize>(1.5, 1.5)</drawSize>
+      </li>
+    </randomGraphics>
+    <scalers>
+      <li>
+        <scaleTime>3</scaleTime>
+        <scaleAmt>1</scaleAmt>
+        <curve>
+          <points>
+            <li>(0,0)</li>
+            <li>(0.04,0.2381762)</li>
+            <li>(0.08,0.4249946)</li>
+            <li>(0.12,0.5651093)</li>
+            <li>(0.16,0.6701739)</li>
+            <li>(0.2,0.7500439)</li>
+            <li>(0.24,0.8105828)</li>
+            <li>(0.28,0.8564262)</li>
+            <li>(0.32,0.8911517)</li>
+            <li>(0.36,0.9175276)</li>
+            <li>(0.3999999,0.9375309)</li>
+            <li>(0.4399999,0.9526281)</li>
+            <li>(0.4799999,0.964285)</li>
+            <li>(0.5199999,0.9726838)</li>
+            <li>(0.5599999,0.9789782)</li>
+            <li>(0.6,0.9838976)</li>
+            <li>(0.64,0.9877752)</li>
+            <li>(0.68,0.9909443)</li>
+            <li>(0.72,0.9935225)</li>
+            <li>(0.7600001,0.9953468)</li>
+            <li>(0.8000001,0.9965819)</li>
+            <li>(0.8400001,0.9974015)</li>
+            <li>(0.8800001,0.9979795)</li>
+            <li>(0.9200001,0.9984894)</li>
+            <li>(0.9600002,0.999105)</li>
+            <li>(1,1)</li>
+          </points>
+
+        </curve>
+      </li>
+    </scalers>
+  </FleckDef>
+  
+  <!-- WorkResult_Good -->
   <FleckDef ParentName="FleckBase_Thrown">
     <defName>WorkResult_Good</defName>
     <altitudeLayer>MoteOverhead</altitudeLayer>
@@ -20,6 +121,7 @@
     </graphicData>
   </FleckDef>
 
+  <!-- WorkResult_Normal -->
   <FleckDef ParentName="FleckBase_Thrown">
     <defName>WorkResult_Normal</defName>
     <altitudeLayer>MoteOverhead</altitudeLayer>
@@ -39,6 +141,7 @@
     </graphicData>
   </FleckDef>
 
+  <!-- WorkResult_Bad -->
   <FleckDef ParentName="FleckBase_Thrown">
     <defName>WorkResult_Bad</defName>
     <altitudeLayer>MoteOverhead</altitudeLayer>

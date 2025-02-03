@@ -23,9 +23,6 @@
       <li>ITab_Entity</li>
     </inspectorTabs>
     <designationCategory>Buildings_LC</designationCategory>
-    <statBases>
-      <MeditationFocusStrength>0</MeditationFocusStrength>
-    </statBases>
     <building>
       <buildingTags>
         <li>Anomaly</li>
@@ -35,17 +32,6 @@
       <li Class="CompProperties_AffectedByFacilities">
         <linkableFacilities>
         </linkableFacilities>
-      </li>
-      <li Class="CompProperties_MeditationFocus">
-        <statDef>MeditationFocusStrength</statDef>
-        <focusTypes>
-          <li>Void</li>
-        </focusTypes>
-        <offsets>
-          <li Class="FocusStrengthOffset_OccupiedHoldingPlatform">
-            <offset>0.16</offset>
-          </li>
-        </offsets>
       </li>
       <li Class="CompProperties_AttachPoints">
         <points>
