@@ -456,6 +456,39 @@ namespace LCAnomalyCore.Building
             }
         }
 
+        public override string GetInspectString()
+        {
+            string text = "\n";
+
+            Pawn heldPawn = HeldPawn;
+            if (heldPawn != null)
+            {
+                TaggedString ts = "HoldingThing".Translate() + ": " + heldPawn.NameShortColored.CapitalizeFirst();
+                bool flag = this.SafelyContains(heldPawn);
+                if (!flag)
+                {
+                    ts += " (" + "HoldingPlatformRequiresStrength".Translate(StatDefOf.MinimumContainmentStrength.Worker.ValueToString(heldPawn.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)) + ")";
+                }
+
+                text += ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable);
+            }
+            else
+            {
+                text += "HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst();
+            }
+
+            //if (heldPawn != null && heldPawn.def.IsStudiable)
+            //{
+            //    string inspectStringExtraFor = heldPawn.def.label.Translate();
+            //    if (!inspectStringExtraFor.NullOrEmpty())
+            //    {
+            //        text = text + "\n" + inspectStringExtraFor;
+            //    }
+            //}
+
+            return text;
+        }
+
         #endregion UI
     }
 }
