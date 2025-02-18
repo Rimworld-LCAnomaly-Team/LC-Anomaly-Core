@@ -14,7 +14,7 @@ namespace LCAnomalyCore.Util
                 icon = new CachedTexture("UI/Icons/LC_OpenCodex").Texture,
                 action = delegate ()
                 {
-                    Find.WindowStack.Add(new Dialog_LC_EntityCodex((Defs.EntityCodexEntryDef)thing.def.entityCodexEntry));
+                    Find.WindowStack.Add(new Dialog_LC_EntityCodex((Defs.AbnormalityCodexEntryDef)thing.def.entityCodexEntry));
                 }
             };
         }

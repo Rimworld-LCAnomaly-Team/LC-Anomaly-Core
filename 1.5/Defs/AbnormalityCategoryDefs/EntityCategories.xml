@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <LCAnomalyCore.Defs.AbnormalityCategoryDef>
+    <defName>ZAYIN</defName>
+    <label>ZAYIN</label>
+    <description></description>
+    <listOrder>0</listOrder>
+  </LCAnomalyCore.Defs.AbnormalityCategoryDef>
+
+  <LCAnomalyCore.Defs.AbnormalityCategoryDef>
+    <defName>TETH</defName>
+    <label>TETH</label>
+    <description></description>
+    <listOrder>1</listOrder>
+  </LCAnomalyCore.Defs.AbnormalityCategoryDef>
+
+  <LCAnomalyCore.Defs.AbnormalityCategoryDef>
+    <defName>HE</defName>
+    <label>HE</label>
+    <description></description>
+    <listOrder>2</listOrder>
+  </LCAnomalyCore.Defs.AbnormalityCategoryDef>
+
+  <LCAnomalyCore.Defs.AbnormalityCategoryDef>
+    <defName>WAW</defName>
+    <label>WAW</label>
+    <description></description>
+    <listOrder>3</listOrder>
+  </LCAnomalyCore.Defs.AbnormalityCategoryDef>
+
+  <LCAnomalyCore.Defs.AbnormalityCategoryDef>
+    <defName>ALEPH</defName>
+    <label>ALEPH</label>
+    <description></description>
+    <listOrder>4</listOrder>
+  </LCAnomalyCore.Defs.AbnormalityCategoryDef>
+
+</Defs>

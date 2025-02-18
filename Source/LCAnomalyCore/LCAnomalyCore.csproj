@@ -139,11 +139,12 @@
     <Compile Include="Comp\Pawns\CompPawnStatus.cs" />
     <Compile Include="Comp\Pawns\CompProperties_PawnStatus.cs" />
     <Compile Include="DamageWorker\DamageWorker_LC_Red.cs" />
+    <Compile Include="Defs\AbnormalityCategoryDef.cs" />
     <Compile Include="Defs\ApparelLayerDefOf.cs" />
     <Compile Include="Defs\DamageDefOf.cs" />
     <Compile Include="Defs\DutyDefOf.cs" />
     <Compile Include="Defs\EGO_TYPE.cs" />
-    <Compile Include="Defs\EntityCodexEntryDef.cs" />
+    <Compile Include="Defs\AbnormalityCodexEntryDef.cs" />
     <Compile Include="Defs\FleckDefOf.cs" />
     <Compile Include="Defs\HediffDefOf.cs" />
     <Compile Include="Defs\HistoryEventDefOf.cs" />

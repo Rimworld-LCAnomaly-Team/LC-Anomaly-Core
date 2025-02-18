@@ -19,7 +19,7 @@ namespace LCAnomalyCore.Patch
         private static bool Prefix(Thing thing, ref Verse.Gizmo __result)
         {
             //是LC实体则添加LC Dialog，否则保持原版
-            if (thing.def.entityCodexEntry is Defs.EntityCodexEntryDef)
+            if (thing.def.entityCodexEntry is Defs.AbnormalityCodexEntryDef)
             {
                 //Log.Warning($"我是LC实体：{thing.GetType()}");
                 __result = Util.Gizmos.Get_EntityCodex(thing);

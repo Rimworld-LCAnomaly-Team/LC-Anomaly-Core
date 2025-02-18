@@ -17,7 +17,7 @@ namespace LCAnomalyCore.Util
             if (thing == null)
                 return false;
 
-            return thing.def.entityCodexEntry is Defs.EntityCodexEntryDef;
+            return thing.def.entityCodexEntry is Defs.AbnormalityCodexEntryDef;
         }
     }
 

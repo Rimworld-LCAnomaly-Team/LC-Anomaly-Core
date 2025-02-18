@@ -1,14 +1,11 @@
-﻿using LCAnomalyCore.Util;
+﻿using LCAnomalyCore.Defs;
 using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEngine.UIElements;
 using Verse;
 using Verse.Sound;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace LCAnomalyCore.UI
 {
@@ -22,13 +19,13 @@ namespace LCAnomalyCore.UI
 
         private float rightScrollHeight;
 
-        private Defs.EntityCodexEntryDef selectedEntry;
+        private Defs.AbnormalityCodexEntryDef selectedEntry;
 
-        private List<EntityCategoryDef> categoriesInOrder;
+        private List<AbnormalityCategoryDef> categoriesInOrder;
 
-        private Dictionary<EntityCategoryDef, List<Defs.EntityCodexEntryDef>> entriesByCategory = new Dictionary<EntityCategoryDef, List<Defs.EntityCodexEntryDef>>();
+        private Dictionary<AbnormalityCategoryDef, List<Defs.AbnormalityCodexEntryDef>> entriesByCategory = new Dictionary<AbnormalityCategoryDef, List<Defs.AbnormalityCodexEntryDef>>();
 
-        private Dictionary<EntityCategoryDef, float> categoryRectSizes = new Dictionary<EntityCategoryDef, float>();
+        private Dictionary<AbnormalityCategoryDef, float> categoryRectSizes = new Dictionary<AbnormalityCategoryDef, float>();
 
         private bool devShowAll;
 
@@ -46,22 +43,22 @@ namespace LCAnomalyCore.UI
 
         public override Vector2 InitialSize => new Vector2(980f, 724f);
 
-        public Dialog_LC_EntityCodex(Defs.EntityCodexEntryDef selectedEntry = null)
+        public Dialog_LC_EntityCodex(Defs.AbnormalityCodexEntryDef selectedEntry = null)
         {
             doCloseX = true;
             doCloseButton = true;
             forcePause = true;
-            categoriesInOrder = (from x in DefDatabase<EntityCategoryDef>.AllDefsListForReading
-                                 where DefDatabase<Defs.EntityCodexEntryDef>.AllDefs.Any((Defs.EntityCodexEntryDef y) => y.category == x && y.Visible)
+            categoriesInOrder = (from x in DefDatabase<AbnormalityCategoryDef>.AllDefsListForReading
+                                 where DefDatabase<AbnormalityCodexEntryDef>.AllDefs.Any((AbnormalityCodexEntryDef y) => y.category == x && y.Visible)
                                  orderby x.listOrder
                                  select x).ToList();
-            foreach (EntityCategoryDef item in categoriesInOrder)
+            foreach (AbnormalityCategoryDef item in categoriesInOrder)
             {
-                entriesByCategory.Add(item, new List<Defs.EntityCodexEntryDef>());
+                entriesByCategory.Add(item, new List<AbnormalityCodexEntryDef>());
                 categoryRectSizes.Add(item, 0f);
             }
 
-            foreach (Defs.EntityCodexEntryDef item2 in DefDatabase<Defs.EntityCodexEntryDef>.AllDefsListForReading)
+            foreach (AbnormalityCodexEntryDef item2 in DefDatabase<AbnormalityCodexEntryDef>.AllDefsListForReading)
             {
                 if (item2.Visible)
                 {
@@ -69,13 +66,13 @@ namespace LCAnomalyCore.UI
                 }
             }
 
-            foreach (KeyValuePair<EntityCategoryDef, List<Defs.EntityCodexEntryDef>> item3 in entriesByCategory)
+            foreach (KeyValuePair<AbnormalityCategoryDef, List<AbnormalityCodexEntryDef>> item3 in entriesByCategory)
             {
                 item3.Deconstruct(out var _, out var value);
-                value.SortBy((Defs.EntityCodexEntryDef e) => e.orderInCategory, (Defs.EntityCodexEntryDef e) => e.label);
+                value.SortBy((AbnormalityCodexEntryDef e) => e.orderInCategory, (AbnormalityCodexEntryDef e) => e.label);
             }
 
-            this.selectedEntry = selectedEntry ?? DefDatabase<Defs.EntityCodexEntryDef>.AllDefs.OrderBy((Defs.EntityCodexEntryDef x) => x.label).FirstOrDefault((Defs.EntityCodexEntryDef x) => x.Discovered);
+            this.selectedEntry = selectedEntry ?? DefDatabase<AbnormalityCodexEntryDef>.AllDefs.OrderBy((AbnormalityCodexEntryDef x) => x.label).FirstOrDefault((Defs.AbnormalityCodexEntryDef x) => x.Discovered);
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -120,7 +117,7 @@ namespace LCAnomalyCore.UI
 
                 using (new TextBlock(newWordWrap: true))
                 {
-                    string text = (flag ? selectedEntry.Description : ((string)"UndiscoveredEntityDesc".Translate()));
+                    string text = (flag ? selectedEntry.description : ((string)"UndiscoveredEntityDesc".Translate()));
                     float num2 = Text.CalcHeight(text, viewRect.width);
                     Widgets.Label(new Rect(0f, num, viewRect.width, num2), text);
                     num += num2 + 10f;
@@ -152,23 +149,23 @@ namespace LCAnomalyCore.UI
                         num += 10f;
                     }
 
-                    if (selectedEntry.discoveredResearchProjects.Count > 0)
-                    {
-                        Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "ResearchUnlocks".Translate() + ":");
-                        num += Text.LineHeight;
-                        foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
-                        {
-                            Rect rect2 = new Rect(0f, num, viewRect.width, Text.LineHeight);
-                            if (Widgets.ButtonText(rect2, "ViewHyperlink".Translate(discoveredResearchProject.LabelCap), drawBackground: false))
-                            {
-                                Close();
-                                Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
-                                ((MainTabWindow_Research)MainButtonDefOf.Research.TabWindow).Select(discoveredResearchProject);
-                            }
+                    //if (selectedEntry.discoveredResearchProjects.Count > 0)
+                    //{
+                    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "ResearchUnlocks".Translate() + ":");
+                    //    num += Text.LineHeight;
+                    //    foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
+                    //    {
+                    //        Rect rect2 = new Rect(0f, num, viewRect.width, Text.LineHeight);
+                    //        if (Widgets.ButtonText(rect2, "ViewHyperlink".Translate(discoveredResearchProject.LabelCap), drawBackground: false))
+                    //        {
+                    //            Close();
+                    //            Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
+                    //            ((MainTabWindow_Research)MainButtonDefOf.Research.TabWindow).Select(discoveredResearchProject);
+                    //        }
 
-                            num += rect2.height;
-                        }
-                    }
+                    //        num += rect2.height;
+                    //    }
+                    //}
                 }
                 else if (Prefs.DevMode && DebugSettings.godMode)
                 {
@@ -178,12 +175,12 @@ namespace LCAnomalyCore.UI
                         {
                             for (int i = 0; i < selectedEntry.linkedThings.Count; i++)
                             {
-                                Find.EntityCodex.SetDiscovered((RimWorld.EntityCodexEntryDef)selectedEntry, selectedEntry.linkedThings[i]);
+                                Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry, selectedEntry.linkedThings[i]);
                             }
                         }
                         else
                         {
-                            Find.EntityCodex.SetDiscovered((RimWorld.EntityCodexEntryDef)selectedEntry);
+                            Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry);
                         }
                     }
 
@@ -201,7 +198,7 @@ namespace LCAnomalyCore.UI
             Rect viewRect = new Rect(0f, 0f, rect.width - 16f, rightScrollHeight);
             Widgets.BeginScrollView(rect, ref rightScrollPos, viewRect);
             float num = 0f;
-            foreach (EntityCategoryDef item in categoriesInOrder)
+            foreach (AbnormalityCategoryDef item in categoriesInOrder)
             {
                 float num2 = num;
                 float height = categoryRectSizes[item];
@@ -215,28 +212,28 @@ namespace LCAnomalyCore.UI
 
                 Widgets.Label(new Rect(10f, num, rect.width, Text.LineHeight), item.LabelCap);
                 num += Text.LineHeight + 4f;
-                List<Defs.EntityCodexEntryDef> list = entriesByCategory[item];
+                List<Defs.AbnormalityCodexEntryDef> list = entriesByCategory[item];
                 int num3 = Mathf.Min(Mathf.CeilToInt(Mathf.Sqrt(list.Count)) + 1, 7);
                 int num4 = Mathf.CeilToInt((float)list.Count / (float)num3);
                 for (int i = 0; i < list.Count; i++)
                 {
-                    Defs.EntityCodexEntryDef entityCodexEntryDef = list[i];
+                    Defs.AbnormalityCodexEntryDef AbnormalityCodexEntryDef = list[i];
                     int num5 = i / num3;
                     int num6 = i % num3;
                     int num7 = ((i >= list.Count - list.Count % num3) ? (list.Count % num3) : num3);
                     float num8 = (viewRect.width - (float)num7 * 74f - (float)(num7 - 1) * 10f) / 2f;
                     Rect rect2 = new Rect(num8 + (float)num6 * 74f + (float)num6 * 10f, num + (float)num5 * 74f + (float)num5 * 10f, 74f, 74f);
-                    bool flag = devShowAll || entityCodexEntryDef.Discovered;
-                    DrawEntry(rect2, entityCodexEntryDef, flag);
+                    bool flag = devShowAll || AbnormalityCodexEntryDef.Discovered;
+                    DrawEntry(rect2, AbnormalityCodexEntryDef, flag);
                     if (flag)
                     {
                         Text.Font = GameFont.Tiny;
-                        float num9 = Text.CalcHeight(entityCodexEntryDef.LabelCap, rect2.width);
+                        float num9 = Text.CalcHeight(AbnormalityCodexEntryDef.LabelCap, rect2.width);
                         Rect rect3 = new Rect(rect2.x, rect2.yMax - num9, rect2.width, num9);
                         Widgets.DrawBoxSolid(rect3, new Color(0f, 0f, 0f, 0.3f));
                         using (new TextBlock(TextAnchor.MiddleCenter))
                         {
-                            Widgets.Label(rect3, entityCodexEntryDef.LabelCap);
+                            Widgets.Label(rect3, AbnormalityCodexEntryDef.LabelCap);
                         }
 
                         Text.Font = GameFont.Small;
@@ -252,7 +249,7 @@ namespace LCAnomalyCore.UI
             Widgets.EndScrollView();
         }
 
-        private void DrawEntry(Rect rect, Defs.EntityCodexEntryDef entry, bool discovered)
+        private void DrawEntry(Rect rect, Defs.AbnormalityCodexEntryDef entry, bool discovered)
         {
             Widgets.DrawOptionBackground(rect, entry == selectedEntry);
             GUI.DrawTexture(rect.ContractedBy(2f), discovered ? entry.icon : entry.silhouette);
@@ -268,7 +265,7 @@ namespace LCAnomalyCore.UI
         /// </summary>
         /// <param name="cat">类型</param>
         /// <param name="rect">rect</param>
-        private void DrawToolTipRow(EntityCategoryDef cat, Rect rect)
+        private void DrawToolTipRow(AbnormalityCategoryDef cat, Rect rect)
         {
             //Log.Message("鼠标进入区域");
 
