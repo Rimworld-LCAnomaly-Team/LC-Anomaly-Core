@@ -1,11 +1,12 @@
-﻿using LCAnomalyCore.UI;
+﻿using LCAnomalyCore.Defs;
+using LCAnomalyCore.UI;
 using Verse;
 
 namespace LCAnomalyCore.Util
 {
     public static class Gizmos
     {
-        public static Verse.Gizmo Get_EntityCodex(Thing thing)
+        public static Gizmo Get_EntityCodex(Thing thing)
         {
             return new Command_Action
             {
@@ -14,7 +15,8 @@ namespace LCAnomalyCore.Util
                 icon = new CachedTexture("UI/Icons/LC_OpenCodex").Texture,
                 action = delegate ()
                 {
-                    Find.WindowStack.Add(new Dialog_LC_EntityCodex((Defs.AbnormalityCodexEntryDef)thing.def.entityCodexEntry));
+                    var abnormalDef = GenDefDatabase.GetDef(typeof(AbnormalityCodexEntryDef), thing.def.defName) as AbnormalityCodexEntryDef;
+                    Find.WindowStack.Add(new Dialog_LC_EntityCodex(abnormalDef));
                 }
             };
         }

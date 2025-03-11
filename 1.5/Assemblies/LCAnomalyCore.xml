@@ -1020,6 +1020,16 @@
             清理所有分配人员
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.AbnormalityCategoryDef">
+            <summary>
+            异想体类型
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCategoryDef.listOrder">
+            <summary>
+            排序行号
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ApparelLayerDefOf">
             <summary>
             所有的服装层Def
@@ -1138,6 +1148,16 @@
         <member name="F:LCAnomalyCore.Defs.EGO_TYPE.Armor">
             <summary>
             EGO装备
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.aliasLabels">
+            <summary>
+            别名列表（不同观察等级的不同名字）
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.category">
+            <summary>
+            分类等级
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.FleckDefOf">
@@ -1447,19 +1467,6 @@
             补丁实例
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_AnomalyUtility">
-            <summary>
-            关于AnomalyUtility的补丁（用于移除和添加图鉴）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_AnomalyUtility.Prefix(Verse.Thing,Verse.Gizmo@)">
-            <summary>
-            Prefix方法
-            </summary>
-            <param name="thing">实体</param>
-            <param name="__result">gizmo</param>
-            <returns>是否中断原方法</returns>
-        </member>
         <member name="T:LCAnomalyCore.Patch.Patch_ApparelProperties">
             <summary>
             服装层Patch（用于解决头部服装渲染问题）
@@ -1517,11 +1524,6 @@
         <member name="M:LCAnomalyCore.Patch.Patch_CompStudyUnlocks.Postfix(RimWorld.CompStudyUnlocks,Verse.Pawn,System.Int32)">
             <summary>
             Postfix
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_Dialog_EntityCodex">
-            <summary>
-            关于Dialog_EntityCodex的补丁（将脑叶异常从原版图鉴列表中移除）
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Patch.Patch_MentalBreak">
@@ -1841,7 +1843,7 @@
             窗体的尺寸
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(RimWorld.EntityCategoryDef,UnityEngine.Rect)">
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(LCAnomalyCore.Defs.AbnormalityCategoryDef,UnityEngine.Rect)">
             <summary>
             绘制Tip
             </summary>

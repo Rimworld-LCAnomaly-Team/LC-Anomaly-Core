@@ -167,12 +167,10 @@
     <Compile Include="Jobs\WorkGiver_StudyInteract.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
     <Compile Include="Patch\PatchMain.cs" />
-    <Compile Include="Patch\Patch_AnomalyUtility.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
     <Compile Include="Patch\Patch_ColonistBarColonistDrawer.cs" />
     <Compile Include="Patch\Patch_CompHoldingPlatformTarget.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
-    <Compile Include="Patch\Patch_Dialog_EntityCodex.cs" />
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
     <Compile Include="Patch\Patch_TargetHoldingPlatformForEntity.cs" />

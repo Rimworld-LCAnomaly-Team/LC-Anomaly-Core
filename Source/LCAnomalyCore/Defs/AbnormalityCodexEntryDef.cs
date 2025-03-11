@@ -25,6 +25,10 @@ namespace LCAnomalyCore.Defs
 
         public Texture2D silhouette;
 
+        public bool Visible;
+
+        public bool Discovered;
+
         private const string SilhouetteTexPathSuffix = "_Silhouette";
 
         public override void PostLoad()

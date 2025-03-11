@@ -43,7 +43,7 @@ namespace LCAnomalyCore.UI
 
         public override Vector2 InitialSize => new Vector2(980f, 724f);
 
-        public Dialog_LC_EntityCodex(Defs.AbnormalityCodexEntryDef selectedEntry = null)
+        public Dialog_LC_EntityCodex(AbnormalityCodexEntryDef selectedEntry = null)
         {
             doCloseX = true;
             doCloseButton = true;
@@ -123,69 +123,69 @@ namespace LCAnomalyCore.UI
                     num += num2 + 10f;
                 }
 
-                if (flag)
-                {
-                    if (selectedEntry.linkedThings.Count > 0)
-                    {
-                        foreach (ThingDef linkedThing in selectedEntry.linkedThings)
-                        {
-                            Rect rect = new Rect(0f, num, viewRect.width, Text.LineHeight);
-                            if (devShowAll || Find.EntityCodex.Discovered(linkedThing))
-                            {
-                                Widgets.HyperlinkWithIcon(rect, new Dialog_InfoCard.Hyperlink(linkedThing));
-                            }
-                            else
-                            {
-                                rect.xMin += rect.height;
-                                using (new TextBlock(ColoredText.SubtleGrayColor))
-                                {
-                                    Widgets.Label(rect, "Undiscovered".Translate());
-                                }
-                            }
+                //if (flag)
+                //{
+                //    //if (selectedEntry.linkedThings.Count > 0)
+                //    //{
+                //    //    foreach (ThingDef linkedThing in selectedEntry.linkedThings)
+                //    //    {
+                //    //        Rect rect = new Rect(0f, num, viewRect.width, Text.LineHeight);
+                //    //        if (devShowAll || Find.EntityCodex.Discovered(linkedThing))
+                //    //        {
+                //    //            Widgets.HyperlinkWithIcon(rect, new Dialog_InfoCard.Hyperlink(linkedThing));
+                //    //        }
+                //    //        else
+                //    //        {
+                //    //            rect.xMin += rect.height;
+                //    //            using (new TextBlock(ColoredText.SubtleGrayColor))
+                //    //            {
+                //    //                Widgets.Label(rect, "Undiscovered".Translate());
+                //    //            }
+                //    //        }
 
-                            num += rect.height;
-                        }
+                //    //        num += rect.height;
+                //    //    }
 
-                        num += 10f;
-                    }
+                //    //    num += 10f;
+                //    //}
 
-                    //if (selectedEntry.discoveredResearchProjects.Count > 0)
-                    //{
-                    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "ResearchUnlocks".Translate() + ":");
-                    //    num += Text.LineHeight;
-                    //    foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
-                    //    {
-                    //        Rect rect2 = new Rect(0f, num, viewRect.width, Text.LineHeight);
-                    //        if (Widgets.ButtonText(rect2, "ViewHyperlink".Translate(discoveredResearchProject.LabelCap), drawBackground: false))
-                    //        {
-                    //            Close();
-                    //            Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
-                    //            ((MainTabWindow_Research)MainButtonDefOf.Research.TabWindow).Select(discoveredResearchProject);
-                    //        }
+                //    //if (selectedEntry.discoveredResearchProjects.Count > 0)
+                //    //{
+                //    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "ResearchUnlocks".Translate() + ":");
+                //    //    num += Text.LineHeight;
+                //    //    foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
+                //    //    {
+                //    //        Rect rect2 = new Rect(0f, num, viewRect.width, Text.LineHeight);
+                //    //        if (Widgets.ButtonText(rect2, "ViewHyperlink".Translate(discoveredResearchProject.LabelCap), drawBackground: false))
+                //    //        {
+                //    //            Close();
+                //    //            Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
+                //    //            ((MainTabWindow_Research)MainButtonDefOf.Research.TabWindow).Select(discoveredResearchProject);
+                //    //        }
 
-                    //        num += rect2.height;
-                    //    }
-                    //}
-                }
-                else if (Prefs.DevMode && DebugSettings.godMode)
-                {
-                    if (Widgets.ButtonText(new Rect(0f, num, viewRect.width, ButSize.y), "DEV: Discover"))
-                    {
-                        if (!selectedEntry.linkedThings.NullOrEmpty())
-                        {
-                            for (int i = 0; i < selectedEntry.linkedThings.Count; i++)
-                            {
-                                Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry, selectedEntry.linkedThings[i]);
-                            }
-                        }
-                        else
-                        {
-                            Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry);
-                        }
-                    }
+                //    //        num += rect2.height;
+                //    //    }
+                //    //}
+                //}
+                //else if (Prefs.DevMode && DebugSettings.godMode)
+                //{
+                //    if (Widgets.ButtonText(new Rect(0f, num, viewRect.width, ButSize.y), "DEV: Discover"))
+                //    {
+                //        if (!selectedEntry.linkedThings.NullOrEmpty())
+                //        {
+                //            for (int i = 0; i < selectedEntry.linkedThings.Count; i++)
+                //            {
+                //                Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry, selectedEntry.linkedThings[i]);
+                //            }
+                //        }
+                //        else
+                //        {
+                //            Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry);
+                //        }
+                //    }
 
-                    num += ButSize.y;
-                }
+                //    num += ButSize.y;
+                //}
 
                 leftScrollHeight = num;
             }
