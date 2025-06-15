@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Defs>
+
+  <!-- Make Enkephalin x10 -->
+  <RecipeDef>
+    <defName>Make10Enkephalin</defName>
+    <label>Make Enkephalin x10</label>
+    <description>.</description>
+    <jobString>Making Enkephalin.</jobString>
+    <workAmount>4000</workAmount>
+    <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
+    <soundWorking>Recipe_Drug</soundWorking>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>EnkephalinBox</li>
+          </thingDefs>
+        </filter>
+        <count>50</count>
+      </li>
+    </ingredients>
+    <products>
+      <Enkephalin>10</Enkephalin>
+    </products>
+	<recipeUsers>
+		<li>LC_UniversalBench</li>
+	</recipeUsers>
+  <researchPrerequisite>Enkephalin_Drug</researchPrerequisite>
+	<skillRequirements>
+    <Crafting>5</Crafting>
+    <Intellectual>5</Intellectual>
+	</skillRequirements>
+  <workSkill>Intellectual</workSkill>
+  </RecipeDef>
+
+  <!-- Make Enkephalin x50 -->
+  <RecipeDef>
+    <defName>Make50Enkephalin</defName>
+    <label>Make Enkephalin x50</label>
+    <description>.</description>
+    <jobString>Making Enkephalin.</jobString>
+    <workAmount>20000</workAmount>
+    <workSpeedStat>DrugSynthesisSpeed</workSpeedStat>
+    <soundWorking>Recipe_Drug</soundWorking>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>EnkephalinBox</li>
+          </thingDefs>
+        </filter>
+        <count>250</count>
+      </li>
+    </ingredients>
+    <products>
+      <Enkephalin>50</Enkephalin>
+    </products>
+	<recipeUsers>
+		<li>LC_UniversalBench</li>
+	</recipeUsers>
+  <researchPrerequisite>Enkephalin_Drug</researchPrerequisite>
+	<skillRequirements>
+    <Crafting>10</Crafting>
+    <Intellectual>10</Intellectual>
+	</skillRequirements>
+  <workSkill>Intellectual</workSkill>
+  </RecipeDef>
+
+</Defs>

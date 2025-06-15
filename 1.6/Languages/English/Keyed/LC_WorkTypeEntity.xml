@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <CommandAssignmentWorkTypeLabel>Work Type Set</CommandAssignmentWorkTypeLabel>
+  <CommandAssignmentWorkTypeDesc>Click to set work type of this platofrm.\nPawn will work on the platform by setted work type.\nWarning, incorrect work type may lead to dangerous result.</CommandAssignmentWorkTypeDesc>
+  
+  <TipDialogWorkType_Instinct>Instinct</TipDialogWorkType_Instinct>
+  <TipDialogWorkType_Insight>Insight</TipDialogWorkType_Insight>
+  <TipDialogWorkType_Attachment>Attachment</TipDialogWorkType_Attachment>
+  <TipDialogWorkType_Repression>Repression</TipDialogWorkType_Repression>
+
+</LanguageData>

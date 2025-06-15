@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="DrugPillBase">
+    <defName>Enkephalin</defName>
+    <label>enkephalin</label>
+    <description>.</description>
+    <descriptionHyperlinks>
+      <HediffDef>EnkephalinHigh</HediffDef>
+      <HediffDef>EnkephalinAddiction</HediffDef>
+    </descriptionHyperlinks>
+    <thingCategories>
+      <li>LC_Drug</li>
+    </thingCategories>
+    <researchPrerequisites>
+      <li>Enkephalin_Drug</li>
+    </researchPrerequisites>
+    <stackLimit>50</stackLimit>
+    <graphicData>
+      <texPath>Things/Item/Drug/Enkephalin</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <rotatable>false</rotatable>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>0.50</Mass>
+      <WorkToMake>500</WorkToMake>
+    </statBases>
+    <techLevel>Ultra</techLevel>
+    <minRewardCount>10</minRewardCount>
+    <ingestible>
+      <drugCategory>Medical</drugCategory>
+      <outcomeDoers>
+        <li Class="IngestionOutcomeDoer_GiveHediff">
+          <hediffDef>EnkephalinHigh</hediffDef>
+          <severity>1.00</severity>
+          <doToGeneratedPawnIfAddicted>true</doToGeneratedPawnIfAddicted>
+        </li>
+        <li Class="IngestionOutcomeDoer_OffsetNeed">
+          <need>Rest</need>
+          <offset>0.2</offset>
+          <toleranceChemical>Psychite</toleranceChemical>
+        </li>
+      </outcomeDoers>
+    </ingestible>
+    <recipeMaker>
+      <researchPrerequisite>Enkephalin_Drug</researchPrerequisite>
+      <recipeUsers>
+        <li>LC_UniversalBench</li>
+      </recipeUsers>
+      <soundWorking>Recipe_Drug</soundWorking>
+    </recipeMaker>
+    <costList>
+      <EnkephalinBox>5</EnkephalinBox>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Drug">
+        <chemical>Enkephalin</chemical>
+        <addictiveness>1.00</addictiveness>
+        <needLevelOffset>0.9</needLevelOffset>
+        <listOrder>1010</listOrder>
+      </li>
+    </comps>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <thingSetMakerTags><li>RewardStandardCore</li></thingSetMakerTags>
+    <allowedArchonexusCount>50</allowedArchonexusCount>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>EnkephalinHigh</defName>
+    <hediffClass>Hediff_High</hediffClass>
+    <label>enkephalin</label>
+    <description>.</description>
+    <defaultLabelColor>(1,1,0.5)</defaultLabelColor>
+    <scenarioCanAdd>true</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <isBad>false</isBad>
+    <stages>
+      <li>
+        <painFactor>0.1</painFactor>
+        <statFactors>
+          <RestFallRateFactor>1.5</RestFallRateFactor>
+          <JoyFallRateFactor>0.2</JoyFallRateFactor>
+          <PsychicSensitivity>0.5</PsychicSensitivity>
+          <WorkSpeedGlobal>2</WorkSpeedGlobal>
+          <MoveSpeed>1.5</MoveSpeed>
+        </statFactors>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <offset>-0.50</offset>
+          </li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <!-- Enkephalin addiction -->
+
+  <ChemicalDef>
+    <defName>Enkephalin</defName>
+    <label>enkephalin</label>
+    <addictionHediff>EnkephalinAddiction</addictionHediff>
+    <canBinge>false</canBinge>
+    <generateAddictionGenes>false</generateAddictionGenes>
+  </ChemicalDef>
+
+  <NeedDef ParentName="DrugAddictionNeedBase">
+    <defName>Chemical_Enkephalin</defName>
+    <needClass>Need_Chemical</needClass>
+    <label>enkephalin</label>
+    <description>.</description>
+    <listPriority>45</listPriority>
+    <fallPerDay>0.8</fallPerDay>
+    <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+  </NeedDef>
+
+  <HediffDef ParentName="AddictionBase">
+    <defName>EnkephalinAddiction</defName>
+    <label>enkephalin need</label>
+    <description>.</description>
+    <hediffClass>Hediff_Addiction</hediffClass>
+    <chemicalNeed>Chemical_Enkephalin</chemicalNeed>
+    <everCurableByItem>false</everCurableByItem>
+    <stages>
+      <li>
+      </li>
+      <li>
+        <label>unmet</label>
+        <painOffset>0.4</painOffset>
+        <lifeThreatening>true</lifeThreatening>
+        <deathMtbDays>10</deathMtbDays>
+        <mtbDeathDestroysBrain>true</mtbDeathDestroysBrain>
+        <capMods>
+          <li>
+            <capacity>Consciousness</capacity>
+            <setMax>0.8</setMax>
+          </li>
+        </capMods>
+        <mentalStateGivers>
+          <li>
+            <mentalState>Berserk</mentalState>
+            <mtbDays>0.4</mtbDays>
+          </li>
+        </mentalStateGivers>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <ThoughtDef>
+    <defName>EnkephalinHigh</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>EnkephalinHigh</hediff>
+    <validWhileDespawned>true</validWhileDespawned>
+    <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+    <stages>
+      <li>
+        <label>high on enkephalin</label>
+        <description>.</description>
+        <baseMoodEffect>80</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+  
+</Defs>

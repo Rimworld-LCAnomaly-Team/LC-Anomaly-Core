@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <SongDef>
+    <defName>Anomaly_Extract</defName>
+    <clipPath>Songs/Extract_Ritual/Anomaly_Extract</clipPath>
+    <volume>2.00</volume>
+    <commonality>0</commonality>
+  </SongDef>
+  
+</Defs>

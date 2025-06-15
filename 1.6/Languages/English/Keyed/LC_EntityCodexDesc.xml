@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_EntityCodexGizmoLabel>Open Management Manual</LC_EntityCodexGizmoLabel>
+  <LC_EntityCodexGizmoDesc>Click to open the Management Manual</LC_EntityCodexGizmoDesc>
+
+  <LC_EntityCodexLabel>Lobotomy Corporation Abnormalities</LC_EntityCodexLabel>
+  <LC_EntityCodexDesc>Abnormalities are the root of the human subconscious, we can obtain enkephalins from them through proper management.\nAccording to their management risk, they are classified into five levels: ZAYIN, TETH, HE, WAW and ALEPH.</LC_EntityCodexDesc>
+  
+  <LC_EntityCodexTip.ZAYIN>With little to no aggression, ZAYIN Abnormalities will cause the least harm to your Agents.\nTheir damage tends to be minuscule, and they may have a positive effect on the employees.</LC_EntityCodexTip.ZAYIN>
+  <LC_EntityCodexTip.TETH>These Abnormalities can inflict varying degrees of injury to your employees.\nHowever, as long as your employees follow the proper managerial guidelines, they will not cause much damage.</LC_EntityCodexTip.TETH>
+  <LC_EntityCodexTip.HE>Abnormalities of this class can easily kill a number of employees.\nYou will have to pay twice as much attention as you do for a ZAYIN or TETH.\nIf the situation goes wrong, several employees could be lost in bloodshed.\nThere’s no need to be concerned though; with your excellent management, they will be in control.</LC_EntityCodexTip.HE>
+  <LC_EntityCodexTip.WAW>These are high risk and carry devastating force.\nMost will be hostile toward employees, and the death toll could reach into the dozens.</LC_EntityCodexTip.WAW>
+  <LC_EntityCodexTip.ALEPH>The most dangerous. You should devote as much concentration and attention as possible to this Risk Level.\nYou’ll be thankful if the Abnormality is suppressed without ravaging entire departments.</LC_EntityCodexTip.ALEPH>
+
+</LanguageData>

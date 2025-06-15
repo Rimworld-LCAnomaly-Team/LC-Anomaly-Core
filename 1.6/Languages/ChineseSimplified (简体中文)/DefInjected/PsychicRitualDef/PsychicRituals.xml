@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <ExtractAnomaly_ZAYIN.label>提取异想体（ZAYIN）</ExtractAnomaly_ZAYIN.label>
+  <ExtractAnomaly_ZAYIN.description>.</ExtractAnomaly_ZAYIN.description>
+
+  <ExtractAnomaly_TETH.label>提取异想体（TETH）</ExtractAnomaly_TETH.label>
+  <ExtractAnomaly_TETH.description>.</ExtractAnomaly_TETH.description>
+
+  <ExtractAnomaly_HE.label>提取异想体（HE）</ExtractAnomaly_HE.label>
+  <ExtractAnomaly_HE.description>.</ExtractAnomaly_HE.description>
+
+  <ExtractAnomaly_WAW.label>提取异想体（WAW）</ExtractAnomaly_WAW.label>
+  <ExtractAnomaly_WAW.description>.</ExtractAnomaly_WAW.description>
+
+  <ExtractAnomaly_ALEPH.label>提取异想体（ALEPH）</ExtractAnomaly_ALEPH.label>
+  <ExtractAnomaly_ALEPH.description>.</ExtractAnomaly_ALEPH.description>
+  
+</LanguageData>

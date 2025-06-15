@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- ExtractRituals -->
+  <ResearchProjectDef>
+    <defName>ExtractAbnormalityRiturals</defName>
+    <label>Extract abnormality Riturals</label>
+    <description>Extract abnormality from the Well.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>1.80</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Extract Abnormalities</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Extracting Abnormalities</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- CogitoUsages -->
+  <ResearchProjectDef>
+    <defName>CogitoUsages</defName>
+    <label>Cogito Usages</label>
+    <description>Carry out a research into the usage of cogito.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>1.20</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Cogito Usages</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now learning how to use cogito.</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Extract -->
+  <ResearchProjectDef>
+    <defName>ExtractEnkephalin</defName>
+    <label>Extract Enkephalin</label>
+    <description>Extract Enkephalin from Anomalies.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Extract Enkephalin</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Extracting Enkephalin</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Convert -->
+  <ResearchProjectDef>
+    <defName>EnkephalinConvert</defName>
+    <label>Enkephalin Convert</label>
+    <description>Convert Enkephalin to other things.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>ExtractEnkephalin</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin Convert</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Converting Enkephalin</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+  
+  <!-- Enkephalin Generator -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGenerator</defName>
+    <label>Enkephalin Generator</label>
+    <description>EnkephalinGenerator</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>2.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>EnkephalinConvert</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Generator (ECO) -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGeneratorECO</defName>
+    <label>Enkephalin Generator (ECO)</label>
+    <description>ECO EnkephalinGenerator</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>0.60</researchViewY>
+    <prerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Generator (Advanced) -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_ElectricGeneratorAdvanced</defName>
+    <label>Enkephalin Generator (Advanced)</label>
+    <description>Advanced EnkephalinGenerator</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>3.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin ElectricGenerator</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- Enkephalin Drug -->
+  <ResearchProjectDef>
+    <defName>Enkephalin_Drug</defName>
+    <label>Drug of Enkephalin</label>
+    <description>Drug of Enkephalin.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>1.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>ExtractEnkephalin</li>
+    </prerequisites>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Enkephalin Drug</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now Enkephalin_Drug</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+  <!-- EntityContainment -->
+  <ResearchProjectDef>
+    <defName>LC_EntityContainment</defName>
+    <label>LobotomyCorporation Containment</label>
+    <description>.</description>
+    <tab>LCAnomaly</tab>
+    <baseCost>500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>0.00</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <generalRules>
+      <rulesStrings>
+        <li>subject->Cogito Usages</li>
+
+        <li>subject_story->empty</li>
+        <li>subject_story->empty</li>
+
+        <li>subject_gerund->Now learning how to use cogito.</li>
+      </rulesStrings>
+    </generalRules>
+  </ResearchProjectDef>
+
+</Defs>

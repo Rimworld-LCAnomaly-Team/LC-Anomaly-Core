@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <FactionDef ParentName="FactionBase">
+    <defName>LC_Entities</defName>
+    <label>lc entities</label>
+    <fixedName>Lobotomy entities</fixedName>
+    <pawnSingular>entity</pawnSingular>
+    <pawnsPlural>entities</pawnsPlural>
+    <requiredCountAtGameStart>1</requiredCountAtGameStart>
+    <raidCommonalityFromPointsCurve>
+      <points>
+        <li>(0, 0)</li>
+      </points>
+    </raidCommonalityFromPointsCurve>
+    <humanlikeFaction>false</humanlikeFaction>
+    <hidden>true</hidden>
+    <displayInFactionSelection>false</displayInFactionSelection>
+    <autoFlee>false</autoFlee>
+    <canUseAvoidGrid>false</canUseAvoidGrid>
+    <techLevel>Animal</techLevel>
+    <permanentEnemyToEveryoneExcept>
+      <li>Insect</li>
+    </permanentEnemyToEveryoneExcept>
+    <hostileToFactionlessHumanlikes>true</hostileToFactionlessHumanlikes>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+    <allowedArrivalTemperatureRange>-100~100</allowedArrivalTemperatureRange>
+    <maxConfigurableAtWorldCreation>1</maxConfigurableAtWorldCreation>
+    <configurationListOrderPriority>1000</configurationListOrderPriority>
+    <maxPawnCostPerTotalPointsCurve>
+      <points>
+        <li>(400,200)</li>
+        <li>(900,300)</li>
+        <li>(100000,10000)</li>
+      </points>
+    </maxPawnCostPerTotalPointsCurve>
+    <pawnGroupMakers Inherit="False">
+    </pawnGroupMakers>
+  </FactionDef>
+
+</Defs>

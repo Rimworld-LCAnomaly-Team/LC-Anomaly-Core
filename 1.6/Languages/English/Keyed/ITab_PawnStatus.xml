@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_TabPawnStatusContents>Employee Level: </LC_TabPawnStatusContents>
+  <LC_ITab_PawnStatus_AvgLevel>Level: </LC_ITab_PawnStatus_AvgLevel>
+
+  <LC_ITab_PawnStatus_Fortitude>Fortitude</LC_ITab_PawnStatus_Fortitude>
+  <LC_ITab_PawnStatus_Prudence>Prudence</LC_ITab_PawnStatus_Prudence>
+  <LC_ITab_PawnStatus_Temperance>Temperance</LC_ITab_PawnStatus_Temperance>
+  <LC_ITab_PawnStatus_Justice>Justice</LC_ITab_PawnStatus_Justice>
+
+  <LC_ITab_PawnStatus_NonTriggered>Status inactivated</LC_ITab_PawnStatus_NonTriggered>
+
+</LanguageData>

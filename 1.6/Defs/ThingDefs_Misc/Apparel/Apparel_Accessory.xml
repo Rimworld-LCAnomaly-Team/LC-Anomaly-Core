@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef Name="LC_Apparel_AccessoryBase" ParentName="ApparelNoQualityBase" Abstract="True">
+    <thingClass>Apparel</thingClass>
+    <category>Item</category>
+    <selectable>true</selectable>
+    <pathCost>10</pathCost>
+    <techLevel>Industrial</techLevel>
+    <generateAllowChance>0</generateAllowChance>
+    <generateCommonality>0</generateCommonality>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>CutoutComplex</shaderType>
+      <drawSize>1.0</drawSize>
+      <drawOffset>(0,0,0)</drawOffset>
+	    <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <apparel>
+      <tags>
+        <li>Apparel_EGOAccessory</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useWornGraphicMask>false</useWornGraphicMask>
+      <wearPerDay>0</wearPerDay>
+      <canBeDesiredForIdeo>false</canBeDesiredForIdeo>
+    </apparel>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <useHitPoints>false</useHitPoints>
+    <statBases>
+      <Mass>0.02</Mass>
+      <Flammability>0</Flammability>
+      <DeteriorationRate>0</DeteriorationRate>
+    </statBases>
+    <altitudeLayer>Item</altitudeLayer>
+    <alwaysHaulable>True</alwaysHaulable>
+    <tickerType>Never</tickerType>
+    <burnableByRecipe>false</burnableByRecipe>
+    <smeltable>false</smeltable>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+    </comps>
+    <tradeTags>
+      <li>LC_Apparel_Accessory</li>
+    </tradeTags>
+  </ThingDef>
+  
+</Defs>

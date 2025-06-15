@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <QliphothCounterInspect>逆卡巴拉计数</QliphothCounterInspect>
+
+  <RequireThingNotInstalledText>缺失必要组件：</RequireThingNotInstalledText>
+
+  <EGOExtractSucceedText>E.G.O提取成功：</EGOExtractSucceedText>
+  <EGOExtractFailedByPeBoxConsumeText>E.G.O提取失败：所需独立PeBox数量不足</EGOExtractFailedByPeBoxConsumeText>
+  <ExtractEGODisabledReasonText>E.G.O提取禁用：提取数量已达最大值</ExtractEGODisabledReasonText>
+
+  <IndiPeBoxIndicatorInspectText>独立PeBox计数：</IndiPeBoxIndicatorInspectText>
+
+  <CommandToggleShowWorkableLabel>开关可工作UI显示</CommandToggleShowWorkableLabel>
+  <CommandToggleShowWorkableDesc>按下来切换异想体平台上关于是否可工作的UI显示状态</CommandToggleShowWorkableDesc>
+
+</LanguageData>

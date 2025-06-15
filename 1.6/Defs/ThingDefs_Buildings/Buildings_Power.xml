@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ThingDef Name="EnkephalinGeneratorBase" ParentName="BuildingBase" Abstract="True">
+    <defName>EnkephalinGeneratorBase</defName>
+    <thingClass>LCAnomalyCore.Building.Building_EnkephalinGenerator</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <graphicData>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.9</fillPercent>
+    <pathCost>50</pathCost>
+    <rotatable>false</rotatable>
+    <blockWind>true</blockWind>
+    <castEdgeShadows>false</castEdgeShadows>
+    <tickerType>Normal</tickerType>
+    <canOverlapZones>false</canOverlapZones>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Medium</destroySound>
+    </building>
+    <comps>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Stunnable">
+        <useLargeEMPEffecter>true</useLargeEMPEffecter>
+        <affectedDamageDefs>
+          <li>EMP</li>
+        </affectedDamageDefs>
+      </li>
+    </comps>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <designationCategory>Buildings_LC</designationCategory>
+    <uiOrder>2100</uiOrder>
+    <constructEffect>ConstructMetal</constructEffect>
+  </ThingDef>
+  
+  <ThingDef ParentName="EnkephalinGeneratorBase">
+    <defName>EnkephalinGenerator</defName>
+    <label>Enkephalin Generator</label>
+    <description>Clean energy.</description>
+    <graphicData>
+      <texPath>Things/Building/Power/EnkephalinGenerator</texPath>
+      <drawSize>(2,2)</drawSize>
+      <shadowData>
+        <volume>(1.93,1,1.69)</volume>
+        <offset>(-0.03,0,-0.1)</offset>
+      </shadowData>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>300</MaxHitPoints>
+      <WorkToBuild>2500</WorkToBuild>
+      <Flammability>1.0</Flammability>
+      <Beauty>-20</Beauty>
+    </statBases>
+    <size>(2,2)</size>
+    <costList>
+      <Steel>100</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerPlant</compClass>
+        <basePowerConsumption>-4000</basePowerConsumption>
+        <transmitsPower>true</transmitsPower>
+        <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelConsumptionRate>4.0</fuelConsumptionRate>
+        <fuelCapacity>75.0</fuelCapacity>
+        <fuelFilter>
+          <thingDefs>
+            <li>EnkephalinModule</li>
+          </thingDefs>
+        </fuelFilter>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+      </li>
+      <li Class="CompProperties_Glower">
+        <glowRadius>6</glowRadius>
+        <glowColor>(0,206,209,0)</glowColor>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Enkephalin_ElectricGenerator</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- ECO -->
+  <ThingDef ParentName="EnkephalinGeneratorBase">
+    <defName>EnkephalinGeneratorECO</defName>
+    <label>Enkephalin Generator (ECO)</label>
+    <description>Economize on fuel.</description>
+    <graphicData>
+      <texPath>Things/Building/Power/EnkephalinGeneratorECO</texPath>
+      <drawSize>(2,2)</drawSize>
+      <shadowData>
+        <volume>(1.93,1,1.69)</volume>
+        <offset>(-0.03,0,-0.1)</offset>
+      </shadowData>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>300</MaxHitPoints>
+      <WorkToBuild>2500</WorkToBuild>
+      <Flammability>1.0</Flammability>
+      <Beauty>-20</Beauty>
+    </statBases>
+    <size>(2,2)</size>
+    <costList>
+      <Steel>200</Steel>
+      <ComponentSpacer>2</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerPlant</compClass>
+        <basePowerConsumption>-3000</basePowerConsumption>
+        <transmitsPower>true</transmitsPower>
+        <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelConsumptionRate>2.0</fuelConsumptionRate>
+        <fuelCapacity>75.0</fuelCapacity>
+        <fuelFilter>
+          <thingDefs>
+            <li>EnkephalinModule</li>
+          </thingDefs>
+        </fuelFilter>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+      </li>
+      <li Class="CompProperties_Glower">
+        <glowRadius>9</glowRadius>
+        <glowColor>(124,252,0,0)</glowColor>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Enkephalin_ElectricGeneratorECO</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- Advanced -->
+  <ThingDef ParentName="EnkephalinGeneratorBase">
+    <defName>EnkephalinGeneratorAdvanced</defName>
+    <label>Enkephalin Generator (Advanced)</label>
+    <description>More power generation.</description>
+    <graphicData>
+      <texPath>Things/Building/Power/EnkephalinGeneratorAdvanced</texPath>
+      <drawSize>(3,3)</drawSize>
+      <shadowData>
+        <volume>(1.93,1,1.69)</volume>
+        <offset>(-0.03,0,-0.1)</offset>
+      </shadowData>
+    </graphicData>
+    <statBases>
+      <MaxHitPoints>1000</MaxHitPoints>
+      <WorkToBuild>5000</WorkToBuild>
+      <Flammability>1.0</Flammability>
+      <Beauty>-20</Beauty>
+    </statBases>
+    <size>(3,3)</size>
+    <costList>
+      <Steel>200</Steel>
+      <ComponentSpacer>2</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerPlant</compClass>
+        <basePowerConsumption>-8000</basePowerConsumption>
+        <transmitsPower>true</transmitsPower>
+        <soundAmbientProducingPower>WoodFiredGenerator_Ambience</soundAmbientProducingPower>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelConsumptionRate>6.0</fuelConsumptionRate>
+        <fuelCapacity>150.0</fuelCapacity>
+        <fuelFilter>
+          <thingDefs>
+            <li>EnkephalinModule</li>
+          </thingDefs>
+        </fuelFilter>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+      </li>
+      <li Class="CompProperties_Glower">
+        <glowRadius>9</glowRadius>
+        <glowColor>(160,102,211,0)</glowColor>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Enkephalin_ElectricGeneratorAdvanced</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+  </ThingDef>
+
+</Defs>

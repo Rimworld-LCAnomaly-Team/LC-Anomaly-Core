@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- Study abnormal -->
+  <WorkGiverDef>
+    <defName>LC_StudyInteract</defName>
+    <label>study</label>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_StudyInteract</giverClass>
+    <workType>AbnormalityStudy</workType>
+    <verb>study</verb>
+    <gerund>studying</gerund>
+    <priorityInType>110</priorityInType>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+
+  <!-- Craft on UniversalBench -->
+  <WorkGiverDef>
+    <defName>LC_UniversalBenchBill</defName>
+    <label>craft at universal workbench</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Crafting</workType>
+    <priorityInType>100</priorityInType>
+    <fixedBillGiverDefs>
+      <li>LC_UniversalBench</li>
+    </fixedBillGiverDefs>
+    <verb>craft</verb>
+    <gerund>craft at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+</Defs>

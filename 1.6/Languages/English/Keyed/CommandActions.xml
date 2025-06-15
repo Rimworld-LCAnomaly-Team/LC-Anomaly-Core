@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <ExtractEGOCommandText>ExtractedAmount: </ExtractEGOCommandText>
+  <IndiPeBoxAmountCommandText>Indi-PeBox Amount: </IndiPeBoxAmountCommandText>
+  <ExtractEGONeedPeboxAmountCommandText>Need Amount: </ExtractEGONeedPeboxAmountCommandText>
+  <ExtractEGOWeaponCommandText>Extract E.G.O Weapon: </ExtractEGOWeaponCommandText>
+  <ExtractEGOArmorCommandText>Extract E.G.O Apparel: </ExtractEGOArmorCommandText>
+
+</LanguageData>

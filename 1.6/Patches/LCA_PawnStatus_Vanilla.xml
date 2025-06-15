@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<!-- Vanilla Human -->
+	<Operation Class="PatchOperationSequence">
+		<operations>
+			<!-- 插入员工数值Comp -->
+			<li Class="PatchOperationConditional">
+				<xpath>Defs/ThingDef[defName="Human"]/comps</xpath>
+				<nomatch Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Human"]</xpath>
+					<value>
+						<comps />
+					</value>
+				</nomatch>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>Defs/ThingDef[defName="Human"]/comps</xpath>
+				<value>
+					<li Class="LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus">
+						<statusNumMax>100</statusNumMax>
+						<initialRange_Fortitude>17~20</initialRange_Fortitude>
+						<initialRange_Prudence>17~20</initialRange_Prudence>
+						<initialRange_Temperance>17~20</initialRange_Temperance>
+						<initialRange_Justice>17~20</initialRange_Justice>
+					</li>
+				</value>
+			</li>
+			<!-- 插入员工面板tab -->
+			<li Class="PatchOperationConditional">
+				<xpath>Defs/ThingDef[defName="Human"]/inspectorTabs</xpath>
+				<nomatch Class="PatchOperationAdd">
+					<xpath>Defs/ThingDef[defName="Human"]</xpath>
+					<value>
+						<inspectorTabs />
+					</value>
+				</nomatch>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>Defs/ThingDef[defName="Human"]/inspectorTabs</xpath>
+				<value>
+					<li>LCAnomalyCore.UI.ITab_PawnStatus</li>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+</Patch>

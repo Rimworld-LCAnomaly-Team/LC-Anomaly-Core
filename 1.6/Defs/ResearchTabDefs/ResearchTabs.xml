@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ResearchTabDef>
+    <defName>LCAnomaly</defName>
+    <label>LobotomyCorporation Abnormality</label>
+    <generalTitle>Abnormality Research</generalTitle>
+    <generalDescription>.</generalDescription>
+    <visibleByDefault>true</visibleByDefault>
+    <minMonolithLevelVisible>1</minMonolithLevelVisible>
+    <tutorTag>Research-Tab-LCAnomaly</tutorTag>
+  </ResearchTabDef>
+
+</Defs>

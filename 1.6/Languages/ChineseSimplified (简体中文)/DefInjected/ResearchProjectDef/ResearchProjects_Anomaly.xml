@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <ExtractAbnormalityRiturals.label>提取异想体</ExtractAbnormalityRiturals.label>
+  <ExtractAbnormalityRiturals.description>研究如何提取异想体。</ExtractAbnormalityRiturals.description>
+  <ExtractAbnormalityRiturals.generalRules.rulesStrings>
+    <li>subject->提取异想体</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </ExtractAbnormalityRiturals.generalRules.rulesStrings>
+
+  <CogitoUsages.label>Cogito应用</CogitoUsages.label>
+  <CogitoUsages.description>研究如何利用Cogito。</CogitoUsages.description>
+  <CogitoUsages.generalRules.rulesStrings>
+    <li>subject->Cogito应用</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </CogitoUsages.generalRules.rulesStrings>
+
+  <LC_EntityContainment.label>异想体收容</LC_EntityContainment.label>
+  <LC_EntityContainment.description>研究如何建造与异想体收容相关的设施。</LC_EntityContainment.description>
+  <LC_EntityContainment.generalRules.rulesStrings>
+    <li>subject->异想体收容</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </LC_EntityContainment.generalRules.rulesStrings>
+  
+  <ExtractEnkephalin.label>提取脑啡肽</ExtractEnkephalin.label>
+  <ExtractEnkephalin.description>研究如何从对异想体的工作中提取提取脑啡肽。</ExtractEnkephalin.description>
+  <ExtractEnkephalin.generalRules.rulesStrings>
+    <li>subject->提取脑啡肽</li>
+    <li>subject_story->L公司的特产</li>
+    <li>subject_story->在员工对异常工作的时候可被提取</li>
+    <li>subject_gerund->正在提取脑啡肽</li>
+  </ExtractEnkephalin.generalRules.rulesStrings>
+
+  <EnkephalinConvert.label>转化脑啡肽</EnkephalinConvert.label>
+  <EnkephalinConvert.description>研究如何将脑啡肽转化成其他产物。</EnkephalinConvert.description>
+  <EnkephalinConvert.generalRules.rulesStrings>
+    <li>subject->转化脑啡肽</li>
+    <li>subject_story->WIP</li>
+    <li>subject_story->WIP</li>
+    <li>subject_gerund->WIP</li>
+  </EnkephalinConvert.generalRules.rulesStrings>
+
+  <Enkephalin_ElectricGenerator.label>脑啡肽发电</Enkephalin_ElectricGenerator.label>
+  <Enkephalin_ElectricGenerator.description>研究如何利用脑啡肽发电。</Enkephalin_ElectricGenerator.description>
+  <Enkephalin_ElectricGenerator.generalRules.rulesStrings>
+    <li>subject->脑啡肽发电</li>
+    <li>subject_story->L公司独有的发电方式</li>
+    <li>subject_story->能够产出大量清洁能源</li>
+    <li>subject_gerund->正在研究利用脑啡肽发电</li>
+  </Enkephalin_ElectricGenerator.generalRules.rulesStrings>
+
+  <Enkephalin_ElectricGeneratorECO.label>脑啡肽发电（节能）</Enkephalin_ElectricGeneratorECO.label>
+  <Enkephalin_ElectricGeneratorECO.description>研究如何优化脑啡肽发电机的能耗。</Enkephalin_ElectricGeneratorECO.description>
+  <Enkephalin_ElectricGeneratorECO.generalRules.rulesStrings>
+    <li>subject->脑啡肽发电</li>
+    <li>subject_story->L公司独有的发电方式</li>
+    <li>subject_story->能够产出大量清洁能源</li>
+    <li>subject_gerund->正在研究利用脑啡肽发电</li>
+  </Enkephalin_ElectricGeneratorECO.generalRules.rulesStrings>
+
+  <Enkephalin_ElectricGeneratorAdvanced.label>脑啡肽发电（先进）</Enkephalin_ElectricGeneratorAdvanced.label>
+  <Enkephalin_ElectricGeneratorAdvanced.description>研究如何利用脑啡肽大量发电。</Enkephalin_ElectricGeneratorAdvanced.description>
+  <Enkephalin_ElectricGeneratorAdvanced.generalRules.rulesStrings>
+    <li>subject->脑啡肽发电</li>
+    <li>subject_story->L公司独有的发电方式</li>
+    <li>subject_story->能够产出大量清洁能源</li>
+    <li>subject_gerund->正在研究利用脑啡肽发电</li>
+  </Enkephalin_ElectricGeneratorAdvanced.generalRules.rulesStrings>
+
+  <Enkephalin_Drug.label>脑啡肽毒品</Enkephalin_Drug.label>
+  <Enkephalin_Drug.description>研究如何利用脑啡肽制作可服用的毒品。</Enkephalin_Drug.description>
+  <Enkephalin_Drug.generalRules.rulesStrings>
+    <li>subject->脑啡肽毒品</li>
+    <li>subject_story->脑啡肽除了发电外还有别的用处</li>
+    <li>subject_story->能够给员工提供一点“快乐”</li>
+    <li>subject_gerund->正在研究利用脑啡肽制作可服用毒品</li>
+  </Enkephalin_Drug.generalRules.rulesStrings>
+  
+</LanguageData>

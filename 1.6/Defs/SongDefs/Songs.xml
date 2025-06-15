@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <SongDef>
+		<defName>FirstWarning</defName>
+		<playOnMap>false</playOnMap>
+		<clipPath>Songs/Warnings/emergency01</clipPath>
+		<volume>1</volume>
+	</SongDef>
+	<SongDef>
+		<defName>SecondWarning</defName>
+		<playOnMap>false</playOnMap>
+		<clipPath>Songs/Warnings/emergency02</clipPath>
+		<volume>1</volume>
+	</SongDef>
+	<SongDef>
+		<defName>ThirdWarning</defName>
+		<playOnMap>false</playOnMap>
+		<clipPath>Songs/Warnings/emergency03</clipPath>
+		<volume>1</volume>
+	</SongDef>
+</Defs>

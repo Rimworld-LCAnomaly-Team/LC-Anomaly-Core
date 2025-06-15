@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <Make10Enkephalin.label>制作10份脑啡肽</Make10Enkephalin.label>
+  <Make10Enkephalin.description>批量制作脑啡肽（工作量减免20%）。</Make10Enkephalin.description>
+  <Make10Enkephalin.jobString>正在制作10份脑啡肽。</Make10Enkephalin.jobString>
+
+  <Make50Enkephalin.label>制作50份脑啡肽</Make50Enkephalin.label>
+  <Make50Enkephalin.description>批量制作脑啡肽（工作量减免20%）。</Make50Enkephalin.description>
+  <Make50Enkephalin.jobString>正在制作50份脑啡肽。</Make50Enkephalin.jobString>
+
+  <Make10EnkephalinModule.label>制作10份脑啡肽模块</Make10EnkephalinModule.label>
+  <Make10EnkephalinModule.description>批量制作脑啡肽模块（工作量减免20%）。</Make10EnkephalinModule.description>
+  <Make10EnkephalinModule.jobString>正在制作10份脑啡肽模块。</Make10EnkephalinModule.jobString>
+
+  <Make50EnkephalinModule.label>制作50份脑啡肽模块</Make50EnkephalinModule.label>
+  <Make50EnkephalinModule.description>批量制作脑啡肽模块（工作量减免20%）。</Make50EnkephalinModule.description>
+  <Make50EnkephalinModule.jobString>正在制作50份脑啡肽模块。</Make50EnkephalinModule.jobString>
+
+  <ConvertEnkephalinToBioferrite10.label>转化10份活铁</ConvertEnkephalinToBioferrite10.label>
+  <ConvertEnkephalinToBioferrite10.description>批量转化活铁</ConvertEnkephalinToBioferrite10.description>
+  <ConvertEnkephalinToBioferrite10.jobString>正在转化10份活铁。</ConvertEnkephalinToBioferrite10.jobString>
+
+  <ConvertEnkephalinToBioferrite50.label>转化50份活铁</ConvertEnkephalinToBioferrite50.label>
+  <ConvertEnkephalinToBioferrite50.description>批量转化活铁</ConvertEnkephalinToBioferrite50.description>
+  <ConvertEnkephalinToBioferrite50.jobString>正在转化50份活铁。</ConvertEnkephalinToBioferrite50.jobString>
+
+</LanguageData>

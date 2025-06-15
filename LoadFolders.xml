@@ -7,4 +7,11 @@
 		<li IfModActive="fxz.myafufu">Extension/1.5/Fufu</li>
 		<li IfModActive="erdelf.HumanoidAlienRaces">Extension/1.5/HAR</li>
     </v1.5>
+	<v1.6>
+		<li>Cont</li>
+		<li>1.6</li>
+		<!-- <li IfModActive="ludeon.rimworld.ideology">Extension/1.5/DLC/Ideology</li>
+		<li IfModActive="fxz.myafufu">Extension/1.5/Fufu</li>
+		<li IfModActive="erdelf.HumanoidAlienRaces">Extension/1.5/HAR</li> -->
+    </v1.6>
 </loadFolders>

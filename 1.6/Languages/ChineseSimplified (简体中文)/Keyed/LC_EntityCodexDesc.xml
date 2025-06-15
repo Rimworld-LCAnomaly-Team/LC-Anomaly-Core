@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_EntityCodexGizmoLabel>打开管理手册</LC_EntityCodexGizmoLabel>
+  <LC_EntityCodexGizmoDesc>点击以打开异想体管理手册</LC_EntityCodexGizmoDesc>
+
+  <LC_EntityCodexLabel>脑叶公司异常</LC_EntityCodexLabel>
+  <LC_EntityCodexDesc>异想体是人类潜意识的根源，通过对其适当的管理我们可以从中获取脑啡肽。\n异想体根据其管理危险性，分为ZAYIN, TETH, HE, WAW和ALEPH这五种等级。</LC_EntityCodexDesc>
+  
+  <LC_EntityCodexTip.ZAYIN>这个等级的异想体几乎不具有侵略性，它们通常不会对员工造成太大伤害。如果情况得当，它们甚至可以对员工产生积极的效应。</LC_EntityCodexTip.ZAYIN>
+  <LC_EntityCodexTip.TETH>这个等级的异想体比能够对员工造成一定的伤害，不过，如果您管理得当，他们也不会造成什么大的损失。</LC_EntityCodexTip.TETH>
+  <LC_EntityCodexTip.HE>这个等级的异想体能够轻易杀死一两个员工，因此您得额外注意他们的情况。一名好的主管是能够好好管住它们的。</LC_EntityCodexTip.HE>
+  <LC_EntityCodexTip.WAW>这个等级的异想体高度危险，极具破坏力，对大多数员工都怀有敌意。如果这个等级的异想体突破收容，将会导致大量的人员伤亡。</LC_EntityCodexTip.WAW>
+  <LC_EntityCodexTip.ALEPH>这个等级的异想体是公司里最危险的异想体。您必须对它们时刻保持关注，确保它们都有好好待在收容单元里。稳定收容这个等级的异想体已经耗费了公司大量的人力物力，请务必不要让他们突破收容。</LC_EntityCodexTip.ALEPH>
+
+</LanguageData>

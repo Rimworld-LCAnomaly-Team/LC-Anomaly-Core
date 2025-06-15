@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <QliphothCounterInspect>QliphothCounterCount</QliphothCounterInspect>
+
+  <RequireThingNotInstalledText>Missing required thing: </RequireThingNotInstalledText>
+
+  <EGOExtractSucceedText>E.G.O Extract Succeed: </EGOExtractSucceedText>
+  <EGOExtractFailedByPeBoxConsumeText>E.G.O Extract Failed: Insufficient Indi-PeBox amount.</EGOExtractFailedByPeBoxConsumeText>
+  <ExtractEGODisabledReasonText>E.G.O Extract Failed: Reached max extract amount.</ExtractEGODisabledReasonText>
+
+  <IndiPeBoxIndicatorInspectText>Indi-PeBox Count: </IndiPeBoxIndicatorInspectText>
+
+  <CommandToggleShowWorkableLabel>Switch Workable UI</CommandToggleShowWorkableLabel>
+  <CommandToggleShowWorkableDesc>Click to show/hide the workable UI</CommandToggleShowWorkableDesc>
+
+</LanguageData>

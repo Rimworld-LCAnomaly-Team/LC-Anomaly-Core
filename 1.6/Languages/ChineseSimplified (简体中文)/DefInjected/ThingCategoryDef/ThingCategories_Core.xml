@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <LC_Thing.label>脑叶公司物品</LC_Thing.label>
+
+  <LC_Entity.label>异想体</LC_Entity.label>
+  <LC_Entity_Tool.label>工具异想体</LC_Entity_Tool.label>
+  <LC_Entity_Egg.label>异想体蛋</LC_Entity_Egg.label>
+
+  <LC_Weapon.label>脑叶公司武器</LC_Weapon.label>
+  <LC_Weapon_Normal.label>普通武器</LC_Weapon_Normal.label>
+  <LC_Weapon_EGO.label>E.G.O武器</LC_Weapon_EGO.label>
+  <LC_Weapon_EGO_Melee.label>近战</LC_Weapon_EGO_Melee.label>
+  <LC_Weapon_EGO_Ranged.label>远程</LC_Weapon_EGO_Ranged.label>
+
+  <LC_Apparel.label>脑叶公司服装</LC_Apparel.label>
+  <LC_Apparel_Normal.label>普通服装</LC_Apparel_Normal.label>
+  <LC_Apparel_EGO.label>E.G.O服装</LC_Apparel_EGO.label>
+  <LC_Apparel_Accessory.label>饰品</LC_Apparel_Accessory.label>
+  <LC_Apparel_Accessory_Normal.label>普通饰品</LC_Apparel_Accessory_Normal.label>
+  <LC_Apparel_Accessory_EGO.label>E.G.O饰品</LC_Apparel_Accessory_EGO.label>
+
+  <LC_Drug.label>药物与成瘾品</LC_Drug.label>
+  <LC_Resource.label>资源</LC_Resource.label>
+
+  <LC_Building.label>建筑</LC_Building.label>
+  <LC_Building_Production.label>生产</LC_Building_Production.label>
+  <LC_Building_Containment.label>收容</LC_Building_Containment.label>
+  <LC_Building_Power.label>电力</LC_Building_Power.label>
+  <LC_Building_Misc.label>杂项</LC_Building_Misc.label>
+
+  <LC_Misc.label>杂项</LC_Misc.label>
+  
+</LanguageData>
