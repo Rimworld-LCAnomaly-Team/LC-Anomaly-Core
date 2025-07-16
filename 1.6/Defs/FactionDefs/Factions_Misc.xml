@@ -2,9 +2,9 @@
 <Defs>
 
   <FactionDef ParentName="FactionBase">
-    <defName>LC_Entities</defName>
-    <label>lc entities</label>
-    <fixedName>Lobotomy entities</fixedName>
+    <defName>LC_Abnormalities</defName>
+    <label>lc abnormalities</label>
+    <fixedName>Lobotomy abnormalities</fixedName>
     <pawnSingular>entity</pawnSingular>
     <pawnsPlural>entities</pawnsPlural>
     <requiredCountAtGameStart>1</requiredCountAtGameStart>

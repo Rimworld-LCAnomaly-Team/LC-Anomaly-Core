@@ -87,10 +87,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Building\Building_CogitoBucket.cs" />
-    <Compile Include="Building\Building_DepartmentCore.cs" />
-    <Compile Include="Building\Building_EnkephalinGenerator.cs" />
-    <Compile Include="Building\Building_HoldingPlatform.cs" />
+    <Compile Include="Buildings\Building_CogitoBucket.cs" />
+    <Compile Include="Buildings\Building_DepartmentCore.cs" />
+    <Compile Include="Buildings\Building_EnkephalinGenerator.cs" />
+    <Compile Include="Buildings\Building_AbnormalyHoldingPlatform.cs" />
     <Compile Include="Comp\Abstract\LC_CompProperties_RequireThingSpawner.cs" />
     <Compile Include="Comp\Abstract\LC_CompRequireThingSpawner.cs" />
     <Compile Include="Comp\CompAccessoryable.cs" />
@@ -100,6 +100,7 @@
     <Compile Include="Comp\CompEgoExtractable.cs" />
     <Compile Include="Comp\CompEgoSuit.cs" />
     <Compile Include="Comp\CompEgoWeapon.cs" />
+    <Compile Include="Comp\CompHoldingPlatformTarget.cs" />
     <Compile Include="Comp\CompPeBoxProduce.cs" />
     <Compile Include="Comp\CompPoperties_EgoSuit.cs" />
     <Compile Include="Comp\CompProperties_Accessoryable.cs" />
@@ -157,11 +158,9 @@
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
     <Compile Include="Patch\Patch_ColonistBarColonistDrawer.cs" />
-    <Compile Include="Patch\Patch_CompHoldingPlatformTarget.cs" />
     <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
-    <Compile Include="Patch\Patch_TargetHoldingPlatformForEntity.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
     <Compile Include="Patch\Patch_WorkGiver_DarkStudyInteract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

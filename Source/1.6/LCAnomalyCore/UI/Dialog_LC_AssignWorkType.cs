@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Util;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Util;
 using UnityEngine;
 using Verse;
 
@@ -6,7 +7,7 @@ namespace LCAnomalyCore.UI
 {
     public class Dialog_LC_AssignWorkType : Window
     {
-        private Building.Building_HoldingPlatform platform;
+        private Building_AbnormalyHoldingPlatform platform;
         private float buttonSize = 100f;
 
         /// <summary>
@@ -14,7 +15,7 @@ namespace LCAnomalyCore.UI
         /// </summary>
         public override Vector2 InitialSize => new Vector2(260f, 260f);
 
-        public Dialog_LC_AssignWorkType(Building.Building_HoldingPlatform platform)
+        public Dialog_LC_AssignWorkType(Building_AbnormalyHoldingPlatform platform)
         {
             this.platform = platform;
             closeOnClickedOutside = true;

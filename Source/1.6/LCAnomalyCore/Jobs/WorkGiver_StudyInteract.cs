@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Comp.Pawns;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Comp.Pawns;
 using RimWorld;
 using System.Linq;
 using Verse;
@@ -34,7 +35,7 @@ namespace LCAnomalyCore.Jobs
                 return false;
 
             //如果是LC平台
-            if (t.def is Defs.LC_HoldingPlatformDef && t is Building.Building_HoldingPlatform building)
+            if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalyHoldingPlatform building)
             {
                 var compStudiable = building.CompStudiable;
                 if (compStudiable != null)
@@ -96,7 +97,7 @@ namespace LCAnomalyCore.Jobs
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            return JobMaker.MakeJob(Defs.JobDefOf.LC_StudyInteract, t, null, (t as Building.Building_HoldingPlatform)?.HeldPawn);
+            return JobMaker.MakeJob(Defs.JobDefOf.LC_StudyInteract, t, null, (t as Building_AbnormalyHoldingPlatform)?.HeldPawn);
         }
     }
 }

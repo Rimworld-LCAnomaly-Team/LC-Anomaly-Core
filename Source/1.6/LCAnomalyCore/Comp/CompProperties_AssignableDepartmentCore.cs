@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Building;
+﻿using LCAnomalyCore.Buildings;
 using RimWorld;
 using UnityEngine;
 

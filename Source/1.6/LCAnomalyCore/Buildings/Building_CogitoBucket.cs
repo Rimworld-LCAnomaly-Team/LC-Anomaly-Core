@@ -3,7 +3,7 @@ using LCAnomalyCore.Util;
 using UnityEngine;
 using Verse;
 
-namespace LCAnomalyCore.Building
+namespace LCAnomalyCore.Buildings
 {
     /// <summary>
     /// 水桶

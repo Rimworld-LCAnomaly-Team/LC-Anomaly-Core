@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Comp.Pawns;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.UI;
 using RimWorld;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace LCAnomalyCore.Comp
         /// <returns></returns>
         public float CheckSkillRequire(Pawn pawn)
         {
-            var building = parent as Building.Building_HoldingPlatform;
+            var building = parent as Building_AbnormalyHoldingPlatform;
             if (building != null && building.HeldPawn != null)
             {
                 var comp = building.HeldPawn.GetComp<LC_CompEntity>();

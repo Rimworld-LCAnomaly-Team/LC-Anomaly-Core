@@ -5,7 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace LCAnomalyCore.Building
+namespace LCAnomalyCore.Buildings
 {
     /// <summary>
     /// 部门核心建筑

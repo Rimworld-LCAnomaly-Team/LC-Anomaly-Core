@@ -10,13 +10,13 @@ using UnityEngine;
 using Verse;
 using Verse.Sound;
 
-namespace LCAnomalyCore.Building
+namespace LCAnomalyCore.Buildings
 {
     /// <summary>
     /// 收容平台Building
     /// </summary>
     [StaticConstructorOnStartup]
-    public class Building_HoldingPlatform : RimWorld.Building_HoldingPlatform, IHoldingPlatformWorkTypeSelectable
+    public class Building_AbnormalyHoldingPlatform : RimWorld.Building_HoldingPlatform, IHoldingPlatformWorkTypeSelectable
     {
         #region 变量
 

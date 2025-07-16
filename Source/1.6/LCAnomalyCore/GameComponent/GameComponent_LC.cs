@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Building;
+﻿using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Settings;
 using System.Collections.Generic;
 using System.IO;

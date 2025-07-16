@@ -1,4 +1,5 @@
-﻿using LCAnomalyCore.Comp;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -29,7 +30,7 @@ namespace LCAnomalyCore.Jobs
         public override bool PlayerInterruptable => playerInterruptable;
         protected bool playerInterruptable = true;
 
-        private Building.Building_HoldingPlatform Platform => base.TargetThingA as Building.Building_HoldingPlatform;
+        private Building_AbnormalyHoldingPlatform Platform => base.TargetThingA as Building_AbnormalyHoldingPlatform;
 
         public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
 

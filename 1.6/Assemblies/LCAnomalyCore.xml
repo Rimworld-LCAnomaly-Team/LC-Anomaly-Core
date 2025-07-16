@@ -4,224 +4,224 @@
         <name>LCAnomalyCore</name>
     </assembly>
     <members>
-        <member name="T:LCAnomalyCore.Building.Building_CogitoBucket">
+        <member name="T:LCAnomalyCore.Buildings.Building_CogitoBucket">
             <summary>
             水桶
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_CogitoBucket.DrawAt(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_CogitoBucket.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绘制方法
             </summary>
             <param name="drawLoc">位置</param>
             <param name="flip">是否翻转</param>
         </member>
-        <member name="T:LCAnomalyCore.Building.Building_DepartmentCore">
+        <member name="T:LCAnomalyCore.Buildings.Building_DepartmentCore">
             <summary>
             部门核心建筑
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompDepartmentCore">
+        <member name="P:LCAnomalyCore.Buildings.Building_DepartmentCore.CompDepartmentCore">
             <summary>
             部门comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompPower">
+        <member name="P:LCAnomalyCore.Buildings.Building_DepartmentCore.CompPower">
             <summary>
             电力comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_DepartmentCore.CompRefuelable">
+        <member name="P:LCAnomalyCore.Buildings.Building_DepartmentCore.CompRefuelable">
             <summary>
             燃料Comp
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.TryHeal">
+        <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.TryHeal">
             <summary>
             房间内的员工治疗
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.DrawAt(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绘制方法
             </summary>
             <param name="drawLoc">位置</param>
             <param name="flip">是否翻转</param>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_DepartmentCore.ProgressBarDraw(UnityEngine.Vector3)">
+        <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.ProgressBarDraw(UnityEngine.Vector3)">
             <summary>
             绘制再生进度条
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Building.EDepartmentType">
+        <member name="T:LCAnomalyCore.Buildings.EDepartmentType">
             <summary>
             部门类型枚举
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.Null">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.Null">
             <summary>
             null
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.ControlTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.ControlTeam">
             <summary>
             控制部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.InformationTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.InformationTeam">
             <summary>
             情报部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.TrainingTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.TrainingTeam">
             <summary>
             培训部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.SafetyTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.SafetyTeam">
             <summary>
             安保部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.CentralCommandTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.CentralCommandTeam">
             <summary>
             中央本部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.WelfareTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.WelfareTeam">
             <summary>
             福利部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.DisciplinaryTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.DisciplinaryTeam">
             <summary>
             惩戒部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.RecordTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.RecordTeam">
             <summary>
             记录部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.ExtractionTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.ExtractionTeam">
             <summary>
             研发部
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.EDepartmentType.ArchitectureTeam">
+        <member name="F:LCAnomalyCore.Buildings.EDepartmentType.ArchitectureTeam">
             <summary>
             构筑部
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Building.Building_EnkephalinGenerator">
+        <member name="T:LCAnomalyCore.Buildings.Building_EnkephalinGenerator">
             <summary>
             脑啡肽发电机（建筑）（WIP）
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_EnkephalinGenerator.IsWorking">
+        <member name="M:LCAnomalyCore.Buildings.Building_EnkephalinGenerator.IsWorking">
             <summary>
             是否正在工作
             </summary>
             <returns></returns>
         </member>
-        <member name="T:LCAnomalyCore.Building.Building_HoldingPlatform">
+        <member name="T:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform">
             <summary>
             收容平台Building
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompWorkable">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CompWorkable">
             <summary>
             可工作UI Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CompAssignable">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CompAssignable">
             <summary>
             可指派工作 Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.EntityCached">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.EntityCached">
             <summary>
             是否存在缓存对象
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Building.Building_HoldingPlatform.altitudesCached">
+        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.altitudesCached">
             <summary>
             缓存altitude
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.CachedEntityNameGraphic">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CachedEntityNameGraphic">
             <summary>
             缓存名称贴图
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.QliphothCounter">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.QliphothCounter">
             <summary>
             逆卡巴拉计数器值
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Building.Building_HoldingPlatform.PeBoxCounter">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.PeBoxCounter">
             <summary>
             独立PeBox数量
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
             <summary>
             生成时方法
             </summary>
             <param name="map"></param>
             <param name="respawningAfterLoad"></param>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DeSpawn(Verse.DestroyMode)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DeSpawn(Verse.DestroyMode)">
             <summary>
             销毁时方法
             </summary>
             <param name="mode"></param>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Tick">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Tick">
             <summary>
             Tick
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             每帧绘制
             </summary>
             <param name="drawLoc"></param>
             <param name="flip"></param>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.ExposeData">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.ExposeData">
             <summary>
             保存相关
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.OnContentChanged">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.OnContentChanged">
             <summary>
             收容内容改变时触发的方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Notify_Studying(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Notify_Studying(Verse.Pawn)">
             <summary>
             正在被研究时每Tick调用
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.Init">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Init">
             <summary>
             初始化方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.EntityNameUpdateForce">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.EntityNameUpdateForce">
             <summary>
             强制更新名称贴图
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绕开基类平台的绘制方法
             </summary>
             <param name="drawLoc"></param>
             <param name="flip"></param>
         </member>
-        <member name="M:LCAnomalyCore.Building.Building_HoldingPlatform.GetGizmos">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.GetGizmos">
             <summary>
             Gizmo
             </summary>
@@ -917,7 +917,7 @@
             <param name="statusType">属性类型</param>
             <returns></returns>
         </member>
-        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean,LCAnomalyCore.Building.Building_DepartmentCore)">
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.SetPawnStatusEnabled(System.Boolean,LCAnomalyCore.Buildings.Building_DepartmentCore)">
             <summary>
             激活员工属性
             </summary>
@@ -1471,50 +1471,6 @@
             <summary>
             服装层Patch（用于解决头部服装渲染问题）
             </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Notify_HeldOnPlatform">
-            <summary>
-            关于CompHoldingPlatformTarget的补丁（为了提供生物特征可传递的特性）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Notify_HeldOnPlatform.Prefix(Verse.ThingOwner,RimWorld.CompHoldingPlatformTarget)">
-            <summary>
-            Prefix方法
-            </summary>
-            <param name="newOwner">新的所有者</param>
-            <param name="__instance">原来的反射对象</param>
-            <returns>false 终止原方法（会和同样的prefix产生可能的不兼容）</returns>
-        </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Escape">
-            <summary>
-            关于CompHoldingPlatformTarget的补丁（为了提供出逃回调方法）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_Escape.Prefix(System.Boolean,RimWorld.CompHoldingPlatformTarget)">
-            <summary>
-            Prefix方法
-            </summary>
-            <param name="initiator">是否是初始化</param>
-            <param name="__instance">原来的反射对象</param>
-            <returns>视情况而定</returns>
-        </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick">
-            <summary>
-            关于CompHoldingPlatformTarget的补丁（为了提供异想体不可随机逃跑的特性）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick.#ctor">
-            <summary>
-            关于CompHoldingPlatformTarget的补丁（为了提供异想体不可随机逃跑的特性）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_CompHoldingPlatformTarget_CaptivityTick.Prefix(Verse.Pawn,RimWorld.CompHoldingPlatformTarget)">
-            <summary>
-            Prefix方法
-            </summary>
-            <param name="pawn">异想体</param>
-            <param name="__instance">原来的反射对象</param>
-            <returns>false 终止原方法（会和同样的prefix产生可能的不兼容）</returns>
         </member>
         <member name="T:LCAnomalyCore.Patch.Patch_CompStudyUnlocks">
             <summary>

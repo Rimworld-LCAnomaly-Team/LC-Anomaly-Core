@@ -28,7 +28,7 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// CompHoldingPlatformTarget
         /// </summary>
-        protected CompHoldingPlatformTarget HoldingTargetComp => parent.GetComp<CompHoldingPlatformTarget>();
+        protected CompAbnormalityHoldingPlatformTarget HoldingTargetComp => parent.GetComp<CompAbnormalityHoldingPlatformTarget>();
 
         protected GameComponent_LC component => Current.Game.GetComponent<GameComponent_LC>();
 

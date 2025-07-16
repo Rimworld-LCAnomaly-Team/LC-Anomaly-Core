@@ -1,7 +1,14 @@
-﻿using LCAnomalyCore.Comp.Pawns;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Comp;
+using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Defs;
 using RimWorld;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace LCAnomalyCore.Util
 {
@@ -10,6 +17,8 @@ namespace LCAnomalyCore.Util
     /// </summary>
     public static class StudyUtil
     {
+        private static readonly HashSet<Pawn> tmpReservers = new HashSet<Pawn>();
+
         /// <summary>
         /// 播放工作质量特效
         /// </summary>
@@ -161,6 +170,174 @@ namespace LCAnomalyCore.Util
                         return 0.4f;
                 }
             }
+        }
+
+        public static void TargetHoldingPlatformForEntity(Pawn carrier, Thing abnormality, bool transferBetweenPlatforms = false, Thing sourcePlatform = null)
+        {
+            //TODO 后续可能要重构 如果带LC Comp或者是蛋def都可以认为是实体
+            bool isLCEntity = abnormality.TryGetComp<LC_CompEntity>() != null || abnormality.def is ThingDef_AnomalyEgg;
+
+            Find.Targeter.BeginTargeting(TargetingParameters.ForBuilding(), delegate (LocalTargetInfo t)
+            {
+                if (carrier != null && !CanReserveForTransfer(t))
+                {
+                    Messages.Message("MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
+                }
+                else
+                {
+                    foreach (Thing item in Find.CurrentMap.listerThings.ThingsInGroup(ThingRequestGroup.EntityHolder))
+                    {
+                        if (item is Building_AbnormalyHoldingPlatform holdingPlatform && abnormality != holdingPlatform.HeldPawn)
+                        {
+                            CompHoldingPlatformTarget compHoldingPlatformTarget = holdingPlatform.HeldPawn?.TryGetComp<CompHoldingPlatformTarget>();
+                            if (compHoldingPlatformTarget != null && compHoldingPlatformTarget.targetHolder == t.Thing)
+                            {
+                                Messages.Message("MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
+                                return;
+                            }
+                        }
+                    }
+
+                    CompHoldingPlatformTarget compHoldingPlatformTarget2 = abnormality.TryGetComp<CompHoldingPlatformTarget>();
+                    if (compHoldingPlatformTarget2 != null)
+                    {
+                        compHoldingPlatformTarget2.targetHolder = t.Thing;
+                    }
+
+                    if (carrier != null)
+                    {
+                        Job job = (transferBetweenPlatforms ? JobMaker.MakeJob(RimWorld.JobDefOf.TransferBetweenEntityHolders, sourcePlatform, t, abnormality) : JobMaker.MakeJob(RimWorld.JobDefOf.CarryToEntityHolder, t, abnormality));
+                        job.count = 1;
+                        carrier.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    }
+
+                    if (t.Thing != null && !t.Thing.SafelyContains(abnormality))
+                    {
+                        Messages.Message("MessageTargetBelowMinimumContainmentStrength".Translate(t.Thing.Label, abnormality.Label), MessageTypeDefOf.ThreatSmall);
+                    }
+                }
+            }, delegate (LocalTargetInfo t)
+            {
+                if (ValidateTarget(t))
+                {
+                    GenDraw.DrawTargetHighlight(t);
+                }
+            }, ValidateTarget, null, null, BaseContent.ClearTex, playSoundOnAction: true, delegate (LocalTargetInfo t)
+            {
+                CompEntityHolder compEntityHolder = t.Thing?.TryGetComp<CompEntityHolder>();
+                if (compEntityHolder == null)
+                {
+                    TaggedString label = "ChooseEntityHolder".Translate().CapitalizeFirst() + "...";
+                    Widgets.MouseAttachedLabel(label);
+                }
+                else
+                {
+                    Pawn pawn = null;
+                    Pawn reserver;
+                    if (carrier != null)
+                    {
+                        pawn = t.Thing.Map.reservationManager.FirstRespectedReserver(t.Thing, carrier);
+                    }
+                    else if (t.Thing is Building_HoldingPlatform p)
+                    {
+                        /* 新增方法开始 */
+
+                        bool isLCPlatform = p.def is LC_HoldingPlatformDef;
+
+                        if (StudyUtility.AlreadyReserved(p, out reserver))
+                        {
+                            if ((isLCEntity && isLCPlatform) || (!isLCEntity && !isLCPlatform))
+                                pawn = reserver;
+                        }
+
+                        /* 新增方法结束 */
+                    }
+
+                    TaggedString label;
+                    if (pawn != null)
+                    {
+                        label = string.Format("{0}: {1}", "EntityHolderReservedBy".Translate(), pawn.LabelShortCap);
+                    }
+                    else
+                    {
+                        label = "FloatMenuContainmentStrength".Translate() + ": " + StatDefOf.ContainmentStrength.Worker.ValueToString(compEntityHolder.ContainmentStrength, finalized: false);
+                        label += "\n" + ("FloatMenuContainmentRequires".Translate(abnormality).CapitalizeFirst() + ": " + StatDefOf.MinimumContainmentStrength.Worker.ValueToString(abnormality.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)).Colorize(t.Thing.SafelyContains(abnormality) ? Color.white : Color.red);
+                    }
+
+                    Widgets.MouseAttachedLabel(label);
+                }
+            }, delegate
+            {
+                foreach (Building item2 in abnormality.MapHeld.listerBuildings.AllBuildingsColonistOfGroup(ThingRequestGroup.EntityHolder))
+                {
+                    if (ValidateTarget(item2) && (carrier == null || CanReserveForTransfer(item2)))
+                    {
+                        GenDraw.DrawArrowPointingAt(item2.DrawPos);
+                    }
+                }
+            });
+            bool CanReserveForTransfer(LocalTargetInfo t)
+            {
+                if (transferBetweenPlatforms)
+                {
+                    if (t.HasThing)
+                    {
+                        return carrier.CanReserve(t.Thing);
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            bool ValidateTarget(LocalTargetInfo t)
+            {
+                if (t.HasThing && t.Thing.TryGetComp(out CompEntityHolder comp) && comp.HeldPawn == null)
+                {
+                    /* 新增方法开始 */
+
+                    bool isLCPlatform = t.Thing.def is LC_HoldingPlatformDef;
+
+                    if (!((isLCEntity && isLCPlatform) || (!isLCEntity && !isLCPlatform)))
+                    {
+                        return false;
+                    }
+
+                    /* 新增方法结束 */
+
+                    if (carrier != null)
+                    {
+                        return carrier.CanReserveAndReach(t.Thing, PathEndMode.Touch, Danger.Some);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public static bool AlreadyReserved(Thing p, out Pawn reserver)
+        {
+            tmpReservers.Clear();
+            p.Map.reservationManager.ReserversOf(p, tmpReservers);
+            reserver = tmpReservers.FirstOrDefault();
+            if (reserver != null)
+            {
+                return true;
+            }
+
+            foreach (Thing item in p.Map.listerThings.ThingsInGroup(ThingRequestGroup.HoldingPlatformTarget))
+            {
+                if (item.TryGetComp<CompHoldingPlatformTarget>().targetHolder == p)
+                {
+                    reserver = item as Pawn;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

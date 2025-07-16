@@ -87,18 +87,18 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// 收容控制组件
         /// </summary>
-        public CompHoldingPlatformTarget HoldingPlaformTargetComp
+        public CompAbnormalityHoldingPlatformTarget HoldingPlaformTargetComp
         {
             get
             {
                 if (holdingPlatformTargetComp == null)
-                    return holdingPlatformTargetComp = parent.GetComp<CompHoldingPlatformTarget>();
+                    return holdingPlatformTargetComp = parent.GetComp<CompAbnormalityHoldingPlatformTarget>();
                 else
                     return holdingPlatformTargetComp;
             }
         }
 
-        protected CompHoldingPlatformTarget holdingPlatformTargetComp;
+        protected CompAbnormalityHoldingPlatformTarget holdingPlatformTargetComp;
 
         /// <summary>
         /// 生物特征
@@ -357,7 +357,7 @@ namespace LCAnomalyCore.Comp
         protected virtual void QliphothMeltdown()
         {
             //Log.Message($"收容：{parent.def.label.Translate()} 的收容单元发生了熔毁");
-            HoldingPlaformTargetComp.Escape(initiator: true);
+            HoldingPlaformTargetComp.Escape();
         }
 
         #endregion 触发事件

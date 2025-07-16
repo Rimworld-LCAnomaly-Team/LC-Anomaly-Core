@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Building;
+﻿using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;

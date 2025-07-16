@@ -1,6 +1,6 @@
 ﻿using Verse;
 
-namespace LCAnomalyCore.Building
+namespace LCAnomalyCore.Buildings
 {
     /// <summary>
     /// 脑啡肽发电机（建筑）（WIP）
