@@ -3,9 +3,9 @@
 
   <!-- Study abnormal -->
   <WorkGiverDef>
-    <defName>LC_StudyInteract</defName>
+    <defName>LC_AbnormalityStudyInteract</defName>
     <label>study</label>
-    <giverClass>LCAnomalyCore.Jobs.WorkGiver_StudyInteract</giverClass>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract</giverClass>
     <workType>AbnormalityStudy</workType>
     <verb>study</verb>
     <gerund>studying</gerund>

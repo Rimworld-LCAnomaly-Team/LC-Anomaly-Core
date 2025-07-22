@@ -16,7 +16,7 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// CompEntity
         /// </summary>
-        public LC_CompEntity EntityComp => parent.GetComp<LC_CompEntity>();
+        public CompAbnormality EntityComp => parent.GetComp<CompAbnormality>();
 
         #region 工具方法
 

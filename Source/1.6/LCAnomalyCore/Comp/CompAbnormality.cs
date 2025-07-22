@@ -11,14 +11,14 @@ namespace LCAnomalyCore.Comp
     /// <summary>
     /// LC基础实体Comp
     /// </summary>
-    public class LC_CompEntity : ThingComp
+    public class CompAbnormality : ThingComp
     {
         #region 变量
 
         /// <summary>
         /// CompProperties
         /// </summary>
-        public LC_CompProperties_Entity Props => (LC_CompProperties_Entity)props;
+        public CompProperties_Abnormality Props => (CompProperties_Abnormality)props;
 
         /// <summary>
         /// 研究阶段解锁
@@ -39,18 +39,18 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// 研究组件
         /// </summary>
-        public LC_CompStudiable StudiableComp
+        public CompAbnormalityStudiable StudiableComp
         {
             get
             {
                 if (studiableComp == null)
-                    return studiableComp = parent.GetComp<LC_CompStudiable>();
+                    return studiableComp = parent.GetComp<CompAbnormalityStudiable>();
                 else
                     return studiableComp;
             }
         }
 
-        protected LC_CompStudiable studiableComp;
+        protected CompAbnormalityStudiable studiableComp;
 
         /// <summary>
         /// 首饰组件
@@ -71,18 +71,18 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// PeBox组件
         /// </summary>
-        public LC_CompPeBoxProduce PeBoxComp
+        public CompPeBoxProduce PeBoxComp
         {
             get
             {
                 if (peBoxComp == null)
-                    return peBoxComp = parent.GetComp<LC_CompPeBoxProduce>();
+                    return peBoxComp = parent.GetComp<CompPeBoxProduce>();
                 else
                     return peBoxComp;
             }
         }
 
-        protected LC_CompPeBoxProduce peBoxComp;
+        protected CompPeBoxProduce peBoxComp;
 
         /// <summary>
         /// 收容控制组件

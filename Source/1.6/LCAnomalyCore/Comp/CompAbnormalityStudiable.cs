@@ -4,20 +4,20 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
-    public class LC_CompStudiable : CompStudiable
+    public class CompAbnormalityStudiable : CompStudiable
     {
-        public new LC_CompProperties_Studiable Props => (LC_CompProperties_Studiable)props;
+        public new CompProperties_AbnormalityStudiable Props => (CompProperties_AbnormalityStudiable)props;
 
-        protected LC_CompStudyUnlocks CompStudyUnlocks
+        protected CompAbnormalityStudyUnlocks CompStudyUnlocks
         {
             get
             {
-                compStudyUnlocks ??= parent.GetComp<LC_CompStudyUnlocks>();
+                compStudyUnlocks ??= parent.GetComp<CompAbnormalityStudyUnlocks>();
                 return compStudyUnlocks;
             }
         }
 
-        private LC_CompStudyUnlocks compStudyUnlocks;
+        private CompAbnormalityStudyUnlocks compStudyUnlocks;
 
         public int StudyTimesPeriod => Props.studyTimesPeriod;
 

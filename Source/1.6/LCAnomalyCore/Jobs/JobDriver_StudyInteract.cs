@@ -3,15 +3,13 @@ using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Util;
 using RimWorld;
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Verse;
 using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {
-    public class JobDriver_StudyInteract : JobDriver
+    public class JobDriver_AbnormalityStudyInteract : JobDriver
     {
         private const TargetIndex ThingToStudyIndex = TargetIndex.A;
 
@@ -25,16 +23,14 @@ namespace LCAnomalyCore.Jobs
 
         private int studyInteractions;
 
-        //public new bool PlayerInterruptable = true;
-
         public override bool PlayerInterruptable => playerInterruptable;
         protected bool playerInterruptable = true;
 
-        private Building_AbnormalyHoldingPlatform Platform => base.TargetThingA as Building_AbnormalyHoldingPlatform;
+        private Building_AbnormalityHoldingPlatform Platform => base.TargetThingA as Building_AbnormalityHoldingPlatform;
 
         public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
 
-        private LC_CompStudiable StudyComp => ThingToStudy?.TryGetComp<LC_CompStudiable>();
+        private CompAbnormalityStudiable StudyComp => ThingToStudy?.TryGetComp<CompAbnormalityStudiable>();
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -74,7 +70,7 @@ namespace LCAnomalyCore.Jobs
                 {
                     //每点自律提供1%工作速度加成
                     float statusRate = pawn.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status * 0.01f;
-                    float unlockRate = ThingToStudy.TryGetComp<LC_CompStudiable>().GetWorkSpeedOffset();
+                    float unlockRate = ThingToStudy.TryGetComp<CompAbnormalityStudiable>().GetWorkSpeedOffset();
                     duration = (int)(300 * (1 / (1 + statusRate + unlockRate)));
                     numModified = duration * comp.Props.amountProdueMax + duration;
                     LogUtil.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
@@ -127,7 +123,7 @@ namespace LCAnomalyCore.Jobs
                 if (durationTicks < numModified - 1)
                 {
                     LogUtil.Warning($"Abnormality study inturrpted");
-                    ThingToStudy.TryGetComp<LC_CompEntity>()?.Notify_Studied(pawn);
+                    ThingToStudy.TryGetComp<CompAbnormality>()?.Notify_Studied(pawn);
                 }
             });
             //studyToil.activeSkill = () => SkillDefOf.Intellectual;

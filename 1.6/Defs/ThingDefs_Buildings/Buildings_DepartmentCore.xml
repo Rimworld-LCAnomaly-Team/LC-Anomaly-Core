@@ -3,7 +3,7 @@
 
   <!-- Base Department Core -->
   <ThingDef Name="LC_DepartmentCoreBase" ParentName="BuildingBase" Abstract="true">
-    <thingClass>LCAnomalyCore.Building.Building_DepartmentCore</thingClass>
+    <thingClass>LCAnomalyCore.Buildings.Building_DepartmentCore</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>
     <graphicData>

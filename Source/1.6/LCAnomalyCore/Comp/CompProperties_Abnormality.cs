@@ -5,7 +5,7 @@ namespace LCAnomalyCore.Comp
     /// <summary>
     /// LC基础实体CompProperties
     /// </summary>
-    public class LC_CompProperties_Entity : CompProperties
+    public class CompProperties_Abnormality : CompProperties
     {
         #region XML字段
 
@@ -44,9 +44,9 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// Comp
         /// </summary>
-        public LC_CompProperties_Entity()
+        public CompProperties_Abnormality()
         {
-            compClass = typeof(LC_CompEntity);
+            compClass = typeof(CompAbnormality);
         }
     }
 }

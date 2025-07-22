@@ -19,7 +19,7 @@ namespace LCAnomalyCore.Jobs
         private const int EnterDelayTicks = 300;
         private Thing Takee => job.GetTarget(TargetIndex.B).Thing;
 
-        private CompEntityHolder DestHolder => job.GetTarget(TargetIndex.A).Thing.TryGetComp<CompEntityHolder>();
+        private CompAbnormalityHolder DestHolder => job.GetTarget(TargetIndex.A).Thing.TryGetComp<CompAbnormalityHolder>();
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -40,7 +40,7 @@ namespace LCAnomalyCore.Jobs
 
             /* 新增开始 */
 
-            bool isLCEntity = Takee.TryGetComp<LC_CompEntity>() != null || Takee.def is ThingDef_AnomalyEgg;
+            bool isLCEntity = Takee.TryGetComp<CompAbnormality>() != null || Takee.def is ThingDef_AnomalyEgg;
             bool isLCPlatform = DestHolder.parent.def is LC_HoldingPlatformDef;
 
             Log.Warning("CarryToEntityHolder：正在使用LCAnomalyLibrary.Jobs自定义的方法，而非原版方法");
@@ -60,7 +60,7 @@ namespace LCAnomalyCore.Jobs
 
             /* 新增结束 */
 
-            this.FailOn(() => Takee.TryGetComp<CompHoldingPlatformTarget>().EntityHolder != DestHolder);
+            this.FailOn(() => Takee.TryGetComp<CompAbnormalityHoldingPlatformTarget>().EntityHolder != DestHolder);
             if (pawn.carryTracker.CarriedThing != Takee)
             {
                 yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.OnCell);
@@ -82,7 +82,7 @@ namespace LCAnomalyCore.Jobs
             });
         }
 
-        public static IEnumerable<Toil> ChainTakeeToPlatformToils(Pawn taker, Thing takee, CompEntityHolder platform, TargetIndex platformIndex)
+        public static IEnumerable<Toil> ChainTakeeToPlatformToils(Pawn taker, Thing takee, CompAbnormalityHolder platform, TargetIndex platformIndex)
         {
             yield return Toils_Goto.GotoThing(platformIndex, PathEndMode.ClosestTouch);
             Toil toil = Toils_General.WaitWith(platformIndex, 300, useProgressBar: true);
@@ -92,7 +92,7 @@ namespace LCAnomalyCore.Jobs
             {
                 Thing thing = takee;
                 platform.Container.TryAddOrTransfer(thing, 1);
-                CompHoldingPlatformTarget compHoldingPlatformTarget = thing.TryGetComp<CompHoldingPlatformTarget>();
+                CompAbnormalityHoldingPlatformTarget compHoldingPlatformTarget = thing.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                 if (compHoldingPlatformTarget != null)
                 {
                     compHoldingPlatformTarget.Notify_HeldOnPlatform(platform.Container);

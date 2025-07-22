@@ -27,7 +27,7 @@ namespace LCAnomalyCore.Patch
             component.AnomalyStatusSavedDict[__instance.parent.def] = saved;
 
             //进行名称检查
-            var lcComp = __instance as LC_CompStudyUnlocks;
+            var lcComp = __instance as CompAbnormalityStudyUnlocks;
             lcComp?.UnlockNameCheck();
         }
     }

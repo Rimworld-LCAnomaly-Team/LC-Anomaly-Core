@@ -22,18 +22,18 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// LC的实体Comp
         /// </summary>
-        public LC_CompEntity EntityComp
+        public CompAbnormality EntityComp
         {
             get
             {
                 if (entityComp == null)
-                    return entityComp = GetComp<LC_CompEntity>();
+                    return entityComp = GetComp<CompAbnormality>();
                 else
                     return entityComp;
             }
         }
 
-        protected LC_CompEntity entityComp;
+        protected CompAbnormality entityComp;
 
         public LC_EntityBasePawn()
         {

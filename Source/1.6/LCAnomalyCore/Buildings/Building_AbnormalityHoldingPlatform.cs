@@ -6,6 +6,7 @@ using LCAnomalyCore.Util;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -16,9 +17,29 @@ namespace LCAnomalyCore.Buildings
     /// 收容平台Building
     /// </summary>
     [StaticConstructorOnStartup]
-    public class Building_AbnormalyHoldingPlatform : RimWorld.Building_HoldingPlatform, IHoldingPlatformWorkTypeSelectable
+    public class Building_AbnormalityHoldingPlatform : Building, IThingHolderWithDrawnPawn, IThingHolder, IRoofCollapseAlert, ISearchableContents, IHoldingPlatformWorkTypeSelectable
     {
         #region 变量
+
+        #region 基本
+
+        public ThingOwner innerContainer;
+
+        public Pawn HeldPawn => innerContainer.FirstOrDefault((Thing x) => x is Pawn) as Pawn;
+
+        public bool Occupied => HeldPawn != null;
+
+        protected StringBuilder inspectTextSB = new StringBuilder();
+
+        private CompProperties_AbnormalityHolderPlatform PlatformProps
+        {
+            get
+            {
+                return base.GetComp<CompAbnormalityHolderPlatform>().Props;
+            }
+        }
+
+        #endregion
 
         #region 组件
 
@@ -36,20 +57,20 @@ namespace LCAnomalyCore.Buildings
 
         private CompAssignableToPawn_LC_Entity compAssignable;
 
-        public LC_CompStudiable CompStudiable
+        public CompAbnormalityStudiable CompStudiable
         {
             get
             {
                 if (HeldPawn != null)
                 {
-                    compStudiable ??= HeldPawn.GetComp<LC_CompStudiable>();
+                    compStudiable ??= HeldPawn.GetComp<CompAbnormalityStudiable>();
                 }
 
                 return compStudiable;
             }
         }
 
-        private LC_CompStudiable compStudiable;
+        private CompAbnormalityStudiable compStudiable;
 
         private Sustainer workingSustainer;
 
@@ -62,7 +83,7 @@ namespace LCAnomalyCore.Buildings
         /// </summary>
         protected bool EntityCached => cachedEntity != null;
 
-        private LC_CompEntity cachedEntity;
+        private CompAbnormality cachedEntity;
 
         /// <summary>
         /// 缓存altitude
@@ -128,6 +149,11 @@ namespace LCAnomalyCore.Buildings
         #endregion 变量
 
         #region 生命周期
+
+        public Building_AbnormalityHoldingPlatform()
+        {
+            innerContainer = new ThingOwner<Thing>(this);
+        }
 
         /// <summary>
         /// 生成时方法
@@ -369,11 +395,21 @@ namespace LCAnomalyCore.Buildings
             if (HeldPawn == null)
                 return;
 
-            var entity = HeldPawn.GetComp<LC_CompEntity>();
+            var entity = HeldPawn.GetComp<CompAbnormality>();
             cachedEntity = entity ?? null;
 
-            var studiable = HeldPawn.GetComp<LC_CompStudiable>();
+            var studiable = HeldPawn.GetComp<CompAbnormalityStudiable>();
             compStudiable = studiable ?? null;
+        }
+
+        /// <summary>
+        /// 释放平台内容
+        /// </summary>
+        public void EjectContents()
+        {
+            HeldPawn?.Drawer.renderer.SetAnimation(null);
+            HeldPawn?.GetComp<CompAbnormalityHoldingPlatformTarget>()?.Notify_ReleasedFromPlatform();
+            innerContainer.TryDropAll(base.Position, base.Map, ThingPlaceMode.Near);
         }
 
         #endregion 事件方法
@@ -458,7 +494,7 @@ namespace LCAnomalyCore.Buildings
 
         public override string GetInspectString()
         {
-            string text = "\n";
+            inspectTextSB.Clear();
 
             Pawn heldPawn = HeldPawn;
             if (heldPawn != null)
@@ -470,11 +506,11 @@ namespace LCAnomalyCore.Buildings
                     ts += " (" + "HoldingPlatformRequiresStrength".Translate(StatDefOf.MinimumContainmentStrength.Worker.ValueToString(heldPawn.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)) + ")";
                 }
 
-                text += ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable);
+                inspectTextSB.Append(ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable));
             }
             else
             {
-                text += "HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst();
+                inspectTextSB.Append("HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst());
             }
 
             //if (heldPawn != null && heldPawn.def.IsStudiable)
@@ -486,9 +522,61 @@ namespace LCAnomalyCore.Buildings
             //    }
             //}
 
-            return text;
+            return inspectTextSB.ToString();
         }
 
         #endregion UI
+
+        #region IThingHolderWithDrawnPawn
+
+        public float HeldPawnDrawPos_Y => DrawPos.y + 0.03658537f;
+        public float HeldPawnBodyAngle => base.Rotation.AsAngle;
+        public PawnPosture HeldPawnPosture => PawnPosture.LayingOnGroundFaceUp;
+
+        #endregion
+
+        #region IThingHolder
+
+        public void GetChildHolders(List<IThingHolder> outChildren)
+        {
+            ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, GetDirectlyHeldThings());
+        }
+
+        public ThingOwner GetDirectlyHeldThings()
+        {
+            return innerContainer;
+        }
+
+        #endregion
+
+        #region IRoofCollapseAlert
+
+        public RoofCollapseResponse Notify_OnBeforeRoofCollapse()
+        {
+            if (!Occupied)
+            {
+                return RoofCollapseResponse.None;
+            }
+
+            if (HeldPawn is IRoofCollapseAlert roofCollapseAlert)
+            {
+                roofCollapseAlert.Notify_OnBeforeRoofCollapse();
+            }
+
+            foreach (IRoofCollapseAlert comp in HeldPawn.GetComps<IRoofCollapseAlert>())
+            {
+                comp.Notify_OnBeforeRoofCollapse();
+            }
+
+            return RoofCollapseResponse.None;
+        }
+
+        #endregion
+
+        #region ISearchableContents
+
+        public ThingOwner SearchableContents => innerContainer;
+
+        #endregion
     }
 }

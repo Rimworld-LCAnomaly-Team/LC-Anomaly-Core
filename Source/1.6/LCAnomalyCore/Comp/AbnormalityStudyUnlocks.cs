@@ -3,9 +3,9 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
-    public class LC_CompStudyUnlocks : CompStudyUnlocks
+    public class CompAbnormalityStudyUnlocks : CompStudyUnlocks
     {
-        protected new LC_CompProperties_StudyUnlocks Props => (LC_CompProperties_StudyUnlocks)props;
+        protected new CompProperties_AbnormalityStudyUnlocks Props => (CompProperties_AbnormalityStudyUnlocks)props;
 
         public virtual void TransferStudyProgress(int progress)
         {

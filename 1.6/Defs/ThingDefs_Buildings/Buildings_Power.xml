@@ -3,7 +3,7 @@
 
   <ThingDef Name="EnkephalinGeneratorBase" ParentName="BuildingBase" Abstract="True">
     <defName>EnkephalinGeneratorBase</defName>
-    <thingClass>LCAnomalyCore.Building.Building_EnkephalinGenerator</thingClass>
+    <thingClass>LCAnomalyCore.Buildings.Building_EnkephalinGenerator</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <graphicData>
       <graphicClass>Graphic_Single</graphicClass>

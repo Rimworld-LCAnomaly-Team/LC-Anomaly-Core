@@ -6,7 +6,7 @@
     <defName>CogitoBucket</defName>
     <label>"The Bucket"</label>
     <description>.</description>
-    <thingClass>LCAnomalyCore.Building.Building_CogitoBucket</thingClass>
+    <thingClass>LCAnomalyCore.Buildings.Building_CogitoBucket</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>
     <graphicData>

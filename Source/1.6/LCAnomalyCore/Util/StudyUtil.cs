@@ -3,6 +3,7 @@ using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Defs;
 using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,7 +176,7 @@ namespace LCAnomalyCore.Util
         public static void TargetHoldingPlatformForEntity(Pawn carrier, Thing abnormality, bool transferBetweenPlatforms = false, Thing sourcePlatform = null)
         {
             //TODO 后续可能要重构 如果带LC Comp或者是蛋def都可以认为是实体
-            bool isLCEntity = abnormality.TryGetComp<LC_CompEntity>() != null || abnormality.def is ThingDef_AnomalyEgg;
+            bool isLCEntity = abnormality.TryGetComp<CompAbnormality>() != null || abnormality.def is ThingDef_AnomalyEgg;
 
             Find.Targeter.BeginTargeting(TargetingParameters.ForBuilding(), delegate (LocalTargetInfo t)
             {
@@ -187,9 +188,9 @@ namespace LCAnomalyCore.Util
                 {
                     foreach (Thing item in Find.CurrentMap.listerThings.ThingsInGroup(ThingRequestGroup.EntityHolder))
                     {
-                        if (item is Building_AbnormalyHoldingPlatform holdingPlatform && abnormality != holdingPlatform.HeldPawn)
+                        if (item is Building_AbnormalityHoldingPlatform holdingPlatform && abnormality != holdingPlatform.HeldPawn)
                         {
-                            CompHoldingPlatformTarget compHoldingPlatformTarget = holdingPlatform.HeldPawn?.TryGetComp<CompHoldingPlatformTarget>();
+                            var compHoldingPlatformTarget = holdingPlatform.HeldPawn?.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                             if (compHoldingPlatformTarget != null && compHoldingPlatformTarget.targetHolder == t.Thing)
                             {
                                 Messages.Message("MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
@@ -198,7 +199,7 @@ namespace LCAnomalyCore.Util
                         }
                     }
 
-                    CompHoldingPlatformTarget compHoldingPlatformTarget2 = abnormality.TryGetComp<CompHoldingPlatformTarget>();
+                    var compHoldingPlatformTarget2 = abnormality.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                     if (compHoldingPlatformTarget2 != null)
                     {
                         compHoldingPlatformTarget2.targetHolder = t.Thing;
@@ -224,8 +225,8 @@ namespace LCAnomalyCore.Util
                 }
             }, ValidateTarget, null, null, BaseContent.ClearTex, playSoundOnAction: true, delegate (LocalTargetInfo t)
             {
-                CompEntityHolder compEntityHolder = t.Thing?.TryGetComp<CompEntityHolder>();
-                if (compEntityHolder == null)
+                CompAbnormalityHolder compAbnormalityHolder = t.Thing?.TryGetComp<CompAbnormalityHolder>();
+                if (compAbnormalityHolder == null)
                 {
                     TaggedString label = "ChooseEntityHolder".Translate().CapitalizeFirst() + "...";
                     Widgets.MouseAttachedLabel(label);
@@ -244,7 +245,7 @@ namespace LCAnomalyCore.Util
 
                         bool isLCPlatform = p.def is LC_HoldingPlatformDef;
 
-                        if (StudyUtility.AlreadyReserved(p, out reserver))
+                        if (StudyUtil.AlreadyReserved(p, out reserver))
                         {
                             if ((isLCEntity && isLCPlatform) || (!isLCEntity && !isLCPlatform))
                                 pawn = reserver;
@@ -260,7 +261,7 @@ namespace LCAnomalyCore.Util
                     }
                     else
                     {
-                        label = "FloatMenuContainmentStrength".Translate() + ": " + StatDefOf.ContainmentStrength.Worker.ValueToString(compEntityHolder.ContainmentStrength, finalized: false);
+                        label = "FloatMenuContainmentStrength".Translate() + ": " + StatDefOf.ContainmentStrength.Worker.ValueToString(compAbnormalityHolder.ContainmentStrength, finalized: false);
                         label += "\n" + ("FloatMenuContainmentRequires".Translate(abnormality).CapitalizeFirst() + ": " + StatDefOf.MinimumContainmentStrength.Worker.ValueToString(abnormality.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)).Colorize(t.Thing.SafelyContains(abnormality) ? Color.white : Color.red);
                     }
 
@@ -293,7 +294,7 @@ namespace LCAnomalyCore.Util
 
             bool ValidateTarget(LocalTargetInfo t)
             {
-                if (t.HasThing && t.Thing.TryGetComp(out CompEntityHolder comp) && comp.HeldPawn == null)
+                if (t.HasThing && t.Thing.TryGetComp(out CompAbnormalityHolder comp) && comp.HeldPawn == null)
                 {
                     /* 新增方法开始 */
 
@@ -320,19 +321,47 @@ namespace LCAnomalyCore.Util
 
         public static bool AlreadyReserved(Thing p, out Pawn reserver)
         {
+            Log.Warning("1");
             tmpReservers.Clear();
+            Log.Warning("2");
             p.Map.reservationManager.ReserversOf(p, tmpReservers);
+            Log.Warning("3");
             reserver = tmpReservers.FirstOrDefault();
+            Log.Warning("4");
             if (reserver != null)
             {
+                Log.Warning("5");
                 return true;
             }
-
+            Log.Warning("6");
             foreach (Thing item in p.Map.listerThings.ThingsInGroup(ThingRequestGroup.HoldingPlatformTarget))
             {
-                if (item.TryGetComp<CompHoldingPlatformTarget>().targetHolder == p)
+                Log.Warning("7");
+                Log.Error($"item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null {item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null}");
+                if (item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == p)
                 {
+                    Log.Warning("8");
                     reserver = item as Pawn;
+                    return true;
+                }
+            }
+            Log.Warning("9");
+            return false;
+        }
+
+        public static bool HoldingPlatformAvailableOnCurrentMap()
+        {
+            Map currentMap = Find.CurrentMap;
+            if (currentMap == null)
+            {
+                return false;
+            }
+
+            Log.Warning((currentMap.listerBuildings.allBuildingsColonist.Count).ToString());
+            foreach (Building item in currentMap.listerBuildings.allBuildingsColonist)
+            {
+                if (item.TryGetComp<CompAbnormalityHolder>(out var comp) && comp.Available && !AlreadyReserved(item, out var _))
+                {
                     return true;
                 }
             }

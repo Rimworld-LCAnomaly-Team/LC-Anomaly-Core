@@ -7,7 +7,7 @@ namespace LCAnomalyCore.UI
 {
     public class Dialog_LC_AssignWorkType : Window
     {
-        private Building_AbnormalyHoldingPlatform platform;
+        private Building_AbnormalityHoldingPlatform platform;
         private float buttonSize = 100f;
 
         /// <summary>
@@ -15,7 +15,7 @@ namespace LCAnomalyCore.UI
         /// </summary>
         public override Vector2 InitialSize => new Vector2(260f, 260f);
 
-        public Dialog_LC_AssignWorkType(Building_AbnormalyHoldingPlatform platform)
+        public Dialog_LC_AssignWorkType(Building_AbnormalityHoldingPlatform platform)
         {
             this.platform = platform;
             closeOnClickedOutside = true;

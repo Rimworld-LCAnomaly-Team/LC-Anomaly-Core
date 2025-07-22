@@ -124,104 +124,109 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform">
+        <member name="T:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform">
             <summary>
             收容平台Building
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CompWorkable">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CompWorkable">
             <summary>
             可工作UI Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CompAssignable">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CompAssignable">
             <summary>
             可指派工作 Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.EntityCached">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.EntityCached">
             <summary>
             是否存在缓存对象
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.altitudesCached">
+        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.altitudesCached">
             <summary>
             缓存altitude
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.CachedEntityNameGraphic">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CachedEntityNameGraphic">
             <summary>
             缓存名称贴图
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.QliphothCounter">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.QliphothCounter">
             <summary>
             逆卡巴拉计数器值
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.PeBoxCounter">
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.PeBoxCounter">
             <summary>
             独立PeBox数量
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
             <summary>
             生成时方法
             </summary>
             <param name="map"></param>
             <param name="respawningAfterLoad"></param>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DeSpawn(Verse.DestroyMode)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DeSpawn(Verse.DestroyMode)">
             <summary>
             销毁时方法
             </summary>
             <param name="mode"></param>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Tick">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Tick">
             <summary>
             Tick
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             每帧绘制
             </summary>
             <param name="drawLoc"></param>
             <param name="flip"></param>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.ExposeData">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.ExposeData">
             <summary>
             保存相关
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.OnContentChanged">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.OnContentChanged">
             <summary>
             收容内容改变时触发的方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Notify_Studying(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Notify_Studying(Verse.Pawn)">
             <summary>
             正在被研究时每Tick调用
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.Init">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Init">
             <summary>
             初始化方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.EntityNameUpdateForce">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.EjectContents">
+            <summary>
+            释放平台内容
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.EntityNameUpdateForce">
             <summary>
             强制更新名称贴图
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绕开基类平台的绘制方法
             </summary>
             <param name="drawLoc"></param>
             <param name="flip"></param>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalyHoldingPlatform.GetGizmos">
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.GetGizmos">
             <summary>
             Gizmo
             </summary>
@@ -376,11 +381,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.Props">
-            <summary>
-            CompProperties
-            </summary>
-        </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_Accessoryable">
             <summary>
             可获取饰品的CompProperties
@@ -462,11 +462,6 @@
             </summary>
         </member>
         <member name="M:LCAnomalyCore.Comp.CompProperties_EgoExtractable.#ctor">
-            <summary>
-            Comp
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.#ctor">
             <summary>
             Comp
             </summary>
@@ -555,130 +550,130 @@
             <param name="selPawn"></param>
             <returns></returns>
         </member>
-        <member name="T:LCAnomalyCore.Comp.LC_CompEntity">
+        <member name="T:LCAnomalyCore.Comp.CompAbnormality">
             <summary>
             LC基础实体Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.Props">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.Props">
             <summary>
             CompProperties
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.StudyUnlocksComp">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.StudyUnlocksComp">
             <summary>
             研究阶段解锁
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.StudiableComp">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.StudiableComp">
             <summary>
             研究组件
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.AccessoryableComp">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.AccessoryableComp">
             <summary>
             首饰组件
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.PeBoxComp">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.PeBoxComp">
             <summary>
             PeBox组件
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.HoldingPlaformTargetComp">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.HoldingPlaformTargetComp">
             <summary>
             收容控制组件
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompEntity.biosignature">
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.biosignature">
             <summary>
             生物特征
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothCountMax">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.QliphothCountMax">
             <summary>
             XML引用：逆卡巴拉计数器最大值
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothEnabled">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.QliphothEnabled">
             <summary>
             逆卡巴拉机制是否启用
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.WarningPoints">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.WarningPoints">
             <summary>
             XML引用：警报点数
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.QliphothCountCurrent">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.QliphothCountCurrent">
             <summary>
             逆卡巴拉计数器当前值
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.BiosignatureName">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.BiosignatureName">
             <summary>
             生物特征名
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompEntity.Escaped">
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.Escaped">
             <summary>
             是否已出逃
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.PostPostMake">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.PostPostMake">
             <summary>
             PostPostMake初始化
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Escaped">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_Escaped">
             <summary>
             逃脱收容后执行的操作
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Studied(Verse.Pawn,System.Boolean)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_Studied(Verse.Pawn,System.Boolean)">
             <summary>
             被研究后执行的操作
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Studying(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_Studying(Verse.Pawn)">
             <summary>
             正在被研究时执行的操作
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.Notify_Holded">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_Holded">
             <summary>
             绑到收容平台上的操作
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Good(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.StudyEvent_Good(Verse.Pawn)">
             <summary>
             研究质量：优秀
             </summary>
             <param name="studier">研究者</param>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Normal(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.StudyEvent_Normal(Verse.Pawn)">
             <summary>
             研究质量：良好
             </summary>
             <param name="studier">研究者</param>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudyEvent_Bad(Verse.Pawn)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.StudyEvent_Bad(Verse.Pawn)">
             <summary>
             研究质量：差
             </summary>
             <param name="studier">研究者</param>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.QliphothMeltdown">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.QliphothMeltdown">
             <summary>
             逆卡巴拉熔毁事件
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.PostExposeData">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.PostExposeData">
             <summary>
             我不知道这是什么，好像和数据保存有关
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudySuccessRateCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.StudySuccessRateCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
             <summary>
             获取研究成功率
             </summary>
@@ -686,14 +681,14 @@
             <param name="workType">工作类型</param>
             <returns>研究成功率</returns>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.StudierExpCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.StudierExpCalculate(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
             <summary>
             工作后的数值经验增长
             </summary>
             <param name="studier"></param>
             <param name="workType"></param>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.CheckStudierSkillRequire(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.CheckStudierSkillRequire(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
             <summary>
             检查研究者研究成功率百分比
             </summary>
@@ -701,80 +696,80 @@
             <param name="workType">工作类型</param>
             <returns></returns>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.ForceQliphothMeltdown">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.ForceQliphothMeltdown">
             <summary>
             Debug：调试用逆卡巴拉强制熔毁
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompEntity.CompGetGizmosExtra">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.CompGetGizmosExtra">
             <summary>
             Gizmos
             </summary>
             <returns></returns>
         </member>
-        <member name="T:LCAnomalyCore.Comp.LC_CompPeBoxProduce">
+        <member name="T:LCAnomalyCore.Comp.CompPeBoxProduce">
             <summary>
             LC可产PeBox的基类Comp
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompPeBoxProduce.Props">
+        <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.Props">
             <summary>
             CompProperties
             </summary>
         </member>
-        <member name="P:LCAnomalyCore.Comp.LC_CompPeBoxProduce.CurAmountIndiPebox">
+        <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.CurAmountIndiPebox">
             <summary>
             当前独立PeBox数量
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompPeBoxProduce.CheckSpawnPeBox(Verse.Pawn,System.Int32)">
+        <member name="M:LCAnomalyCore.Comp.CompPeBoxProduce.CheckSpawnPeBox(Verse.Pawn,System.Int32)">
             <summary>
             检查生成Pebox
             </summary>
             <param name="studier">研究者</param>
             <param name="amount">生产量</param>
         </member>
-        <member name="E:LCAnomalyCore.Comp.LC_CompPeBoxProduce.OnContentsChanged">
+        <member name="E:LCAnomalyCore.Comp.CompPeBoxProduce.OnContentsChanged">
             <summary>
             值发生变化时调用
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_Entity">
+        <member name="T:LCAnomalyCore.Comp.CompProperties_Abnormality">
             <summary>
             LC基础实体CompProperties
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.qliphothCountMax">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.qliphothCountMax">
             <summary>
             XML：最大逆卡巴拉值
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.studySucessRateBase">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.studySucessRateBase">
             <summary>
             XML：学习基础成功率
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.shouldNotifyWhenEscape">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.shouldNotifyWhenEscape">
             <summary>
             XML：出逃时是否通知
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.ifProvideWarningPoints">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.ifProvideWarningPoints">
             <summary>
             XML：提供出逃点数（决定是否提供点数，不提供的情况下自定义点数无效）
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.customWarningPoints">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.customWarningPoints">
             <summary>
             XML：自定义出逃警报点数（填大于0则启用自定义点数，否则按异常等级计算）
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_Entity.soundWorking">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_Abnormality.soundWorking">
             <summary>
             XML：被研究时播放的音效
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_Entity.#ctor">
+        <member name="M:LCAnomalyCore.Comp.CompProperties_Abnormality.#ctor">
             <summary>
             Comp
             </summary>
@@ -794,28 +789,28 @@
             Comp
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce">
+        <member name="T:LCAnomalyCore.Comp.CompProperties_PeBoxProduce">
             <summary>
             LC可产PeBox的CompProperties
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce.peBoxDef">
+        <member name="F:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.peBoxDef">
             <summary>
             XML：工作产生PeBox的类型
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_PeBoxProduce.#ctor">
+        <member name="M:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.#ctor">
             <summary>
             Comp
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompStudiable.GetWorkSpeedOffset">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.GetWorkSpeedOffset">
             <summary>
             研究解锁带来的工作速度加成
             </summary>
             <returns></returns>
         </member>
-        <member name="M:LCAnomalyCore.Comp.LC_CompStudiable.GetWorkSuccessRateOffset">
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.GetWorkSuccessRateOffset">
             <summary>
             研究解锁带来的成功率加成
             </summary>
@@ -1527,11 +1522,6 @@
             Postfix
             </summary>
             <param name="__instance">原来的反射对象</param>
-        </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_WorkGiver_DarkStudyInteract">
-            <summary>
-            关于WorkGiver_DarkStudyInteract的补丁（用于禁止主动研究LC实体）
-            </summary>
         </member>
         <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">
             <summary>

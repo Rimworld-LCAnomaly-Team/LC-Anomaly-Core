@@ -18,12 +18,12 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// CompEntity
         /// </summary>
-        public LC_CompEntity EntityComp => parent.GetComp<LC_CompEntity>();
+        public CompAbnormality EntityComp => parent.GetComp<CompAbnormality>();
 
         /// <summary>
         /// 提取所需PeBox的Def
         /// </summary>
-        protected LC_CompPeBoxProduce PeBoxComp => parent.GetComp<LC_CompPeBoxProduce>();
+        protected CompPeBoxProduce PeBoxComp => parent.GetComp<CompPeBoxProduce>();
 
         /// <summary>
         /// CompHoldingPlatformTarget

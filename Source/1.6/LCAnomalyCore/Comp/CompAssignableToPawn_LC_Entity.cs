@@ -50,7 +50,7 @@ namespace LCAnomalyCore.Comp
                 //不存在可分配工作的单位，或平台上没有实体，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc".Translate());
-                else if (((Building_HoldingPlatform)parent).HeldPawn == null)
+                else if (((Building_AbnormalityHoldingPlatform)parent).HeldPawn == null)
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
@@ -87,10 +87,10 @@ namespace LCAnomalyCore.Comp
         /// <returns></returns>
         public float CheckSkillRequire(Pawn pawn)
         {
-            var building = parent as Building_AbnormalyHoldingPlatform;
+            var building = parent as Building_AbnormalityHoldingPlatform;
             if (building != null && building.HeldPawn != null)
             {
-                var comp = building.HeldPawn.GetComp<LC_CompEntity>();
+                var comp = building.HeldPawn.GetComp<CompAbnormality>();
                 if (comp != null)
                     return comp.CheckStudierSkillRequire(pawn.GetComp<CompPawnStatus>(), building.CurWorkType);
             }

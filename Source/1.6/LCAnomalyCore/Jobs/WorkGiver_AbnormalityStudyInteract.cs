@@ -7,7 +7,7 @@ using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {
-    public class WorkGiver_StudyInteract : WorkGiver_StudyBase
+    public class WorkGiver_AbnormalityStudyInteract : WorkGiver_AbnormalityStudyBase
     {
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
@@ -35,7 +35,7 @@ namespace LCAnomalyCore.Jobs
                 return false;
 
             //如果是LC平台
-            if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalyHoldingPlatform building)
+            if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalityHoldingPlatform building)
             {
                 var compStudiable = building.CompStudiable;
                 if (compStudiable != null)
@@ -97,7 +97,7 @@ namespace LCAnomalyCore.Jobs
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            return JobMaker.MakeJob(Defs.JobDefOf.LC_StudyInteract, t, null, (t as Building_AbnormalyHoldingPlatform)?.HeldPawn);
+            return JobMaker.MakeJob(Defs.JobDefOf.LC_AbnormalityStudyInteract, t, null, (t as Building_AbnormalityHoldingPlatform)?.HeldPawn);
         }
     }
 }

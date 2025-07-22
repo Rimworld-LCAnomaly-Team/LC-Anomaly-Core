@@ -1,30 +1,19 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Verse.AI.Group;
 using Verse.AI;
 using Verse;
 using LCAnomalyCore.GameComponent;
 using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Util;
 
 namespace LCAnomalyCore.Comp
 {
     [StaticConstructorOnStartup]
     public class CompAbnormalityHoldingPlatformTarget : ThingComp
     {
-        private const int CheckInitiateEscapeIntervalTicks = 2500;
-
-        private static readonly SimpleCurve JoinEscapeChanceFromEscapeIntervalCurve = new SimpleCurve
-    {
-        new CurvePoint(120f, 0.33f),
-        new CurvePoint(60f, 0.5f),
-        new CurvePoint(10f, 0.9f)
-    };
-
         private static readonly CachedTexture CaptureIcon = new CachedTexture("UI/Commands/CaptureEntity");
-
-        private static readonly CachedTexture TransferIcon = new CachedTexture("UI/Commands/TransferEntity");
 
         private static readonly Texture2D CancelTex = ContentFinder<Texture2D>.Get("UI/Designators/Cancel");
 
@@ -32,12 +21,8 @@ namespace LCAnomalyCore.Comp
 
         public bool isEscaping;
 
-        public EntityContainmentMode containmentMode;
-
-        public bool extractBioferrite;
-
         [Unsaved(false)]
-        private CompStudiable compStudiable;
+        private CompAbnormalityStudiable compStudiable;
 
         [Unsaved(false)]
         private CompActivity compActivity;
@@ -45,9 +30,9 @@ namespace LCAnomalyCore.Comp
         [Unsaved(false)]
         private bool didCheckForActivityComp;
 
-        public CompProperties_HoldingPlatformTarget Props => (CompProperties_HoldingPlatformTarget)props;
+        public CompProperties_AbnormalityHoldingPlatformTarget Props => (CompProperties_AbnormalityHoldingPlatformTarget)props;
 
-        public CompStudiable CompStudiable => compStudiable ?? (compStudiable = parent.GetComp<CompStudiable>());
+        public CompAbnormalityStudiable CompStudiable => compStudiable ?? (compStudiable = parent.GetComp<CompAbnormalityStudiable>());
 
         public CompActivity CompActivity
         {
@@ -68,7 +53,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        public CompEntityHolder EntityHolder => targetHolder.TryGetComp<CompEntityHolder>();
+        public CompAbnormalityHolder EntityHolder => targetHolder.TryGetComp<CompAbnormalityHolder>();
 
         public bool StudiedAtHoldingPlatform
         {
@@ -103,18 +88,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        public bool CanStudy
-        {
-            get
-            {
-                if (containmentMode == EntityContainmentMode.Study)
-                {
-                    return EverStudiable;
-                }
-
-                return false;
-            }
-        }
+        public bool CanStudy => true;
 
         private bool EverStudiable
         {
@@ -139,7 +113,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        public Building_AbnormalyHoldingPlatform HeldPlatform => parent.ParentHolder as Building_AbnormalyHoldingPlatform;
+        public Building_AbnormalityHoldingPlatform HeldPlatform => parent.ParentHolder as Building_AbnormalityHoldingPlatform;
 
         public bool CurrentlyHeldOnPlatform
         {
@@ -220,12 +194,6 @@ namespace LCAnomalyCore.Comp
                 }
             }
 
-            Building_HoldingPlatform heldPlatform = HeldPlatform;
-            if (heldPlatform != null && heldPlatform.HasAttachedBioferriteHarvester)
-            {
-                extractBioferrite = false;
-            }
-
             if (CanBeCaptured)
             {
                 LessonAutoActivator.TeachOpportunity(ConceptDefOf.CapturingEntities, OpportunityType.Important);
@@ -264,7 +232,7 @@ namespace LCAnomalyCore.Comp
                             CompBiosignatureOwner compBiosignatureOwner = parent.TryGetComp<CompBiosignatureOwner>();
                             if (compBiosignatureOwner != null)
                             {
-                                pawn3.TryGetComp<LC_CompEntity>().biosignature = compBiosignatureOwner.biosignature;
+                                pawn3.TryGetComp<CompAbnormality>().biosignature = compBiosignatureOwner.biosignature;
                                 //Log.Warning("Patch_CompHoldingPlatformTarget:::传递生物特征成功");
                             }
 
@@ -277,19 +245,17 @@ namespace LCAnomalyCore.Comp
                         var component = Current.Game.GetComponent<GameComponent_LC>();
                         component.TryGetAnomalyStatusSaved(pawn3.def, out AnomalyStatusSaved saved);
 
-                        var comp2 = pawn3.TryGetComp<LC_CompStudyUnlocks>();
+                        var comp2 = pawn3.TryGetComp<CompAbnormalityStudyUnlocks>();
                         comp2?.TransferStudyProgress(saved.StudyProgress);
                     }
 
                     //绑上平台
-                    LC_CompEntity tmpComp = pawn3.TryGetComp<LC_CompEntity>();
+                    CompAbnormality tmpComp = pawn3.TryGetComp<CompAbnormality>();
                     if (tmpComp != null)
                         tmpComp.Notify_Holded();
 
                     parent.Destroy();
                 }
-
-                containmentMode = EntityContainmentMode.Study;
             }
 
             if (pawn != null && HeldPlatform != null)
@@ -363,10 +329,10 @@ namespace LCAnomalyCore.Comp
                         icon = CaptureIcon.Texture,
                         action = delegate
                         {
-                            StudyUtility.TargetHoldingPlatformForEntity(null, parent);
+                            StudyUtil.TargetHoldingPlatformForEntity(null, parent);
                         },
                         activateSound = SoundDefOf.Click,
-                        Disabled = !StudyUtility.HoldingPlatformAvailableOnCurrentMap(),
+                        Disabled = !StudyUtil.HoldingPlatformAvailableOnCurrentMap(),
                         disabledReason = "NoHoldingPlatformsAvailable".Translate()
                     };
                 }
@@ -385,20 +351,6 @@ namespace LCAnomalyCore.Comp
                         {
                             targetHolder = null;
                         }
-                    };
-                }
-                else
-                {
-                    yield return new Command_Action
-                    {
-                        defaultLabel = "TransferEntity".Translate(parent) + "...",
-                        defaultDesc = "TransferEntityDesc".Translate(parent).Resolve(),
-                        icon = TransferIcon.Texture,
-                        action = delegate
-                        {
-                            StudyUtility.TargetHoldingPlatformForEntity(null, parent, transferBetweenPlatforms: true, HeldPlatform);
-                        },
-                        activateSound = SoundDefOf.Click
                     };
                 }
             }
@@ -450,8 +402,6 @@ namespace LCAnomalyCore.Comp
         {
             Scribe_References.Look(ref targetHolder, "targetHolder");
             Scribe_Values.Look(ref isEscaping, "isEscaping", defaultValue: false);
-            Scribe_Values.Look(ref containmentMode, "containmentMode", EntityContainmentMode.MaintainOnly);
-            Scribe_Values.Look(ref extractBioferrite, "extractBioferrite", defaultValue: false);
         }
     }
 }

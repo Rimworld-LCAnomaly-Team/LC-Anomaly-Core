@@ -2,8 +2,8 @@
 <Defs>
 
   <JobDef>
-    <defName>LC_StudyInteract</defName>
-    <driverClass>LCAnomalyCore.Jobs.JobDriver_StudyInteract</driverClass>
+    <defName>LC_AbnormalityStudyInteract</defName>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract</driverClass>
     <reportString>Studying TargetA.</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
