@@ -10,7 +10,7 @@ namespace LCAnomalyCore.Jobs
     /// <summary>
     /// 改自原版同名工作，是携带实体到平台的工作
     /// </summary>
-    public class JobDriver_CarryToEntityHolder : JobDriver
+    public class JobDriver_CarryToAbnormalityHolder : JobDriver
     {
         private const TargetIndex DestHolderIndex = TargetIndex.A;
 

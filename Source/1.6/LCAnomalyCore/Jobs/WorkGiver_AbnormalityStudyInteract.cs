@@ -37,25 +37,25 @@ namespace LCAnomalyCore.Jobs
             //如果是LC平台
             if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalityHoldingPlatform building)
             {
-                var compStudiable = building.CompStudiable;
-                if (compStudiable != null)
+                var compAbnormalityStudiable = building.CompAbnormalityStudiable;
+                if (compAbnormalityStudiable != null)
                 {
-                    if (compStudiable.KnowledgeCategory == null)
+                    if (compAbnormalityStudiable.KnowledgeCategory == null)
                     {
                         return false;
                     }
 
-                    if (!compStudiable.EverStudiable())
+                    if (!compAbnormalityStudiable.EverStudiable())
                     {
                         JobFailReason.IsSilent();
                         return false;
                     }
 
-                    if (!compStudiable.CurrentlyStudiable())
+                    if (!compAbnormalityStudiable.CurrentlyStudiable())
                     {
-                        if (compStudiable.Props.frequencyTicks > 0 && compStudiable.TicksTilNextStudy > 0)
+                        if (compAbnormalityStudiable.Props.frequencyTicks > 0 && compAbnormalityStudiable.TicksTilNextStudy > 0)
                         {
-                            JobFailReason.Is("CanBeStudiedInDuration".Translate(compStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
+                            JobFailReason.Is("CanBeStudiedInDuration".Translate(compAbnormalityStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
                         }
                         else
                         {

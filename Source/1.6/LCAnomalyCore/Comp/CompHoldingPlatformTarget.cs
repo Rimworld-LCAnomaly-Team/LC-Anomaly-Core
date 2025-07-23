@@ -22,7 +22,7 @@ namespace LCAnomalyCore.Comp
         public bool isEscaping;
 
         [Unsaved(false)]
-        private CompAbnormalityStudiable compStudiable;
+        private CompAbnormalityStudiable compAbnormalityStudiable;
 
         [Unsaved(false)]
         private CompActivity compActivity;
@@ -32,7 +32,7 @@ namespace LCAnomalyCore.Comp
 
         public CompProperties_AbnormalityHoldingPlatformTarget Props => (CompProperties_AbnormalityHoldingPlatformTarget)props;
 
-        public CompAbnormalityStudiable CompStudiable => compStudiable ?? (compStudiable = parent.GetComp<CompAbnormalityStudiable>());
+        public CompAbnormalityStudiable CompAbnormalityStudiable => compAbnormalityStudiable ?? (compAbnormalityStudiable = parent.GetComp<CompAbnormalityStudiable>());
 
         public CompActivity CompActivity
         {
@@ -101,9 +101,9 @@ namespace LCAnomalyCore.Comp
 
                 if (parent is Pawn)
                 {
-                    if (CompStudiable != null)
+                    if (CompAbnormalityStudiable != null)
                     {
-                        return CompStudiable.AnomalyKnowledge > 0f;
+                        return CompAbnormalityStudiable.AnomalyKnowledge > 0f;
                     }
 
                     return false;
@@ -147,7 +147,7 @@ namespace LCAnomalyCore.Comp
                     return false;
                 }
 
-                if (CompStudiable != null && Find.Anomaly.HighestLevelReached < CompStudiable.Props.minMonolithLevelForStudy && Find.Anomaly.GenerateMonolith)
+                if (CompAbnormalityStudiable != null && Find.Anomaly.HighestLevelReached < CompAbnormalityStudiable.Props.minMonolithLevelForStudy && Find.Anomaly.GenerateMonolith)
                 {
                     return false;
                 }
@@ -236,7 +236,7 @@ namespace LCAnomalyCore.Comp
                                 //Log.Warning("Patch_CompHoldingPlatformTarget:::传递生物特征成功");
                             }
 
-                            if (pawn3.TryGetComp<CompStudiable>(out var comp1))
+                            if (pawn3.TryGetComp<CompAbnormalityStudiable>(out var comp1))
                             {
                                 comp1.lastStudiedTick = Find.TickManager.TicksGame;
                             }

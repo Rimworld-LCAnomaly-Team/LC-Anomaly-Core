@@ -1400,7 +1400,7 @@
             研究进度
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToEntityHolder">
+        <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder">
             <summary>
             改自原版同名工作，是携带实体到平台的工作
             </summary>

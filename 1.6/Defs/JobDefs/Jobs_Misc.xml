@@ -8,4 +8,11 @@
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 
+  <JobDef>
+    <defName>CarryToAbnormalityHolder</defName>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder</driverClass>
+    <reportString>carrying TargetB to TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
 </Defs>

@@ -269,7 +269,7 @@ namespace LCAnomalyCore.Util
                 }
             }, delegate
             {
-                foreach (Building item2 in abnormality.MapHeld.listerBuildings.AllBuildingsColonistOfGroup(ThingRequestGroup.EntityHolder))
+                foreach (Building item2 in abnormality.MapHeld.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
                 {
                     if (ValidateTarget(item2) && (carrier == null || CanReserveForTransfer(item2)))
                     {
@@ -334,7 +334,7 @@ namespace LCAnomalyCore.Util
                 return true;
             }
             Log.Warning("6");
-            foreach (Thing item in p.Map.listerThings.ThingsInGroup(ThingRequestGroup.HoldingPlatformTarget))
+            foreach (Thing item in p.Map.listerThings.AllThings.Where(m => m.HasComp<CompAbnormalityHoldingPlatformTarget>()))
             {
                 Log.Warning("7");
                 Log.Error($"item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null {item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null}");

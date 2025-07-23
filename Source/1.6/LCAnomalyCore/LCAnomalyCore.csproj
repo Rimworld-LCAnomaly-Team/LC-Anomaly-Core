@@ -155,9 +155,10 @@
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
-    <Compile Include="Jobs\JobDriver_StudyInteract.cs" />
+    <Compile Include="Jobs\JobDriver_AbnormalityStudyInteract.cs" />
     <Compile Include="Jobs\WorkGiver_AbnormalityStudyBase.cs" />
     <Compile Include="Jobs\WorkGiver_AbnormalityStudyInteract.cs" />
+    <Compile Include="Jobs\WorkGiver_TakeAbnormalityToHoldingPlatform.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="UI\Dialog_LC_EntityCodex.cs" />
+    <Compile Include="UI\FloatMenu\FloatMenuOptionProvider_CaptureAbnormality.cs" />
     <Compile Include="UI\ITab_PawnStatus.cs" />
     <Compile Include="Util\AssetBundleUtil.cs" />
     <Compile Include="Util\ColorUtil.cs" />

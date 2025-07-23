@@ -12,6 +12,16 @@
     <priorityInType>110</priorityInType>
     <canBeDoneByMechs>false</canBeDoneByMechs>
   </WorkGiverDef>
+ 
+  <WorkGiverDef>
+    <defName>TakeAbnormalityToHoldingPlatform</defName>
+    <label>capture entity</label>
+    <giverClass>LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform</giverClass>
+    <workType>Hauling</workType>
+    <verb>capture</verb>
+    <gerund>capturing</gerund>
+    <priorityInType>300</priorityInType>
+  </WorkGiverDef>
 
   <!-- Craft on UniversalBench -->
   <WorkGiverDef>

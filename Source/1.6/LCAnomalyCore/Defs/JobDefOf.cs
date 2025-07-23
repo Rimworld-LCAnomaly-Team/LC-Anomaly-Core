@@ -7,5 +7,8 @@ namespace LCAnomalyCore.Defs
     public class JobDefOf
     {
         public static JobDef LC_AbnormalityStudyInteract;
+
+        public static JobDef CarryToAbnormalityHolder;
+
     }
 }

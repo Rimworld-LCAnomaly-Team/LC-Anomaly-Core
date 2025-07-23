@@ -57,20 +57,20 @@ namespace LCAnomalyCore.Buildings
 
         private CompAssignableToPawn_LC_Entity compAssignable;
 
-        public CompAbnormalityStudiable CompStudiable
+        public CompAbnormalityStudiable CompAbnormalityStudiable
         {
             get
             {
                 if (HeldPawn != null)
                 {
-                    compStudiable ??= HeldPawn.GetComp<CompAbnormalityStudiable>();
+                    compAbnormalityStudiable ??= HeldPawn.GetComp<CompAbnormalityStudiable>();
                 }
 
-                return compStudiable;
+                return compAbnormalityStudiable;
             }
         }
 
-        private CompAbnormalityStudiable compStudiable;
+        private CompAbnormalityStudiable compAbnormalityStudiable;
 
         private Sustainer workingSustainer;
 
@@ -230,7 +230,7 @@ namespace LCAnomalyCore.Buildings
                     //工作状态更新
                     if (CompWorkable != null && CompWorkable.UIAllowed)
                     {
-                        var comp = HeldPawn.GetComp<CompStudiable>();
+                        var comp = HeldPawn.GetComp<CompAbnormalityStudiable>();
                         if (comp != null)
                         {
                             var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
@@ -399,7 +399,7 @@ namespace LCAnomalyCore.Buildings
             cachedEntity = entity ?? null;
 
             var studiable = HeldPawn.GetComp<CompAbnormalityStudiable>();
-            compStudiable = studiable ?? null;
+            compAbnormalityStudiable = studiable ?? null;
         }
 
         /// <summary>
