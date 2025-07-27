@@ -40,7 +40,7 @@ namespace LCAnomalyCore.Jobs
 
             /* 新增开始 */
 
-            bool isLCEntity = Takee.TryGetComp<CompAbnormality>() != null || Takee.def is ThingDef_AnomalyEgg;
+            bool isLCEntity = Takee.TryGetComp<CompAbnormality>() != null || Takee.def is ThingDef_AbnormalityEgg;
             bool isLCPlatform = DestHolder.parent.def is LC_HoldingPlatformDef;
 
             Log.Warning("CarryToEntityHolder：正在使用LCAnomalyLibrary.Jobs自定义的方法，而非原版方法");

@@ -219,13 +219,6 @@
             强制更新名称贴图
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DrawAvoidParent(UnityEngine.Vector3,System.Boolean)">
-            <summary>
-            绕开基类平台的绘制方法
-            </summary>
-            <param name="drawLoc"></param>
-            <param name="flip"></param>
-        </member>
         <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.GetGizmos">
             <summary>
             Gizmo
@@ -526,7 +519,7 @@
             注射提取后变成异常的方法
             </summary>
         </member>
-        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.SpawnEntity(System.Collections.Generic.List{LCAnomalyCore.Defs.ThingDef_LCAnomalyBase},System.Single)">
+        <member name="M:LCAnomalyCore.Comp.HediffComp_CogitoInjected.SpawnEntity(System.Collections.Generic.List{LCAnomalyCore.Defs.ThingDef_AbnormalityBase},System.Single)">
             <summary>
             生成实体
             </summary>
@@ -1295,42 +1288,32 @@
             控制部核心（建筑）
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Defs.ThingDef_LCAnomalyBase">
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityBase">
             <summary>
             LC异想体ThingDef基类
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Defs.ThingDef_LCAnomalyBase.anomalyLevelTag">
-            <summary>
-            异想体评估等级标签
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.PawnKindDef_LCAnomalyBase">
+        <member name="T:LCAnomalyCore.Defs.PawnKindDef_AbnormalityBase">
             <summary>
             LC异想体PawnKind基类
             </summary>
         </member>
-        <member name="F:LCAnomalyCore.Defs.PawnKindDef_LCAnomalyBase.anomalyLevelTag">
-            <summary>
-            异想体评估等级标签
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEntity">
+        <member name="T:LCAnomalyCore.Defs.PawnKindDef_AbnormalityEntity">
             <summary>
             LC异想体PawnKind基类（活动实体类）
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEgg">
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityEgg">
             <summary>
             LC异想体ThingDef基类（蛋类）
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyTool">
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityTool">
             <summary>
             LC异想体ThingDef基类（工具类）
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Defs.ThingDef_AnomalyEntity_Spawn">
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityEntity_Spawn">
             <summary>
             LC异想体ThingDef基类（生成特效类）
             </summary>

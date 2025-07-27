@@ -1,4 +1,6 @@
 ﻿using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Defs;
+using LCAnomalyCore.ModExtensions;
 using LCAnomalyCore.Settings;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -404,29 +406,33 @@ namespace LCAnomalyCore.Comp
         /// <param name="workType"></param>
         protected virtual void StudierExpCalculate(CompPawnStatus studier, EAnomalyWorkType workType)
         {
-            float value = StudyUtil.GetPawnStatusIncreaseValue(studier, workType, parent.def.entityCodexEntry.category.defName);
-            value *= 0.05f;
-
-            switch (workType)
+            string abnormalityCategory = parent.def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+            if (!string.IsNullOrEmpty(abnormalityCategory))
             {
-                case EAnomalyWorkType.Instinct:
-                    studier.GetPawnStatusLevel(EPawnStatus.Fortitude).Exp += value;
-                    break;
+                float value = StudyUtil.GetPawnStatusIncreaseValue(studier, workType, abnormalityCategory);
+                value *= 0.05f;
 
-                case EAnomalyWorkType.Attachment:
-                    studier.GetPawnStatusLevel(EPawnStatus.Temperance).Exp += value;
-                    break;
-
-                case EAnomalyWorkType.Insight:
-                    studier.GetPawnStatusLevel(EPawnStatus.Prudence).Exp += value;
-                    break;
-
-                case EAnomalyWorkType.Repression:
-                    studier.GetPawnStatusLevel(EPawnStatus.Justice).Exp += value;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException("Unknown EAnomalyWorkType");
+                switch (workType)
+                {
+                    case EAnomalyWorkType.Instinct:
+                        studier.GetPawnStatusLevel(EPawnStatus.Fortitude).Exp += value;
+                        break;
+                    case EAnomalyWorkType.Attachment:
+                        studier.GetPawnStatusLevel(EPawnStatus.Temperance).Exp += value;
+                        break;
+                    case EAnomalyWorkType.Insight:
+                        studier.GetPawnStatusLevel(EPawnStatus.Prudence).Exp += value;
+                        break;
+                    case EAnomalyWorkType.Repression:
+                        studier.GetPawnStatusLevel(EPawnStatus.Justice).Exp += value;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("Unknown EAnomalyWorkType");
+                }
+            }
+            else
+            {
+                LogUtil.Warning("CompAbnormality.StudierExpCalculate:::abnormalityCategory is null!");
             }
         }
 

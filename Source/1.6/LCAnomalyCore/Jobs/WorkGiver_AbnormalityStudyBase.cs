@@ -2,6 +2,7 @@
 using LCAnomalyCore.Comp;
 using RimWorld;
 using System.Collections.Generic;
+using System.Linq;
 using Verse;
 
 namespace LCAnomalyCore.Jobs
@@ -12,7 +13,7 @@ namespace LCAnomalyCore.Jobs
 
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            return Find.StudyManager.GetStudiableThingsAndPlatforms(pawn.Map);
+            return pawn.Map.listerThings.AllThings.Where(m => m.def is Defs.LC_HoldingPlatformDef);
         }
 
         public override float GetPriority(Pawn pawn, TargetInfo t)

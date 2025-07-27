@@ -176,7 +176,7 @@ namespace LCAnomalyCore.Util
         public static void TargetHoldingPlatformForEntity(Pawn carrier, Thing abnormality, bool transferBetweenPlatforms = false, Thing sourcePlatform = null)
         {
             //TODO 后续可能要重构 如果带LC Comp或者是蛋def都可以认为是实体
-            bool isLCEntity = abnormality.TryGetComp<CompAbnormality>() != null || abnormality.def is ThingDef_AnomalyEgg;
+            bool isLCEntity = abnormality.TryGetComp<CompAbnormality>() != null || abnormality.def is ThingDef_AbnormalityEgg;
 
             Find.Targeter.BeginTargeting(TargetingParameters.ForBuilding(), delegate (LocalTargetInfo t)
             {

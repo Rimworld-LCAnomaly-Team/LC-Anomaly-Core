@@ -160,6 +160,7 @@
     <Compile Include="Jobs\WorkGiver_AbnormalityStudyInteract.cs" />
     <Compile Include="Jobs\WorkGiver_TakeAbnormalityToHoldingPlatform.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
+    <Compile Include="ModExtensions\AbnormalityCategory.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
     <Compile Include="Patch\Patch_ColonistBarColonistDrawer.cs" />

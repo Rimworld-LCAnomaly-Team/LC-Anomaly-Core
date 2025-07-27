@@ -107,7 +107,7 @@ namespace LCAnomalyCore.Comp
         /// 生成实体
         /// </summary>
         /// <param name="list">实体列表</param>
-        protected bool SpawnEntity(List<ThingDef_LCAnomalyBase> list, float chance)
+        protected bool SpawnEntity(List<ThingDef_AbnormalityBase> list, float chance)
         {
             if (list.Count > 0 && Rand.Chance(chance))
             {

@@ -4,9 +4,43 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
-    public class CompAbnormalityStudiable : CompStudiable
+    public class CompAbnormalityStudiable : ThingComp
     {
-        public new CompProperties_AbnormalityStudiable Props => (CompProperties_AbnormalityStudiable)props;
+        private static readonly CachedTexture StudyToggleIcon = new CachedTexture("UI/Icons/Study");
+
+        public CompProperties_AbnormalityStudiable Props => (CompProperties_AbnormalityStudiable)props;
+
+        public bool Completed
+        {
+            get
+            {
+                if (Props.Completable)
+                {
+                    return ProgressPercent >= 1f;
+                }
+
+                return false;
+            }
+        }
+
+        public float ProgressPercent
+        {
+            get
+            {
+                if (!Props.Completable)
+                {
+                    return 0f;
+                }
+
+                return studyPoints / Props.studyAmountToComplete;
+            }
+        }
+
+        public float studyPoints;
+        public bool studyEnabled = true;
+        public int lastStudiedTick = -9999999;
+        public int TicksTilNextStudy => lastStudiedTick + Props.frequencyTicks - Find.TickManager.TicksGame;
+        public int studyInteractions;
 
         protected CompAbnormalityStudyUnlocks CompStudyUnlocks
         {
@@ -21,19 +55,27 @@ namespace LCAnomalyCore.Comp
 
         public int StudyTimesPeriod => Props.studyTimesPeriod;
 
-        public override void Study(Pawn studier, float studyAmount, float anomalyKnowledgeAmount = 0)
+        #region 生命周期
+
+        public override void PostPostMake()
+        {
+            base.PostPostMake();
+            studyEnabled = Props.studyEnabledByDefault;
+        }
+
+        #endregion
+
+        public void SetStudyEnabled(bool enabled)
+        {
+            studyEnabled = enabled;
+        }
+
+        public virtual void Study(Pawn studier, float studyAmount)
         {
             bool completed = Completed;
 
             studyAmount *= Find.Storyteller.difficulty.researchSpeedFactor;
             studyAmount *= studier.GetStatValue(StatDefOf.ResearchSpeed);
-            anomalyKnowledgeGained += anomalyKnowledgeAmount;
-            //Find.StudyManager.Study(parent, studier, studyAmount);
-
-            if (ModsConfig.AnomalyActive && anomalyKnowledgeAmount > 0f)
-            {
-                Find.StudyManager.StudyAnomaly(parent, studier, anomalyKnowledgeAmount, KnowledgeCategory);
-            }
 
             if (!completed && Completed)
             {
@@ -48,6 +90,35 @@ namespace LCAnomalyCore.Comp
                     Find.LetterStack.ReceiveLetter(Props.completedLetterTitle.Formatted(studier.Named("STUDIER"), parent.Named("PARENT")), Props.completedLetterText.Formatted(studier.Named("STUDIER"), parent.Named("PARENT")), Props.completedLetterDef ?? LetterDefOf.NeutralEvent, new List<Thing> { parent, studier });
                 }
             }
+        }
+
+        public bool CurrentlyStudiable()
+        {
+            if (!studyEnabled)
+            {
+                return false;
+            }
+
+            if (Props.frequencyTicks > 0 && TicksTilNextStudy > 0)
+            {
+                return false;
+            }
+
+            if (parent is Pawn pawn)
+            {
+                var compHoldingPlatformTarget = pawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+                if (compHoldingPlatformTarget == null || !compHoldingPlatformTarget.CanStudy)
+                {
+                    return false;
+                }
+
+                if (pawn.Downed || !pawn.Awake())
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -67,5 +138,94 @@ namespace LCAnomalyCore.Comp
         {
             return 0;
         }
+
+        public void Notify_ActivityDeactivated()
+        {
+            if (Props.canBeActivityDeactivated)
+            {
+                studyEnabled = false;
+            }
+        }
+
+        public override void PostExposeData()
+        {
+            Scribe_Values.Look(ref lastStudiedTick, "lastStudiedTick", 0);
+            Scribe_Values.Look(ref studyEnabled, "studyEnabled", defaultValue: true);
+            Scribe_Values.Look(ref studyPoints, "studiedAmount", 0f);
+            Scribe_Values.Look(ref studyInteractions, "studyInteractions", 0);
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                float value = 0f;
+                Scribe_Values.Look(ref value, "progress", 0f);
+                if (value > 0f)
+                {
+                    float num = value / Props.studyAmountToComplete;
+                    studyPoints = Props.studyAmountToComplete * num;
+                }
+            }
+
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && Find.StudyManager.backCompatStudyProgress.TryGetValue(parent.def, out var value2))
+            {
+                studyPoints = Props.studyAmountToComplete * value2;
+            }
+        }
+
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        {
+            string reason;
+            if (Props.showToggleGizmo)
+            {
+                Command_Toggle command_Toggle = new Command_Toggle
+                {
+                    defaultLabel = "CommandToggleStudy".Translate(),
+                    defaultDesc = "CommandToggleStudyDesc".Translate(),
+                    icon = StudyToggleIcon.Texture,
+                    isActive = () => studyEnabled,
+                    toggleAction = delegate
+                    {
+                        SetStudyEnabled(!studyEnabled);
+                    },
+                    hideIconIfDisabled = true
+                };
+                command_Toggle.tutorTag = "ToggleStudy";
+
+                yield return command_Toggle;
+            }
+
+            if (!DebugSettings.ShowDevGizmos)
+            {
+                yield break;
+            }
+
+            if (TicksTilNextStudy > 0)
+            {
+                Command_Action command_Action = new Command_Action();
+                command_Action.defaultLabel = "DEV: End study cooldown";
+                command_Action.action = delegate
+                {
+                    lastStudiedTick = Find.TickManager.TicksGame - Props.frequencyTicks;
+                };
+                yield return command_Action;
+            }
+
+            if (!Props.Completable || Completed)
+            {
+                yield break;
+            }
+
+            Command_Action command_Action2 = new Command_Action();
+            command_Action2.defaultLabel = "DEV: Complete study";
+            command_Action2.action = delegate
+            {
+                int num = 100;
+                while (!Completed && num > 0)
+                {
+                    Study(parent.Map?.mapPawns?.FreeColonists?.RandomElement(), float.MaxValue);
+                    num--;
+                }
+            };
+            yield return command_Action2;
+        }
+
     }
 }

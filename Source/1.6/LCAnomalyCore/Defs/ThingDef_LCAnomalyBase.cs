@@ -5,57 +5,57 @@ namespace LCAnomalyCore.Defs
     /// <summary>
     /// LC异想体ThingDef基类
     /// </summary>
-    public abstract class ThingDef_LCAnomalyBase : ThingDef
+    public abstract class ThingDef_AbnormalityBase : ThingDef
     {
-        /// <summary>
-        /// 异想体评估等级标签
-        /// </summary>
-        public readonly string anomalyLevelTag;
+
     }
 
     /// <summary>
     /// LC异想体PawnKind基类
     /// </summary>
-    public abstract class PawnKindDef_LCAnomalyBase : PawnKindDef
+    public abstract class PawnKindDef_AbnormalityBase : PawnKindDef
     {
-        /// <summary>
-        /// 异想体评估等级标签
-        /// </summary>
-        public readonly string anomalyLevelTag;
+
     }
 
     /// <summary>
     /// LC异想体PawnKind基类（活动实体类）
     /// </summary>
-    public class ThingDef_AnomalyEntity : PawnKindDef_LCAnomalyBase
+    public class PawnKindDef_AbnormalityEntity : PawnKindDef_AbnormalityBase
     {
+
+    }
+
+    public abstract class ThingDef_AbnormalityEntity : ThingDef_AbnormalityBase
+    {
+
     }
 
     /// <summary>
     /// LC异想体ThingDef基类（蛋类）
     /// </summary>
-    public class ThingDef_AnomalyEgg : ThingDef_LCAnomalyBase
+    public class ThingDef_AbnormalityEgg : ThingDef_AbnormalityBase
     {
     }
 
     /// <summary>
     /// LC异想体ThingDef基类（工具类）
     /// </summary>
-    public class ThingDef_AnomalyTool : ThingDef_LCAnomalyBase
+    public class ThingDef_AbnormalityTool : ThingDef_AbnormalityBase
     {
     }
 
     /// <summary>
     /// LC异想体ThingDef基类（生成特效类）
     /// </summary>
-    public class ThingDef_AnomalyEntity_Spawn : ThingDef_LCAnomalyBase
+    public class ThingDef_AbnormalityEntity_Spawn : ThingDef_AbnormalityBase
     {
     }
 
     /// <summary>
     /// LC异想体（大罪生物）（WIP）
     /// </summary>
-    public class PawnKindDef_AnomalyEntity_SevenSin : ThingDef_AnomalyEntity
+    public class PawnKindDef_AnomalyEntity_SevenSin : PawnKindDef_AbnormalityEntity
     {
     }
 }

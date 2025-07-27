@@ -99,16 +99,6 @@ namespace LCAnomalyCore.Comp
                     return false;
                 }
 
-                if (parent is Pawn)
-                {
-                    if (CompAbnormalityStudiable != null)
-                    {
-                        return CompAbnormalityStudiable.AnomalyKnowledge > 0f;
-                    }
-
-                    return false;
-                }
-
                 return true;
             }
         }
@@ -147,7 +137,7 @@ namespace LCAnomalyCore.Comp
                     return false;
                 }
 
-                if (CompAbnormalityStudiable != null && Find.Anomaly.HighestLevelReached < CompAbnormalityStudiable.Props.minMonolithLevelForStudy && Find.Anomaly.GenerateMonolith)
+                if (CompAbnormalityStudiable != null)
                 {
                     return false;
                 }

@@ -1,6 +1,7 @@
 ﻿using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Interface;
+using LCAnomalyCore.ModExtensions;
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -105,6 +106,8 @@ namespace LCAnomalyCore.Buildings
 
         #region 字段
 
+        public Vector3 PawnDrawOffset => new Vector3(0f, 0f, 0.15f);
+
         /// <summary>
         /// 逆卡巴拉计数器值
         /// </summary>
@@ -188,19 +191,21 @@ namespace LCAnomalyCore.Buildings
         /// </summary>
         protected override void Tick()
         {
-            //if (AllComps != null)
-            //{
-            //    int i = 0;
-            //    for (int count = AllComps.Count; i < count; i++)
-            //        AllComps[i].CompTick();
-            //}
-
-            //innerContainer.ThingOwnerTick();
-
             if (innerContainer.Count > 0)
             {
                 var entitiy = innerContainer[0] as LC_EntityBasePawn;
                 entitiy?.TickHolded();
+            }
+        }
+
+        public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
+        {
+            base.DynamicDrawPhaseAt(phase, drawLoc, flip);
+            Pawn heldPawn = this.HeldPawn;
+            if (heldPawn != null)
+            {
+                Rot4 value = Rot4.South;
+                heldPawn.Drawer.renderer.DynamicDrawPhaseAt(phase, this.DrawPos + this.PawnDrawOffset, new Rot4?(value), true);
             }
         }
 
@@ -211,7 +216,7 @@ namespace LCAnomalyCore.Buildings
         /// <param name="flip"></param>
         protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
-            DrawAvoidParent(drawLoc, flip);
+            base.DrawAt(drawLoc, flip);
 
             Vector3 drawPosCached = this.DrawPos + altitudesCached;
             Vector3 drawPosUpperCached = drawPosCached + Vector3.up;
@@ -233,7 +238,7 @@ namespace LCAnomalyCore.Buildings
                         var comp = HeldPawn.GetComp<CompAbnormalityStudiable>();
                         if (comp != null)
                         {
-                            var studiable = !(comp.EverStudiable() && comp.TicksTilNextStudy > 0);
+                            var studiable = !(comp.TicksTilNextStudy > 0);
                             var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
                             graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                         }
@@ -292,13 +297,13 @@ namespace LCAnomalyCore.Buildings
 
                 #endregion 平台上的异常名字UI
 
-                #region 可工作UI
+                #region 分类等级UI
 
-                var category = HeldPawn.def.entityCodexEntry.category.defName;
-                var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(category);
+                var abnormalityLevel = HeldPawn.kindDef.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+                var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(abnormalityLevel);
                 graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
 
-                #endregion 可工作UI
+                #endregion 分类等级UI
 
                 #region 左侧Box条
 
@@ -335,6 +340,7 @@ namespace LCAnomalyCore.Buildings
             base.ExposeData();
 
             Scribe_Values.Look(ref curWorkType, "curWorkType", EAnomalyWorkType.Instinct);
+            Scribe_Deep.Look(ref innerContainer, "innerContainer", this);
         }
 
         #endregion 生命周期
@@ -424,23 +430,6 @@ namespace LCAnomalyCore.Buildings
             if (EntityCached)
                 cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
             //Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
-        }
-
-        /// <summary>
-        /// 绕开基类平台的绘制方法
-        /// </summary>
-        /// <param name="drawLoc"></param>
-        /// <param name="flip"></param>
-        protected void DrawAvoidParent(Vector3 drawLoc, bool flip)
-        {
-            if (def.drawerType == DrawerType.RealtimeOnly || !Spawned)
-            {
-                Graphic.Draw(drawLoc, flip ? Rotation.Opposite : Rotation, this);
-            }
-
-            SilhouetteUtility.DrawGraphicSilhouette(this, drawLoc);
-
-            Comps_PostDraw();
         }
 
         #endregion 工具方法

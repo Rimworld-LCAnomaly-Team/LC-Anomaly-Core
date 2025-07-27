@@ -1,5 +1,6 @@
 ﻿using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Util;
 using RimWorld;
 using System.Linq;
 using Verse;
@@ -11,7 +12,9 @@ namespace LCAnomalyCore.Jobs
     {
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
-            return !ModsConfig.AnomalyActive;
+            //如果没有CompPawnStatus组件或属性未激活，则不兼容
+            var comp = pawn.GetComp<CompPawnStatus>();
+            return comp == null || !comp.Enabled;
         }
 
         public override string PostProcessedGerund(Job job)
@@ -26,33 +29,34 @@ namespace LCAnomalyCore.Jobs
 
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
+            LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered!");
+
             if (!pawn.CanReserve(t, 1, -1, null, forced))
             {
+                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Can not reserved!");
                 return false;
             }
 
             if (t == null)
+            {
+                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Target is null!");
                 return false;
+            }
 
             //如果是LC平台
             if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalityHoldingPlatform building)
             {
+                LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the platform compare!");
+
                 var compAbnormalityStudiable = building.CompAbnormalityStudiable;
                 if (compAbnormalityStudiable != null)
                 {
-                    if (compAbnormalityStudiable.KnowledgeCategory == null)
-                    {
-                        return false;
-                    }
-
-                    if (!compAbnormalityStudiable.EverStudiable())
-                    {
-                        JobFailReason.IsSilent();
-                        return false;
-                    }
+                    LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable compare!");
 
                     if (!compAbnormalityStudiable.CurrentlyStudiable())
                     {
+                        LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable.LC_CurrentlyStudiable()!");
+
                         if (compAbnormalityStudiable.Props.frequencyTicks > 0 && compAbnormalityStudiable.TicksTilNextStudy > 0)
                         {
                             JobFailReason.Is("CanBeStudiedInDuration".Translate(compAbnormalityStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
@@ -64,13 +68,9 @@ namespace LCAnomalyCore.Jobs
 
                         return false;
                     }
-
-                    var comp = pawn.GetComp<CompPawnStatus>();
-                    //如果没有CompPawnStatus组件或属性未激活，则不兼容
-                    if (comp == null || !comp.Enabled)
+                    else
                     {
-                        JobFailReason.IsSilent();
-                        return false;
+                        LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable.LC_CurrentlyStudiable() failed!");
                     }
 
                     //如果是非右键强制状态
@@ -90,6 +90,15 @@ namespace LCAnomalyCore.Jobs
 
                     return true;
                 }
+                else
+                {
+                    LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable failed!");
+                }
+            }
+            else
+            {
+                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Failed at platform compare!\n" +
+                    $"T's DefName: {t.def.defName}, T's type is: {t.GetType()}");
             }
 
             return false;

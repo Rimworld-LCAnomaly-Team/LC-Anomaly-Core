@@ -126,11 +126,8 @@ namespace LCAnomalyCore.Jobs
                     ThingToStudy.TryGetComp<CompAbnormality>()?.Notify_Studied(pawn);
                 }
             });
-            //studyToil.activeSkill = () => SkillDefOf.Intellectual;
-            if (StudyComp.KnowledgeCategory != null)
-            {
-                studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);
-            }
+            
+            studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);
 
             Toil finishInteraction = ToilMaker.MakeToil("Interaction finish");
             finishInteraction.initAction = DoStudyInteraction;
@@ -188,13 +185,7 @@ namespace LCAnomalyCore.Jobs
 
         private void DoStudyInteraction()
         {
-            float anomalyKnowledgeAmount = 0f;
-            if (ModsConfig.AnomalyActive)
-            {
-                anomalyKnowledgeAmount = StudyComp.AdjustedAnomalyKnowledgePerStudy * base.pawn.GetStatValue(StatDefOf.StudyEfficiency);
-            }
-
-            StudyComp.Study(base.pawn, 0.87f, anomalyKnowledgeAmount);
+            StudyComp.Study(base.pawn, 0.87f);
             studyInteractions++;
             if (ModsConfig.AnomalyActive && ThingToStudy is Pawn pawn)
             {

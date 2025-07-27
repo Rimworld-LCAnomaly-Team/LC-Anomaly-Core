@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
   
-  <ThingDef ParentName="BasePawn" Name="LC_EntityBase" Abstract="True">
+  <LCAnomalyCore.Defs.ThingDef_AbnormalityEntity ParentName="BasePawn" Name="LC_EntityBase" Abstract="True">
     <thingClass>LCAnomalyCore.Comp.Abstract.LC_EntityBasePawn</thingClass>
     <hiddenWhileUndiscovered>true</hiddenWhileUndiscovered>
     <tradeability>None</tradeability>
@@ -33,6 +33,6 @@
     <inspectorTabs>
       <li>ITab_StudyNotes</li>
     </inspectorTabs>
-  </ThingDef>
+  </LCAnomalyCore.Defs.ThingDef_AbnormalityEntity>
 
 </Defs>
