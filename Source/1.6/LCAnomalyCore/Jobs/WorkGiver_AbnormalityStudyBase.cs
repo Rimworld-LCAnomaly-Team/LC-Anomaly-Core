@@ -13,7 +13,14 @@ namespace LCAnomalyCore.Jobs
 
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            return pawn.Map.listerThings.AllThings.Where(m => m.def is Defs.LC_HoldingPlatformDef);
+            // 优化: 使用 ThingsInGroup 代替遍历所有物体
+            foreach (Thing thing in pawn.Map.listerThings.ThingsInGroup(ThingRequestGroup.BuildingArtificial))
+            {
+                if (thing.def is Defs.LC_HoldingPlatformDef)
+                {
+                    yield return thing;
+                }
+            }
         }
 
         public override float GetPriority(Pawn pawn, TargetInfo t)

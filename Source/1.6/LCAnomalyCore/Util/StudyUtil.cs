@@ -321,31 +321,24 @@ namespace LCAnomalyCore.Util
 
         public static bool AlreadyReserved(Thing p, out Pawn reserver)
         {
-            Log.Warning("1");
             tmpReservers.Clear();
-            Log.Warning("2");
             p.Map.reservationManager.ReserversOf(p, tmpReservers);
-            Log.Warning("3");
             reserver = tmpReservers.FirstOrDefault();
-            Log.Warning("4");
             if (reserver != null)
             {
-                Log.Warning("5");
                 return true;
             }
-            Log.Warning("6");
-            foreach (Thing item in p.Map.listerThings.AllThings.Where(m => m.HasComp<CompAbnormalityHoldingPlatformTarget>()))
+
+            // 优化: 只在 Pawn 中查找,避免遍历所有物体
+            foreach (Pawn pawn in p.Map.mapPawns.AllPawnsSpawned)
             {
-                Log.Warning("7");
-                Log.Error($"item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null {item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null}");
-                if (item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == p)
+                var comp = pawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+                if (comp != null && comp.targetHolder == p)
                 {
-                    Log.Warning("8");
-                    reserver = item as Pawn;
+                    reserver = pawn;
                     return true;
                 }
             }
-            Log.Warning("9");
             return false;
         }
 
@@ -357,7 +350,7 @@ namespace LCAnomalyCore.Util
                 return false;
             }
 
-            Log.Warning((currentMap.listerBuildings.allBuildingsColonist.Count).ToString());
+            // 优化: 移除调试日志,直接遍历建筑
             foreach (Building item in currentMap.listerBuildings.allBuildingsColonist)
             {
                 if (item.TryGetComp<CompAbnormalityHolder>(out var comp) && comp.Available && !AlreadyReserved(item, out var _))

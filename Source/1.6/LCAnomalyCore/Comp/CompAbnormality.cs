@@ -25,80 +25,35 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// 研究阶段解锁
         /// </summary>
-        public CompStudyUnlocks StudyUnlocksComp
-        {
-            get
-            {
-                if (studyUnlocksComp == null)
-                    return studyUnlocksComp = parent.GetComp<CompStudyUnlocks>();
-                else
-                    return studyUnlocksComp;
-            }
-        }
+        public CompStudyUnlocks StudyUnlocksComp => studyUnlocksComp ??= parent.GetComp<CompStudyUnlocks>();
 
         protected CompStudyUnlocks studyUnlocksComp;
 
         /// <summary>
         /// 研究组件
         /// </summary>
-        public CompAbnormalityStudiable StudiableComp
-        {
-            get
-            {
-                if (studiableComp == null)
-                    return studiableComp = parent.GetComp<CompAbnormalityStudiable>();
-                else
-                    return studiableComp;
-            }
-        }
+        public CompAbnormalityStudiable StudiableComp => studiableComp ??= parent.GetComp<CompAbnormalityStudiable>();
 
         protected CompAbnormalityStudiable studiableComp;
 
         /// <summary>
         /// 首饰组件
         /// </summary>
-        public CompAccessoryable AccessoryableComp
-        {
-            get
-            {
-                if (studyUnlocksComp == null)
-                    return accessoryableComp = parent.GetComp<CompAccessoryable>();
-                else
-                    return accessoryableComp;
-            }
-        }
+        public CompAccessoryable AccessoryableComp => accessoryableComp ??= parent.GetComp<CompAccessoryable>();
 
         protected CompAccessoryable accessoryableComp;
 
         /// <summary>
         /// PeBox组件
         /// </summary>
-        public CompPeBoxProduce PeBoxComp
-        {
-            get
-            {
-                if (peBoxComp == null)
-                    return peBoxComp = parent.GetComp<CompPeBoxProduce>();
-                else
-                    return peBoxComp;
-            }
-        }
+        public CompPeBoxProduce PeBoxComp => peBoxComp ??= parent.GetComp<CompPeBoxProduce>();
 
         protected CompPeBoxProduce peBoxComp;
 
         /// <summary>
         /// 收容控制组件
         /// </summary>
-        public CompAbnormalityHoldingPlatformTarget HoldingPlaformTargetComp
-        {
-            get
-            {
-                if (holdingPlatformTargetComp == null)
-                    return holdingPlatformTargetComp = parent.GetComp<CompAbnormalityHoldingPlatformTarget>();
-                else
-                    return holdingPlatformTargetComp;
-            }
-        }
+        public CompAbnormalityHoldingPlatformTarget HoldingPlaformTargetComp => holdingPlatformTargetComp ??= parent.GetComp<CompAbnormalityHoldingPlatformTarget>();
 
         protected CompAbnormalityHoldingPlatformTarget holdingPlatformTargetComp;
 

@@ -11,9 +11,29 @@ namespace LCAnomalyCore.Jobs
     {
         //public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.HoldingPlatformTarget);
 
+        // 缓存具有 CompAbnormalityHoldingPlatformTarget 的 Thing 列表
+        private static List<Thing> cachedTargets = new List<Thing>();
+        private static int lastCacheUpdateTick = -1;
+        private const int CacheUpdateInterval = 60; // 每60 tick更新一次缓存
+
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            return pawn.Map.listerThings.AllThings.Where(m => m.HasComp<CompAbnormalityHoldingPlatformTarget>());
+            // 优化: 使用缓存减少频繁的全图遍历
+            int currentTick = Find.TickManager.TicksGame;
+            if (lastCacheUpdateTick < 0 || currentTick - lastCacheUpdateTick >= CacheUpdateInterval || cachedTargets.NullOrEmpty())
+            {
+                cachedTargets.Clear();
+                // 优先在 Pawn 类型中查找
+                foreach (Pawn p in pawn.Map.mapPawns.AllPawnsSpawned)
+                {
+                    if (p.HasComp<CompAbnormalityHoldingPlatformTarget>())
+                    {
+                        cachedTargets.Add(p);
+                    }
+                }
+                lastCacheUpdateTick = currentTick;
+            }
+            return cachedTargets;
         }
 
         public override bool ShouldSkip(Pawn pawn, bool forced = false)

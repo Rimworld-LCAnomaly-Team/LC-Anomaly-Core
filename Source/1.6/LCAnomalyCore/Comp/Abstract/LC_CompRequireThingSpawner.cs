@@ -204,12 +204,12 @@ namespace LCAnomalyCore.Comp
                 command_Action3.action = delegate
                 {
                     List<FloatMenuOption> list = new List<FloatMenuOption>();
-                    foreach (var item in parent.Map.listerThings.AllThings.Where(x => x.def == PropsSpawner.thingRequire && x.stackCount == 1))
+                    // 优化: 使用 ThingsOfDef 而不是遍历所有物体
+                    foreach (Thing item in parent.Map.listerThings.ThingsOfDef(PropsSpawner.thingRequire))
                     {
-                        Thing thing = item;
-
-                        if (true)
+                        if (item.stackCount == 1)
                         {
+                            Thing thing = item;
                             list.Add(new FloatMenuOption(thing.LabelCap, delegate
                             {
                                 innerContainer.TryAddOrTransfer(thing.SplitOff(1), false);

@@ -12,18 +12,13 @@ namespace LCAnomalyCore.Hediffs
 
         private HediffStage curStage;
 
-        protected CompPawnStatus PawnStatusComp
-        {
-            get
-            {
-                if (pawnStatusComp == null)
-                    pawnStatusComp = pawn.GetComp<CompPawnStatus>();
-
-                return pawnStatusComp;
-            }
-        }
+        protected CompPawnStatus PawnStatusComp => pawnStatusComp ??= pawn.GetComp<CompPawnStatus>();
 
         private CompPawnStatus pawnStatusComp;
+
+        // 优化: 缓存 StatModifier 列表以避免重复分配
+        private List<StatModifier> cachedStatFactors;
+        private List<StatModifier> cachedStatOffsets;
 
         public override HediffStage CurStage
         {
@@ -31,10 +26,14 @@ namespace LCAnomalyCore.Hediffs
             {
                 if (curStage == null)
                 {
+                    // 初始化缓存的修饰符列表
+                    cachedStatFactors = new List<StatModifier>(4);
+                    cachedStatOffsets = new List<StatModifier>(2);
+
                     curStage = new HediffStage
                     {
-                        statFactors = GetStatsFactorList(),
-                        statOffsets = GetStatsOffsetList()
+                        statFactors = cachedStatFactors,
+                        statOffsets = cachedStatOffsets
                     };
                 }
 
@@ -46,65 +45,74 @@ namespace LCAnomalyCore.Hediffs
         {
             if (Find.TickManager.TicksGame % 3600 == 0)
             {
-                LogUtil.Warning("PawnStatus Hediff update.");
-
                 StatusUpdate();
             }
         }
 
         private void StatusUpdate()
         {
-            if (CurStage == null)
+            if (CurStage == null || PawnStatusComp == null)
                 return;
 
-            CurStage.statFactors = GetStatsFactorList();
-            CurStage.statOffsets = GetStatsOffsetList();
+            // 优化: 直接更新缓存列表中的值,而不是创建新列表
+            UpdateStatsOffsetList();
+            UpdateStatsFactorList();
         }
 
-        private List<StatModifier> GetStatsOffsetList()
+        private void UpdateStatsOffsetList()
         {
-            StatModifier smTemperance = new StatModifier()
+            if (cachedStatOffsets == null)
+            {
+                cachedStatOffsets = new List<StatModifier>(2);
+            }
+
+            cachedStatOffsets.Clear();
+
+            cachedStatOffsets.Add(new StatModifier
             {
                 stat = StatDefOf.WorkSpeedGlobal,
                 value = 0.01f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Temperance).Status
-            };
+            });
 
-            StatModifier smJustice_Move = new StatModifier()
+            cachedStatOffsets.Add(new StatModifier
             {
                 stat = StatDefOf.MoveSpeed,
                 value = 0.01f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Justice).Status
-            };
-
-            return [smTemperance, smJustice_Move];
+            });
         }
 
-        private List<StatModifier> GetStatsFactorList()
+        private void UpdateStatsFactorList()
         {
-            StatModifier smFortitude = new StatModifier()
+            if (cachedStatFactors == null)
+            {
+                cachedStatFactors = new List<StatModifier>(4);
+            }
+
+            cachedStatFactors.Clear();
+
+            cachedStatFactors.Add(new StatModifier
             {
                 stat = StatDefOf.IncomingDamageFactor,
                 value = 1 - 0.005f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Fortitude).Status
-            };
+            });
 
-            StatModifier smPrudence = new StatModifier()
+            cachedStatFactors.Add(new StatModifier
             {
                 stat = StatDefOf.MentalBreakThreshold,
                 value = 1 - 0.005f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Prudence).Status
-            };
+            });
 
-            StatModifier smJustice_Melee = new StatModifier()
+            cachedStatFactors.Add(new StatModifier
             {
                 stat = StatDefOf.MeleeCooldownFactor,
                 value = 1 - 0.005f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Justice).Status
-            };
+            });
 
-            StatModifier smJustice_Ranged = new StatModifier()
+            cachedStatFactors.Add(new StatModifier
             {
                 stat = StatDefOf.RangedCooldownFactor,
                 value = 1 - 0.005f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Justice).Status
-            };
-
-            return [smFortitude, smPrudence, smJustice_Melee, smJustice_Ranged];
+            });
         }
     }
 }

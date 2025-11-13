@@ -102,6 +102,12 @@ namespace LCAnomalyCore.Buildings
         private List<Graphic> cachedPeBoxBarGraphics = new List<Graphic>();
         private List<Graphic> cachedNeBoxBarGraphics = new List<Graphic>();
 
+        // 优化: 缓存每帧绘制使用的数据
+        private string cachedAbnormalityLevel;
+        private bool cachedAssignedPawnsAny;
+        private int lastAssignedPawnsCheckTick = -1;
+        private const int AssignedPawnsCheckInterval = 30; // 每30 tick检查一次
+
         #endregion 缓存
 
         #region 字段
@@ -225,8 +231,16 @@ namespace LCAnomalyCore.Buildings
             {
                 #region 右下角可工作状态
 
+                // 优化: 减少频繁的AssignedPawns.Any()调用
+                int currentTick = Find.TickManager.TicksGame;
+                if (lastAssignedPawnsCheckTick < 0 || currentTick - lastAssignedPawnsCheckTick >= AssignedPawnsCheckInterval)
+                {
+                    cachedAssignedPawnsAny = CompAssignable.AssignedPawns.Any();
+                    lastAssignedPawnsCheckTick = currentTick;
+                }
+
                 //如果分配工作者，就显示自动图标，否则就显示是否可工作
-                if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
+                if (cachedAssignedPawnsAny && CompWorkable.UIAllowed)
                 {
                     CompWorkable?.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                 }
@@ -235,10 +249,10 @@ namespace LCAnomalyCore.Buildings
                     //工作状态更新
                     if (CompWorkable != null && CompWorkable.UIAllowed)
                     {
-                        var comp = HeldPawn.GetComp<CompAbnormalityStudiable>();
-                        if (comp != null)
+                        // 优化: 使用已缓存的 compAbnormalityStudiable 而不是每帧获取
+                        if (CompAbnormalityStudiable != null)
                         {
-                            var studiable = !(comp.TicksTilNextStudy > 0);
+                            var studiable = !(CompAbnormalityStudiable.TicksTilNextStudy > 0);
                             var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
                             graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
                         }
@@ -299,9 +313,17 @@ namespace LCAnomalyCore.Buildings
 
                 #region 分类等级UI
 
-                var abnormalityLevel = HeldPawn.kindDef.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
-                var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(abnormalityLevel);
-                graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
+                // 优化: 缓存 abnormalityLevel,避免每帧获取 ModExtension
+                if (cachedAbnormalityLevel == null && HeldPawn.kindDef != null)
+                {
+                    cachedAbnormalityLevel = HeldPawn.kindDef.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef?.defName;
+                }
+
+                if (cachedAbnormalityLevel != null)
+                {
+                    var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(cachedAbnormalityLevel);
+                    graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
+                }
 
                 #endregion 分类等级UI
 
@@ -357,6 +379,10 @@ namespace LCAnomalyCore.Buildings
 
             //清理原先平台的分配对象
             GetComp<CompAssignableToPawn_LC_Entity>()?.ClearAllAssignments();
+
+            // 优化: 重置缓存的等级数据
+            cachedAbnormalityLevel = null;
+            lastAssignedPawnsCheckTick = -1;
         }
 
         /// <summary>
@@ -464,10 +490,12 @@ namespace LCAnomalyCore.Buildings
                 Command_Action command_Action = new Command_Action();
                 command_Action.defaultLabel = "CommandAssignmentWorkTypeLabel".Translate();
                 command_Action.defaultDesc = "CommandAssignmentWorkTypeDesc".Translate();
-                command_Action.icon = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/" + CurWorkType.ToString(), true);
+                // 优化: 缓存工作类型字符串,避免重复调用 ToString()
+                string workTypeStr = CurWorkType.ToString();
+                command_Action.icon = ContentFinder<Texture2D>.Get(string.Concat("UI/Commands/WorkType/", workTypeStr), true);
                 command_Action.onHover = () =>
                 {
-                    command_Action.defaultDesc = ("CommandAssignmentWorkTypeOnHoverDesc_" + CurWorkType.ToString()).Translate();
+                    command_Action.defaultDesc = string.Concat("CommandAssignmentWorkTypeOnHoverDesc_", workTypeStr).Translate();
                 };
                 command_Action.action = () =>
                 {
@@ -488,18 +516,27 @@ namespace LCAnomalyCore.Buildings
             Pawn heldPawn = HeldPawn;
             if (heldPawn != null)
             {
-                TaggedString ts = "HoldingThing".Translate() + ": " + heldPawn.NameShortColored.CapitalizeFirst();
+                // 优化: 使用 StringBuilder 进行字符串拼接
+                inspectTextSB.Append("HoldingThing".Translate());
+                inspectTextSB.Append(": ");
                 bool flag = this.SafelyContains(heldPawn);
                 if (!flag)
                 {
-                    ts += " (" + "HoldingPlatformRequiresStrength".Translate(StatDefOf.MinimumContainmentStrength.Worker.ValueToString(heldPawn.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)) + ")";
+                    inspectTextSB.Append(heldPawn.NameShortColored.CapitalizeFirst());
+                    inspectTextSB.Append(" (");
+                    inspectTextSB.Append("HoldingPlatformRequiresStrength".Translate(StatDefOf.MinimumContainmentStrength.Worker.ValueToString(heldPawn.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)));
+                    inspectTextSB.Append(")");
                 }
-
-                inspectTextSB.Append(ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable));
+                else
+                {
+                    inspectTextSB.Append(heldPawn.NameShortColored.CapitalizeFirst());
+                }
             }
             else
             {
-                inspectTextSB.Append("HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst());
+                inspectTextSB.Append("HoldingThing".Translate());
+                inspectTextSB.Append(": ");
+                inspectTextSB.Append("Nothing".Translate().CapitalizeFirst());
             }
 
             //if (heldPawn != null && heldPawn.def.IsStudiable)

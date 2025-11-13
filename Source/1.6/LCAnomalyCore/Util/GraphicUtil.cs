@@ -42,7 +42,8 @@ namespace LCAnomalyCore.Util
             if (CachedTopGraphic.Empty())
             {
                 for (int i = 0; i < 10; i++)
-                    CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>(baseLocOfHoldingPlatform + "QliphothIndicator/Top" + i,
+                    // 优化: 使用 string.Concat 代替字符串连接
+                    CachedTopGraphic.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(baseLocOfHoldingPlatform, "QliphothIndicator/Top", i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 LogUtil.Message("QliphothIndicatorTex initialized");
             }
@@ -78,33 +79,41 @@ namespace LCAnomalyCore.Util
             {
                 string loc = baseLocOfHoldingPlatform + "PeBoxCounter/";
 
+                // 优化: 预先构建常用路径,减少字符串连接
+                string singlePath = string.Concat(loc, "Single/mid_");
+                string doubleRightPath = string.Concat(loc, "Double/right_");
+                string doubleLeftPath = string.Concat(loc, "Double/left_");
+                string thirdMidPath = string.Concat(loc, "Third/mid_");
+                string thirdRightPath = string.Concat(loc, "Third/right_");
+                string thirdLeftPath = string.Concat(loc, "Third/left_");
+
                 for (int i = 0; i < 10; i++)
                 {
                     //个位数
-                    CachedTopGraphic_IndiPeBoxIndicator_Single.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Single/mid_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_Single.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(singlePath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
 
                     //两位数右侧
-                    CachedTopGraphic_IndiPeBoxIndicator_DoubleRight.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Double/right_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_DoubleRight.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(doubleRightPath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
 
                     //三位数中间
-                    CachedTopGraphic_IndiPeBoxIndicator_ThirdMid.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/mid_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdMid.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(thirdMidPath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
 
                     //三位数右侧
-                    CachedTopGraphic_IndiPeBoxIndicator_ThirdRight.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/right_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdRight.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(thirdRightPath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
 
                 for (int i = 1; i < 10; i++)
                 {
                     //两位数左侧
-                    CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Double/left_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_DoubleLeft.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(doubleLeftPath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
 
                     //三位数左侧
-                    CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft.Add(GraphicDatabase.Get<Graphic_Single>(loc + "Third/left_" + i,
+                    CachedTopGraphic_IndiPeBoxIndicator_ThirdLeft.Add(GraphicDatabase.Get<Graphic_Single>(string.Concat(thirdLeftPath, i.ToString()),
                         ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 }
 
@@ -188,18 +197,18 @@ namespace LCAnomalyCore.Util
             //初始化
             if (CachedTopGraphic_EntityNamePlatformTop == null || forced)
             {
+                // 优化: 使用 string.Concat 减少字符串连接
+                string path = string.Concat("UI/HoldingPlatform/", loc, "_", LanguageDatabase.activeLanguage.ToString());
                 CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
-                    .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage
-                    , ShaderDatabase.Transparent
-                    , drawSizeOfHoldingPlatform, Color.white);
+                    .Get<Graphic_Single>(path, ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
                 //如果贴图为null就切换到英文版
                 if (CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
                 {
                     LogUtil.Warning("EntityNamePlatformTex cant find local language tex, try to use english ver");
                     CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
-                        .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
-                        , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+                        .Get<Graphic_Single>(string.Concat("UI/HoldingPlatform/", loc, "_English"),
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
                 }
 
                 LogUtil.Message("EntityNamePlatformTex initialized");
@@ -222,16 +231,26 @@ namespace LCAnomalyCore.Util
             EAnomalyWorkType.Repression
         };
 
+        // 优化: 预先缓存枚举的字符串表示,避免重复调用 ToString()
+        private static readonly Dictionary<EAnomalyWorkType, string> workTypeStrings = new Dictionary<EAnomalyWorkType, string>
+        {
+            { EAnomalyWorkType.Instinct, "Instinct" },
+            { EAnomalyWorkType.Insight, "Insight" },
+            { EAnomalyWorkType.Attachment, "Attachment" },
+            { EAnomalyWorkType.Repression, "Repression" }
+        };
+
         public static Graphic WorkTypePlatformTopGraphic_Get(EAnomalyWorkType workType)
         {
             //初始化
             if (CachedTopGraphicDict_WorkTypePlatformTop.NullOrEmpty())
             {
+                string basePath = "Things/Building/LC_HoldingPlatform/WorkType/";
                 foreach (var type in eAnomalyWorkTypes)
                 {
                     var graphic = GraphicDatabase
-                        .Get<Graphic_Single>("Things/Building/LC_HoldingPlatform/WorkType/" + type.ToString()
-                        , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+                        .Get<Graphic_Single>(string.Concat(basePath, workTypeStrings[type]),
+                        ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
                     CachedTopGraphicDict_WorkTypePlatformTop.Add(type, graphic);
                 }
 
