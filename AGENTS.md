@@ -6,3 +6,4 @@
 - Apply normal code, project, assembly, XML, and asset changes only to the 1.6 version.
 - Build and verify only the 1.6 solutions by default.
 - Use Rimsage MCP to verify RimWorld types, methods, Defs, and API compatibility when relevant.
+- Write Git commit subjects, bodies, and change summaries in Chinese unless the user explicitly requests another language.
