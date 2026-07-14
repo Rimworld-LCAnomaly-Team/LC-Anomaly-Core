@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <LC_ContainmentStrength.label>LC 收容强度</LC_ContainmentStrength.label>
+  <LC_ContainmentStrength.description>该平台安全收容异想体的能力。坚固的墙壁和门、照明、完整屋顶及 LC 收容地板会提高此数值。</LC_ContainmentStrength.description>
+  <LC_MinimumContainmentStrength.label>最低 LC 收容强度</LC_MinimumContainmentStrength.label>
+  <LC_MinimumContainmentStrength.description>安全收容该异想体所需的 LC 收容强度。</LC_MinimumContainmentStrength.description>
+</LanguageData>

@@ -131,8 +131,12 @@ namespace LCAnomalyCore.Buildings
             {
                 if (EntityCached)
                 {
-                    Util.Components.LC.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
-                    return saved.IndiPeBoxAmount;
+                    var component = Util.Components.LC;
+                    if (component != null)
+                    {
+                        component.TryGetAnomalyStatusSaved(cachedEntity.parent.def, out var saved);
+                        return saved.IndiPeBoxAmount;
+                    }
                 }
 
                 return 0;
@@ -299,9 +303,12 @@ namespace LCAnomalyCore.Buildings
 
                 #region 分类等级UI
 
-                var abnormalityLevel = HeldPawn.kindDef.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
-                var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(abnormalityLevel);
-                graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
+                var abnormalityLevel = cachedEntity?.AbnormalityCategory?.defName;
+                if (!abnormalityLevel.NullOrEmpty())
+                {
+                    var graphicLevel = GraphicUtil.LevelIndicator_GetCachedTopGraphic(abnormalityLevel);
+                    graphicLevel.Draw(drawPosCached, base.Rotation, this, 0f);
+                }
 
                 #endregion 分类等级UI
 
@@ -475,7 +482,7 @@ namespace LCAnomalyCore.Buildings
                 };
 
                 if (!EntityCached)
-                    command_Action.Disable("LC_NoAbnormalityOnPlatformDesc".Translate());
+                    command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
             }
@@ -489,10 +496,11 @@ namespace LCAnomalyCore.Buildings
             if (heldPawn != null)
             {
                 TaggedString ts = "HoldingThing".Translate() + ": " + heldPawn.NameShortColored.CapitalizeFirst();
-                bool flag = this.SafelyContains(heldPawn);
+                bool flag = LCContainmentUtility.SafelyContains(this, heldPawn);
                 if (!flag)
                 {
-                    ts += " (" + "HoldingPlatformRequiresStrength".Translate(StatDefOf.MinimumContainmentStrength.Worker.ValueToString(heldPawn.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)) + ")";
+                    float minimumStrength = LCContainmentUtility.GetMinimumContainmentStrength(heldPawn);
+                    ts += " (" + "LC_HoldingPlatformRequiresStrength".Translate(Defs.StatDefOf.LC_MinimumContainmentStrength.Worker.ValueToString(minimumStrength, finalized: false)) + ")";
                 }
 
                 inspectTextSB.Append(ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable));

@@ -25,7 +25,7 @@ namespace LCAnomalyCore.Recipe
                 return false;
             }
 
-            if (pawn.Faction == Faction.OfEntities)
+            if (pawn.Faction == Util.LCContainmentUtility.AbnormalityFaction || (ModsConfig.AnomalyActive && pawn.Faction == Faction.OfEntities))
             {
                 return false;
             }
@@ -67,7 +67,8 @@ namespace LCAnomalyCore.Recipe
             BodyPartRecord brain = pawn.health.hediffSet.GetBrain();
             if (brain != null)
             {
-                Find.BattleLog.Add(new BattleLogEntry_Event(pawn, RulePackDefOf.Event_UnnaturalCorpseAttack, billDoer));
+                if (ModsConfig.AnomalyActive)
+                    Find.BattleLog.Add(new BattleLogEntry_Event(pawn, RulePackDefOf.Event_UnnaturalCorpseAttack, billDoer));
                 DamageDef psychic = DamageDefOf.Psychic;
                 BodyPartRecord hitPart = brain;
                 pawn.TakeDamage(new DamageInfo(psychic, 99999f, 99999f, -1f, billDoer, hitPart));

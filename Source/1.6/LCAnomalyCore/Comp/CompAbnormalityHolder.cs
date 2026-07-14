@@ -6,7 +6,7 @@ namespace LCAnomalyCore.Comp
 {
     public abstract class CompAbnormalityHolder : ThingComp
     {
-        public virtual float ContainmentStrength => parent.GetStatValue(StatDefOf.ContainmentStrength, applyPostProcess: true, 15);
+        public virtual float ContainmentStrength => Util.LCContainmentUtility.GetContainmentStrength(parent);
 
         public CompProperties_AbnormalityHolder Props => (CompProperties_AbnormalityHolder)props;
 
@@ -28,8 +28,8 @@ namespace LCAnomalyCore.Comp
                 text += "\n";
             }
 
-            float statValue = parent.GetStatValue(StatDefOf.ContainmentStrength);
-            text += $"{StatDefOf.ContainmentStrength.LabelCap}: {statValue:F0}";
+            float statValue = ContainmentStrength;
+            text += $"{Defs.StatDefOf.LC_ContainmentStrength.LabelCap}: {statValue:F0}";
             if (!parent.Spawned)
             {
                 return text;
@@ -39,11 +39,6 @@ namespace LCAnomalyCore.Comp
             {
                 text += string.Format(" ({0})", "Outdoors".Translate());
             }
-            else if (StatWorker_ContainmentStrength.AnyDoorForcedOpen(parent.GetRoom()))
-            {
-                text += string.Format(" ({0})", "Stat_ContainmentStrength_DoorForcedOpen".Translate());
-            }
-
             return text;
         }
     }

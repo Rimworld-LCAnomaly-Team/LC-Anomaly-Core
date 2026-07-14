@@ -23,7 +23,7 @@ namespace LCAnomalyCore.Jobs
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if (pawn.Reserve(Takee, job, 1, -1, null, errorOnFailed))
+            if (Takee != null && DestHolder != null && pawn.Reserve(Takee, job, 1, -1, null, errorOnFailed))
             {
                 return pawn.Reserve(DestHolder.parent, job, 1, -1, null, errorOnFailed);
             }
@@ -35,13 +35,11 @@ namespace LCAnomalyCore.Jobs
         {
             this.FailOnDestroyedOrNull(TargetIndex.B);
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-            this.FailOn(() => !DestHolder.Available);
-            this.FailOn(() => Takee is Pawn pawn2 && !(pawn2.GetComp<CompActivity>()?.IsDormant ?? true));
-
-            /* 新增开始 */
-
+            this.FailOn(() => DestHolder == null || !DestHolder.Available);
             bool isLCEntity = Takee.TryGetComp<CompAbnormality>() != null || Takee.def is ThingDef_AbnormalityEgg;
-            bool isLCPlatform = DestHolder.parent.def is LC_HoldingPlatformDef;
+            bool isLCPlatform = DestHolder?.parent?.def is LC_HoldingPlatformDef;
+
+            this.FailOn(() => !isLCEntity && Takee is Pawn pawn2 && ModsConfig.AnomalyActive && !(pawn2.GetComp<CompActivity>()?.IsDormant ?? true));
 
             Log.Warning("CarryToEntityHolder：正在使用LCAnomalyLibrary.Jobs自定义的方法，而非原版方法");
 
@@ -58,9 +56,7 @@ namespace LCAnomalyCore.Jobs
 
             Log.Message("CarryToEntityHolder：平台检测通过，符合专有平台规则");
 
-            /* 新增结束 */
-
-            this.FailOn(() => Takee.TryGetComp<CompAbnormalityHoldingPlatformTarget>().EntityHolder != DestHolder);
+            this.FailOn(() => Takee.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.EntityHolder != DestHolder);
             if (pawn.carryTracker.CarriedThing != Takee)
             {
                 yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.OnCell);
@@ -75,7 +71,7 @@ namespace LCAnomalyCore.Jobs
 
             yield return Toils_General.Do(delegate
             {
-                if (Takee is Pawn pawn && (!pawn.RaceProps.Humanlike || pawn.IsMutant))
+                if (ModsConfig.AnomalyActive && TaleDefOf.Captured != null && Takee is Pawn pawn && (!pawn.RaceProps.Humanlike || pawn.IsMutant))
                 {
                     TaleRecorder.RecordTale(TaleDefOf.Captured, base.pawn, pawn);
                 }
@@ -86,7 +82,8 @@ namespace LCAnomalyCore.Jobs
         {
             yield return Toils_Goto.GotoThing(platformIndex, PathEndMode.ClosestTouch);
             Toil toil = Toils_General.WaitWith(platformIndex, 300, useProgressBar: true);
-            toil.PlaySustainerOrSound(SoundDefOf.ChainToPlatform);
+            if (ModsConfig.AnomalyActive && SoundDefOf.ChainToPlatform != null)
+                toil.PlaySustainerOrSound(SoundDefOf.ChainToPlatform);
             yield return toil;
             yield return Toils_General.Do(delegate
             {

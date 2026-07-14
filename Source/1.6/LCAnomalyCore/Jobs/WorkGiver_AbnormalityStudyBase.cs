@@ -30,7 +30,7 @@ namespace LCAnomalyCore.Jobs
             }
 
             var compAbnormalityStudiable = thing.TryGetComp<CompAbnormalityStudiable>();
-            return Find.TickManager.TicksGame - compAbnormalityStudiable.lastStudiedTick;
+            return compAbnormalityStudiable == null ? 0f : Find.TickManager.TicksGame - compAbnormalityStudiable.lastStudiedTick;
         }
     }
 }

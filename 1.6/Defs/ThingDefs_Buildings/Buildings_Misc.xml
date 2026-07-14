@@ -15,12 +15,11 @@
     <canOverlapZones>false</canOverlapZones>
     <size>(3, 3)</size>
     <defaultPlacingRot>North</defaultPlacingRot>
-    <minMonolithLevel>1</minMonolithLevel>
     <thingCategories>
       <li>LC_Building_Containment</li>
     </thingCategories>
     <inspectorTabs>
-      <li>ITab_Entity</li>
+      <li>ITab_AbnormalityStudyNotes</li>
     </inspectorTabs>
     <designationCategory>Buildings_LC</designationCategory>
     <building>

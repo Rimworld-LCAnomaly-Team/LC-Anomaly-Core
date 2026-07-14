@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <TabStudyNotesContents>研究笔记</TabStudyNotesContents>
+  <StudyNotesTab_NoDiscoveries>尚无发现。</StudyNotesTab_NoDiscoveries>
+  <StudyNotesTab_StudyProgress>研究进度</StudyNotesTab_StudyProgress>
+  <StudyNotesTab_StudyProgressCompleted>已完成</StudyNotesTab_StudyProgressCompleted>
+  <StudyNotesTab_StudyProgressOngoing>进行中</StudyNotesTab_StudyProgressOngoing>
+  <StudyNotesTab_ToggleStudy>启用研究</StudyNotesTab_ToggleStudy>
+
+</LanguageData>

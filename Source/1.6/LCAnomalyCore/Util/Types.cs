@@ -17,7 +17,7 @@ namespace LCAnomalyCore.Util
             if (thing == null)
                 return false;
 
-            return thing.def.entityCodexEntry is Defs.AbnormalityCodexEntryDef;
+            return thing.TryGetComp<Comp.CompAbnormality>() != null || thing.def is Defs.ThingDef_AbnormalityBase;
         }
     }
 

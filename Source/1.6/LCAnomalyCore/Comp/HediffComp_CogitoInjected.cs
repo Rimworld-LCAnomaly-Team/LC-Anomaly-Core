@@ -39,7 +39,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         private void TurnIntoAnomaly()
         {
-            EffecterDefOf.MeatExplosionSmall.SpawnMaintained(Pawn.Position, Pawn.MapHeld);
+            EffecterDefOf.MeatExplosionSmall?.SpawnMaintained(Pawn.Position, Pawn.MapHeld);
 
             if (Rand.Chance(Props.deadChance))
             {
@@ -58,7 +58,7 @@ namespace LCAnomalyCore.Comp
                 {
                     if (Rand.Chance(Props.sevenSinEnitityChance))
                     {
-                        Pawn pawn = PawnGenerator.GeneratePawn(list1.RandomElement(), Faction.OfEntities);
+                        Pawn pawn = PawnGenerator.GeneratePawn(list1.RandomElement(), LCContainmentUtility.AbnormalityFaction);
 
                         if (Pawn.Name != null)
                         {

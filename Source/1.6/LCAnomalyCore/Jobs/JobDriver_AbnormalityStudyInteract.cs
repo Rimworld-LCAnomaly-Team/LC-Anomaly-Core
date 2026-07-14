@@ -127,7 +127,8 @@ namespace LCAnomalyCore.Jobs
                 }
             });
             
-            studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);
+            if (ModsConfig.AnomalyActive && EffecterDefOf.StudyHoraxian != null)
+                studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);
 
             Toil finishInteraction = ToilMaker.MakeToil("Interaction finish");
             finishInteraction.initAction = DoStudyInteraction;
@@ -151,9 +152,10 @@ namespace LCAnomalyCore.Jobs
                 studyInteractions = 0;
                 StudyComp.studyInteractions = 0;
                 StudyComp.lastStudiedTick = Find.TickManager.TicksGame;
-                if (ModsConfig.AnomalyActive && ThingToStudy is Pawn pawn && (!pawn.RaceProps.Humanlike || pawn.IsMutant))
+                ThingToStudy.TryGetComp<CompAbnormality>()?.Notify_Studied(pawn);
+                if (ModsConfig.AnomalyActive && TaleDefOf.StudiedEntity != null && ThingToStudy is Pawn entityPawn && (!entityPawn.RaceProps.Humanlike || entityPawn.IsMutant))
                 {
-                    TaleRecorder.RecordTale(TaleDefOf.StudiedEntity, base.pawn, pawn);
+                    TaleRecorder.RecordTale(TaleDefOf.StudiedEntity, base.pawn, entityPawn);
                 }
             };
             yield return toil;
@@ -169,7 +171,8 @@ namespace LCAnomalyCore.Jobs
                 if (actor.CurJob.GetTarget(pawnIndex).Thing is Pawn recipient)
                 {
                     PawnUtility.ForceWait(recipient, duration, study.actor);
-                    actor.interactions.TryInteractWith(recipient, InteractionDefOf.PrisonerStudyAnomaly);
+                    if (InteractionDefOf.PrisonerStudyAnomaly != null)
+                        actor.interactions.TryInteractWith(recipient, InteractionDefOf.PrisonerStudyAnomaly);
                 }
             };
             study.tickAction = delegate
@@ -187,7 +190,7 @@ namespace LCAnomalyCore.Jobs
         {
             StudyComp.Study(base.pawn, 0.87f);
             studyInteractions++;
-            if (ModsConfig.AnomalyActive && ThingToStudy is Pawn pawn)
+            if (ThingToStudy is Pawn pawn)
             {
                 pawn.mindState.lastAssignedInteractTime = Find.TickManager.TicksGame;
                 pawn.mindState.interactionsToday++;

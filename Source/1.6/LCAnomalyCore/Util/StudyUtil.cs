@@ -182,18 +182,18 @@ namespace LCAnomalyCore.Util
             {
                 if (carrier != null && !CanReserveForTransfer(t))
                 {
-                    Messages.Message("MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
+                    Messages.Message("LC_MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
                 }
                 else
                 {
-                    foreach (Thing item in Find.CurrentMap.listerThings.ThingsInGroup(ThingRequestGroup.EntityHolder))
+                    foreach (Building_AbnormalityHoldingPlatform holdingPlatform in Find.CurrentMap.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
                     {
-                        if (item is Building_AbnormalityHoldingPlatform holdingPlatform && abnormality != holdingPlatform.HeldPawn)
+                        if (abnormality != holdingPlatform.HeldPawn)
                         {
                             var compHoldingPlatformTarget = holdingPlatform.HeldPawn?.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                             if (compHoldingPlatformTarget != null && compHoldingPlatformTarget.targetHolder == t.Thing)
                             {
-                                Messages.Message("MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
+                                Messages.Message("LC_MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
                                 return;
                             }
                         }
@@ -207,14 +207,16 @@ namespace LCAnomalyCore.Util
 
                     if (carrier != null)
                     {
-                        Job job = (transferBetweenPlatforms ? JobMaker.MakeJob(RimWorld.JobDefOf.TransferBetweenEntityHolders, sourcePlatform, t, abnormality) : JobMaker.MakeJob(RimWorld.JobDefOf.CarryToEntityHolder, t, abnormality));
+                        JobDef carryJobDef = isLCEntity ? Defs.JobDefOf.CarryToAbnormalityHolder : (RimWorld.JobDefOf.CarryToEntityHolder ?? Defs.JobDefOf.CarryToAbnormalityHolder);
+                        JobDef transferJobDef = RimWorld.JobDefOf.TransferBetweenEntityHolders ?? Defs.JobDefOf.CarryToAbnormalityHolder;
+                        Job job = (transferBetweenPlatforms ? JobMaker.MakeJob(transferJobDef, sourcePlatform, t, abnormality) : JobMaker.MakeJob(isLCEntity ? Defs.JobDefOf.CarryToAbnormalityHolder : carryJobDef, t, abnormality));
                         job.count = 1;
                         carrier.jobs.TryTakeOrderedJob(job, JobTag.Misc);
                     }
 
-                    if (t.Thing != null && !t.Thing.SafelyContains(abnormality))
+                    if (t.Thing != null && !LCContainmentUtility.SafelyContains(t.Thing, abnormality))
                     {
-                        Messages.Message("MessageTargetBelowMinimumContainmentStrength".Translate(t.Thing.Label, abnormality.Label), MessageTypeDefOf.ThreatSmall);
+                        Messages.Message("LC_MessageTargetBelowMinimumContainmentStrength".Translate(t.Thing.Label, abnormality.Label), MessageTypeDefOf.ThreatSmall);
                     }
                 }
             }, delegate (LocalTargetInfo t)
@@ -228,7 +230,7 @@ namespace LCAnomalyCore.Util
                 CompAbnormalityHolder compAbnormalityHolder = t.Thing?.TryGetComp<CompAbnormalityHolder>();
                 if (compAbnormalityHolder == null)
                 {
-                    TaggedString label = "ChooseEntityHolder".Translate().CapitalizeFirst() + "...";
+                    TaggedString label = "LC_ChooseEntityHolder".Translate().CapitalizeFirst() + "...";
                     Widgets.MouseAttachedLabel(label);
                 }
                 else
@@ -239,7 +241,7 @@ namespace LCAnomalyCore.Util
                     {
                         pawn = t.Thing.Map.reservationManager.FirstRespectedReserver(t.Thing, carrier);
                     }
-                    else if (t.Thing is Building_HoldingPlatform p)
+                    else if (t.Thing is Building_AbnormalityHoldingPlatform p)
                     {
                         /* 新增方法开始 */
 
@@ -257,12 +259,13 @@ namespace LCAnomalyCore.Util
                     TaggedString label;
                     if (pawn != null)
                     {
-                        label = string.Format("{0}: {1}", "EntityHolderReservedBy".Translate(), pawn.LabelShortCap);
+                        label = string.Format("{0}: {1}", "LC_EntityHolderReservedBy".Translate(), pawn.LabelShortCap);
                     }
                     else
                     {
-                        label = "FloatMenuContainmentStrength".Translate() + ": " + StatDefOf.ContainmentStrength.Worker.ValueToString(compAbnormalityHolder.ContainmentStrength, finalized: false);
-                        label += "\n" + ("FloatMenuContainmentRequires".Translate(abnormality).CapitalizeFirst() + ": " + StatDefOf.MinimumContainmentStrength.Worker.ValueToString(abnormality.GetStatValue(StatDefOf.MinimumContainmentStrength), finalized: false)).Colorize(t.Thing.SafelyContains(abnormality) ? Color.white : Color.red);
+                        label = "LC_FloatMenuContainmentStrength".Translate() + ": " + Defs.StatDefOf.LC_ContainmentStrength.Worker.ValueToString(compAbnormalityHolder.ContainmentStrength, finalized: false);
+                        float minimumStrength = LCContainmentUtility.GetMinimumContainmentStrength(abnormality);
+                        label += "\n" + ("LC_FloatMenuContainmentRequires".Translate(abnormality).CapitalizeFirst() + ": " + Defs.StatDefOf.LC_MinimumContainmentStrength.Worker.ValueToString(minimumStrength, finalized: false)).Colorize(LCContainmentUtility.SafelyContains(t.Thing, abnormality) ? Color.white : Color.red);
                     }
 
                     Widgets.MouseAttachedLabel(label);

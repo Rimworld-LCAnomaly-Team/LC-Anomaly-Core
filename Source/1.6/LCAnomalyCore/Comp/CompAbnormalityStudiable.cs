@@ -6,7 +6,7 @@ namespace LCAnomalyCore.Comp
 {
     public class CompAbnormalityStudiable : ThingComp
     {
-        private static readonly CachedTexture StudyToggleIcon = new CachedTexture("UI/Icons/Study");
+        private static readonly CachedTexture StudyToggleIcon = new CachedTexture("UI/Commands/WorkableUI");
 
         public CompProperties_AbnormalityStudiable Props => (CompProperties_AbnormalityStudiable)props;
 
@@ -75,7 +75,21 @@ namespace LCAnomalyCore.Comp
             bool completed = Completed;
 
             studyAmount *= Find.Storyteller.difficulty.researchSpeedFactor;
-            studyAmount *= studier.GetStatValue(StatDefOf.ResearchSpeed);
+            if (studier != null)
+            {
+                studyAmount *= studier.GetStatValue(StatDefOf.ResearchSpeed);
+            }
+
+            studyPoints += studyAmount;
+
+            studier?.skills.Learn(SkillDefOf.Intellectual, 0.1f);
+
+            if (Props.Completable && studyPoints >= Props.studyAmountToComplete)
+            {
+                studyPoints = Props.studyAmountToComplete;
+            }
+
+            CompStudyUnlocks?.OnStudied(studier, studyPoints);
 
             if (!completed && Completed)
             {
@@ -149,6 +163,7 @@ namespace LCAnomalyCore.Comp
 
         public override void PostExposeData()
         {
+            base.PostExposeData();
             Scribe_Values.Look(ref lastStudiedTick, "lastStudiedTick", 0);
             Scribe_Values.Look(ref studyEnabled, "studyEnabled", defaultValue: true);
             Scribe_Values.Look(ref studyPoints, "studiedAmount", 0f);
@@ -164,7 +179,7 @@ namespace LCAnomalyCore.Comp
                 }
             }
 
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && Find.StudyManager.backCompatStudyProgress.TryGetValue(parent.def, out var value2))
+            if (ModsConfig.AnomalyActive && Scribe.mode == LoadSaveMode.PostLoadInit && Find.StudyManager.backCompatStudyProgress.TryGetValue(parent.def, out var value2))
             {
                 studyPoints = Props.studyAmountToComplete * value2;
             }
@@ -177,8 +192,8 @@ namespace LCAnomalyCore.Comp
             {
                 Command_Toggle command_Toggle = new Command_Toggle
                 {
-                    defaultLabel = "CommandToggleStudy".Translate(),
-                    defaultDesc = "CommandToggleStudyDesc".Translate(),
+                    defaultLabel = "LC_CommandToggleStudy".Translate(),
+                    defaultDesc = "LC_CommandToggleStudyDesc".Translate(),
                     icon = StudyToggleIcon.Texture,
                     isActive = () => studyEnabled,
                     toggleAction = delegate

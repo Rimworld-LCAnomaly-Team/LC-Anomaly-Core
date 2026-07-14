@@ -24,7 +24,7 @@ namespace LCAnomalyCore.Recipe
                 return false;
             }
 
-            if (pawn.Faction == Faction.OfEntities)
+            if (pawn.Faction == Util.LCContainmentUtility.AbnormalityFaction || (ModsConfig.AnomalyActive && pawn.Faction == Faction.OfEntities))
             {
                 return false;
             }

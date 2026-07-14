@@ -90,7 +90,7 @@ namespace LCAnomalyCore.Util
                 //Ritual字典初始化
                 foreach (var def in DefDatabase<ThingDef_AbnormalityEgg>.AllDefsListForReading)
                 {
-                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef?.defName;
                     if (defName == level)
                     {
                         anomlayLvl2DefList_Ritual[level].Add(def);
@@ -98,7 +98,7 @@ namespace LCAnomalyCore.Util
                 }
                 foreach (var def in DefDatabase<ThingDef_AbnormalityTool>.AllDefsListForReading)
                 {
-                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef?.defName;
                     if (defName == level)
                     {
                         anomlayLvl2DefList_Ritual[level].Add(def);
@@ -108,7 +108,7 @@ namespace LCAnomalyCore.Util
                 //Cogito字典初始化
                 foreach (var def in DefDatabase<ThingDef_AbnormalityEntity_Spawn>.AllDefsListForReading)
                 {
-                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef?.defName;
                     if (defName == level)
                     {
                         anomlayLvl2DefList_Cogito[level].Add(def);
@@ -118,7 +118,7 @@ namespace LCAnomalyCore.Util
                 //SevenSin字典初始化
                 foreach (var def in DefDatabase<PawnKindDef_AnomalyEntity_SevenSin>.AllDefsListForReading)
                 {
-                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+                    var defName = def.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef?.defName;
                     if (defName == level)
                     {
                         anomlayLvl2DefList_SevenSin[level].Add(def);

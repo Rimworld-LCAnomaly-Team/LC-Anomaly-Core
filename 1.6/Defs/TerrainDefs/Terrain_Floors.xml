@@ -18,6 +18,7 @@
       <Cleanliness>0.2</Cleanliness>
       <CleaningTimeFactor>0.6</CleaningTimeFactor>
       <Flammability>0.15</Flammability>
+      <LC_ContainmentStrength>5</LC_ContainmentStrength>
     </statBases>
     <costList>
       <EnkephalinBox>5</EnkephalinBox>

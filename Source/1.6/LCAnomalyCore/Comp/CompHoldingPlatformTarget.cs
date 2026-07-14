@@ -13,7 +13,7 @@ namespace LCAnomalyCore.Comp
     [StaticConstructorOnStartup]
     public class CompAbnormalityHoldingPlatformTarget : ThingComp
     {
-        private static readonly CachedTexture CaptureIcon = new CachedTexture("UI/Commands/CaptureEntity");
+        private static readonly CachedTexture CaptureIcon = new CachedTexture("UI/Commands/Assignment/HoldingPlatform");
 
         private static readonly Texture2D CancelTex = ContentFinder<Texture2D>.Get("UI/Designators/Cancel");
 
@@ -53,12 +53,22 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        public CompAbnormalityHolder EntityHolder => targetHolder.TryGetComp<CompAbnormalityHolder>();
+        public CompAbnormalityHolder EntityHolder => targetHolder?.TryGetComp<CompAbnormalityHolder>();
 
         public bool StudiedAtHoldingPlatform
         {
             get
             {
+                if (parent.TryGetComp<CompAbnormality>() != null)
+                {
+                    return true;
+                }
+
+                if (!ModsConfig.AnomalyActive)
+                {
+                    return false;
+                }
+
                 if (!EverStudiable)
                 {
                     return false;
@@ -71,7 +81,7 @@ namespace LCAnomalyCore.Comp
                         return false;
                     }
 
-                    if (pawn.IsMutant && pawn.mutant.Def.canBeCapturedToHoldingPlatform)
+                    if (pawn.IsMutant && ModLister.AnomalyInstalled && pawn.mutant.Def.canBeCapturedToHoldingPlatform)
                     {
                         return true;
                     }
@@ -132,19 +142,15 @@ namespace LCAnomalyCore.Comp
                     return false;
                 }
 
-                if (pawn.IsMutant && !pawn.mutant.Def.canBeCapturedToHoldingPlatform)
-                {
-                    return false;
-                }
-
-                if (CompAbnormalityStudiable != null)
+                bool isLCAbnormality = parent.TryGetComp<CompAbnormality>() != null;
+                if (!isLCAbnormality && pawn.IsMutant && ModsConfig.AnomalyActive && !pawn.mutant.Def.canBeCapturedToHoldingPlatform)
                 {
                     return false;
                 }
 
                 if (!pawn.Downed && !(pawn.ParentHolder is Pawn_CarryTracker))
                 {
-                    return CompActivity?.IsDormant ?? false;
+                    return !isLCAbnormality && ModsConfig.AnomalyActive && (CompActivity?.IsDormant ?? false);
                 }
 
                 return true;
@@ -173,7 +179,7 @@ namespace LCAnomalyCore.Comp
                 {
                     //CaptivityTick(pawn);
                 }
-                else if (targetHolder != null && (targetHolder.Destroyed || EntityHolder.HeldPawn != null))
+                else if (targetHolder != null && (targetHolder.Destroyed || EntityHolder == null || EntityHolder.HeldPawn != null))
                 {
                     targetHolder = null;
                 }
@@ -186,7 +192,8 @@ namespace LCAnomalyCore.Comp
 
             if (CanBeCaptured)
             {
-                LessonAutoActivator.TeachOpportunity(ConceptDefOf.CapturingEntities, OpportunityType.Important);
+                if (ConceptDefOf.CapturingEntities != null)
+                    LessonAutoActivator.TeachOpportunity(ConceptDefOf.CapturingEntities, OpportunityType.Important);
             }
         }
 
@@ -206,7 +213,7 @@ namespace LCAnomalyCore.Comp
                 if (Props.heldPawnKind != null)
                 {
                     PawnKindDef heldPawnKind = Props.heldPawnKind;
-                    Faction ofEntities = Faction.OfEntities;
+                    Faction ofEntities = LCContainmentUtility.AbnormalityFaction;
                     float? fixedBiologicalAge = 0f;
                     Pawn pawn3 = PawnGenerator.GeneratePawn(new PawnGenerationRequest(heldPawnKind, ofEntities, PawnGenerationContext.NonPlayer, null, forceGenerateNewPawn: true, allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, fixedBiologicalAge));
                     newOwner.TryAdd(pawn3);
@@ -219,11 +226,10 @@ namespace LCAnomalyCore.Comp
                     {
                         if (egg.Props.shouldTransferBioSignature)
                         {
-                            CompBiosignatureOwner compBiosignatureOwner = parent.TryGetComp<CompBiosignatureOwner>();
-                            if (compBiosignatureOwner != null)
+                            var sourceCompAbnormality = parent.TryGetComp<CompAbnormality>();
+                            if (sourceCompAbnormality != null)
                             {
-                                pawn3.TryGetComp<CompAbnormality>().biosignature = compBiosignatureOwner.biosignature;
-                                //Log.Warning("Patch_CompHoldingPlatformTarget:::传递生物特征成功");
+                                pawn3.TryGetComp<CompAbnormality>().biosignature = sourceCompAbnormality.biosignature;
                             }
 
                             if (pawn3.TryGetComp<CompAbnormalityStudiable>(out var comp1))
@@ -232,11 +238,13 @@ namespace LCAnomalyCore.Comp
                             }
                         }
 
-                        var component = Current.Game.GetComponent<GameComponent_LC>();
-                        component.TryGetAnomalyStatusSaved(pawn3.def, out AnomalyStatusSaved saved);
-
+                        var component = Components.LC;
                         var comp2 = pawn3.TryGetComp<CompAbnormalityStudyUnlocks>();
-                        comp2?.TransferStudyProgress(saved.StudyProgress);
+                        if (component != null)
+                        {
+                            component.TryGetAnomalyStatusSaved(pawn3.def, out AnomalyStatusSaved saved);
+                            comp2?.TransferStudyProgress(saved.StudyProgress);
+                        }
                     }
 
                     //绑上平台
@@ -251,16 +259,21 @@ namespace LCAnomalyCore.Comp
             if (pawn != null && HeldPlatform != null)
             {
                 pawn.GetLord()?.Notify_PawnLost(pawn, PawnLostCondition.MadePrisoner);
-                pawn.TryGetComp <CompActivity>()?.Notify_HeldOnPlatform();
-                Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
-                PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.CapturingEntities, KnowledgeAmount.Total);
-                LessonAutoActivator.TeachOpportunity(ConceptDefOf.ContainingEntities, OpportunityType.Important);
+                if (ModsConfig.AnomalyActive)
+                    pawn.TryGetComp<CompActivity>()?.Notify_HeldOnPlatform();
+                if (ModsConfig.AnomalyActive)
+                    Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
+                if (ConceptDefOf.CapturingEntities != null)
+                    PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.CapturingEntities, KnowledgeAmount.Total);
+                if (ConceptDefOf.ContainingEntities != null)
+                    LessonAutoActivator.TeachOpportunity(ConceptDefOf.ContainingEntities, OpportunityType.Important);
             }
         }
 
         public void Notify_ReleasedFromPlatform()
         {
-            Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
+            if (ModsConfig.AnomalyActive)
+                Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
         }
 
         public void Escape()
@@ -301,8 +314,8 @@ namespace LCAnomalyCore.Comp
                 {
                     yield return new Command_Action
                     {
-                        defaultLabel = "CancelCapture".Translate(),
-                        defaultDesc = "CancelCaptureDesc".Translate(parent).Resolve(),
+                        defaultLabel = "LC_CancelCapture".Translate(),
+                        defaultDesc = "LC_CancelCaptureDesc".Translate(parent).Resolve(),
                         icon = CancelTex,
                         action = delegate
                         {
@@ -314,8 +327,8 @@ namespace LCAnomalyCore.Comp
                 {
                     yield return new Command_Action
                     {
-                        defaultLabel = "CaptureEntity".Translate() + "...",
-                        defaultDesc = "CaptureEntityDesc".Translate(parent).Resolve(),
+                        defaultLabel = "LC_CaptureEntity".Translate() + "...",
+                        defaultDesc = "LC_CaptureEntityDesc".Translate(parent).Resolve(),
                         icon = CaptureIcon.Texture,
                         action = delegate
                         {
@@ -323,7 +336,7 @@ namespace LCAnomalyCore.Comp
                         },
                         activateSound = SoundDefOf.Click,
                         Disabled = !StudyUtil.HoldingPlatformAvailableOnCurrentMap(),
-                        disabledReason = "NoHoldingPlatformsAvailable".Translate()
+                        disabledReason = "LC_NoHoldingPlatformsAvailable".Translate()
                     };
                 }
             }
@@ -334,8 +347,8 @@ namespace LCAnomalyCore.Comp
                 {
                     yield return new Command_Action
                     {
-                        defaultLabel = "CancelTransfer".Translate(),
-                        defaultDesc = "CancelTransferDesc".Translate(),
+                        defaultLabel = "LC_CancelTransfer".Translate(),
+                        defaultDesc = "LC_CancelTransferDesc".Translate(),
                         icon = CancelTex,
                         action = delegate
                         {
@@ -369,12 +382,12 @@ namespace LCAnomalyCore.Comp
         public override string CompInspectStringExtra()
         {
             string text = base.CompInspectStringExtra();
-            if (CanBeCaptured && ContainmentUtility.ShowContainmentStats(parent))
+            if (CanBeCaptured && parent.TryGetComp<CompAbnormalityHoldingPlatformTarget>(out var targetComp) && targetComp.Props.heldPawnKind != null)
             {
-                float num = parent.GetStatValue(StatDefOf.MinimumContainmentStrength);
+                float num = LCContainmentUtility.GetMinimumContainmentStrength(parent);
                 if (Props.heldPawnKind != null)
                 {
-                    num = Props.heldPawnKind.race.GetStatValueAbstract(StatDefOf.MinimumContainmentStrength);
+                    num = LCContainmentUtility.GetMinimumContainmentStrength(Props.heldPawnKind.race);
                 }
 
                 if (!text.NullOrEmpty())
@@ -382,7 +395,7 @@ namespace LCAnomalyCore.Comp
                     text += "\n";
                 }
 
-                text += "Capturable".Translate() + ". " + StatDefOf.MinimumContainmentStrength.LabelCap + ": " + num.ToString("F1");
+                text += "LC_Capturable".Translate() + ". " + Defs.StatDefOf.LC_MinimumContainmentStrength.LabelCap + ": " + num.ToString("F1");
             }
 
             return text;

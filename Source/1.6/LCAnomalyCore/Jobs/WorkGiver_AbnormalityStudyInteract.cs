@@ -59,7 +59,7 @@ namespace LCAnomalyCore.Jobs
 
                         if (compAbnormalityStudiable.Props.frequencyTicks > 0 && compAbnormalityStudiable.TicksTilNextStudy > 0)
                         {
-                            JobFailReason.Is("CanBeStudiedInDuration".Translate(compAbnormalityStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
+                            JobFailReason.Is("LC_CanBeStudiedInDuration".Translate(compAbnormalityStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
                         }
                         else
                         {

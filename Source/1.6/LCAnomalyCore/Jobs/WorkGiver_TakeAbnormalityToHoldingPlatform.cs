@@ -30,7 +30,8 @@ namespace LCAnomalyCore.Jobs
             }
 
             var compHoldingPlatformTarget = t.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
-            if (compHoldingPlatformTarget?.targetHolder == null || compHoldingPlatformTarget.targetHolder.Destroyed || compHoldingPlatformTarget.targetHolder.MapHeld != t.MapHeld || compHoldingPlatformTarget.EntityHolder.HeldPawn != null)
+            CompAbnormalityHolder holder = compHoldingPlatformTarget?.EntityHolder;
+            if (compHoldingPlatformTarget?.targetHolder == null || holder == null || compHoldingPlatformTarget.targetHolder.Destroyed || compHoldingPlatformTarget.targetHolder.MapHeld != t.MapHeld || holder.HeldPawn != null)
             {
                 return false;
             }

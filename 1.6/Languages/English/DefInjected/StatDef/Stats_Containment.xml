@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <LC_ContainmentStrength.label>LC containment strength</LC_ContainmentStrength.label>
+  <LC_ContainmentStrength.description>How securely this platform can contain an abnormality. Strong walls and doors, lighting, roofing and LC containment flooring improve this value.</LC_ContainmentStrength.description>
+  <LC_MinimumContainmentStrength.label>minimum LC containment strength</LC_MinimumContainmentStrength.label>
+  <LC_MinimumContainmentStrength.description>The LC containment strength required to safely hold this abnormality.</LC_MinimumContainmentStrength.description>
+</LanguageData>

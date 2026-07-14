@@ -8,6 +8,9 @@
     <hideStats>true</hideStats>
     <onlyShowInspectString>true</onlyShowInspectString>
     <hideMainDesc>true</hideMainDesc>
+    <statBases>
+      <LC_MinimumContainmentStrength>0</LC_MinimumContainmentStrength>
+    </statBases>
     <comps>
       <li Class="CompProperties_AttachPoints">
         <points>
@@ -31,7 +34,7 @@
       </li>
     </comps>
     <inspectorTabs>
-      <li>ITab_StudyNotes</li>
+      <li>ITab_AbnormalityStudyNotes</li>
     </inspectorTabs>
   </LCAnomalyCore.Defs.ThingDef_AbnormalityEntity>
 

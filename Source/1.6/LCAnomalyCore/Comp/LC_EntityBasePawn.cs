@@ -46,7 +46,7 @@ namespace LCAnomalyCore.Comp
             if (EntityComp != null)
             {
                 EntityComp.Notify_Studied(studier);
-                EntityComp.StudyUnlocksComp.OnStudied(studier, amount, category);
+                EntityComp.StudyUnlocksComp?.OnStudied(studier, amount, category);
             }
         }
 

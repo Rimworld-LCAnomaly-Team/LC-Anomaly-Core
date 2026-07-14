@@ -24,7 +24,7 @@ namespace LCAnomalyCore.UI.FloatMenu
 
         protected override bool AppliesInt(FloatMenuContext context)
         {
-            return ModsConfig.AnomalyActive;
+            return true;
         }
 
         public override IEnumerable<FloatMenuOption> GetOptionsFor(Thing clickedThing, FloatMenuContext context)
@@ -46,19 +46,31 @@ namespace LCAnomalyCore.UI.FloatMenu
             Thing building = GenClosest.ClosestThing_Global_Reachable(context.FirstSelectedPawn.Position, context.FirstSelectedPawn.Map, buildings, PathEndMode.ClosestTouch, TraverseParms.For(context.FirstSelectedPawn, Danger.Some), 9999f, null, delegate (Thing t)
             {
                 var compEntityHolder = t.TryGetComp<CompAbnormalityHolder>();
-                return (compEntityHolder != null && compEntityHolder.ContainmentStrength >= clickedThing.GetStatValue(StatDefOf.MinimumContainmentStrength)) ? (compEntityHolder.ContainmentStrength / Mathf.Max(clickedThing.PositionHeld.DistanceTo(t.Position), 1f)) : 0f;
+                return (compEntityHolder != null && Util.LCContainmentUtility.SafelyContains(t, clickedThing)) ? (compEntityHolder.ContainmentStrength / Mathf.Max(clickedThing.PositionHeld.DistanceTo(t.Position), 1f)) : 0f;
             });
             if (building == null)
             {
-                yield return new FloatMenuOption("CannotGenericWorkCustom".Translate("CaptureLower".Translate(clickedThing)) + ": " + "NoHoldingPlatformsAvailable".Translate().CapitalizeFirst(), null);
+                yield return new FloatMenuOption("CannotGenericWorkCustom".Translate("LC_CaptureLower".Translate(clickedThing)) + ": " + "LC_NoHoldingPlatformsAvailable".Translate().CapitalizeFirst(), null);
                 yield break;
             }
 
-            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("Capture".Translate(clickedThing.Label, clickedThing), delegate
+            yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("LC_Capture".Translate(clickedThing.Label, clickedThing), delegate
             {
-                if (!ContainmentUtility.SafeContainerExistsFor(clickedThing))
+                bool safeContainerExists = false;
+                float minStrength = Util.LCContainmentUtility.GetMinimumContainmentStrength(clickedThing);
+                foreach (Building_AbnormalityHoldingPlatform platform in context.FirstSelectedPawn.Map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
                 {
-                    Messages.Message("MessageNoRoomWithMinimumContainmentStrength".Translate(clickedThing.Label), MessageTypeDefOf.ThreatSmall);
+                    var holderComp = platform.TryGetComp<CompAbnormalityHolder>();
+                    if (holderComp != null && !platform.Occupied && holderComp.ContainmentStrength >= minStrength)
+                    {
+                        safeContainerExists = true;
+                        break;
+                    }
+                }
+
+                if (!safeContainerExists)
+                {
+                    Messages.Message("LC_MessageNoPlatformWithMinimumContainmentStrength".Translate(clickedThing.Label), MessageTypeDefOf.ThreatSmall);
                 }
 
                 holdComp.targetHolder = building;
@@ -68,7 +80,7 @@ namespace LCAnomalyCore.UI.FloatMenu
             }), context.FirstSelectedPawn, clickedThing);
             if (buildings.Count() > 1)
             {
-                yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("Capture".Translate(clickedThing.Label, clickedThing) + " (" + "ChooseEntityHolder".Translate() + "...)", delegate
+                yield return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("LC_Capture".Translate(clickedThing.Label, clickedThing) + " (" + "LC_ChooseEntityHolder".Translate() + "...)", delegate
                 {
                     Util.StudyUtil.TargetHoldingPlatformForEntity(context.FirstSelectedPawn, clickedThing);
                 }), context.FirstSelectedPawn, clickedThing);

@@ -146,6 +146,8 @@
     <Compile Include="Defs\RecipeDefOf.cs" />
     <Compile Include="Defs\ResearchProjectDefOf.cs" />
     <Compile Include="Defs\ResearchTabDefOf.cs" />
+    <Compile Include="Defs\FactionDefOf.cs" />
+    <Compile Include="Defs\StatDefOf.cs" />
     <Compile Include="Defs\SongDefOf.cs" />
     <Compile Include="Defs\ThingDefOf.cs" />
     <Compile Include="Defs\ThingDef_LCAnomalyBase.cs" />
@@ -164,7 +166,7 @@
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
     <Compile Include="Patch\Patch_ColonistBarColonistDrawer.cs" />
-    <Compile Include="Patch\Patch_CompStudyUnlocks.cs" />
+    <Compile Include="UI\ITab_AbnormalityStudyNotes.cs" />
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
@@ -209,6 +211,8 @@
     <Compile Include="Util\MusicUtils.cs" />
     <Compile Include="Util\SightUtil.cs" />
     <Compile Include="Util\StudyUtil.cs" />
+    <Compile Include="Util\LCContainmentUtility.cs" />
+    <Compile Include="Util\StatWorker_LCContainmentStrength.cs" />
     <Compile Include="Util\Types.cs" />
   </ItemGroup>
   <ItemGroup />

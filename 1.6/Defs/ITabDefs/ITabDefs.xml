@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ITabDef>
+    <defName>ITab_AbnormalityStudyNotes</defName>
+    <label>Study Notes</label>
+    <tabWindowClass>LCAnomalyCore.UI.ITab_AbnormalityStudyNotes</tabWindowClass>
+    <visibleByDefault>false</visibleByDefault>
+  </ITabDef>
+
+</Defs>

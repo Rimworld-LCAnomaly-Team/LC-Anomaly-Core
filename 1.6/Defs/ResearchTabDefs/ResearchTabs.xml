@@ -7,7 +7,6 @@
     <generalTitle>Abnormality Research</generalTitle>
     <generalDescription>.</generalDescription>
     <visibleByDefault>true</visibleByDefault>
-    <minMonolithLevelVisible>1</minMonolithLevelVisible>
     <tutorTag>Research-Tab-LCAnomaly</tutorTag>
   </ResearchTabDef>
 

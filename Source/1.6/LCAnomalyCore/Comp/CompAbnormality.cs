@@ -25,18 +25,32 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// 研究阶段解锁
         /// </summary>
-        public CompStudyUnlocks StudyUnlocksComp
+        public CompAbnormalityStudyUnlocks StudyUnlocksComp
         {
             get
             {
                 if (studyUnlocksComp == null)
-                    return studyUnlocksComp = parent.GetComp<CompStudyUnlocks>();
+                    return studyUnlocksComp = parent.GetComp<CompAbnormalityStudyUnlocks>();
                 else
                     return studyUnlocksComp;
             }
         }
 
-        protected CompStudyUnlocks studyUnlocksComp;
+        protected CompAbnormalityStudyUnlocks studyUnlocksComp;
+
+        public AbnormalityCategoryDef AbnormalityCategory
+        {
+            get
+            {
+                AbnormalityCategoryDef category = parent.def.GetModExtension<ModExtension_AbnormalityCategory>()?.abnormalityCategoryDef;
+                if (category != null)
+                {
+                    return category;
+                }
+
+                return DefDatabase<AbnormalityCodexEntryDef>.GetNamedSilentFail(parent.def.defName)?.category;
+            }
+        }
 
         /// <summary>
         /// 研究组件
@@ -61,7 +75,7 @@ namespace LCAnomalyCore.Comp
         {
             get
             {
-                if (studyUnlocksComp == null)
+                if (accessoryableComp == null)
                     return accessoryableComp = parent.GetComp<CompAccessoryable>();
                 else
                     return accessoryableComp;
@@ -139,7 +153,14 @@ namespace LCAnomalyCore.Comp
                 }
                 else
                 {
-                    var points = MusicUtils.LevelTag2Points(parent.def.entityCodexEntry.category.defName);
+                    string categoryDefName = AbnormalityCategory?.defName;
+                    if (categoryDefName.NullOrEmpty())
+                    {
+                        Log.WarningOnce($"LC anomaly {parent.def.defName} has no abnormality category; warning points default to 0.", parent.def.shortHash);
+                        return 0;
+                    }
+
+                    var points = MusicUtils.LevelTag2Points(categoryDefName);
                     //Log.Message($"警报点数：{parent.def.label.Translate()}提供根据等级的警报点数{points}点");
 
                     return points;
@@ -194,9 +215,22 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// 生物特征名
         /// </summary>
-        public string BiosignatureName => biosignatureName ?? (biosignatureName = AnomalyUtility.GetBiosignatureName(biosignature));
+        public string BiosignatureName => biosignatureName ?? (biosignatureName = GetBiosignatureName());
 
         private string biosignatureName;
+
+        /// <summary>
+        /// 获取生物特征名（如果Anomaly DLC可用则使用DLC方法，否则使用自定义实现）
+        /// </summary>
+        protected virtual string GetBiosignatureName()
+        {
+            if (ModsConfig.AnomalyActive)
+            {
+                return AnomalyUtility.GetBiosignatureName(biosignature);
+            }
+
+            return $"Entity-{biosignature.ToString("X8")}";
+        }
 
         /// <summary>
         /// 是否已出逃
@@ -263,6 +297,13 @@ namespace LCAnomalyCore.Comp
         public virtual void Notify_Studied(Pawn studier, bool interrupted = false)
         {
             //优秀
+            if (PeBoxComp == null)
+            {
+                PeBoxProducedTemp = 0;
+                NeBoxProducedTemp = 0;
+                return;
+            }
+
             if (PeBoxProducedTemp > PeBoxComp.Props.amountProdueRangeNormal.max)
             {
                 StudyEvent_Good(studier);
@@ -406,7 +447,7 @@ namespace LCAnomalyCore.Comp
         /// <param name="workType"></param>
         protected virtual void StudierExpCalculate(CompPawnStatus studier, EAnomalyWorkType workType)
         {
-            string abnormalityCategory = parent.def.GetModExtension<ModExtension_AbnormalityCategory>().abnormalityCategoryDef.defName;
+            string abnormalityCategory = AbnormalityCategory?.defName;
             if (!string.IsNullOrEmpty(abnormalityCategory))
             {
                 float value = StudyUtil.GetPawnStatusIncreaseValue(studier, workType, abnormalityCategory);
