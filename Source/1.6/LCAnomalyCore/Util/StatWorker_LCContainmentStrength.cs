@@ -74,7 +74,7 @@ namespace LCAnomalyCore.Util
 
             float wallStrength = wallCount > 0 ? WallStrengthFromHp.Evaluate(wallHp / wallCount) : 0f;
             var doors = room.ContainedAndAdjacentThings.OfType<Building_Door>().Distinct().ToList();
-            float doorStrength = doors.Count > 0 ? doors.Average(door => door.HitPoints) / 5f : 0f;
+            float doorStrength = doors.Count > 0 ? (float)doors.Average(door => door.HitPoints) / 5f : 0f;
             int otherPlatforms = room.ContainedAndAdjacentThings.Count(thing => thing != req.Thing && thing.HasComp<CompAbnormalityHolder>());
             float roofOffset = !outdoors && room.OpenRoofCount > 0 ? -30f : 0f;
             float strength = baseValue + lighting + floorStrength + wallStrength + doorStrength + roofOffset;

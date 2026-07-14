@@ -608,6 +608,11 @@
             生物特征名
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.GetBiosignatureName">
+            <summary>
+            获取生物特征名（如果Anomaly DLC可用则使用DLC方法，否则使用自定义实现）
+            </summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompAbnormality.Escaped">
             <summary>
             是否已出逃
@@ -1450,16 +1455,6 @@
             服装层Patch（用于解决头部服装渲染问题）
             </summary>
         </member>
-        <member name="T:LCAnomalyCore.Patch.Patch_CompStudyUnlocks">
-            <summary>
-            关于ConpStudyUnlocks的补丁（为了插入改名方法）
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.Patch.Patch_CompStudyUnlocks.Postfix(RimWorld.CompStudyUnlocks,Verse.Pawn,System.Int32)">
-            <summary>
-            Postfix
-            </summary>
-        </member>
         <member name="T:LCAnomalyCore.Patch.Patch_MentalBreak">
             <summary>
             关于MentalStateHandler的补丁（为了提供崩溃警报点数）
@@ -1505,6 +1500,68 @@
             Postfix
             </summary>
             <param name="__instance">原来的反射对象</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
+            <summary>
+            自动研究分配对话框
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
+            <summary>
+            自动研究分配对话框
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignEntity.InitialSize">
+            <summary>
+            窗体的尺寸
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(LCAnomalyCore.Defs.AbnormalityCategoryDef,UnityEngine.Rect)">
+            <summary>
+            绘制Tip
+            </summary>
+            <param name="cat">类型</param>
+            <param name="rect">rect</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.ITab_PawnStatus">
+            <summary>
+            脑叶员工属性Tab
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.StatusComp">
+            <summary>
+            comp
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsEmployee">
+            <summary>
+            是否是职员（comp不为空且阵营为殖民者）
+            </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsVisible">
+            <summary>
+            是否显示在面板上
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.FillTab">
+            <summary>
+            Tab内容绘制
+            </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.DrawStatusTab">
+            <summary>
+            具体内容绘制
+            </summary>
         </member>
         <member name="T:LCAnomalyCore.Recipe.Recipe_CogitoInjection">
             <summary>
@@ -1746,68 +1803,6 @@
             <param name="state"></param>
             <param name="y"></param>
             <param name="inRect"></param>
-        </member>
-        <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
-            <summary>
-            自动研究分配对话框
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign.InitialSize">
-            <summary>
-            窗体的尺寸
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
-            <summary>
-            窗体的尺寸
-            </summary>
-        </member>
-        <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
-            <summary>
-            自动研究分配对话框
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignEntity.InitialSize">
-            <summary>
-            窗体的尺寸
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(LCAnomalyCore.Defs.AbnormalityCategoryDef,UnityEngine.Rect)">
-            <summary>
-            绘制Tip
-            </summary>
-            <param name="cat">类型</param>
-            <param name="rect">rect</param>
-        </member>
-        <member name="T:LCAnomalyCore.UI.ITab_PawnStatus">
-            <summary>
-            脑叶员工属性Tab
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.StatusComp">
-            <summary>
-            comp
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsEmployee">
-            <summary>
-            是否是职员（comp不为空且阵营为殖民者）
-            </summary>
-        </member>
-        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.IsVisible">
-            <summary>
-            是否显示在面板上
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.FillTab">
-            <summary>
-            Tab内容绘制
-            </summary>
-        </member>
-        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.DrawStatusTab">
-            <summary>
-            具体内容绘制
-            </summary>
         </member>
         <member name="T:LCAnomalyCore.Util.AssetBundleUtil">
             <summary>
@@ -2052,6 +2047,11 @@
         <member name="F:LCAnomalyCore.Util.LC_StudyResult.Bad">
             <summary>
             差
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.StatWorker_LCContainmentStrength">
+            <summary>
+            DLC-independent containment strength for LC holding platforms.
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Util.Types">

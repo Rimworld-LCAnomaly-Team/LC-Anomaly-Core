@@ -47,7 +47,7 @@ namespace LCAnomalyCore.UI
 
         public ITab_AbnormalityStudyNotes()
         {
-            size = new Vector2(Mathf.Min(610f, UI.screenWidth), 350f);
+            size = new Vector2(Mathf.Min(610f, Verse.UI.screenWidth), 350f);
             labelKey = "TabStudyNotesContents";
         }
 

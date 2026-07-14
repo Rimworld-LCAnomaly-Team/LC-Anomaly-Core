@@ -37,7 +37,7 @@ namespace LCAnomalyCore.Misc
         /// <summary>
         /// 每Tick执行
         /// </summary>
-        public override void Tick()
+        protected override void Tick()
         {
             //动画播完就执行操作
             if (Find.TickManager.TicksGame >= completeTick)

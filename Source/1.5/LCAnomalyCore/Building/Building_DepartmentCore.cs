@@ -57,7 +57,7 @@ namespace LCAnomalyCore.Building
         private GenDraw.FillableBarRequest fillableBarRequest;
         private int healTimer = 0;
 
-        public override void Tick()
+        protected override void Tick()
         {
             base.Tick();
 

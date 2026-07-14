@@ -84,7 +84,7 @@ namespace LCAnomalyCore.Jobs
 
             Toil findAdjacentCell = Toils_General.Do(delegate
             {
-                IntVec3 adjacentInteractionCell_NewTemp = InteractionUtility.GetAdjacentInteractionCell_NewTemp(pawn, job.GetTarget(TargetIndex.A).Thing, job.playerForced);
+                IntVec3 adjacentInteractionCell_NewTemp = SocialInteractionUtility.GetAdjacentInteractionCell(pawn, job.GetTarget(TargetIndex.A).Thing, job.playerForced);
                 pawn.Map.pawnDestinationReservationManager.Reserve(pawn, job, adjacentInteractionCell_NewTemp);
                 job.targetB = adjacentInteractionCell_NewTemp;
             });
@@ -97,9 +97,9 @@ namespace LCAnomalyCore.Jobs
             else
             {
                 studyToil = Toils_General.WaitWith(TargetIndex.A, numModified, useProgressBar: true, maintainPosture: false, maintainSleep: false, TargetIndex.A);
-                studyToil.AddPreTickAction(delegate
+                studyToil.AddPreTickIntervalAction(delegate (int delta)
                 {
-                    ThingToStudy.TryGetComp<CompObelisk>()?.Notify_InteractedTick(pawn);
+                    ThingToStudy.TryGetComp<CompObelisk>()?.Notify_InteractedTick(pawn, delta);
                 });
             }
 

@@ -160,7 +160,7 @@ namespace LCAnomalyCore.Building
         /// <summary>
         /// Tick
         /// </summary>
-        public override void Tick()
+        protected override void Tick()
         {
             //if (AllComps != null)
             //{
