@@ -6,6 +6,10 @@ namespace LCAnomalyCore.Comp
     {
         public string level = "ZAYIN";
 
+        public Damage.FourColorDamageType damageType = Damage.FourColorDamageType.None;
+
+        public float damageMultiplier = 1f;
+
         public CompProperties_EgoWeapon()
         {
             compClass = typeof(CompEgoWeapon);

@@ -1,68 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <!-- Red -->
-  <DamageDef>
+  <!-- Other mods may inherit this base and replace the mod extension. -->
+  <DamageDef Name="LC_FourColorDamageBase" Abstract="True">
+    <workerClass>LCAnomalyCore.DamageWorker.DamageWorker_FourColor</workerClass>
+    <externalViolence>true</externalViolence>
+    <hediff>Crush</hediff>
+    <hediffSkin>Cut</hediffSkin>
+    <hediffSolid>Crack</hediffSolid>
+    <impactSoundType>Blunt</impactSoundType>
+    <overkillPctToDestroyPart>0.4~1.0</overkillPctToDestroyPart>
+  </DamageDef>
+
+  <DamageDef ParentName="LC_FourColorDamageBase">
     <defName>LC_RedDamage</defName>
-    <label>LC RedDamage</label>
-    <workerClass>DamageWorker_AddInjury</workerClass>
-    <externalViolence>true</externalViolence>
-    <deathMessage>{0} has been hurted.</deathMessage>
-    <hediff>Crush</hediff>
-    <hediffSkin>Cut</hediffSkin>
-    <hediffSolid>Crack</hediffSolid>
-    <harmAllLayersUntilOutside>true</harmAllLayersUntilOutside>
-    <impactSoundType>Blunt</impactSoundType>
-    <armorCategory>Blunt</armorCategory>
-    <overkillPctToDestroyPart>0.4~1.0</overkillPctToDestroyPart>
+    <label>RED damage</label>
+    <deathMessage>{0} was overwhelmed by physical trauma.</deathMessage>
+    <modExtensions>
+      <li Class="LCAnomalyCore.ModExtensions.FourColorDamageExtension">
+        <damageType>Red</damageType>
+      </li>
+    </modExtensions>
   </DamageDef>
 
-  <!-- White -->
-  <DamageDef>
+  <DamageDef ParentName="LC_FourColorDamageBase">
     <defName>LC_WhiteDamage</defName>
-    <label>LC WhiteDamage</label>
-    <workerClass>DamageWorker_AddInjury</workerClass>
-    <externalViolence>true</externalViolence>
-    <deathMessage>{0} has been crushed by MeatLantern to death.</deathMessage>
-    <hediff>Crush</hediff>
-    <hediffSkin>Cut</hediffSkin>
-    <hediffSolid>Crack</hediffSolid>
-    <harmAllLayersUntilOutside>true</harmAllLayersUntilOutside>
-    <impactSoundType>Blunt</impactSoundType>
-    <armorCategory>Blunt</armorCategory>
-    <overkillPctToDestroyPart>0.4~1.0</overkillPctToDestroyPart>
+    <label>WHITE damage</label>
+    <harmsHealth>false</harmsHealth>
+    <deathMessage>{0}'s mind was broken.</deathMessage>
+    <modExtensions>
+      <li Class="LCAnomalyCore.ModExtensions.FourColorDamageExtension">
+        <damageType>White</damageType>
+      </li>
+    </modExtensions>
   </DamageDef>
 
-  <!-- Black -->
-  <DamageDef>
+  <DamageDef ParentName="LC_FourColorDamageBase">
     <defName>LC_BlackDamage</defName>
-    <label>LC BlackDamage</label>
-    <workerClass>DamageWorker_AddInjury</workerClass>
-    <externalViolence>true</externalViolence>
-    <deathMessage>{0} has been crushed by MeatLantern to death.</deathMessage>
-    <hediff>Crush</hediff>
-    <hediffSkin>Cut</hediffSkin>
-    <hediffSolid>Crack</hediffSolid>
-    <harmAllLayersUntilOutside>true</harmAllLayersUntilOutside>
-    <impactSoundType>Blunt</impactSoundType>
-    <armorCategory>Blunt</armorCategory>
-    <overkillPctToDestroyPart>0.4~1.0</overkillPctToDestroyPart>
+    <label>BLACK damage</label>
+    <deathMessage>{0} succumbed to erosion of body and mind.</deathMessage>
+    <modExtensions>
+      <li Class="LCAnomalyCore.ModExtensions.FourColorDamageExtension">
+        <damageType>Black</damageType>
+      </li>
+    </modExtensions>
   </DamageDef>
 
-  <!-- Pale -->
-  <DamageDef>
+  <DamageDef ParentName="LC_FourColorDamageBase">
     <defName>LC_PaleDamage</defName>
-    <label>LC PaleDamage</label>
-    <workerClass>DamageWorker_AddInjury</workerClass>
-    <externalViolence>true</externalViolence>
-    <deathMessage>{0} has been crushed by MeatLantern to death.</deathMessage>
-    <hediff>Crush</hediff>
-    <hediffSkin>Cut</hediffSkin>
-    <hediffSolid>Crack</hediffSolid>
-    <harmAllLayersUntilOutside>true</harmAllLayersUntilOutside>
-    <impactSoundType>Blunt</impactSoundType>
-    <armorCategory>Blunt</armorCategory>
-    <overkillPctToDestroyPart>0.4~1.0</overkillPctToDestroyPart>
+    <label>PALE damage</label>
+    <deathMessage>{0}'s soul was extinguished.</deathMessage>
+    <modExtensions>
+      <li Class="LCAnomalyCore.ModExtensions.FourColorDamageExtension">
+        <damageType>Pale</damageType>
+      </li>
+    </modExtensions>
   </DamageDef>
-  
+
 </Defs>

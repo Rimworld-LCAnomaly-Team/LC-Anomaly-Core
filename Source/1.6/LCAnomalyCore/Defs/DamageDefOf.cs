@@ -4,28 +4,28 @@ using Verse;
 namespace LCAnomalyCore.Defs
 {
     /// <summary>
-    /// 该Mod所有的DamageDef（WIP）
+    /// 该 Mod 的四色 DamageDef。
     /// </summary>
     [DefOf]
     public static class DamageDefOf
     {
         /// <summary>
-        /// 红伤（WIP）
+        /// 红伤
         /// </summary>
         public static DamageDef LC_RedDamage;
 
         /// <summary>
-        /// 白伤（WIP）
+        /// 白伤
         /// </summary>
         public static DamageDef LC_WhiteDamage;
 
         /// <summary>
-        /// 黑伤（WIP）
+        /// 黑伤
         /// </summary>
         public static DamageDef LC_BlackDamage;
 
         /// <summary>
-        /// 蓝伤（WIP）
+        /// 苍白伤
         /// </summary>
         public static DamageDef LC_PaleDamage;
     }

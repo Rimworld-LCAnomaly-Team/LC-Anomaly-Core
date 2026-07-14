@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <HediffDef>
+    <defName>LC_MentalDamage</defName>
+    <label>mental stability</label>
+    <description>Remaining resistance to WHITE and BLACK mental trauma. Reaching zero causes panic. WHITE or BLACK attacks restore the sanity of a panicked pawn.</description>
+    <hediffClass>LCAnomalyCore.Hediffs.Hediff_LCMentalDamage</hediffClass>
+    <initialSeverity>0.001</initialSeverity>
+    <isBad>true</isBad>
+    <scenarioCanAdd>false</scenarioCanAdd>
+  </HediffDef>
+
+</Defs>

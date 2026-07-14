@@ -374,6 +374,17 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoSuit.ApplyEGOResist(Verse.DamageInfo@)">
+            <summary>
+            Retained for binary compatibility with early integrations. New damage workers apply
+            resistance centrally and do not call this method.
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_EgoSuit">
+            <summary>
+            Correctly-spelled XML alias. The old class name remains for existing Defs.
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_Accessoryable">
             <summary>
             可获取饰品的CompProperties
@@ -1013,6 +1024,11 @@
             清理所有分配人员
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.DamageWorker.DamageWorker_LC_Red">
+            <summary>
+            Compatibility alias for old XML. Use DamageWorker_FourColor for new definitions.
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.AbnormalityCategoryDef">
             <summary>
             异想体类型
@@ -1100,27 +1116,27 @@
         </member>
         <member name="T:LCAnomalyCore.Defs.DamageDefOf">
             <summary>
-            该Mod所有的DamageDef（WIP）
+            该 Mod 的四色 DamageDef。
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage">
             <summary>
-            红伤（WIP）
+            红伤
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_WhiteDamage">
             <summary>
-            白伤（WIP）
+            白伤
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_BlackDamage">
             <summary>
-            黑伤（WIP）
+            黑伤
             </summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.DamageDefOf.LC_PaleDamage">
             <summary>
-            蓝伤（WIP）
+            苍白伤
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.DutyDefOf">
@@ -1191,6 +1207,11 @@
         <member name="F:LCAnomalyCore.Defs.HediffDefOf.LC_PawnStatus">
             <summary>
             员工Hediff
+            </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage">
+            <summary>
+            Accumulated WHITE/BLACK mental damage.
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Defs.HistoryEventDefOf">
@@ -1388,6 +1409,11 @@
             研究进度
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage">
+            <summary>
+            Severity is the lost fraction of the pawn's maximum SP (0..1).
+            </summary>
+        </member>
         <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder">
             <summary>
             改自原版同名工作，是携带实体到平台的工作
@@ -1438,6 +1464,11 @@
         <member name="M:LCAnomalyCore.Misc.LC_FX_Standard.ExposeData">
             <summary>
             和保存有关
+            </summary>
+        </member>
+        <member name="T:LCAnomalyCore.ModExtensions.FourColorTargetExtension">
+            <summary>
+            Optional race-level override for compatibility mods.
             </summary>
         </member>
         <member name="T:LCAnomalyCore.Patch.PatchMain">

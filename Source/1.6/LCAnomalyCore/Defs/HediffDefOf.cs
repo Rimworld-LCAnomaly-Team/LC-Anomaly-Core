@@ -23,5 +23,10 @@ namespace LCAnomalyCore.Defs
         /// 员工Hediff
         /// </summary>
         public static HediffDef LC_PawnStatus;
+
+        /// <summary>
+        /// Accumulated WHITE/BLACK mental damage.
+        /// </summary>
+        public static HediffDef LC_MentalDamage;
     }
 }

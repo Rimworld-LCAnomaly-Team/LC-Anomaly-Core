@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2009463077\1.5\Assemblies\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
@@ -42,7 +42,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="HarmonyMod">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2009463077\1.5\Assemblies\HarmonyMod.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\HarmonyMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -130,6 +130,8 @@
     <Compile Include="Comp\LC_EntityBasePawn.cs" />
     <Compile Include="Comp\Pawns\CompPawnStatus.cs" />
     <Compile Include="Comp\Pawns\CompProperties_PawnStatus.cs" />
+    <Compile Include="Damage\FourColorDamageType.cs" />
+    <Compile Include="DamageWorker\DamageWorker_FourColor.cs" />
     <Compile Include="DamageWorker\DamageWorker_LC_Red.cs" />
     <Compile Include="Defs\AbnormalityCategoryDef.cs" />
     <Compile Include="Defs\ApparelLayerDefOf.cs" />
@@ -155,6 +157,7 @@
     <Compile Include="Defs\WorkTypeDefOf.cs" />
     <Compile Include="GameComponent\GameComponent_LC.cs" />
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
+    <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
     <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
     <Compile Include="Jobs\JobDriver_AbnormalityStudyInteract.cs" />
@@ -163,6 +166,7 @@
     <Compile Include="Jobs\WorkGiver_TakeAbnormalityToHoldingPlatform.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
     <Compile Include="ModExtensions\AbnormalityCategory.cs" />
+    <Compile Include="ModExtensions\FourColorDamageExtensions.cs" />
     <Compile Include="Patch\PatchMain.cs" />
     <Compile Include="Patch\Patch_ApparelProperties.cs" />
     <Compile Include="Patch\Patch_ColonistBarColonistDrawer.cs" />
@@ -170,6 +174,7 @@
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
+    <Compile Include="Patch\Patch_Thing_TakeDamage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\Recipe_CogitoInjection.cs" />
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />
