@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Local RimWorld and mod DLL reference paths
+/Source/1.6/LocalDllPaths.props
