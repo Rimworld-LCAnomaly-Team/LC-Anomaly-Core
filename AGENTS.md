@@ -7,3 +7,4 @@
 - Build and verify only the 1.6 solutions by default.
 - Use Rimsage MCP to verify RimWorld types, methods, Defs, and API compatibility when relevant.
 - Write Git commit subjects, bodies, and change summaries in Chinese unless the user explicitly requests another language.
+- If a Git commit is made through Codex, set the commit author identity to `GPT-5 <gpt-5@codex.local>`.
