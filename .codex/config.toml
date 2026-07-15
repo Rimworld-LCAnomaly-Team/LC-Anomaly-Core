@@ -1,6 +1,0 @@
-sandbox_mode = "workspace-write"
-[mcp_servers.local_mcp]
-url = "http://localhost:3000/mcp"
-
-[sandbox_workspace_write]
-network_access = true
