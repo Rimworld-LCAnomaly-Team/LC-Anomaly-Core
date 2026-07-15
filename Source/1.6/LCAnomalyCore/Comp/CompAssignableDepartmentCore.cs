@@ -18,7 +18,7 @@ namespace LCAnomalyCore.Comp
         /// <summary>
         /// CompProperties
         /// </summary>
-        public CompProperties_AssignableDepartmentCore Props => (CompProperties_AssignableDepartmentCore)props;
+        public new CompProperties_AssignableDepartmentCore Props => (CompProperties_AssignableDepartmentCore)props;
 
         /// <summary>
         /// 候选者列表
@@ -37,6 +37,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (ShouldShowAssignmentGizmo())
@@ -58,6 +59,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void TryAssignPawn(Pawn pawn)
         {
             uninstalledAssignedPawns.Remove(pawn);
@@ -70,6 +72,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void TryUnassignPawn(Pawn pawn, bool sort = true, bool uninstall = false)
         {
             if (assignedPawns.Contains(pawn))
@@ -88,6 +91,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>UnassignAllPawn</c> 定义的操作。</summary>
         public void UnassignAllPawn()
         {
             if (assignedPawns.Count > 0) 

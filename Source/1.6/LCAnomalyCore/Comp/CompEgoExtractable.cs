@@ -6,6 +6,7 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompEgoExtractable</c> 类型。</summary>
     public class CompEgoExtractable : ThingComp
     {
         #region 字段
@@ -30,6 +31,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         protected CompAbnormalityHoldingPlatformTarget HoldingTargetComp => parent.GetComp<CompAbnormalityHoldingPlatformTarget>();
 
+        /// <summary>获取 <c>component</c>。</summary>
         protected GameComponent_LC component => Current.Game.GetComponent<GameComponent_LC>();
 
         /// <summary>

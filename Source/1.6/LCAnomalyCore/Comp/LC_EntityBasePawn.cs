@@ -9,6 +9,7 @@ namespace LCAnomalyCore.Comp
     /// </summary>
     public class LC_EntityBaseThing : ThingWithComps
     {
+        /// <summary>初始化 <c>LC_EntityBaseThing</c> 类的新实例。</summary>
         public LC_EntityBaseThing()
         {
         }
@@ -33,12 +34,15 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>entityComp</c>。</summary>
         protected CompAbnormality entityComp;
 
+        /// <summary>初始化 <c>LC_EntityBasePawn</c> 类的新实例。</summary>
         public LC_EntityBasePawn()
         {
         }
 
+        /// <inheritdoc />
         public override void Notify_Studied(Pawn studier, float amount, KnowledgeCategoryDef category = null)
         {
             LogUtil.Warning("研究了一次");

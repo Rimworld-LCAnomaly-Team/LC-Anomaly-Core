@@ -6,24 +6,33 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompAbnormalityStudyUnlocks</c> 类型。</summary>
     public class CompAbnormalityStudyUnlocks : ThingComp
     {
         private List<float> studyThresholds = new List<float>();
 
+        /// <summary>表示 <c>letters</c>。</summary>
         protected List<ChoiceLetter> letters = new List<ChoiceLetter>();
 
+        /// <summary>表示 <c>nextIndex</c>。</summary>
         protected int nextIndex;
 
+        /// <summary>表示 <c>studyProgress</c>。</summary>
         protected int studyProgress;
 
+        /// <summary>获取 <c>Props</c>。</summary>
         public CompProperties_AbnormalityStudyUnlocks Props => (CompProperties_AbnormalityStudyUnlocks)props;
 
+        /// <summary>获取 <c>Letters</c>。</summary>
         public IReadOnlyList<ChoiceLetter> Letters => letters;
 
+        /// <summary>获取 <c>Progress</c>。</summary>
         public int Progress => studyProgress;
 
+        /// <summary>获取 <c>Completed</c>。</summary>
         public bool Completed => nextIndex >= Props.studyNotes.Count;
 
+        /// <inheritdoc />
         public override void PostPostMake()
         {
             base.PostPostMake();
@@ -37,6 +46,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>OnStudied</c> 定义的操作。</summary>
         public virtual void OnStudied(Pawn studier, float amount, KnowledgeCategoryDef category = null)
         {
             if (!Completed)
@@ -49,6 +59,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>RegisterStudyLevel</c> 定义的操作。</summary>
         protected virtual void RegisterStudyLevel(Pawn studier, int i)
         {
             if (nextIndex <= i)
@@ -77,10 +88,12 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>Notify_StudyLevelChanged</c> 定义的操作。</summary>
         protected virtual void Notify_StudyLevelChanged(ChoiceLetter keptLetter)
         {
         }
 
+        /// <summary>执行 <c>TransferStudyProgress</c> 定义的操作。</summary>
         public virtual void TransferStudyProgress(int progress)
         {
             int levelsToTransfer = System.Math.Max(0, System.Math.Min(progress, Props.studyNotes.Count));
@@ -92,6 +105,7 @@ namespace LCAnomalyCore.Comp
             UnlockNameCheck();
         }
 
+        /// <summary>执行 <c>TransferStudyLevel</c> 定义的操作。</summary>
         protected virtual void TransferStudyLevel(int i)
         {
             if (nextIndex <= i)
@@ -116,10 +130,12 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>UnlockNameCheck</c> 定义的操作。</summary>
         public virtual void UnlockNameCheck()
         {
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (DebugSettings.ShowDevGizmos && !Completed)
@@ -144,6 +160,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void PostExposeData()
         {
             base.PostExposeData();

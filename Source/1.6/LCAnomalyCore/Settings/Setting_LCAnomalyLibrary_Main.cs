@@ -3,6 +3,7 @@ using Verse;
 
 namespace LCAnomalyCore.Settings
 {
+    /// <summary>表示 <c>Setting_LCAnomalyCore_Main</c> 类型。</summary>
     public class Setting_LCAnomalyCore_Main : Mod
     {
         /// <summary>
@@ -10,6 +11,7 @@ namespace LCAnomalyCore.Settings
         /// </summary>
         public static Setting_LCAnomalyCore Settings;
 
+        /// <summary>表示 <c>ContentDir</c>。</summary>
         public static string ContentDir;
 
         private string PointsOfWarning_FadeDurationEditBuffer;

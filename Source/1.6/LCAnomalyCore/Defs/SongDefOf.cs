@@ -3,6 +3,7 @@ using Verse;
 
 namespace LCAnomalyCore.Defs
 {
+    /// <summary>表示 <c>SongDefOf</c> 类型。</summary>
     [DefOf]
     public static class SongDefOf
     {

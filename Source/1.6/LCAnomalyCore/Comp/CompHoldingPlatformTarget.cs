@@ -10,6 +10,7 @@ using LCAnomalyCore.Util;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompAbnormalityHoldingPlatformTarget</c> 类型。</summary>
     [StaticConstructorOnStartup]
     public class CompAbnormalityHoldingPlatformTarget : ThingComp
     {
@@ -17,8 +18,10 @@ namespace LCAnomalyCore.Comp
 
         private static readonly Texture2D CancelTex = ContentFinder<Texture2D>.Get("UI/Designators/Cancel");
 
+        /// <summary>表示 <c>targetHolder</c>。</summary>
         public Thing targetHolder;
 
+        /// <summary>表示 <c>isEscaping</c>。</summary>
         public bool isEscaping;
 
         [Unsaved(false)]
@@ -30,10 +33,13 @@ namespace LCAnomalyCore.Comp
         [Unsaved(false)]
         private bool didCheckForActivityComp;
 
+        /// <summary>获取 <c>Props</c>。</summary>
         public CompProperties_AbnormalityHoldingPlatformTarget Props => (CompProperties_AbnormalityHoldingPlatformTarget)props;
 
+        /// <summary>获取 <c>CompAbnormalityStudiable</c>。</summary>
         public CompAbnormalityStudiable CompAbnormalityStudiable => compAbnormalityStudiable ?? (compAbnormalityStudiable = parent.GetComp<CompAbnormalityStudiable>());
 
+        /// <summary>表示 <c>CompActivity</c>。</summary>
         public CompActivity CompActivity
         {
             get
@@ -53,8 +59,10 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>获取 <c>EntityHolder</c>。</summary>
         public CompAbnormalityHolder EntityHolder => targetHolder?.TryGetComp<CompAbnormalityHolder>();
 
+        /// <summary>表示 <c>StudiedAtHoldingPlatform</c>。</summary>
         public bool StudiedAtHoldingPlatform
         {
             get
@@ -98,6 +106,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>获取 <c>CanStudy</c>。</summary>
         public bool CanStudy => true;
 
         private bool EverStudiable
@@ -113,8 +122,10 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>获取 <c>HeldPlatform</c>。</summary>
         public Building_AbnormalityHoldingPlatform HeldPlatform => parent.ParentHolder as Building_AbnormalityHoldingPlatform;
 
+        /// <summary>表示 <c>CurrentlyHeldOnPlatform</c>。</summary>
         public bool CurrentlyHeldOnPlatform
         {
             get
@@ -128,6 +139,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>CanBeCaptured</c>。</summary>
         public bool CanBeCaptured
         {
             get
@@ -157,6 +169,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             if (targetHolder != null && parent.Map != targetHolder.Map)
@@ -165,6 +178,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void CompTick()
         {
             base.CompTick();
@@ -197,6 +211,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>Notify_HeldOnPlatform</c> 定义的操作。</summary>
         public void Notify_HeldOnPlatform(ThingOwner newOwner)
         {
             targetHolder = null;
@@ -270,12 +285,14 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>Notify_ReleasedFromPlatform</c> 定义的操作。</summary>
         public void Notify_ReleasedFromPlatform()
         {
             if (ModsConfig.AnomalyActive)
                 Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
         }
 
+        /// <summary>执行 <c>Escape</c> 定义的操作。</summary>
         public void Escape()
         {
             var entitiyBasePawn = parent as LC_EntityBasePawn;
@@ -306,6 +323,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (StudiedAtHoldingPlatform && !CurrentlyHeldOnPlatform && CanBeCaptured)
@@ -379,6 +397,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override string CompInspectStringExtra()
         {
             string text = base.CompInspectStringExtra();
@@ -401,6 +420,7 @@ namespace LCAnomalyCore.Comp
             return text;
         }
 
+        /// <inheritdoc />
         public override void PostExposeData()
         {
             Scribe_References.Look(ref targetHolder, "targetHolder");

@@ -12,15 +12,19 @@ namespace LCAnomalyCore.Hediffs
 
         private int lastDamageTick;
 
+        /// <inheritdoc />
         public override string LabelInBrackets => UnityEngine.Mathf.Clamp01(1f - Severity).ToStringPercent();
 
+        /// <inheritdoc />
         public override bool ShouldRemove => Severity <= 0.0001f;
 
+        /// <summary>执行 <c>NotifyMentalDamageTaken</c> 定义的操作。</summary>
         public void NotifyMentalDamageTaken()
         {
             lastDamageTick = Find.TickManager.TicksGame;
         }
 
+        /// <inheritdoc />
         public override void Tick()
         {
             base.Tick();
@@ -33,6 +37,7 @@ namespace LCAnomalyCore.Hediffs
             Severity -= RecoveryPerDay * 60f / 60000f;
         }
 
+        /// <inheritdoc />
         public override void ExposeData()
         {
             base.ExposeData();

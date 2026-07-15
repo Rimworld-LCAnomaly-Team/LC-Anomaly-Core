@@ -95,7 +95,9 @@ namespace LCAnomalyCore.Settings
         /// </summary>
         public bool If_ShowDepartmentLabel_ColonistBar = true;
 
+        /// <summary>表示 <c>DepartmentLabel_ColonistBar_VerticalOffset</c>。</summary>
         public float DepartmentLabel_ColonistBar_VerticalOffset = -1f;
+        /// <summary>表示 <c>DepartmentLabel_ColonistBar_VerticalOffsetPerLine</c>。</summary>
         public float DepartmentLabel_ColonistBar_VerticalOffsetPerLine = 0.1f;
 
         #endregion

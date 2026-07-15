@@ -24,12 +24,16 @@ namespace LCAnomalyCore.Buildings
 
         #region 基本
 
+        /// <summary>表示 <c>innerContainer</c>。</summary>
         public ThingOwner innerContainer;
 
+        /// <summary>获取 <c>HeldPawn</c>。</summary>
         public Pawn HeldPawn => innerContainer.FirstOrDefault((Thing x) => x is Pawn) as Pawn;
 
+        /// <summary>获取 <c>Occupied</c>。</summary>
         public bool Occupied => HeldPawn != null;
 
+        /// <summary>表示 <c>inspectTextSB</c>。</summary>
         protected StringBuilder inspectTextSB = new StringBuilder();
 
         private CompProperties_AbnormalityHolderPlatform PlatformProps
@@ -58,6 +62,7 @@ namespace LCAnomalyCore.Buildings
 
         private CompAssignableToPawn_LC_Entity compAssignable;
 
+        /// <summary>表示 <c>CompAbnormalityStudiable</c>。</summary>
         public CompAbnormalityStudiable CompAbnormalityStudiable
         {
             get
@@ -106,6 +111,7 @@ namespace LCAnomalyCore.Buildings
 
         #region 字段
 
+        /// <summary>获取 <c>PawnDrawOffset</c>。</summary>
         public Vector3 PawnDrawOffset => new Vector3(0f, 0f, 0.15f);
 
         /// <summary>
@@ -143,12 +149,14 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        /// <summary>表示 <c>CurWorkType</c>。</summary>
         public EAnomalyWorkType CurWorkType
         {
             get => curWorkType;
             set => curWorkType = value;
         }
 
+        /// <summary>表示 <c>curWorkType</c>。</summary>
         protected EAnomalyWorkType curWorkType = EAnomalyWorkType.Instinct;
 
         #endregion 字段
@@ -157,6 +165,7 @@ namespace LCAnomalyCore.Buildings
 
         #region 生命周期
 
+        /// <summary>初始化 <c>Building_AbnormalityHoldingPlatform</c> 类的新实例。</summary>
         public Building_AbnormalityHoldingPlatform()
         {
             innerContainer = new ThingOwner<Thing>(this);
@@ -202,6 +211,7 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        /// <inheritdoc />
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
         {
             base.DynamicDrawPhaseAt(phase, drawLoc, flip);
@@ -384,6 +394,7 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        /// <summary>执行 <c>Notify_StudyInterval</c> 定义的操作。</summary>
         public void Notify_StudyInterval(CompPawnStatus studier)
         {
             bool success = cachedEntity.Notify_StudyInterval(studier, CurWorkType);
@@ -394,6 +405,7 @@ namespace LCAnomalyCore.Buildings
                 cachedNeBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("NE", cachedEntity.PeBoxComp.Props.amountProdueMax));
         }
 
+        /// <summary>执行 <c>Notify_StudyStart</c> 定义的操作。</summary>
         public void Notify_StudyStart(Pawn studier)
         {
             cachedPeBoxBarGraphics.Clear();
@@ -488,6 +500,7 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        /// <inheritdoc />
         public override string GetInspectString()
         {
             inspectTextSB.Clear();
@@ -526,19 +539,24 @@ namespace LCAnomalyCore.Buildings
 
         #region IThingHolderWithDrawnPawn
 
+        /// <summary>获取 <c>HeldPawnDrawPos_Y</c>。</summary>
         public float HeldPawnDrawPos_Y => DrawPos.y + 0.03658537f;
+        /// <summary>获取 <c>HeldPawnBodyAngle</c>。</summary>
         public float HeldPawnBodyAngle => base.Rotation.AsAngle;
+        /// <summary>获取 <c>HeldPawnPosture</c>。</summary>
         public PawnPosture HeldPawnPosture => PawnPosture.LayingOnGroundFaceUp;
 
         #endregion
 
         #region IThingHolder
 
+        /// <summary>执行 <c>GetChildHolders</c> 定义的操作。</summary>
         public void GetChildHolders(List<IThingHolder> outChildren)
         {
             ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, GetDirectlyHeldThings());
         }
 
+        /// <summary>执行 <c>GetDirectlyHeldThings</c> 定义的操作。</summary>
         public ThingOwner GetDirectlyHeldThings()
         {
             return innerContainer;
@@ -548,6 +566,7 @@ namespace LCAnomalyCore.Buildings
 
         #region IRoofCollapseAlert
 
+        /// <summary>执行 <c>Notify_OnBeforeRoofCollapse</c> 定义的操作。</summary>
         public RoofCollapseResponse Notify_OnBeforeRoofCollapse()
         {
             if (!Occupied)
@@ -572,6 +591,7 @@ namespace LCAnomalyCore.Buildings
 
         #region ISearchableContents
 
+        /// <summary>获取 <c>SearchableContents</c>。</summary>
         public ThingOwner SearchableContents => innerContainer;
 
         #endregion

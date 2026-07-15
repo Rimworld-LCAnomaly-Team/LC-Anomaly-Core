@@ -4,6 +4,7 @@ using Verse;
 
 namespace LCAnomalyCore.Defs
 {
+    /// <summary>表示 <c>AbnormalityCodexEntryDef</c> 类型。</summary>
     public class AbnormalityCodexEntryDef : Def
     {
         /// <summary>
@@ -16,21 +17,27 @@ namespace LCAnomalyCore.Defs
         /// </summary>
         public AbnormalityCategoryDef category;
 
+        /// <summary>表示 <c>orderInCategory</c>。</summary>
         public int orderInCategory = 9999999;
 
         [NoTranslate]
-        private string uiIconPath;
+        private string uiIconPath = null;
 
+        /// <summary>表示 <c>icon</c>。</summary>
         public Texture2D icon;
 
+        /// <summary>表示 <c>silhouette</c>。</summary>
         public Texture2D silhouette;
 
+        /// <summary>表示 <c>Visible</c>。</summary>
         public bool Visible;
 
+        /// <summary>表示 <c>Discovered</c>。</summary>
         public bool Discovered;
 
         private const string SilhouetteTexPathSuffix = "_Silhouette";
 
+        /// <inheritdoc />
         public override void PostLoad()
         {
             LongEventHandler.ExecuteWhenFinished(delegate
@@ -40,6 +47,7 @@ namespace LCAnomalyCore.Defs
             });
         }
 
+        /// <inheritdoc />
         public override IEnumerable<string> ConfigErrors()
         {
             foreach (string item in base.ConfigErrors())

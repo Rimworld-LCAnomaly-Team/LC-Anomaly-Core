@@ -7,6 +7,7 @@ using Verse;
 
 namespace LCAnomalyCore.UI
 {
+    /// <summary>表示 <c>ITab_AbnormalityStudyNotes</c> 类型。</summary>
     public class ITab_AbnormalityStudyNotes : ITab
     {
         private Vector2 leftScroll;
@@ -29,8 +30,10 @@ namespace LCAnomalyCore.UI
 
         private const float RowHeight = 30f;
 
+        /// <summary>获取 <c>StudiableThing</c>。</summary>
         protected Thing StudiableThing => (base.SelThing as Building_AbnormalityHoldingPlatform)?.HeldPawn ?? base.SelThing;
 
+        /// <inheritdoc />
         public override bool IsVisible
         {
             get
@@ -41,21 +44,26 @@ namespace LCAnomalyCore.UI
 
         private CompAbnormalityStudyUnlocks StudyUnlocks => StudiableThing?.TryGetComp<CompAbnormalityStudyUnlocks>();
 
+        /// <summary>获取 <c>Letters</c>。</summary>
         protected virtual IReadOnlyList<ChoiceLetter> Letters => StudyUnlocks?.Letters;
 
+        /// <summary>获取 <c>StudyCompleted</c>。</summary>
         protected virtual bool StudyCompleted => StudyUnlocks?.Completed ?? false;
 
+        /// <summary>初始化 <c>ITab_AbnormalityStudyNotes</c> 类的新实例。</summary>
         public ITab_AbnormalityStudyNotes()
         {
             size = new Vector2(Mathf.Min(610f, Verse.UI.screenWidth), 350f);
             labelKey = "TabStudyNotesContents";
         }
 
+        /// <inheritdoc />
         public override void OnOpen()
         {
             selectedLetter = (Letters?.EnumerableNullOrEmpty() ?? true) ? null : Letters[Letters.Count - 1];
         }
 
+        /// <inheritdoc />
         protected override void FillTab()
         {
             if (previous != StudiableThing)

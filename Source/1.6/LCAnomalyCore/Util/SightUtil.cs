@@ -3,6 +3,7 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>SightUtil</c> 类型。</summary>
     public static class SightUtil
     {
         /// <summary>

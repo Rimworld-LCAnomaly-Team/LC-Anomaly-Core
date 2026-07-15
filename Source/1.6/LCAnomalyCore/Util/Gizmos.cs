@@ -4,8 +4,10 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>Gizmos</c> 类型。</summary>
     public static class Gizmos
     {
+        /// <summary>执行 <c>Get_EntityCodex</c> 定义的操作。</summary>
         public static Gizmo Get_EntityCodex(Thing thing)
         {
             return new Command_Action

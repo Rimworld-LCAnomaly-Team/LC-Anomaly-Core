@@ -7,20 +7,24 @@ using System.Linq;
 
 namespace LCAnomalyCore.Jobs
 {
+    /// <summary>表示 <c>WorkGiver_TakeAbnormalityToHoldingPlatform</c> 类型。</summary>
     public class WorkGiver_TakeAbnormalityToHoldingPlatform : WorkGiver_Scanner
     {
         //public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.HoldingPlatformTarget);
 
+        /// <inheritdoc />
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
             return pawn.Map.listerThings.AllThings.Where(m => m.HasComp<CompAbnormalityHoldingPlatformTarget>());
         }
 
+        /// <inheritdoc />
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
             return false;
         }
 
+        /// <inheritdoc />
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
@@ -54,6 +58,7 @@ namespace LCAnomalyCore.Jobs
             return true;
         }
 
+        /// <inheritdoc />
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             var compHoldingPlatformTarget = t.TryGetComp<CompAbnormalityHoldingPlatformTarget>();

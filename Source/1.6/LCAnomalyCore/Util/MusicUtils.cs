@@ -11,6 +11,7 @@ namespace LCAnomalyCore.Util
     /// </summary>
     public static class MusicUtils
     {
+        /// <summary>执行 <c>PlayMusic_LC</c> 定义的操作。</summary>
         public static void PlayMusic_LC(int points)
         {
             //如果未启用警报音乐，就不播放音乐
@@ -72,6 +73,7 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>执行 <c>LevelTag2Points</c> 定义的操作。</summary>
         public static int LevelTag2Points(string tag)
         {
             switch (tag)
@@ -96,10 +98,14 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>表示 <c>EWarningLevel</c> 类型。</summary>
         public enum EWarningLevel
         {
+            /// <summary>表示 <c>First</c>。</summary>
             First,
+            /// <summary>表示 <c>Second</c>。</summary>
             Second,
+            /// <summary>表示 <c>Third</c>。</summary>
             Third
         }
     }

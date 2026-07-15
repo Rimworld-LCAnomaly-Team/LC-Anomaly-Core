@@ -6,23 +6,31 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>LC_CompRequireThingSpawner</c> 类型。</summary>
     public abstract class LC_CompRequireThingSpawner : ThingComp, IThingHolder
     {
+        /// <summary>表示 <c>ticksUntilSpawn</c>。</summary>
         protected int ticksUntilSpawn;
 
+        /// <summary>获取 <c>PropsSpawner</c>。</summary>
         public virtual LC_CompProperties_RequireThingSpawner PropsSpawner => (LC_CompProperties_RequireThingSpawner)props;
 
+        /// <summary>获取 <c>PowerOn</c>。</summary>
         protected bool PowerOn => parent.GetComp<CompPowerTrader>()?.PowerOn ?? false;
 
+        /// <summary>表示 <c>innerContainer</c>。</summary>
         protected ThingOwner innerContainer;
 
+        /// <summary>获取 <c>HasRequireThingInstalled</c>。</summary>
         public bool HasRequireThingInstalled => innerContainer != null && innerContainer.Count != 0;
 
+        /// <summary>初始化 <c>LC_CompRequireThingSpawner</c> 类的新实例。</summary>
         public LC_CompRequireThingSpawner()
         {
             innerContainer = new ThingOwner<Thing>(this, oneStackOnly: true);
         }
 
+        /// <inheritdoc />
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             if (!respawningAfterLoad)
@@ -31,18 +39,21 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void CompTick()
         {
             if (HasRequireThingInstalled)
                 TickInterval(1);
         }
 
+        /// <inheritdoc />
         public override void CompTickRare()
         {
             if (HasRequireThingInstalled)
                 TickInterval(250);
         }
 
+        /// <summary>执行 <c>TickInterval</c> 定义的操作。</summary>
         protected virtual void TickInterval(int interval)
         {
             if (!parent.Spawned)
@@ -70,6 +81,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>TryDoSpawn</c> 定义的操作。</summary>
         protected virtual bool TryDoSpawn()
         {
             if (!parent.Spawned)
@@ -134,6 +146,7 @@ namespace LCAnomalyCore.Comp
             return false;
         }
 
+        /// <summary>执行 <c>TryFindSpawnCell</c> 定义的操作。</summary>
         protected virtual bool TryFindSpawnCell(Thing parent, ThingDef thingToSpawn, int spawnCount, out IntVec3 result)
         {
             foreach (IntVec3 item in GenAdj.CellsAdjacent8Way(parent).InRandomOrder())
@@ -172,6 +185,7 @@ namespace LCAnomalyCore.Comp
             return false;
         }
 
+        /// <summary>执行 <c>CheckShouldSpawn</c> 定义的操作。</summary>
         protected void CheckShouldSpawn()
         {
             if (ticksUntilSpawn <= 0)
@@ -181,11 +195,13 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>ResetCountdown</c> 定义的操作。</summary>
         protected void ResetCountdown()
         {
             ticksUntilSpawn = PropsSpawner.spawnIntervalRange.RandomInRange;
         }
 
+        /// <inheritdoc />
         public override void PostExposeData()
         {
             string text = (PropsSpawner.saveKeysPrefix.NullOrEmpty() ? null : (PropsSpawner.saveKeysPrefix + "_"));
@@ -193,6 +209,7 @@ namespace LCAnomalyCore.Comp
             Scribe_Deep.Look<ThingOwner>(ref this.innerContainer, "innerContainer", this);
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             if (!HasRequireThingInstalled)
@@ -260,6 +277,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override string CompInspectStringExtra()
         {
             if (PropsSpawner.writeTimeLeftToSpawn && (!PropsSpawner.requiresPower || PowerOn))
@@ -273,11 +291,13 @@ namespace LCAnomalyCore.Comp
             return null;
         }
 
+        /// <summary>执行 <c>GetChildHolders</c> 定义的操作。</summary>
         public void GetChildHolders(List<IThingHolder> outChildren)
         {
             ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, this.GetDirectlyHeldThings());
         }
 
+        /// <summary>执行 <c>GetDirectlyHeldThings</c> 定义的操作。</summary>
         public ThingOwner GetDirectlyHeldThings()
         {
             return this.innerContainer;

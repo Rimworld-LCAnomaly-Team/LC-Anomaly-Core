@@ -7,8 +7,10 @@ using Verse;
 
 namespace LCAnomalyCore.DamageWorker
 {
+    /// <summary>表示 <c>DamageWorker_FourColor</c> 类型。</summary>
     public class DamageWorker_FourColor : DamageWorker_AddInjury
     {
+        /// <inheritdoc />
         public override DamageResult Apply(DamageInfo dinfo, Thing victim)
         {
             FourColorDamageExtension extension = dinfo.Def.GetModExtension<FourColorDamageExtension>();

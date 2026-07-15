@@ -35,8 +35,10 @@ namespace LCAnomalyCore.UI
             }
         }
 
+        /// <summary>获取 <c>DrawThingIcon</c>。</summary>
         protected virtual bool DrawThingIcon => true;
 
+        /// <summary>初始化 <c>ITab_PawnStatus</c> 类的新实例。</summary>
         public ITab_PawnStatus()
         {
             size = new Vector2(Mathf.Min(220f, Verse.UI.screenWidth), 180f);

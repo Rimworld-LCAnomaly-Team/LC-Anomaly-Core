@@ -183,6 +183,7 @@ namespace LCAnomalyCore.Util
 
         private static Graphic CachedTopGraphic_EntityNamePlatformTop;
 
+        /// <summary>执行 <c>EntityNamePlatformTopGraphic_Get</c> 定义的操作。</summary>
         public static Graphic EntityNamePlatformTopGraphic_Get(string loc, bool forced = false)
         {
             //初始化
@@ -222,6 +223,7 @@ namespace LCAnomalyCore.Util
             EAnomalyWorkType.Repression
         };
 
+        /// <summary>执行 <c>WorkTypePlatformTopGraphic_Get</c> 定义的操作。</summary>
         public static Graphic WorkTypePlatformTopGraphic_Get(EAnomalyWorkType workType)
         {
             //初始化
@@ -247,6 +249,7 @@ namespace LCAnomalyCore.Util
 
         private static Dictionary<EAnomalyWorkType, Texture2D> CachedTextureDict_DialogAssignWorkTypeNormal = new Dictionary<EAnomalyWorkType, Texture2D>();
 
+        /// <summary>执行 <c>DialogAssignWorkTypeNormalTexture_Get</c> 定义的操作。</summary>
         public static Texture2D DialogAssignWorkTypeNormalTexture_Get(EAnomalyWorkType workType)
         {
             //初始化
@@ -264,6 +267,7 @@ namespace LCAnomalyCore.Util
             return CachedTextureDict_DialogAssignWorkTypeNormal[workType];
         }
 
+        /// <summary>执行 <c>DialogAssignWorkTypeOnHoverTexture_Get</c> 定义的操作。</summary>
         public static Texture2D DialogAssignWorkTypeOnHoverTexture_Get(EAnomalyWorkType workType)
         {
             //未知类型直接返回未知贴图
@@ -288,6 +292,7 @@ namespace LCAnomalyCore.Util
         private static Dictionary<int, Graphic> CachedTopGraphicDict_BoxBarUnit_PE = new Dictionary<int, Graphic>();
         private static Dictionary<int, Graphic> CachedTopGraphicDict_BoxBarUnit_NE = new Dictionary<int, Graphic>();
 
+        /// <summary>执行 <c>CachedTopGraphic_BoxBarUnit_Get</c> 定义的操作。</summary>
         public static Graphic CachedTopGraphic_BoxBarUnit_Get(string BoxType, int maxNum)
         {
             string baseLoc = baseLocOfHoldingPlatform + "Box/";
@@ -424,6 +429,7 @@ namespace LCAnomalyCore.Util
             return cachedTopGraphic_DepartmentCore;
         }
 
+        /// <summary>执行 <c>DepartmentCore_GetCachedBaseGraphic</c> 定义的操作。</summary>
         public static Graphic DepartmentCore_GetCachedBaseGraphic(float percent)
         {
             if (cachedBaseGraphic_DepartmentCore.Count <= 0)

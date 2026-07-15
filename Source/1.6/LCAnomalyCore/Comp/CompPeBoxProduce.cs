@@ -16,6 +16,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public CompProperties_PeBoxProduce Props => (CompProperties_PeBoxProduce)props;
 
+        /// <summary>获取 <c>component</c>。</summary>
         protected GameComponent_LC component => Components.LC;
 
         /// <summary>
@@ -67,6 +68,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public event Action OnContentsChanged;
 
+        /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             foreach (var gizmo in base.CompGetGizmosExtra())

@@ -4,10 +4,12 @@ using Verse;
 
 namespace LCAnomalyCore.Render
 {
+    /// <summary>表示 <c>PawnRenderNodeWorker_StillState</c> 类型。</summary>
     public class PawnRenderNodeWorker_StillState : PawnRenderNodeWorker
     {
         private static readonly Color LineColor = new Color(0.89f, 0.21f, 0.13f);
 
+        /// <inheritdoc />
         public override Vector3 OffsetFor(PawnRenderNode node, PawnDrawParms parms, out Vector3 pivot)
         {
             Vector3 vector = base.OffsetFor(node, parms, out pivot);
@@ -22,6 +24,7 @@ namespace LCAnomalyCore.Render
             return vector;
         }
 
+        /// <inheritdoc />
         public override MaterialPropertyBlock GetMaterialPropertyBlock(PawnRenderNode node, Material material, PawnDrawParms parms)
         {
             MaterialPropertyBlock materialPropertyBlock = base.GetMaterialPropertyBlock(node, material, parms);

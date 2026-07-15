@@ -8,6 +8,7 @@ using Verse;
 
 namespace LCAnomalyCore.GameComponent
 {
+    /// <summary>表示 <c>LCGameComponentTick</c> 类型。</summary>
     public delegate void LCGameComponentTick();
 
     /// <summary>
@@ -41,6 +42,7 @@ namespace LCAnomalyCore.GameComponent
 
         private int waringPointsCounter;
 
+        /// <summary>表示 <c>LCGameComponentTickEvent</c>。</summary>
         public LCGameComponentTick LCGameComponentTickEvent;
 
         /// <summary>
@@ -55,12 +57,15 @@ namespace LCAnomalyCore.GameComponent
             }
         }
 
+        /// <summary>表示 <c>anomalyStatusSavedDict</c>。</summary>
         protected Dictionary<ThingDef, AnomalyStatusSaved> anomalyStatusSavedDict;
 
+        /// <summary>初始化 <c>GameComponent_LC</c> 类的新实例。</summary>
         public GameComponent_LC(Game game)
         {
         }
 
+        /// <inheritdoc />
         public override void LoadedGame()
         {
             base.LoadedGame();
@@ -95,6 +100,7 @@ namespace LCAnomalyCore.GameComponent
             }
         }
 
+        /// <inheritdoc />
         public override void ExposeData()
         {
             Scribe_Values.Look(ref curWarningPoints, "curWarningPoints", 0);
@@ -102,6 +108,7 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
         }
 
+        /// <summary>执行 <c>TryGetAnomalyStatusSaved</c> 定义的操作。</summary>
         public void TryGetAnomalyStatusSaved(ThingDef key, out AnomalyStatusSaved saved)
         {
             if (!AnomalyStatusSavedDict.ContainsKey(key))
@@ -187,6 +194,7 @@ namespace LCAnomalyCore.GameComponent
 
         private int studyProgress = 0;
 
+        /// <summary>初始化 <c>AnomalyStatusSaved</c> 类的新实例。</summary>
         public AnomalyStatusSaved(int extractedEgoWeaponAmount, int extractedEgoArmorAmount, int indiPeBoxAmount, int studyProgress)
         {
             ExtractedEgoWeaponAmount = extractedEgoWeaponAmount;
@@ -195,6 +203,7 @@ namespace LCAnomalyCore.GameComponent
             StudyProgress = studyProgress;
         }
 
+        /// <summary>执行 <c>ExposeData</c> 定义的操作。</summary>
         public void ExposeData()
         {
             Scribe_Values.Look(ref extractedEgoWeaponAmount, "extractedEgoWeaponAmount", 0);

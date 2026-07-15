@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>FileUtil</c> 类型。</summary>
     public static class FileUtil
     {
 

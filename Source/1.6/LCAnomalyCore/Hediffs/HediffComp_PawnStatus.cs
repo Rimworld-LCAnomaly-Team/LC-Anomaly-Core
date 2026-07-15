@@ -6,12 +6,15 @@ using Verse;
 
 namespace LCAnomalyCore.Hediffs
 {
+    /// <summary>表示 <c>HediffComp_PawnStatus</c> 类型。</summary>
     public class HediffComp_PawnStatus : Hediff
     {
+        /// <summary>表示 <c>statusStages</c>。</summary>
         protected List<HediffStage> statusStages = new List<HediffStage>();
 
         private HediffStage curStage;
 
+        /// <summary>表示 <c>PawnStatusComp</c>。</summary>
         protected CompPawnStatus PawnStatusComp
         {
             get
@@ -25,6 +28,7 @@ namespace LCAnomalyCore.Hediffs
 
         private CompPawnStatus pawnStatusComp;
 
+        /// <inheritdoc />
         public override HediffStage CurStage
         {
             get
@@ -42,6 +46,7 @@ namespace LCAnomalyCore.Hediffs
             }
         }
 
+        /// <inheritdoc />
         public override void Tick()
         {
             if (Find.TickManager.TicksGame % 3600 == 0)

@@ -8,8 +8,10 @@ using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {
+    /// <summary>表示 <c>WorkGiver_AbnormalityStudyInteract</c> 类型。</summary>
     public class WorkGiver_AbnormalityStudyInteract : WorkGiver_AbnormalityStudyBase
     {
+        /// <inheritdoc />
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
             //如果没有CompPawnStatus组件或属性未激活，则不兼容
@@ -17,6 +19,7 @@ namespace LCAnomalyCore.Jobs
             return comp == null || !comp.Enabled;
         }
 
+        /// <inheritdoc />
         public override string PostProcessedGerund(Job job)
         {
             if (job.targetC == null)
@@ -27,6 +30,7 @@ namespace LCAnomalyCore.Jobs
             return "DoWorkAtThing".Translate(def.gerund.Named("GERUND"), job.targetC.Label.Named("TARGETLABEL"));
         }
 
+        /// <inheritdoc />
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered!");
@@ -104,6 +108,7 @@ namespace LCAnomalyCore.Jobs
             return false;
         }
 
+        /// <inheritdoc />
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             return JobMaker.MakeJob(Defs.JobDefOf.LC_AbnormalityStudyInteract, t, null, (t as Building_AbnormalityHoldingPlatform)?.HeldPawn);

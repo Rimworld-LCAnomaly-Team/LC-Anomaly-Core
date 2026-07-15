@@ -9,6 +9,7 @@ using Verse.Sound;
 
 namespace LCAnomalyCore.UI
 {
+    /// <summary>表示 <c>Dialog_LC_EntityCodex</c> 类型。</summary>
     public class Dialog_LC_EntityCodex : Window
     {
         private Vector2 leftScrollPos;
@@ -41,8 +42,10 @@ namespace LCAnomalyCore.UI
 
         private const int MaxEntriesPerRow = 7;
 
+        /// <inheritdoc />
         public override Vector2 InitialSize => new Vector2(980f, 724f);
 
+        /// <summary>初始化 <c>Dialog_LC_EntityCodex</c> 类的新实例。</summary>
         public Dialog_LC_EntityCodex(AbnormalityCodexEntryDef selectedEntry = null)
         {
             doCloseX = true;
@@ -75,6 +78,7 @@ namespace LCAnomalyCore.UI
             this.selectedEntry = selectedEntry ?? DefDatabase<AbnormalityCodexEntryDef>.AllDefs.OrderBy((AbnormalityCodexEntryDef x) => x.label).FirstOrDefault((Defs.AbnormalityCodexEntryDef x) => x.Discovered);
         }
 
+        /// <inheritdoc />
         public override void DoWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Small;

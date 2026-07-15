@@ -7,8 +7,10 @@ using static LCAnomalyCore.Util.MusicUtils;
 
 namespace LCAnomalyCore.Singleton
 {
+    /// <summary>表示 <c>LCCanvasSingleton</c> 类型。</summary>
     public class LCCanvasSingleton
     {
+        /// <summary>表示 <c>Instance</c>。</summary>
         public static LCCanvasSingleton Instance
         {
             get
@@ -21,19 +23,27 @@ namespace LCAnomalyCore.Singleton
 
         private static LCCanvasSingleton instance = null;
 
+        /// <summary>表示 <c>GameObject</c>。</summary>
         public GameObject GameObject;
+        /// <summary>表示 <c>CanvasWarningUI</c>。</summary>
         public Canvas CanvasWarningUI;
+        /// <summary>表示 <c>Image</c>。</summary>
         public Image Image;
+        /// <summary>表示 <c>CanvasGroupWarningUI</c>。</summary>
         public CanvasGroup CanvasGroupWarningUI;
 
+        /// <summary>表示 <c>FirstWarningSprite</c>。</summary>
         public Sprite FirstWarningSprite = Sprite.Create(ContentFinder<Texture2D>.Get("UI/WarningUI/WarningUI_First"), new Rect(0, 0, 4096, 2160), new Vector2(0.5f, 0.5f));
+        /// <summary>表示 <c>SecondWarningSprite</c>。</summary>
         public Sprite SecondWarningSprite = Sprite.Create(ContentFinder<Texture2D>.Get("UI/WarningUI/WarningUI_Second"), new Rect(0, 0, 4096, 2160), new Vector2(0.5f, 0.5f));
+        /// <summary>表示 <c>ThirdWarningSprite</c>。</summary>
         public Sprite ThirdWarningSprite = Sprite.Create(ContentFinder<Texture2D>.Get("UI/WarningUI/WarningUI_Third"), new Rect(0, 0, 4096, 2160), new Vector2(0.5f, 0.5f));
 
         private int tickCounter;
         private bool shouldShowWarningUI;
         private bool shouldDecreaseAlpha;
 
+        /// <summary>初始化 <c>LCCanvasSingleton</c> 类的新实例。</summary>
         public LCCanvasSingleton()
         {
             this.GameObject = new GameObject("LCAnomalyCanvas");
@@ -59,11 +69,13 @@ namespace LCAnomalyCore.Singleton
             Current.Game.GetComponent<GameComponent_LC>().LCGameComponentTickEvent += Tick;
         }
 
+        /// <summary>执行 <c>RemoveEvents</c> 定义的操作。</summary>
         public void RemoveEvents()
         {
             Current.Game.GetComponent<GameComponent_LC>().LCGameComponentTickEvent -= Tick;
         }
 
+        /// <summary>执行 <c>Tick</c> 定义的操作。</summary>
         protected void Tick()
         {
             if (shouldShowWarningUI)
@@ -97,6 +109,7 @@ namespace LCAnomalyCore.Singleton
             }
         }
 
+        /// <summary>执行 <c>ShowWarningUI</c> 定义的操作。</summary>
         public void ShowWarningUI(EWarningLevel level)
         {
             if (level == EWarningLevel.First)
@@ -119,6 +132,7 @@ namespace LCAnomalyCore.Singleton
             shouldShowWarningUI = true;
         }
 
+        /// <summary>执行 <c>ShowText</c> 定义的操作。</summary>
         public void ShowText(string text)
         {
             GameObject go = new GameObject("TestText");

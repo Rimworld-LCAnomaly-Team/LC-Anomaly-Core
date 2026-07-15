@@ -2,12 +2,17 @@
 
 namespace LCAnomalyCore.Test
 {
+    /// <summary>表示 <c>ThrowTextController</c> 类型。</summary>
     public class ThrowTextController : MonoBehaviour
     {
+        /// <summary>表示 <c>ThrowTextCanvas</c>。</summary>
         public Canvas ThrowTextCanvas;
+        /// <summary>表示 <c>ThrowTextCanvasGroup</c>。</summary>
         public CanvasGroup ThrowTextCanvasGroup;
 
+        /// <summary>表示 <c>shouldShow</c>。</summary>
         public bool shouldShow = false;
+        /// <summary>表示 <c>shouldFade</c>。</summary>
         public bool shouldFade = false;
 
         private string array;
@@ -20,6 +25,7 @@ namespace LCAnomalyCore.Test
 
         private UnityEngine.UI.Text SelfText;
 
+        /// <summary>初始化 <c>ThrowTextController</c> 类的新实例。</summary>
         public ThrowTextController()
         {
             this.ThrowTextCanvas = gameObject.AddComponent<Canvas>();
@@ -99,6 +105,7 @@ namespace LCAnomalyCore.Test
             }
         }
 
+        /// <summary>执行 <c>Trigger</c> 定义的操作。</summary>
         public void Trigger(string text)
         {
             SelfText.transform.Rotate(0, 0, 30);

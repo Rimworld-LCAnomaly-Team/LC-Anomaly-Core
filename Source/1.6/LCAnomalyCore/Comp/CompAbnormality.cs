@@ -36,8 +36,10 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>studyUnlocksComp</c>。</summary>
         protected CompAbnormalityStudyUnlocks studyUnlocksComp;
 
+        /// <summary>表示 <c>AbnormalityCategory</c>。</summary>
         public AbnormalityCategoryDef AbnormalityCategory
         {
             get
@@ -66,6 +68,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>studiableComp</c>。</summary>
         protected CompAbnormalityStudiable studiableComp;
 
         /// <summary>
@@ -82,6 +85,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>accessoryableComp</c>。</summary>
         protected CompAccessoryable accessoryableComp;
 
         /// <summary>
@@ -98,6 +102,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>peBoxComp</c>。</summary>
         protected CompPeBoxProduce peBoxComp;
 
         /// <summary>
@@ -114,6 +119,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>holdingPlatformTargetComp</c>。</summary>
         protected CompAbnormalityHoldingPlatformTarget holdingPlatformTargetComp;
 
         /// <summary>
@@ -237,9 +243,12 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public bool Escaped => escaped;
 
+        /// <summary>表示 <c>escaped</c>。</summary>
         protected bool escaped = false;
 
+        /// <summary>表示 <c>PeBoxProducedTemp</c>。</summary>
         protected int PeBoxProducedTemp = 0;
+        /// <summary>表示 <c>NeBoxProducedTemp</c>。</summary>
         protected int NeBoxProducedTemp = 0;
 
         #endregion 变量
@@ -331,6 +340,7 @@ namespace LCAnomalyCore.Comp
         {
         }
 
+        /// <summary>执行 <c>Notify_StudyInterval</c> 定义的操作。</summary>
         public virtual bool Notify_StudyInterval(CompPawnStatus studier, EAnomalyWorkType workType)
         {
             StudierExpCalculate(studier, workType);

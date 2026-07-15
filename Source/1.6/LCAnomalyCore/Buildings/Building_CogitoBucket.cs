@@ -10,14 +10,14 @@ namespace LCAnomalyCore.Buildings
     /// </summary>
     public class Building_CogitoBucket : Verse.Building
     {
+        /// <summary>获取 <c>CompSpawner</c>。</summary>
         public CompCogitoBucketSpawner CompSpawner => this.GetComp<CompCogitoBucketSpawner>();
 
         private float animOffset = 0f;
 
         private bool shouldUp = true;
 
-        private bool shouldUpdate = false;
-
+        /// <inheritdoc />
         protected override void Tick()
         {
             base.Tick();
@@ -48,8 +48,6 @@ namespace LCAnomalyCore.Buildings
             {
                 if (CompSpawner.HasRequireThingInstalled)
                 {
-                    shouldUpdate = true;
-
                     GraphicUtil.CogitoBucket_GetCachedGraphic("BrainSpinalNerve")
                         .Draw(new Vector3(this.DrawPos.x, this.DrawPos.y, this.DrawPos.z + animOffset) + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
                 }
@@ -61,8 +59,6 @@ namespace LCAnomalyCore.Buildings
 
             GraphicUtil.CogitoBucket_GetCachedGraphic("Glass")
                 .Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
-
-            shouldUpdate = false;
         }
     }
 }

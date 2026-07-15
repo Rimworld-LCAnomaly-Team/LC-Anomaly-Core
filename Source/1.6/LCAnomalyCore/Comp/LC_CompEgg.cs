@@ -9,6 +9,7 @@ namespace LCAnomalyCore.Comp
     /// </summary>
     public class LC_CompEgg : CompInteractable
     {
+        /// <summary>获取 <c>Props</c>。</summary>
         public new LC_CompProperties_InteractableEgg Props => (LC_CompProperties_InteractableEgg)props;
 
         /// <summary>

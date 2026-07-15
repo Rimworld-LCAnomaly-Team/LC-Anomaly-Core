@@ -7,6 +7,7 @@ using Verse;
 
 namespace LCAnomalyCore.Patch
 {
+    /// <summary>表示 <c>Patch_ColonistBarColonistDrawer</c> 类型。</summary>
     [HarmonyPatch(typeof(ColonistBarColonistDrawer), nameof(ColonistBarColonistDrawer.DrawColonist))]
     public class Patch_ColonistBarColonistDrawer
     {

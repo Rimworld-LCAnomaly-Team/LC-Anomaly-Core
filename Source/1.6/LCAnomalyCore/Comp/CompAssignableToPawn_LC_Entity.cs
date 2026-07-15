@@ -33,6 +33,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             if (ShouldShowAssignmentGizmo())

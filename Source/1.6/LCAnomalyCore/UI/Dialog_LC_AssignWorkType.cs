@@ -5,6 +5,7 @@ using Verse;
 
 namespace LCAnomalyCore.UI
 {
+    /// <summary>表示 <c>Dialog_LC_AssignWorkType</c> 类型。</summary>
     public class Dialog_LC_AssignWorkType : Window
     {
         private Building_AbnormalityHoldingPlatform platform;
@@ -15,6 +16,7 @@ namespace LCAnomalyCore.UI
         /// </summary>
         public override Vector2 InitialSize => new Vector2(260f, 260f);
 
+        /// <summary>初始化 <c>Dialog_LC_AssignWorkType</c> 类的新实例。</summary>
         public Dialog_LC_AssignWorkType(Building_AbnormalityHoldingPlatform platform)
         {
             this.platform = platform;
@@ -22,6 +24,7 @@ namespace LCAnomalyCore.UI
             absorbInputAroundWindow = true;
         }
 
+        /// <inheritdoc />
         public override void DoWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Small;

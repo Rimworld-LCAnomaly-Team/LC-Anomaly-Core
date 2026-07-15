@@ -18,11 +18,13 @@ namespace LCAnomalyCore.Util
             new CurvePoint(10000f, 150f)
         };
 
+        /// <inheritdoc />
         public override bool ShouldShowFor(StatRequest req)
         {
             return req.Def is ThingDef thingDef && thingDef.HasComp<CompAbnormalityHolder>();
         }
 
+        /// <inheritdoc />
         public override float GetValueUnfinalized(StatRequest req, bool applyPostProcess = true)
         {
             float baseValue = base.GetValueUnfinalized(req, applyPostProcess);

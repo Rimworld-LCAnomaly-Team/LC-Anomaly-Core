@@ -25,6 +25,7 @@ namespace LCAnomalyCore.UI
         /// </summary>
         public override Vector2 InitialSize => new Vector2(650f, 500f);
 
+        /// <summary>初始化 <c>Dialog_LC_DepartmentCoreAssign</c> 类的新实例。</summary>
         public Dialog_LC_DepartmentCoreAssign(CompAssignableDepartmentCore assignable)
         {
             this.assignable = assignable;
@@ -34,6 +35,7 @@ namespace LCAnomalyCore.UI
             absorbInputAroundWindow = true;
         }
 
+        /// <inheritdoc />
         public override void DoWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Small;

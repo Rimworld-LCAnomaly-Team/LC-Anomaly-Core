@@ -21,6 +21,7 @@ namespace LCAnomalyCore.Jobs
 
         private CompAbnormalityHolder DestHolder => job.GetTarget(TargetIndex.A).Thing.TryGetComp<CompAbnormalityHolder>();
 
+        /// <inheritdoc />
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             if (Takee != null && DestHolder != null && pawn.Reserve(Takee, job, 1, -1, null, errorOnFailed))
@@ -31,6 +32,7 @@ namespace LCAnomalyCore.Jobs
             return false;
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOnDestroyedOrNull(TargetIndex.B);
@@ -78,6 +80,7 @@ namespace LCAnomalyCore.Jobs
             });
         }
 
+        /// <summary>执行 <c>ChainTakeeToPlatformToils</c> 定义的操作。</summary>
         public static IEnumerable<Toil> ChainTakeeToPlatformToils(Pawn taker, Thing takee, CompAbnormalityHolder platform, TargetIndex platformIndex)
         {
             yield return Toils_Goto.GotoThing(platformIndex, PathEndMode.ClosestTouch);

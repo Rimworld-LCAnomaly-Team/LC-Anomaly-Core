@@ -12,21 +12,28 @@ using UnityEngine;
 
 namespace LCAnomalyCore.UI.FloatMenu
 {
+    /// <summary>表示 <c>FloatMenuOptionProvider_CaptureAbnormality</c> 类型。</summary>
     public class FloatMenuOptionProvider_CaptureAbnormality : FloatMenuOptionProvider
     {
+        /// <inheritdoc />
         protected override bool Drafted => true;
 
+        /// <inheritdoc />
         protected override bool Undrafted => true;
 
+        /// <inheritdoc />
         protected override bool Multiselect => false;
 
+        /// <inheritdoc />
         protected override bool RequiresManipulation => true;
 
+        /// <inheritdoc />
         protected override bool AppliesInt(FloatMenuContext context)
         {
             return true;
         }
 
+        /// <inheritdoc />
         public override IEnumerable<FloatMenuOption> GetOptionsFor(Thing clickedThing, FloatMenuContext context)
         {
             if (!clickedThing.TryGetComp(out CompAbnormalityHoldingPlatformTarget holdComp) || !holdComp.CanBeCaptured || !holdComp.StudiedAtHoldingPlatform)

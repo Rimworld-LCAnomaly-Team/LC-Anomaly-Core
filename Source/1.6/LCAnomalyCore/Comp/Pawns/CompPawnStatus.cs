@@ -108,12 +108,14 @@ namespace LCAnomalyCore.Comp.Pawns
             }
         }
 
+        /// <summary>表示 <c>AssignedCore</c>。</summary>
         public Building_DepartmentCore AssignedCore;
 
         #endregion 变量
 
         #region 生命周期
 
+        /// <inheritdoc />
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
@@ -356,10 +358,12 @@ namespace LCAnomalyCore.Comp.Pawns
         EX
     }
 
+    /// <summary>表示 <c>PawnStatus</c> 类型。</summary>
     public struct PawnStatus : IExposable
     {
         private static readonly int maxLevel = 100;
 
+        /// <summary>表示 <c>Status</c>。</summary>
         public int Status
         {
             get => status;
@@ -372,6 +376,7 @@ namespace LCAnomalyCore.Comp.Pawns
 
         private int status;
 
+        /// <summary>表示 <c>Exp</c>。</summary>
         public float Exp
         {
             get => exp;
@@ -392,12 +397,14 @@ namespace LCAnomalyCore.Comp.Pawns
 
         private float exp;
 
+        /// <summary>初始化 <c>PawnStatus</c> 类的新实例。</summary>
         public PawnStatus(int status, int exp = 0)
         {
             Status = status;
             Exp = exp;
         }
 
+        /// <summary>执行 <c>ExposeData</c> 定义的操作。</summary>
         public void ExposeData()
         {
             Scribe_Values.Look(ref status, "status", 1);

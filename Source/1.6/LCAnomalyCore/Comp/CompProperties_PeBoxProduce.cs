@@ -14,9 +14,12 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public ThingDef peBoxDef;
 
+        /// <summary>表示 <c>amountProdueRangeNormal</c>。</summary>
         public IntRange amountProdueRangeNormal;
+        /// <summary>表示 <c>amountProdueMax</c>。</summary>
         public int amountProdueMax;
 
+        /// <summary>表示 <c>boxTexOffsetZ</c>。</summary>
         public float boxTexOffsetZ;
 
         #endregion XML字段

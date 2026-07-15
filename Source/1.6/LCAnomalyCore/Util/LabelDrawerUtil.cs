@@ -6,8 +6,10 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>LabelDrawerUtil</c> 类型。</summary>
     public static class LabelDrawerUtil
     {
+        /// <summary>执行 <c>DrawLabels</c> 定义的操作。</summary>
         public static void DrawLabels(Pawn colonist, Vector2 pos, ColonistBar bar, Rect rect, float truncateToWidth = 9999f)
         {
             var comp = colonist.GetComp<CompPawnStatus>();
@@ -22,6 +24,7 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>执行 <c>DrawCustomLabel</c> 定义的操作。</summary>
         public static void DrawCustomLabel(Vector2 pos, string labelToDraw, Color labelColor)
         {
             bool tempDrawBG = true;

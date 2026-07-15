@@ -173,6 +173,7 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>执行 <c>TargetHoldingPlatformForEntity</c> 定义的操作。</summary>
         public static void TargetHoldingPlatformForEntity(Pawn carrier, Thing abnormality, bool transferBetweenPlatforms = false, Thing sourcePlatform = null)
         {
             //TODO 后续可能要重构 如果带LC Comp或者是蛋def都可以认为是实体
@@ -322,6 +323,7 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>执行 <c>AlreadyReserved</c> 定义的操作。</summary>
         public static bool AlreadyReserved(Thing p, out Pawn reserver)
         {
             Log.Warning("1");
@@ -352,6 +354,7 @@ namespace LCAnomalyCore.Util
             return false;
         }
 
+        /// <summary>执行 <c>HoldingPlatformAvailableOnCurrentMap</c> 定义的操作。</summary>
         public static bool HoldingPlatformAvailableOnCurrentMap()
         {
             Map currentMap = Find.CurrentMap;

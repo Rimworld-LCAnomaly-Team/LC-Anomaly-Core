@@ -47,8 +47,10 @@ namespace LCAnomalyCore.Patch
         }
     }
 
+    /// <summary>表示 <c>PatchPawnUtils</c> 类型。</summary>
     public static class PatchPawnUtils
     {
+        /// <summary>执行 <c>CalculateWarningPoints</c> 定义的操作。</summary>
         public static void CalculateWarningPoints(Pawn pawn)
         {
             //LC组件null直接返回原方法

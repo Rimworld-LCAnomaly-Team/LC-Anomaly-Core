@@ -12,8 +12,10 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>DamageUtils</c> 类型。</summary>
     public static class DamageUtils
     {
+        /// <summary>执行 <c>LevelTag2Int</c> 定义的操作。</summary>
         public static int LevelTag2Int(string tag)
         {
             if (Enum.TryParse(tag, true, out LCRiskLevel level))
@@ -24,6 +26,7 @@ namespace LCAnomalyCore.Util
             return (int)LCRiskLevel.ZAYIN;
         }
 
+        /// <summary>执行 <c>GetDamageLevelFactor</c> 定义的操作。</summary>
         public static float GetDamageLevelFactor(int attacker, int victim)
         {
             int delta = Mathf.Clamp(victim - attacker, -4, 4);
@@ -40,6 +43,7 @@ namespace LCAnomalyCore.Util
             }
         }
 
+        /// <summary>执行 <c>ConvertWeaponDamage</c> 定义的操作。</summary>
         public static void ConvertWeaponDamage(ref DamageInfo dinfo)
         {
             if (dinfo.Def?.GetModExtension<FourColorDamageExtension>() != null)
@@ -57,6 +61,7 @@ namespace LCAnomalyCore.Util
                 dinfo.Def = convertedDef;
         }
 
+        /// <summary>执行 <c>GetAdjustedDamage</c> 定义的操作。</summary>
         public static float GetAdjustedDamage(DamageInfo dinfo, Thing victim,
             FourColorDamageType damageType, LCRiskLevel fallbackRiskLevel)
         {
@@ -97,6 +102,7 @@ namespace LCAnomalyCore.Util
             return Mathf.Max(0f, dinfo.Amount * Mathf.Max(0f, weaponMultiplier) * resistance * levelFactor);
         }
 
+        /// <summary>执行 <c>ApplyMentalDamage</c> 定义的操作。</summary>
         public static float ApplyMentalDamage(Pawn pawn, float amount, DamageInfo dinfo)
         {
             if (!CanTakeMentalDamage(pawn) || amount <= 0f)
@@ -136,6 +142,7 @@ namespace LCAnomalyCore.Util
             return amount;
         }
 
+        /// <summary>执行 <c>CanTakeMentalDamage</c> 定义的操作。</summary>
         public static bool CanTakeMentalDamage(Pawn pawn)
         {
             if (pawn?.mindState?.mentalStateHandler == null)
@@ -151,6 +158,7 @@ namespace LCAnomalyCore.Util
             return pawn.RaceProps.Humanlike && !(pawn.def is Defs.ThingDef_AbnormalityBase);
         }
 
+        /// <summary>执行 <c>GetMaxMentalPoints</c> 定义的操作。</summary>
         public static float GetMaxMentalPoints(Pawn pawn)
         {
             CompPawnStatus status = pawn.TryGetComp<CompPawnStatus>();

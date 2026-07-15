@@ -9,6 +9,12 @@
             水桶
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_CogitoBucket.CompSpawner">
+            <summary>获取 <c>CompSpawner</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_CogitoBucket.Tick">
+            <inheritdoc />
+        </member>
         <member name="M:LCAnomalyCore.Buildings.Building_CogitoBucket.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
             绘制方法
@@ -35,6 +41,12 @@
             <summary>
             燃料Comp
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.Tick">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.DeSpawn(Verse.DestroyMode)">
+            <inheritdoc />
         </member>
         <member name="M:LCAnomalyCore.Buildings.Building_DepartmentCore.TryHeal">
             <summary>
@@ -129,6 +141,18 @@
             收容平台Building
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.innerContainer">
+            <summary>表示 <c>innerContainer</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.HeldPawn">
+            <summary>获取 <c>HeldPawn</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Occupied">
+            <summary>获取 <c>Occupied</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.inspectTextSB">
+            <summary>表示 <c>inspectTextSB</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CompWorkable">
             <summary>
             可工作UI Comp
@@ -138,6 +162,9 @@
             <summary>
             可指派工作 Comp
             </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CompAbnormalityStudiable">
+            <summary>表示 <c>CompAbnormalityStudiable</c>。</summary>
         </member>
         <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.EntityCached">
             <summary>
@@ -154,6 +181,9 @@
             缓存名称贴图
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.PawnDrawOffset">
+            <summary>获取 <c>PawnDrawOffset</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.QliphothCounter">
             <summary>
             逆卡巴拉计数器值
@@ -163,6 +193,15 @@
             <summary>
             独立PeBox数量
             </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.CurWorkType">
+            <summary>表示 <c>CurWorkType</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.curWorkType">
+            <summary>表示 <c>curWorkType</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.#ctor">
+            <summary>初始化 <c>Building_AbnormalityHoldingPlatform</c> 类的新实例。</summary>
         </member>
         <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.SpawnSetup(Verse.Map,System.Boolean)">
             <summary>
@@ -181,6 +220,9 @@
             <summary>
             Tick
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DynamicDrawPhaseAt(Verse.DrawPhase,UnityEngine.Vector3,System.Boolean)">
+            <inheritdoc />
         </member>
         <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.DrawAt(UnityEngine.Vector3,System.Boolean)">
             <summary>
@@ -204,6 +246,12 @@
             正在被研究时每Tick调用
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Notify_StudyInterval(LCAnomalyCore.Comp.Pawns.CompPawnStatus)">
+            <summary>执行 <c>Notify_StudyInterval</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Notify_StudyStart(Verse.Pawn)">
+            <summary>执行 <c>Notify_StudyStart</c> 定义的操作。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Init">
             <summary>
             初始化方法
@@ -224,6 +272,174 @@
             Gizmo
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.GetInspectString">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.HeldPawnDrawPos_Y">
+            <summary>获取 <c>HeldPawnDrawPos_Y</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.HeldPawnBodyAngle">
+            <summary>获取 <c>HeldPawnBodyAngle</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.HeldPawnPosture">
+            <summary>获取 <c>HeldPawnPosture</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.GetChildHolders(System.Collections.Generic.List{Verse.IThingHolder})">
+            <summary>执行 <c>GetChildHolders</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.GetDirectlyHeldThings">
+            <summary>执行 <c>GetDirectlyHeldThings</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.Notify_OnBeforeRoofCollapse">
+            <summary>执行 <c>Notify_OnBeforeRoofCollapse</c> 定义的操作。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform.SearchableContents">
+            <summary>获取 <c>SearchableContents</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner">
+            <summary>表示 <c>LC_CompProperties_RequireThingSpawner</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.thingRequire">
+            <summary>表示 <c>thingRequire</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.thingToSpawn">
+            <summary>表示 <c>thingToSpawn</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.spawnCount">
+            <summary>表示 <c>spawnCount</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.spawnIntervalRange">
+            <summary>表示 <c>spawnIntervalRange</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.spawnMaxAdjacent">
+            <summary>表示 <c>spawnMaxAdjacent</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.spawnForbidden">
+            <summary>表示 <c>spawnForbidden</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.requiresPower">
+            <summary>表示 <c>requiresPower</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.writeTimeLeftToSpawn">
+            <summary>表示 <c>writeTimeLeftToSpawn</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.showMessageIfOwned">
+            <summary>表示 <c>showMessageIfOwned</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.saveKeysPrefix">
+            <summary>表示 <c>saveKeysPrefix</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.inheritFaction">
+            <summary>表示 <c>inheritFaction</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompProperties_RequireThingSpawner.#ctor">
+            <summary>初始化 <c>LC_CompProperties_RequireThingSpawner</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.LC_CompRequireThingSpawner">
+            <summary>表示 <c>LC_CompRequireThingSpawner</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.ticksUntilSpawn">
+            <summary>表示 <c>ticksUntilSpawn</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.PropsSpawner">
+            <summary>获取 <c>PropsSpawner</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.PowerOn">
+            <summary>获取 <c>PowerOn</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.innerContainer">
+            <summary>表示 <c>innerContainer</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.HasRequireThingInstalled">
+            <summary>获取 <c>HasRequireThingInstalled</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.#ctor">
+            <summary>初始化 <c>LC_CompRequireThingSpawner</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.PostSpawnSetup(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.CompTick">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.CompTickRare">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.TickInterval(System.Int32)">
+            <summary>执行 <c>TickInterval</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.TryDoSpawn">
+            <summary>执行 <c>TryDoSpawn</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.TryFindSpawnCell(Verse.Thing,Verse.ThingDef,System.Int32,Verse.IntVec3@)">
+            <summary>执行 <c>TryFindSpawnCell</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.CheckShouldSpawn">
+            <summary>执行 <c>CheckShouldSpawn</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.ResetCountdown">
+            <summary>执行 <c>ResetCountdown</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.PostExposeData">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.CompInspectStringExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.GetChildHolders(System.Collections.Generic.List{Verse.IThingHolder})">
+            <summary>执行 <c>GetChildHolders</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_CompRequireThingSpawner.GetDirectlyHeldThings">
+            <summary>执行 <c>GetDirectlyHeldThings</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAbnormalityHolder">
+            <summary>表示 <c>CompAbnormalityHolder</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.ContainmentStrength">
+            <summary>获取 <c>ContainmentStrength</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.HoldingPlatform">
+            <summary>获取 <c>HoldingPlatform</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.Available">
+            <summary>获取或设置 <c>Available</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.HeldPawn">
+            <summary>获取或设置 <c>HeldPawn</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolder.Container">
+            <summary>获取或设置 <c>Container</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHolder.EjectContents">
+            <summary>执行 <c>EjectContents</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHolder.CompInspectStringExtra">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform">
+            <summary>表示 <c>CompAbnormalityHolderPlatform</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform.Available">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform.HeldPawn">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform.Container">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHolderPlatform.EjectContents">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Comp.CompAccessoryable">
             <summary>
@@ -278,6 +494,18 @@
             候选者列表
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.TryAssignPawn(Verse.Pawn)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.TryUnassignPawn(Verse.Pawn,System.Boolean,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.UnassignAllPawn">
+            <summary>执行 <c>UnassignAllPawn</c> 定义的操作。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompAssignableDepartmentCore.DoHeal(Verse.Pawn,System.Single)">
             <summary>
             进行治疗
@@ -301,10 +529,49 @@
             <param name="amount">单位治疗量</param>
             <param name="count">治疗部位数量</param>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompBrainSpinalNerve">
+            <summary>表示 <c>CompBrainSpinalNerve</c> 类型。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompBrainSpinalNerve.Props">
             <summary>
             CompProperties
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompBrainSpinalNerve.name">
+            <summary>表示 <c>name</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompBrainSpinalNerve.skill">
+            <summary>表示 <c>skill</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompBrainSpinalNerve.Init(Verse.Pawn)">
+            <summary>执行 <c>Init</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompBrainSpinalNerve.PostExposeData">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompBrainSpinalNerve.CompInspectStringExtra">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.NerveSkill">
+            <summary>表示 <c>NerveSkill</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.NerveSkill.def">
+            <summary>表示 <c>def</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.NerveSkill.level">
+            <summary>表示 <c>level</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.NerveSkill.ExposeData">
+            <summary>执行 <c>ExposeData</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompCogitoBucketSpawner">
+            <summary>表示 <c>CompCogitoBucketSpawner</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompCogitoBucketSpawner.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompEgoExtractable">
+            <summary>表示 <c>CompEgoExtractable</c> 类型。</summary>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.Props">
             <summary>
@@ -325,6 +592,9 @@
             <summary>
             CompHoldingPlatformTarget
             </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.component">
+            <summary>获取 <c>component</c>。</summary>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompEgoExtractable.CurAmountWeapon">
             <summary>
@@ -374,16 +644,136 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompEgoSuit">
+            <summary>表示 <c>CompEgoSuit</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoSuit.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompEgoSuit.ResistanceFor(LCAnomalyCore.Damage.FourColorDamageType)">
+            <summary>执行 <c>ResistanceFor</c> 定义的操作。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompEgoSuit.ApplyEGOResist(Verse.DamageInfo@)">
             <summary>
             Retained for binary compatibility with early integrations. New damage workers apply
             resistance centrally and do not call this method.
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompEgoWeapon">
+            <summary>表示 <c>CompEgoWeapon</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompEgoWeapon.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget">
+            <summary>表示 <c>CompAbnormalityHoldingPlatformTarget</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.targetHolder">
+            <summary>表示 <c>targetHolder</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.isEscaping">
+            <summary>表示 <c>isEscaping</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CompAbnormalityStudiable">
+            <summary>获取 <c>CompAbnormalityStudiable</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CompActivity">
+            <summary>表示 <c>CompActivity</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.EntityHolder">
+            <summary>获取 <c>EntityHolder</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.StudiedAtHoldingPlatform">
+            <summary>表示 <c>StudiedAtHoldingPlatform</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CanStudy">
+            <summary>获取 <c>CanStudy</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.HeldPlatform">
+            <summary>获取 <c>HeldPlatform</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CurrentlyHeldOnPlatform">
+            <summary>表示 <c>CurrentlyHeldOnPlatform</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CanBeCaptured">
+            <summary>表示 <c>CanBeCaptured</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.PostSpawnSetup(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CompTick">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.Notify_HeldOnPlatform(Verse.ThingOwner)">
+            <summary>执行 <c>Notify_HeldOnPlatform</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.Notify_ReleasedFromPlatform">
+            <summary>执行 <c>Notify_ReleasedFromPlatform</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.Escape">
+            <summary>执行 <c>Escape</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.CompInspectStringExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityHoldingPlatformTarget.PostExposeData">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompPoperties_EgoSuit">
+            <summary>表示 <c>CompPoperties_EgoSuit</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompPoperties_EgoSuit.level">
+            <summary>表示 <c>level</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompPoperties_EgoSuit.redResist">
+            <summary>表示 <c>redResist</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompPoperties_EgoSuit.whiteResist">
+            <summary>表示 <c>whiteResist</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompPoperties_EgoSuit.blackResist">
+            <summary>表示 <c>blackResist</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompPoperties_EgoSuit.paleResist">
+            <summary>表示 <c>paleResist</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompPoperties_EgoSuit.#ctor">
+            <summary>初始化 <c>CompPoperties_EgoSuit</c> 类的新实例。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_EgoSuit">
             <summary>
             Correctly-spelled XML alias. The old class name remains for existing Defs.
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform">
+            <summary>表示 <c>CompProperties_AbnormalityHolderPlatform</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.untetheredGraphicTexPath">
+            <summary>表示 <c>untetheredGraphicTexPath</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.tilingChainTexPath">
+            <summary>表示 <c>tilingChainTexPath</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.baseChainFastenerTexPath">
+            <summary>表示 <c>baseChainFastenerTexPath</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.targetChainFastenerTexPath">
+            <summary>表示 <c>targetChainFastenerTexPath</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.entityLungeSoundHi">
+            <summary>表示 <c>entityLungeSoundHi</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.entityLungeSoundLow">
+            <summary>表示 <c>entityLungeSoundLow</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform.#ctor">
+            <summary>初始化 <c>CompProperties_AbnormalityHolderPlatform</c> 类的新实例。</summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_Accessoryable">
             <summary>
@@ -414,6 +804,36 @@
             <summary>
             部门核心CompProperties
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.departmentType">
+            <summary>表示 <c>departmentType</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.healConsumeAmount">
+            <summary>表示 <c>healConsumeAmount</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.healAmount">
+            <summary>表示 <c>healAmount</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.healDuration">
+            <summary>表示 <c>healDuration</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.fillableBarColor">
+            <summary>表示 <c>fillableBarColor</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore.#ctor">
+            <summary>初始化 <c>CompProperties_AssignableDepartmentCore</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_BrainSpinalNerve">
+            <summary>表示 <c>CompProperties_BrainSpinalNerve</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_BrainSpinalNerve.#ctor">
+            <summary>初始化 <c>CompProperties_BrainSpinalNerve</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_CogitoBucketSpawner">
+            <summary>表示 <c>CompProperties_CogitoBucketSpawner</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_CogitoBucketSpawner.#ctor">
+            <summary>初始化 <c>CompProperties_CogitoBucketSpawner</c> 类的新实例。</summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_EgoExtractable">
             <summary>
@@ -470,15 +890,84 @@
             Comp
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_EgoWeapon">
+            <summary>表示 <c>CompProperties_EgoWeapon</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoWeapon.level">
+            <summary>表示 <c>level</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoWeapon.damageType">
+            <summary>表示 <c>damageType</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_EgoWeapon.damageMultiplier">
+            <summary>表示 <c>damageMultiplier</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_EgoWeapon.#ctor">
+            <summary>初始化 <c>CompProperties_EgoWeapon</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget">
+            <summary>表示 <c>CompProperties_AbnormalityHoldingPlatformTarget</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.heldPawnKind">
+            <summary>表示 <c>heldPawnKind</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.capturedLetterLabel">
+            <summary>表示 <c>capturedLetterLabel</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.capturedLetterText">
+            <summary>表示 <c>capturedLetterText</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.lookForTargetOnEscape">
+            <summary>表示 <c>lookForTargetOnEscape</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.canBeExecuted">
+            <summary>表示 <c>canBeExecuted</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.getsColdContainmentBonus">
+            <summary>表示 <c>getsColdContainmentBonus</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.hasAnimation">
+            <summary>表示 <c>hasAnimation</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AbnormalityHoldingPlatformTarget.#ctor">
+            <summary>初始化 <c>CompProperties_AbnormalityHoldingPlatformTarget</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AbnormalityHolder">
+            <summary>表示 <c>CompProperties_AbnormalityHolder</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityHolder.containmentFactor">
+            <summary>表示 <c>containmentFactor</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_WorkableUI">
+            <summary>表示 <c>CompProperties_WorkableUI</c> 类型。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompProperties_WorkableUI.#ctor">
             <summary>
             Comp
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Comp.CompWorkableUI">
+            <summary>表示 <c>CompWorkableUI</c> 类型。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompWorkableUI.Props">
             <summary>
             CompProperties
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompWorkableUI.UIAllowed">
+            <summary>表示 <c>UIAllowed</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompWorkableUI.AllowWorkGraphic">
+            <summary>获取 <c>AllowWorkGraphic</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompWorkableUI.NotAllowWorkGraphic">
+            <summary>获取 <c>NotAllowWorkGraphic</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompWorkableUI.AutoWorkGraphic">
+            <summary>获取 <c>AutoWorkGraphic</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompWorkableUI.PostExposeData">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected">
             <summary>
@@ -535,11 +1024,15 @@
             生成实体
             </summary>
             <param name="list">实体列表</param>
+            <param name="chance">生成概率</param>
         </member>
         <member name="T:LCAnomalyCore.Comp.LC_CompEgg">
             <summary>
             LC异想体蛋基础Comp
             </summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.LC_CompEgg.Props">
+            <summary>获取 <c>Props</c>。</summary>
         </member>
         <member name="M:LCAnomalyCore.Comp.LC_CompEgg.OnInteracted(Verse.Pawn)">
             <summary>
@@ -569,25 +1062,43 @@
             研究阶段解锁
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.studyUnlocksComp">
+            <summary>表示 <c>studyUnlocksComp</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormality.AbnormalityCategory">
+            <summary>表示 <c>AbnormalityCategory</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompAbnormality.StudiableComp">
             <summary>
             研究组件
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.studiableComp">
+            <summary>表示 <c>studiableComp</c>。</summary>
         </member>
         <member name="P:LCAnomalyCore.Comp.CompAbnormality.AccessoryableComp">
             <summary>
             首饰组件
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.accessoryableComp">
+            <summary>表示 <c>accessoryableComp</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompAbnormality.PeBoxComp">
             <summary>
             PeBox组件
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.peBoxComp">
+            <summary>表示 <c>peBoxComp</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompAbnormality.HoldingPlaformTargetComp">
             <summary>
             收容控制组件
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.holdingPlatformTargetComp">
+            <summary>表示 <c>holdingPlatformTargetComp</c>。</summary>
         </member>
         <member name="F:LCAnomalyCore.Comp.CompAbnormality.biosignature">
             <summary>
@@ -629,6 +1140,15 @@
             是否已出逃
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.escaped">
+            <summary>表示 <c>escaped</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.PeBoxProducedTemp">
+            <summary>表示 <c>PeBoxProducedTemp</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormality.NeBoxProducedTemp">
+            <summary>表示 <c>NeBoxProducedTemp</c>。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompAbnormality.PostPostMake">
             <summary>
             PostPostMake初始化
@@ -648,6 +1168,9 @@
             <summary>
             正在被研究时执行的操作
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_StudyInterval(LCAnomalyCore.Comp.Pawns.CompPawnStatus,LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>执行 <c>Notify_StudyInterval</c> 定义的操作。</summary>
         </member>
         <member name="M:LCAnomalyCore.Comp.CompAbnormality.Notify_Holded">
             <summary>
@@ -726,6 +1249,9 @@
             CompProperties
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.component">
+            <summary>获取 <c>component</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.Comp.CompPeBoxProduce.CurAmountIndiPebox">
             <summary>
             当前独立PeBox数量
@@ -742,6 +1268,9 @@
             <summary>
             值发生变化时调用
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompPeBoxProduce.CompGetGizmosExtra">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Comp.CompProperties_Abnormality">
             <summary>
@@ -808,10 +1337,127 @@
             XML：工作产生PeBox的类型
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.amountProdueRangeNormal">
+            <summary>表示 <c>amountProdueRangeNormal</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.amountProdueMax">
+            <summary>表示 <c>amountProdueMax</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.boxTexOffsetZ">
+            <summary>表示 <c>boxTexOffsetZ</c>。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Comp.CompProperties_PeBoxProduce.#ctor">
             <summary>
             Comp
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable">
+            <summary>表示 <c>CompProperties_AbnormalityStudiable</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.studyTimesPeriod">
+            <summary>表示 <c>studyTimesPeriod</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.frequencyTicks">
+            <summary>表示 <c>frequencyTicks</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.studyAmountToComplete">
+            <summary>表示 <c>studyAmountToComplete</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.showToggleGizmo">
+            <summary>表示 <c>showToggleGizmo</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.studyEnabledByDefault">
+            <summary>表示 <c>studyEnabledByDefault</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.canBeActivityDeactivated">
+            <summary>表示 <c>canBeActivityDeactivated</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.knowledgeFactorOutdoors">
+            <summary>表示 <c>knowledgeFactorOutdoors</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.minMonolithLevelForStudy">
+            <summary>表示 <c>minMonolithLevelForStudy</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.completedLetterTitle">
+            <summary>表示 <c>completedLetterTitle</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.completedLetterText">
+            <summary>表示 <c>completedLetterText</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.completedMessage">
+            <summary>表示 <c>completedMessage</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.completedLetterDef">
+            <summary>表示 <c>completedLetterDef</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.Completable">
+            <summary>获取 <c>Completable</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AbnormalityStudiable.#ctor">
+            <summary>初始化 <c>CompProperties_AbnormalityStudiable</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks">
+            <summary>表示 <c>CompProperties_AbnormalityStudyUnlocks</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks.studyNotes">
+            <summary>表示 <c>studyNotes</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks.defaultStudyAmount">
+            <summary>表示 <c>defaultStudyAmount</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks.defaultCategoryOverride">
+            <summary>表示 <c>defaultCategoryOverride</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks.#ctor">
+            <summary>初始化 <c>CompProperties_AbnormalityStudyUnlocks</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompProperties_AbnormalityStudyUnlocks.ConfigErrors(Verse.ThingDef)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAbnormalityStudiable">
+            <summary>表示 <c>CompAbnormalityStudiable</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.Completed">
+            <summary>表示 <c>Completed</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.ProgressPercent">
+            <summary>表示 <c>ProgressPercent</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudiable.studyPoints">
+            <summary>表示 <c>studyPoints</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudiable.studyEnabled">
+            <summary>表示 <c>studyEnabled</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudiable.lastStudiedTick">
+            <summary>表示 <c>lastStudiedTick</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.TicksTilNextStudy">
+            <summary>获取 <c>TicksTilNextStudy</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudiable.studyInteractions">
+            <summary>表示 <c>studyInteractions</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.CompStudyUnlocks">
+            <summary>表示 <c>CompStudyUnlocks</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudiable.StudyTimesPeriod">
+            <summary>获取 <c>StudyTimesPeriod</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.PostPostMake">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.SetStudyEnabled(System.Boolean)">
+            <summary>执行 <c>SetStudyEnabled</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.Study(Verse.Pawn,System.Single)">
+            <summary>执行 <c>Study</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.CurrentlyStudiable">
+            <summary>执行 <c>CurrentlyStudiable</c> 定义的操作。</summary>
         </member>
         <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.GetWorkSpeedOffset">
             <summary>
@@ -825,10 +1471,73 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.Notify_ActivityDeactivated">
+            <summary>执行 <c>Notify_ActivityDeactivated</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.PostExposeData">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudiable.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks">
+            <summary>表示 <c>CompAbnormalityStudyUnlocks</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.letters">
+            <summary>表示 <c>letters</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.nextIndex">
+            <summary>表示 <c>nextIndex</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.studyProgress">
+            <summary>表示 <c>studyProgress</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.Letters">
+            <summary>获取 <c>Letters</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.Progress">
+            <summary>获取 <c>Progress</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.Completed">
+            <summary>获取 <c>Completed</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.PostPostMake">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.OnStudied(Verse.Pawn,System.Single,RimWorld.KnowledgeCategoryDef)">
+            <summary>执行 <c>OnStudied</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.RegisterStudyLevel(Verse.Pawn,System.Int32)">
+            <summary>执行 <c>RegisterStudyLevel</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.Notify_StudyLevelChanged(Verse.ChoiceLetter)">
+            <summary>执行 <c>Notify_StudyLevelChanged</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.TransferStudyProgress(System.Int32)">
+            <summary>执行 <c>TransferStudyProgress</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.TransferStudyLevel(System.Int32)">
+            <summary>执行 <c>TransferStudyLevel</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.UnlockNameCheck">
+            <summary>执行 <c>UnlockNameCheck</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.CompGetGizmosExtra">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAbnormalityStudyUnlocks.PostExposeData">
+            <inheritdoc />
+        </member>
         <member name="T:LCAnomalyCore.Comp.LC_EntityBaseThing">
             <summary>
             LC实体Thing基类
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_EntityBaseThing.#ctor">
+            <summary>初始化 <c>LC_EntityBaseThing</c> 类的新实例。</summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.LC_EntityBasePawn">
             <summary>
@@ -839,6 +1548,15 @@
             <summary>
             LC的实体Comp
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.LC_EntityBasePawn.entityComp">
+            <summary>表示 <c>entityComp</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_EntityBasePawn.#ctor">
+            <summary>初始化 <c>LC_EntityBasePawn</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.LC_EntityBasePawn.Notify_Studied(Verse.Pawn,System.Single,RimWorld.KnowledgeCategoryDef)">
+            <inheritdoc />
         </member>
         <member name="M:LCAnomalyCore.Comp.LC_EntityBasePawn.TickHolded">
             <summary>
@@ -889,6 +1607,12 @@
             <summary>
             综合等级
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompPawnStatus.AssignedCore">
+            <summary>表示 <c>AssignedCore</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.PostSpawnSetup(System.Boolean)">
+            <inheritdoc />
         </member>
         <member name="M:LCAnomalyCore.Comp.Pawns.CompPawnStatus.PostExposeData">
             <summary>
@@ -992,10 +1716,43 @@
             6级
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Comp.Pawns.PawnStatus">
+            <summary>表示 <c>PawnStatus</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.Pawns.PawnStatus.Status">
+            <summary>表示 <c>Status</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Comp.Pawns.PawnStatus.Exp">
+            <summary>表示 <c>Exp</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.PawnStatus.#ctor(System.Int32,System.Int32)">
+            <summary>初始化 <c>PawnStatus</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.PawnStatus.ExposeData">
+            <summary>执行 <c>ExposeData</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus">
             <summary>
             LC员工基本属性CompProperties
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.statusNumMax">
+            <summary>表示 <c>statusNumMax</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.initialRange_Fortitude">
+            <summary>表示 <c>initialRange_Fortitude</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.initialRange_Prudence">
+            <summary>表示 <c>initialRange_Prudence</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.initialRange_Temperance">
+            <summary>表示 <c>initialRange_Temperance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.initialRange_Justice">
+            <summary>表示 <c>initialRange_Justice</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.Pawns.CompProperties_PawnStatus.#ctor">
+            <summary>初始化 <c>CompProperties_PawnStatus</c> 类的新实例。</summary>
         </member>
         <member name="T:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity">
             <summary>
@@ -1006,6 +1763,9 @@
             <summary>
             候选者列表
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CompGetGizmosExtra">
+            <inheritdoc />
         </member>
         <member name="M:LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity.CheckAssignedList">
             <summary>
@@ -1023,6 +1783,60 @@
             <summary>
             清理所有分配人员
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Damage.FourColorDamageType">
+            <summary>表示 <c>FourColorDamageType</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorDamageType.None">
+            <summary>表示 <c>None</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorDamageType.Red">
+            <summary>表示 <c>Red</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorDamageType.White">
+            <summary>表示 <c>White</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorDamageType.Black">
+            <summary>表示 <c>Black</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorDamageType.Pale">
+            <summary>表示 <c>Pale</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Damage.LCRiskLevel">
+            <summary>表示 <c>LCRiskLevel</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.LCRiskLevel.ZAYIN">
+            <summary>表示 <c>ZAYIN</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.LCRiskLevel.TETH">
+            <summary>表示 <c>TETH</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.LCRiskLevel.HE">
+            <summary>表示 <c>HE</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.LCRiskLevel.WAW">
+            <summary>表示 <c>WAW</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.LCRiskLevel.ALEPH">
+            <summary>表示 <c>ALEPH</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Damage.FourColorTargetKind">
+            <summary>表示 <c>FourColorTargetKind</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorTargetKind.Default">
+            <summary>表示 <c>Default</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorTargetKind.Employee">
+            <summary>表示 <c>Employee</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Damage.FourColorTargetKind.Abnormality">
+            <summary>表示 <c>Abnormality</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.DamageWorker.DamageWorker_FourColor">
+            <summary>表示 <c>DamageWorker_FourColor</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.DamageWorker.DamageWorker_FourColor.Apply(Verse.DamageInfo,Verse.Thing)">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.DamageWorker.DamageWorker_LC_Red">
             <summary>
@@ -1159,6 +1973,9 @@
             EGO装备
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.AbnormalityCodexEntryDef">
+            <summary>表示 <c>AbnormalityCodexEntryDef</c> 类型。</summary>
+        </member>
         <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.aliasLabels">
             <summary>
             别名列表（不同观察等级的不同名字）
@@ -1168,6 +1985,27 @@
             <summary>
             分类等级
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.orderInCategory">
+            <summary>表示 <c>orderInCategory</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.icon">
+            <summary>表示 <c>icon</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.silhouette">
+            <summary>表示 <c>silhouette</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.Visible">
+            <summary>表示 <c>Visible</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.Discovered">
+            <summary>表示 <c>Discovered</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.PostLoad">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Defs.AbnormalityCodexEntryDef.ConfigErrors">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Defs.FleckDefOf">
             <summary>
@@ -1229,6 +2067,21 @@
             被注射了Cogito
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.JobDefOf">
+            <summary>表示 <c>JobDefOf</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.JobDefOf.LC_AbnormalityStudyInteract">
+            <summary>表示 <c>LC_AbnormalityStudyInteract</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.JobDefOf.CarryToAbnormalityHolder">
+            <summary>表示 <c>CarryToAbnormalityHolder</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.LCShaderTypeDef">
+            <summary>表示 <c>LCShaderTypeDef</c> 类型。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.LC_HoldingPlatformDef">
+            <summary>表示 <c>LC_HoldingPlatformDef</c> 类型。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.RecipeDefOf">
             <summary>
             该mod的所有RecipeDef
@@ -1258,6 +2111,24 @@
             <summary>
             异想体研究面板
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.FactionDefOf">
+            <summary>表示 <c>FactionDefOf</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.FactionDefOf.LC_Abnormalities">
+            <summary>表示 <c>LC_Abnormalities</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.StatDefOf">
+            <summary>表示 <c>StatDefOf</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.StatDefOf.LC_ContainmentStrength">
+            <summary>表示 <c>LC_ContainmentStrength</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.StatDefOf.LC_MinimumContainmentStrength">
+            <summary>表示 <c>LC_MinimumContainmentStrength</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Defs.SongDefOf">
+            <summary>表示 <c>SongDefOf</c> 类型。</summary>
         </member>
         <member name="F:LCAnomalyCore.Defs.SongDefOf.FirstWarning">
             <summary>
@@ -1329,6 +2200,9 @@
             LC异想体PawnKind基类（活动实体类）
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityEntity">
+            <summary>表示 <c>ThingDef_AbnormalityEntity</c> 类型。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Defs.ThingDef_AbnormalityEgg">
             <summary>
             LC异想体ThingDef基类（蛋类）
@@ -1364,6 +2238,15 @@
             脑啡肽状态中
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Defs.WorkTypeDefOf">
+            <summary>表示 <c>WorkTypeDefOf</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Defs.WorkTypeDefOf.AbnormalityStudy">
+            <summary>表示 <c>AbnormalityStudy</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.GameComponent.LCGameComponentTick">
+            <summary>表示 <c>LCGameComponentTick</c> 类型。</summary>
+        </member>
         <member name="T:LCAnomalyCore.GameComponent.GameComponent_LC">
             <summary>
             LC游戏组件
@@ -1374,15 +2257,33 @@
             当前的警报点数
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.GameComponent.GameComponent_LC.LCGameComponentTickEvent">
+            <summary>表示 <c>LCGameComponentTickEvent</c>。</summary>
+        </member>
         <member name="P:LCAnomalyCore.GameComponent.GameComponent_LC.AnomalyStatusSavedDict">
             <summary>
             异想体独立数据字典
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.GameComponent.GameComponent_LC.anomalyStatusSavedDict">
+            <summary>表示 <c>anomalyStatusSavedDict</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.#ctor(Verse.Game)">
+            <summary>初始化 <c>GameComponent_LC</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.LoadedGame">
+            <inheritdoc />
+        </member>
         <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.GameComponentTick">
             <summary>
             Tick
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.ExposeData">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.GameComponent_LC.TryGetAnomalyStatusSaved(Verse.ThingDef,LCAnomalyCore.GameComponent.AnomalyStatusSaved@)">
+            <summary>执行 <c>TryGetAnomalyStatusSaved</c> 定义的操作。</summary>
         </member>
         <member name="T:LCAnomalyCore.GameComponent.AnomalyStatusSaved">
             <summary>
@@ -1409,15 +2310,138 @@
             研究进度
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.GameComponent.AnomalyStatusSaved.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>初始化 <c>AnomalyStatusSaved</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.GameComponent.AnomalyStatusSaved.ExposeData">
+            <summary>执行 <c>ExposeData</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Hediffs.HediffComp_PawnStatus">
+            <summary>表示 <c>HediffComp_PawnStatus</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Hediffs.HediffComp_PawnStatus.statusStages">
+            <summary>表示 <c>statusStages</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Hediffs.HediffComp_PawnStatus.PawnStatusComp">
+            <summary>表示 <c>PawnStatusComp</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Hediffs.HediffComp_PawnStatus.CurStage">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Hediffs.HediffComp_PawnStatus.Tick">
+            <inheritdoc />
+        </member>
         <member name="T:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage">
             <summary>
             Severity is the lost fraction of the pawn's maximum SP (0..1).
             </summary>
         </member>
+        <member name="P:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage.LabelInBrackets">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage.ShouldRemove">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage.NotifyMentalDamageTaken">
+            <summary>执行 <c>NotifyMentalDamageTaken</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage.Tick">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Hediffs.Hediff_LCMentalDamage.ExposeData">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Interface.IHoldingPlatformWorkTypeSelectable">
+            <summary>表示 <c>IHoldingPlatformWorkTypeSelectable</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Interface.IHoldingPlatformWorkTypeSelectable.CurWorkType">
+            <summary>获取或设置 <c>CurWorkType</c>。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder">
             <summary>
             改自原版同名工作，是携带实体到平台的工作
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder.TryMakePreToilReservations(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder.MakeNewToils">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_CarryToAbnormalityHolder.ChainTakeeToPlatformToils(Verse.Pawn,Verse.Thing,LCAnomalyCore.Comp.CompAbnormalityHolder,Verse.AI.TargetIndex)">
+            <summary>执行 <c>ChainTakeeToPlatformToils</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract">
+            <summary>表示 <c>JobDriver_AbnormalityStudyInteract</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.ElectroharvesterFactor">
+            <summary>表示 <c>ElectroharvesterFactor</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.PlayerInterruptable">
+            <inheritdoc />
+        </member>
+        <member name="F:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.playerInterruptable">
+            <summary>表示 <c>playerInterruptable</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.ThingToStudy">
+            <summary>获取 <c>ThingToStudy</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.TryMakePreToilReservations(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.MakeNewToils">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.IsSameJobAs(Verse.AI.Job)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.ReportStringProcessed(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract.ExposeData">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyBase">
+            <summary>表示 <c>WorkGiver_AbnormalityStudyBase</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyBase.Prioritized">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyBase.PotentialWorkThingsGlobal(Verse.Pawn)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyBase.GetPriority(Verse.Pawn,Verse.TargetInfo)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract">
+            <summary>表示 <c>WorkGiver_AbnormalityStudyInteract</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract.ShouldSkip(Verse.Pawn,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract.PostProcessedGerund(Verse.AI.Job)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract.HasJobOnThing(Verse.Pawn,Verse.Thing,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract.JobOnThing(Verse.Pawn,Verse.Thing,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform">
+            <summary>表示 <c>WorkGiver_TakeAbnormalityToHoldingPlatform</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform.PotentialWorkThingsGlobal(Verse.Pawn)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform.ShouldSkip(Verse.Pawn,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform.HasJobOnThing(Verse.Pawn,Verse.Thing,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Jobs.WorkGiver_TakeAbnormalityToHoldingPlatform.JobOnThing(Verse.Pawn,Verse.Thing,System.Boolean)">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Misc.LC_FX_Standard">
             <summary>
@@ -1466,10 +2490,61 @@
             和保存有关
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.ModExtensions.ModExtension_AbnormalityCategory">
+            <summary>表示 <c>ModExtension_AbnormalityCategory</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.ModExtension_AbnormalityCategory.abnormalityCategoryDef">
+            <summary>表示 <c>abnormalityCategoryDef</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.ModExtensions.FourColorDamageExtension">
+            <summary>表示 <c>FourColorDamageExtension</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorDamageExtension.damageType">
+            <summary>表示 <c>damageType</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorDamageExtension.riskLevel">
+            <summary>表示 <c>riskLevel</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.ModExtensions.FourColorWeaponExtension">
+            <summary>表示 <c>FourColorWeaponExtension</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorWeaponExtension.damageType">
+            <summary>表示 <c>damageType</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorWeaponExtension.riskLevel">
+            <summary>表示 <c>riskLevel</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorWeaponExtension.damageMultiplier">
+            <summary>表示 <c>damageMultiplier</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.ModExtensions.FourColorApparelExtension">
+            <summary>表示 <c>FourColorApparelExtension</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorApparelExtension.riskLevel">
+            <summary>表示 <c>riskLevel</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorApparelExtension.redResistance">
+            <summary>表示 <c>redResistance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorApparelExtension.whiteResistance">
+            <summary>表示 <c>whiteResistance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorApparelExtension.blackResistance">
+            <summary>表示 <c>blackResistance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorApparelExtension.paleResistance">
+            <summary>表示 <c>paleResistance</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.ModExtensions.FourColorApparelExtension.ResistanceFor(LCAnomalyCore.Damage.FourColorDamageType)">
+            <summary>执行 <c>ResistanceFor</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.ModExtensions.FourColorTargetExtension">
             <summary>
             Optional race-level override for compatibility mods.
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.ModExtensions.FourColorTargetExtension.targetKind">
+            <summary>表示 <c>targetKind</c>。</summary>
         </member>
         <member name="T:LCAnomalyCore.Patch.PatchMain">
             <summary>
@@ -1485,6 +2560,9 @@
             <summary>
             服装层Patch（用于解决头部服装渲染问题）
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_ColonistBarColonistDrawer">
+            <summary>表示 <c>Patch_ColonistBarColonistDrawer</c> 类型。</summary>
         </member>
         <member name="T:LCAnomalyCore.Patch.Patch_MentalBreak">
             <summary>
@@ -1521,6 +2599,12 @@
             <param name="__instance">原来的反射对象</param>
             <param name="mode">消失模式</param>
         </member>
+        <member name="T:LCAnomalyCore.Patch.PatchPawnUtils">
+            <summary>表示 <c>PatchPawnUtils</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.PatchPawnUtils.CalculateWarningPoints(Verse.Pawn)">
+            <summary>执行 <c>CalculateWarningPoints</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Patch.Patch_TickManager">
             <summary>
             关于Pawn的补丁（为了提供暂停机制处理）
@@ -1532,6 +2616,36 @@
             </summary>
             <param name="__instance">原来的反射对象</param>
         </member>
+        <member name="T:LCAnomalyCore.Patch.Patch_Thing_TakeDamage">
+            <summary>表示 <c>Patch_Thing_TakeDamage</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Patch.Patch_Thing_TakeDamage.Prefix(Verse.DamageInfo@)">
+            <summary>执行 <c>Prefix</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes">
+            <summary>表示 <c>ITab_AbnormalityStudyNotes</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.StudiableThing">
+            <summary>获取 <c>StudiableThing</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.IsVisible">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.Letters">
+            <summary>获取 <c>Letters</c>。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.StudyCompleted">
+            <summary>获取 <c>StudyCompleted</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.#ctor">
+            <summary>初始化 <c>ITab_AbnormalityStudyNotes</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.OnOpen">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_AbnormalityStudyNotes.FillTab">
+            <inheritdoc />
+        </member>
         <member name="T:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign">
             <summary>
             自动研究分配对话框
@@ -1542,10 +2656,25 @@
             窗体的尺寸
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign.#ctor(LCAnomalyCore.Comp.CompAssignableDepartmentCore)">
+            <summary>初始化 <c>Dialog_LC_DepartmentCoreAssign</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_DepartmentCoreAssign.DoWindowContents(UnityEngine.Rect)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignWorkType">
+            <summary>表示 <c>Dialog_LC_AssignWorkType</c> 类型。</summary>
+        </member>
         <member name="P:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.InitialSize">
             <summary>
             窗体的尺寸
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.#ctor(LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform)">
+            <summary>初始化 <c>Dialog_LC_AssignWorkType</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_AssignWorkType.DoWindowContents(UnityEngine.Rect)">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.UI.Dialog_LC_AssignEntity">
             <summary>
@@ -1557,12 +2686,51 @@
             窗体的尺寸
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_AssignEntity.#ctor(LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity)">
+            <summary>初始化 <c>Dialog_LC_AssignEntity</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_AssignEntity.DoWindowContents(UnityEngine.Rect)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.UI.Dialog_LC_EntityCodex">
+            <summary>表示 <c>Dialog_LC_EntityCodex</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.Dialog_LC_EntityCodex.InitialSize">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.#ctor(LCAnomalyCore.Defs.AbnormalityCodexEntryDef)">
+            <summary>初始化 <c>Dialog_LC_EntityCodex</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DoWindowContents(UnityEngine.Rect)">
+            <inheritdoc />
+        </member>
         <member name="M:LCAnomalyCore.UI.Dialog_LC_EntityCodex.DrawToolTipRow(LCAnomalyCore.Defs.AbnormalityCategoryDef,UnityEngine.Rect)">
             <summary>
             绘制Tip
             </summary>
             <param name="cat">类型</param>
             <param name="rect">rect</param>
+        </member>
+        <member name="T:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality">
+            <summary>表示 <c>FloatMenuOptionProvider_CaptureAbnormality</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.Drafted">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.Undrafted">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.Multiselect">
+            <inheritdoc />
+        </member>
+        <member name="P:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.RequiresManipulation">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.AppliesInt(RimWorld.FloatMenuContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.UI.FloatMenu.FloatMenuOptionProvider_CaptureAbnormality.GetOptionsFor(Verse.Thing,RimWorld.FloatMenuContext)">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.UI.ITab_PawnStatus">
             <summary>
@@ -1583,6 +2751,12 @@
             <summary>
             是否显示在面板上
             </summary>
+        </member>
+        <member name="P:LCAnomalyCore.UI.ITab_PawnStatus.DrawThingIcon">
+            <summary>获取 <c>DrawThingIcon</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.#ctor">
+            <summary>初始化 <c>ITab_PawnStatus</c> 类的新实例。</summary>
         </member>
         <member name="M:LCAnomalyCore.UI.ITab_PawnStatus.FillTab">
             <summary>
@@ -1706,6 +2880,102 @@
             <param name="ingredients">？</param>
             <param name="bill">手术</param>
         </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead">
+            <summary>表示 <c>PawnRenderNodeProperties_HediffUpHead</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead.offsetRangeX">
+            <summary>表示 <c>offsetRangeX</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead.offsetRangeZ">
+            <summary>表示 <c>offsetRangeZ</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead.durationTicksRange">
+            <summary>表示 <c>durationTicksRange</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead.nextSpasmTicksRange">
+            <summary>表示 <c>nextSpasmTicksRange</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNodeProperties_HediffUpHead.#ctor">
+            <summary>初始化 <c>PawnRenderNodeProperties_HediffUpHead</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNodeWorker_HediffUpHead">
+            <summary>表示 <c>PawnRenderNodeWorker_HediffUpHead</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNodeWorker_HediffUpHead.OffsetFor(Verse.PawnRenderNode,Verse.PawnDrawParms,UnityEngine.Vector3@)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead">
+            <summary>表示 <c>PawnRenderNode_HediffUpHead</c> 类型。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData">
+            <summary>表示 <c>SpasmData</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.offsetStart">
+            <summary>表示 <c>offsetStart</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.offsetTarget">
+            <summary>表示 <c>offsetTarget</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.tickStart">
+            <summary>表示 <c>tickStart</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.nextSpasm">
+            <summary>表示 <c>nextSpasm</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.duration">
+            <summary>表示 <c>duration</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData.#ctor">
+            <summary>初始化 <c>SpasmData</c> 类的新实例。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.spasmData">
+            <summary>表示 <c>spasmData</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.#ctor(Verse.Pawn,Verse.PawnRenderNodeProperties,Verse.PawnRenderTree)">
+            <summary>初始化 <c>PawnRenderNode_HediffUpHead</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.MeshSetFor(Verse.Pawn)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.CheckAndDoSpasm(Verse.PawnDrawParms,LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.SpasmData@,System.Single@)">
+            <summary>执行 <c>CheckAndDoSpasm</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.GetNextSpasmDurationTicks">
+            <summary>执行 <c>GetNextSpasmDurationTicks</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_HediffUpHead.GetNextSpasmTick">
+            <summary>执行 <c>GetNextSpasmTick</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNodeProperties_StillState">
+            <summary>表示 <c>PawnRenderNodeProperties_StillState</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Render.PawnRenderNodeProperties_StillState.offset">
+            <summary>表示 <c>offset</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNodeProperties_StillState.#ctor">
+            <summary>初始化 <c>PawnRenderNodeProperties_StillState</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNodeWorker_StillState">
+            <summary>表示 <c>PawnRenderNodeWorker_StillState</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNodeWorker_StillState.OffsetFor(Verse.PawnRenderNode,Verse.PawnDrawParms,UnityEngine.Vector3@)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNodeWorker_StillState.GetMaterialPropertyBlock(Verse.PawnRenderNode,UnityEngine.Material,Verse.PawnDrawParms)">
+            <inheritdoc />
+        </member>
+        <member name="T:LCAnomalyCore.Render.PawnRenderNode_StillState">
+            <summary>表示 <c>PawnRenderNode_StillState</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Render.PawnRenderNode_StillState.Props">
+            <summary>获取 <c>Props</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_StillState.#ctor(Verse.Pawn,Verse.PawnRenderNodeProperties,Verse.PawnRenderTree)">
+            <summary>初始化 <c>PawnRenderNode_StillState</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Render.PawnRenderNode_StillState.GraphicFor(Verse.Pawn)">
+            <inheritdoc />
+        </member>
         <member name="T:LCAnomalyCore.Settings.Setting_LCAnomalyCore">
             <summary>
             游戏内配置文件
@@ -1791,15 +3061,27 @@
             是否在殖民者栏显示
             </summary>
         </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.DepartmentLabel_ColonistBar_VerticalOffset">
+            <summary>表示 <c>DepartmentLabel_ColonistBar_VerticalOffset</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore.DepartmentLabel_ColonistBar_VerticalOffsetPerLine">
+            <summary>表示 <c>DepartmentLabel_ColonistBar_VerticalOffsetPerLine</c>。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore.ExposeData">
             <summary>
             保存相关
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main">
+            <summary>表示 <c>Setting_LCAnomalyCore_Main</c> 类型。</summary>
+        </member>
         <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.Settings">
             <summary>
             设置文件对象
             </summary>
+        </member>
+        <member name="F:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.ContentDir">
+            <summary>表示 <c>ContentDir</c>。</summary>
         </member>
         <member name="M:LCAnomalyCore.Settings.Setting_LCAnomalyCore_Main.#ctor(Verse.ModContentPack)">
             <summary>
@@ -1835,6 +3117,108 @@
             <param name="y"></param>
             <param name="inRect"></param>
         </member>
+        <member name="T:LCAnomalyCore.Shaders.ImageEffect_Mosaic">
+            <summary>表示 <c>ImageEffect_Mosaic</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Shaders.ImageEffect_Mosaic.MosaicShader">
+            <summary>表示 <c>MosaicShader</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Shaders.ImageEffect_Mosaic.MosaicSize">
+            <summary>表示 <c>MosaicSize</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Shaders.ImageEffect_Mosaic.OnDisable">
+            <summary>执行 <c>OnDisable</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Singleton.LCCanvasSingleton">
+            <summary>表示 <c>LCCanvasSingleton</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Singleton.LCCanvasSingleton.Instance">
+            <summary>表示 <c>Instance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.GameObject">
+            <summary>表示 <c>GameObject</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.CanvasWarningUI">
+            <summary>表示 <c>CanvasWarningUI</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.Image">
+            <summary>表示 <c>Image</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.CanvasGroupWarningUI">
+            <summary>表示 <c>CanvasGroupWarningUI</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.FirstWarningSprite">
+            <summary>表示 <c>FirstWarningSprite</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.SecondWarningSprite">
+            <summary>表示 <c>SecondWarningSprite</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasSingleton.ThirdWarningSprite">
+            <summary>表示 <c>ThirdWarningSprite</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasSingleton.#ctor">
+            <summary>初始化 <c>LCCanvasSingleton</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasSingleton.RemoveEvents">
+            <summary>执行 <c>RemoveEvents</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasSingleton.Tick">
+            <summary>执行 <c>Tick</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasSingleton.ShowWarningUI(LCAnomalyCore.Util.MusicUtils.EWarningLevel)">
+            <summary>执行 <c>ShowWarningUI</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasSingleton.ShowText(System.String)">
+            <summary>执行 <c>ShowText</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Singleton.LCCanvasNormalSingleton">
+            <summary>表示 <c>LCCanvasNormalSingleton</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Singleton.LCCanvasNormalSingleton.Instance">
+            <summary>表示 <c>Instance</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasNormalSingleton.GameObject">
+            <summary>表示 <c>GameObject</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasNormalSingleton.SelfCanvas">
+            <summary>表示 <c>SelfCanvas</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Singleton.LCCanvasNormalSingleton.SelfGraphicRaycaster">
+            <summary>表示 <c>SelfGraphicRaycaster</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCCanvasNormalSingleton.#ctor">
+            <summary>初始化 <c>LCCanvasNormalSingleton</c> 类的新实例。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Singleton.LCMonoSingleton">
+            <summary>表示 <c>LCMonoSingleton</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Singleton.LCMonoSingleton.Instance">
+            <summary>表示 <c>Instance</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Singleton.LCMonoSingleton.InitPrefab(UnityEngine.GameObject,UnityEngine.Transform)">
+            <summary>执行 <c>InitPrefab</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Test.ThrowTextController">
+            <summary>表示 <c>ThrowTextController</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Test.ThrowTextController.ThrowTextCanvas">
+            <summary>表示 <c>ThrowTextCanvas</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Test.ThrowTextController.ThrowTextCanvasGroup">
+            <summary>表示 <c>ThrowTextCanvasGroup</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Test.ThrowTextController.shouldShow">
+            <summary>表示 <c>shouldShow</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Test.ThrowTextController.shouldFade">
+            <summary>表示 <c>shouldFade</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Test.ThrowTextController.#ctor">
+            <summary>初始化 <c>ThrowTextController</c> 类的新实例。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Test.ThrowTextController.Trigger(System.String)">
+            <summary>执行 <c>Trigger</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Util.AssetBundleUtil">
             <summary>
             AB包工具类
@@ -1845,15 +3229,66 @@
             主AB包
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Util.ColorUtil">
+            <summary>表示 <c>ColorUtil</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.RedTex">
+            <summary>表示 <c>RedTex</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.WhiteTex">
+            <summary>表示 <c>WhiteTex</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.PurpleTex">
+            <summary>表示 <c>PurpleTex</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.BlueTex">
+            <summary>表示 <c>BlueTex</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.ColorUtil.CyanTex">
+            <summary>表示 <c>CyanTex</c>。</summary>
+        </member>
         <member name="F:LCAnomalyCore.Util.ColorUtil.TeamStyleColorDict">
             <summary>
             部门配色字典
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Util.Components">
+            <summary>表示 <c>Components</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Util.Components.LC">
+            <summary>获取 <c>LC</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.Curves">
+            <summary>表示 <c>Curves</c> 类型。</summary>
+        </member>
         <member name="F:LCAnomalyCore.Util.Curves.JoinEscapeChanceFromEscapeIntervalCurve">
             <summary>
             出逃曲线（和原版一致）
             </summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.DamageUtils">
+            <summary>表示 <c>DamageUtils</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.LevelTag2Int(System.String)">
+            <summary>执行 <c>LevelTag2Int</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.GetDamageLevelFactor(System.Int32,System.Int32)">
+            <summary>执行 <c>GetDamageLevelFactor</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.ConvertWeaponDamage(Verse.DamageInfo@)">
+            <summary>执行 <c>ConvertWeaponDamage</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.GetAdjustedDamage(Verse.DamageInfo,Verse.Thing,LCAnomalyCore.Damage.FourColorDamageType,LCAnomalyCore.Damage.LCRiskLevel)">
+            <summary>执行 <c>GetAdjustedDamage</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.ApplyMentalDamage(Verse.Pawn,System.Single,Verse.DamageInfo)">
+            <summary>执行 <c>ApplyMentalDamage</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.CanTakeMentalDamage(Verse.Pawn)">
+            <summary>执行 <c>CanTakeMentalDamage</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.DamageUtils.GetMaxMentalPoints(Verse.Pawn)">
+            <summary>执行 <c>GetMaxMentalPoints</c> 定义的操作。</summary>
         </member>
         <member name="T:LCAnomalyCore.Util.ExpansionActive">
             <summary>
@@ -1928,6 +3363,9 @@
             <param name="s">等级字符串</param>
             <returns>是否合法</returns>
         </member>
+        <member name="T:LCAnomalyCore.Util.FileUtil">
+            <summary>表示 <c>FileUtil</c> 类型。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Util.FileUtil.RenderTexture_Save2Local(UnityEngine.RenderTexture,System.String,System.String)">
             <summary>
             保存RenderTexture对象到本地png文件
@@ -1935,6 +3373,12 @@
             <param name="tex">贴图</param>
             <param name="filePath">文件路径</param>
             <param name="fileName">文件名</param>
+        </member>
+        <member name="T:LCAnomalyCore.Util.Gizmos">
+            <summary>表示 <c>Gizmos</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.Gizmos.Get_EntityCodex(Verse.Thing)">
+            <summary>执行 <c>Get_EntityCodex</c> 定义的操作。</summary>
         </member>
         <member name="T:LCAnomalyCore.Util.GraphicUtil">
             <summary>
@@ -1979,6 +3423,21 @@
             </summary>
             <returns>图集</returns>
         </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(System.String,System.Boolean)">
+            <summary>执行 <c>EntityNamePlatformTopGraphic_Get</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.WorkTypePlatformTopGraphic_Get(LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>执行 <c>WorkTypePlatformTopGraphic_Get</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.DialogAssignWorkTypeNormalTexture_Get(LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>执行 <c>DialogAssignWorkTypeNormalTexture_Get</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.DialogAssignWorkTypeOnHoverTexture_Get(LCAnomalyCore.Util.EAnomalyWorkType)">
+            <summary>执行 <c>DialogAssignWorkTypeOnHoverTexture_Get</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.CachedTopGraphic_BoxBarUnit_Get(System.String,System.Int32)">
+            <summary>执行 <c>CachedTopGraphic_BoxBarUnit_Get</c> 定义的操作。</summary>
+        </member>
         <member name="F:LCAnomalyCore.Util.GraphicUtil.CogitoBucket_CachedGlassGraphic">
             <summary>
             缓存的玻璃图
@@ -2006,12 +3465,39 @@
             </summary>
             <returns>图集</returns>
         </member>
+        <member name="M:LCAnomalyCore.Util.GraphicUtil.DepartmentCore_GetCachedBaseGraphic(System.Single)">
+            <summary>执行 <c>DepartmentCore_GetCachedBaseGraphic</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.HealthUtil">
+            <summary>表示 <c>HealthUtil</c> 类型。</summary>
+        </member>
         <member name="M:LCAnomalyCore.Util.HealthUtil.FindAllMissingBodyPart(Verse.Pawn)">
             <summary>
             获取pawn所有缺失的肢体
             </summary>
             <param name="pawn"></param>
             <returns></returns>
+        </member>
+        <member name="T:LCAnomalyCore.Util.LabelDrawerUtil">
+            <summary>表示 <c>LabelDrawerUtil</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LabelDrawerUtil.DrawLabels(Verse.Pawn,UnityEngine.Vector2,RimWorld.ColonistBar,UnityEngine.Rect,System.Single)">
+            <summary>执行 <c>DrawLabels</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LabelDrawerUtil.DrawCustomLabel(UnityEngine.Vector2,System.String,UnityEngine.Color)">
+            <summary>执行 <c>DrawCustomLabel</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.LogUtil">
+            <summary>表示 <c>LogUtil</c> 类型。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LogUtil.Message(System.String)">
+            <summary>执行 <c>Message</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LogUtil.Warning(System.String)">
+            <summary>执行 <c>Warning</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LogUtil.Error(System.String)">
+            <summary>执行 <c>Error</c> 定义的操作。</summary>
         </member>
         <member name="T:LCAnomalyCore.Util.MaterialDatabase">
             <summary>
@@ -2027,6 +3513,27 @@
             <summary>
             音乐工具
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.MusicUtils.PlayMusic_LC(System.Int32)">
+            <summary>执行 <c>PlayMusic_LC</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.MusicUtils.LevelTag2Points(System.String)">
+            <summary>执行 <c>LevelTag2Points</c> 定义的操作。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.MusicUtils.EWarningLevel">
+            <summary>表示 <c>EWarningLevel</c> 类型。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.MusicUtils.EWarningLevel.First">
+            <summary>表示 <c>First</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.MusicUtils.EWarningLevel.Second">
+            <summary>表示 <c>Second</c>。</summary>
+        </member>
+        <member name="F:LCAnomalyCore.Util.MusicUtils.EWarningLevel.Third">
+            <summary>表示 <c>Third</c>。</summary>
+        </member>
+        <member name="T:LCAnomalyCore.Util.SightUtil">
+            <summary>表示 <c>SightUtil</c> 类型。</summary>
         </member>
         <member name="M:LCAnomalyCore.Util.SightUtil.IsOutsideView(Verse.Thing,RimWorld.Faction)">
             <summary>
@@ -2060,6 +3567,15 @@
             计算处理脑叶员工数值变化量
             </summary>
         </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.TargetHoldingPlatformForEntity(Verse.Pawn,Verse.Thing,System.Boolean,Verse.Thing)">
+            <summary>执行 <c>TargetHoldingPlatformForEntity</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.AlreadyReserved(Verse.Thing,Verse.Pawn@)">
+            <summary>执行 <c>AlreadyReserved</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StudyUtil.HoldingPlatformAvailableOnCurrentMap">
+            <summary>执行 <c>HoldingPlatformAvailableOnCurrentMap</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Util.LC_StudyResult">
             <summary>
             研究质量枚举
@@ -2080,10 +3596,34 @@
             差
             </summary>
         </member>
+        <member name="T:LCAnomalyCore.Util.LCContainmentUtility">
+            <summary>表示 <c>LCContainmentUtility</c> 类型。</summary>
+        </member>
+        <member name="P:LCAnomalyCore.Util.LCContainmentUtility.AbnormalityFaction">
+            <summary>获取 <c>AbnormalityFaction</c>。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LCContainmentUtility.GetContainmentStrength(Verse.Thing)">
+            <summary>执行 <c>GetContainmentStrength</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LCContainmentUtility.GetMinimumContainmentStrength(Verse.Thing)">
+            <summary>执行 <c>GetMinimumContainmentStrength</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LCContainmentUtility.GetMinimumContainmentStrength(Verse.ThingDef)">
+            <summary>执行 <c>GetMinimumContainmentStrength</c> 定义的操作。</summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.LCContainmentUtility.SafelyContains(Verse.Thing,Verse.Thing)">
+            <summary>执行 <c>SafelyContains</c> 定义的操作。</summary>
+        </member>
         <member name="T:LCAnomalyCore.Util.StatWorker_LCContainmentStrength">
             <summary>
             DLC-independent containment strength for LC holding platforms.
             </summary>
+        </member>
+        <member name="M:LCAnomalyCore.Util.StatWorker_LCContainmentStrength.ShouldShowFor(RimWorld.StatRequest)">
+            <inheritdoc />
+        </member>
+        <member name="M:LCAnomalyCore.Util.StatWorker_LCContainmentStrength.GetValueUnfinalized(RimWorld.StatRequest,System.Boolean)">
+            <inheritdoc />
         </member>
         <member name="T:LCAnomalyCore.Util.Types">
             <summary>

@@ -3,10 +3,13 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompEgoSuit</c> 类型。</summary>
     public class CompEgoSuit : ThingComp
     {
+        /// <summary>获取 <c>Props</c>。</summary>
         public CompPoperties_EgoSuit Props => (CompPoperties_EgoSuit)props;
 
+        /// <summary>执行 <c>ResistanceFor</c> 定义的操作。</summary>
         public float ResistanceFor(FourColorDamageType damageType)
         {
             switch (damageType)

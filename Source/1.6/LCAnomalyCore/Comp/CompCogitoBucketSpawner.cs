@@ -4,8 +4,10 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompCogitoBucketSpawner</c> 类型。</summary>
     public class CompCogitoBucketSpawner : LC_CompRequireThingSpawner
     {
+        /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
             foreach (var gizmo in base.CompGetGizmosExtra())

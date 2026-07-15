@@ -4,14 +4,17 @@ using Verse;
 
 namespace LCAnomalyCore.Shaders
 {
+    /// <summary>表示 <c>ImageEffect_Mosaic</c> 类型。</summary>
     [ExecuteInEditMode]
     [AddComponentMenu("PengLu/ImageEffect/Mosaic")]
     public class ImageEffect_Mosaic : MonoBehaviour
     {
         #region Variables
 
+        /// <summary>表示 <c>MosaicShader</c>。</summary>
         public Shader MosaicShader = null;
         private Material MosaicMaterial = null;
+        /// <summary>表示 <c>MosaicSize</c>。</summary>
         public int MosaicSize = 8;
 
         #endregion Variables
@@ -33,14 +36,6 @@ namespace LCAnomalyCore.Shaders
         private void Start()
         {
             MosaicShader = AssetBundleUtil.MainBundle.LoadAsset<Shader>("MosaicShader");
-
-            // Disable if we don't support image effects
-            if (!SystemInfo.supportsImageEffects)
-            {
-                enabled = false;
-                Log.Warning("not supported");
-                return;
-            }
 
             // Disable the image effect if the shader can't
             // run on the users graphics card
@@ -78,6 +73,7 @@ namespace LCAnomalyCore.Shaders
 #endif
         }
 
+        /// <summary>执行 <c>OnDisable</c> 定义的操作。</summary>
         public void OnDisable()
         {
             if (MosaicMaterial)

@@ -4,6 +4,7 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>HealthUtil</c> 类型。</summary>
     public static class HealthUtil
     {
         /// <summary>

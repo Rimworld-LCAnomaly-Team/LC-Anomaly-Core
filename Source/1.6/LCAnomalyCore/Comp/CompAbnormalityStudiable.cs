@@ -4,12 +4,15 @@ using Verse;
 
 namespace LCAnomalyCore.Comp
 {
+    /// <summary>表示 <c>CompAbnormalityStudiable</c> 类型。</summary>
     public class CompAbnormalityStudiable : ThingComp
     {
         private static readonly CachedTexture StudyToggleIcon = new CachedTexture("UI/Commands/WorkableUI");
 
+        /// <summary>获取 <c>Props</c>。</summary>
         public CompProperties_AbnormalityStudiable Props => (CompProperties_AbnormalityStudiable)props;
 
+        /// <summary>表示 <c>Completed</c>。</summary>
         public bool Completed
         {
             get
@@ -23,6 +26,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>ProgressPercent</c>。</summary>
         public float ProgressPercent
         {
             get
@@ -36,12 +40,18 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>表示 <c>studyPoints</c>。</summary>
         public float studyPoints;
+        /// <summary>表示 <c>studyEnabled</c>。</summary>
         public bool studyEnabled = true;
+        /// <summary>表示 <c>lastStudiedTick</c>。</summary>
         public int lastStudiedTick = -9999999;
+        /// <summary>获取 <c>TicksTilNextStudy</c>。</summary>
         public int TicksTilNextStudy => lastStudiedTick + Props.frequencyTicks - Find.TickManager.TicksGame;
+        /// <summary>表示 <c>studyInteractions</c>。</summary>
         public int studyInteractions;
 
+        /// <summary>表示 <c>CompStudyUnlocks</c>。</summary>
         protected CompAbnormalityStudyUnlocks CompStudyUnlocks
         {
             get
@@ -53,10 +63,12 @@ namespace LCAnomalyCore.Comp
 
         private CompAbnormalityStudyUnlocks compStudyUnlocks;
 
+        /// <summary>获取 <c>StudyTimesPeriod</c>。</summary>
         public int StudyTimesPeriod => Props.studyTimesPeriod;
 
         #region 生命周期
 
+        /// <inheritdoc />
         public override void PostPostMake()
         {
             base.PostPostMake();
@@ -65,11 +77,13 @@ namespace LCAnomalyCore.Comp
 
         #endregion
 
+        /// <summary>执行 <c>SetStudyEnabled</c> 定义的操作。</summary>
         public void SetStudyEnabled(bool enabled)
         {
             studyEnabled = enabled;
         }
 
+        /// <summary>执行 <c>Study</c> 定义的操作。</summary>
         public virtual void Study(Pawn studier, float studyAmount)
         {
             bool completed = Completed;
@@ -106,6 +120,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <summary>执行 <c>CurrentlyStudiable</c> 定义的操作。</summary>
         public bool CurrentlyStudiable()
         {
             if (!studyEnabled)
@@ -153,6 +168,7 @@ namespace LCAnomalyCore.Comp
             return 0;
         }
 
+        /// <summary>执行 <c>Notify_ActivityDeactivated</c> 定义的操作。</summary>
         public void Notify_ActivityDeactivated()
         {
             if (Props.canBeActivityDeactivated)
@@ -161,6 +177,7 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override void PostExposeData()
         {
             base.PostExposeData();
@@ -185,9 +202,9 @@ namespace LCAnomalyCore.Comp
             }
         }
 
+        /// <inheritdoc />
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            string reason;
             if (Props.showToggleGizmo)
             {
                 Command_Toggle command_Toggle = new Command_Toggle

@@ -5,8 +5,10 @@ using Verse;
 
 namespace LCAnomalyCore.Singleton
 {
+    /// <summary>表示 <c>LCCanvasNormalSingleton</c> 类型。</summary>
     public class LCCanvasNormalSingleton
     {
+        /// <summary>表示 <c>Instance</c>。</summary>
         public static LCCanvasNormalSingleton Instance
         {
             get
@@ -19,10 +21,14 @@ namespace LCAnomalyCore.Singleton
 
         private static LCCanvasNormalSingleton instance = null;
 
+        /// <summary>表示 <c>GameObject</c>。</summary>
         public GameObject GameObject;
+        /// <summary>表示 <c>SelfCanvas</c>。</summary>
         public Canvas SelfCanvas;
+        /// <summary>表示 <c>SelfGraphicRaycaster</c>。</summary>
         public GraphicRaycaster SelfGraphicRaycaster;
 
+        /// <summary>初始化 <c>LCCanvasNormalSingleton</c> 类的新实例。</summary>
         public LCCanvasNormalSingleton()
         {
             this.GameObject = new GameObject("LCCanvasNormal");
@@ -40,8 +46,10 @@ namespace LCAnomalyCore.Singleton
         }
     }
 
+    /// <summary>表示 <c>LCMonoSingleton</c> 类型。</summary>
     public class LCMonoSingleton : MonoBehaviour
     {
+        /// <summary>表示 <c>Instance</c>。</summary>
         public static LCMonoSingleton Instance
         {
             get
@@ -54,6 +62,7 @@ namespace LCAnomalyCore.Singleton
 
         private static LCMonoSingleton instance = null;
 
+        /// <summary>执行 <c>InitPrefab</c> 定义的操作。</summary>
         public void InitPrefab(GameObject prefab, Transform parent)
         {
             Instantiate(prefab, parent);

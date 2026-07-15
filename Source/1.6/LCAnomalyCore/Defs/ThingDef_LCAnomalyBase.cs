@@ -26,6 +26,7 @@ namespace LCAnomalyCore.Defs
 
     }
 
+    /// <summary>表示 <c>ThingDef_AbnormalityEntity</c> 类型。</summary>
     public abstract class ThingDef_AbnormalityEntity : ThingDef_AbnormalityBase
     {
 

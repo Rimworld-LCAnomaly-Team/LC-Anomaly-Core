@@ -6,12 +6,18 @@ using Verse;
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>ColorUtil</c> 类型。</summary>
     public static class ColorUtil
     {
+        /// <summary>表示 <c>RedTex</c>。</summary>
         public static readonly Texture2D RedTex = SolidColorMaterials.NewSolidColorTexture(Color.red);
+        /// <summary>表示 <c>WhiteTex</c>。</summary>
         public static readonly Texture2D WhiteTex = SolidColorMaterials.NewSolidColorTexture(Color.white);
+        /// <summary>表示 <c>PurpleTex</c>。</summary>
         public static readonly Texture2D PurpleTex = SolidColorMaterials.NewSolidColorTexture(GenColor.FromHex("7e1e9c"));
+        /// <summary>表示 <c>BlueTex</c>。</summary>
         public static readonly Texture2D BlueTex = SolidColorMaterials.NewSolidColorTexture(Color.blue);
+        /// <summary>表示 <c>CyanTex</c>。</summary>
         public static readonly Texture2D CyanTex = SolidColorMaterials.NewSolidColorTexture(Color.cyan);
 
         #region 部门配色

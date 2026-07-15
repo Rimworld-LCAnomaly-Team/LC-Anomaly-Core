@@ -57,6 +57,7 @@ namespace LCAnomalyCore.Buildings
         private GenDraw.FillableBarRequest fillableBarRequest;
         private int healTimer = 0;
 
+        /// <inheritdoc />
         protected override void Tick()
         {
             base.Tick();
@@ -75,6 +76,7 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        /// <inheritdoc />
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
             //清理所有已分配员工

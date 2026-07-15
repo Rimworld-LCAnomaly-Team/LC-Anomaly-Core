@@ -2,6 +2,7 @@
 
 namespace LCAnomalyCore.Util
 {
+    /// <summary>表示 <c>Curves</c> 类型。</summary>
     public static class Curves
     {
         /// <summary>

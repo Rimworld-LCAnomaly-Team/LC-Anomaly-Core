@@ -3,8 +3,10 @@ using Verse;
 
 namespace LCAnomalyCore.Render
 {
+    /// <summary>表示 <c>PawnRenderNodeWorker_HediffUpHead</c> 类型。</summary>
     public class PawnRenderNodeWorker_HediffUpHead : PawnRenderNodeWorker
     {
+        /// <inheritdoc />
         public override Vector3 OffsetFor(PawnRenderNode node, PawnDrawParms parms, out Vector3 pivot)
         {
             Vector3 result = base.OffsetFor(node, parms, out pivot);

@@ -9,6 +9,7 @@ using Verse.AI;
 
 namespace LCAnomalyCore.Jobs
 {
+    /// <summary>表示 <c>JobDriver_AbnormalityStudyInteract</c> 类型。</summary>
     public class JobDriver_AbnormalityStudyInteract : JobDriver
     {
         private const TargetIndex ThingToStudyIndex = TargetIndex.A;
@@ -19,19 +20,24 @@ namespace LCAnomalyCore.Jobs
 
         private const int PawnTargetStudyDurationFactor = 2;
 
+        /// <summary>表示 <c>ElectroharvesterFactor</c>。</summary>
         public const float ElectroharvesterFactor = 0.5f;
 
         private int studyInteractions;
 
+        /// <inheritdoc />
         public override bool PlayerInterruptable => playerInterruptable;
+        /// <summary>表示 <c>playerInterruptable</c>。</summary>
         protected bool playerInterruptable = true;
 
         private Building_AbnormalityHoldingPlatform Platform => base.TargetThingA as Building_AbnormalityHoldingPlatform;
 
+        /// <summary>获取 <c>ThingToStudy</c>。</summary>
         public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
 
         private CompAbnormalityStudiable StudyComp => ThingToStudy?.TryGetComp<CompAbnormalityStudiable>();
 
+        /// <inheritdoc />
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             if (Platform != null)
@@ -46,6 +52,7 @@ namespace LCAnomalyCore.Jobs
             return pawn.Reserve(base.TargetThingA, job, 1, -1, null, errorOnFailed);
         }
 
+        /// <inheritdoc />
         protected override IEnumerable<Toil> MakeNewToils()
         {
             bool targetIsPawn = base.TargetThingA is Pawn;
@@ -197,16 +204,19 @@ namespace LCAnomalyCore.Jobs
             }
         }
 
+        /// <inheritdoc />
         public override bool? IsSameJobAs(Job j)
         {
             return j.targetA == base.TargetThingA;
         }
 
+        /// <inheritdoc />
         protected override string ReportStringProcessed(string str)
         {
             return JobUtility.GetResolvedJobReport(str, ThingToStudy);
         }
 
+        /// <inheritdoc />
         public override void ExposeData()
         {
             base.ExposeData();
