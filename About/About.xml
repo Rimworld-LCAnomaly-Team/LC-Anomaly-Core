@@ -1,13 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
   <name>LC Anomaly Core</name>
   <author>DarthCY</author>
   <supportedVersions>
-    <li>1.5</li>
-    <li>1.6</li>
     <li>1.7</li>
   </supportedVersions>
-  <description>Core of LobotomyCorporation's Anomaly DLC Expansion.</description>
+  <description>Standalone framework for Lobotomy Corporation abnormalities, containment, work and E.G.O. extraction. Anomaly DLC is not required.</description>
   <url>https://github.com/DarthCY-K/LC-Anomaly-Core</url>
   <packageId>DarthCY.LC.AnomalyCore</packageId>
   <modDependencies>
@@ -21,7 +19,4 @@
   <loadAfter>
     <li>fxz.myafufu</li>
   </loadAfter>
-  <descriptionsByVersion>
-    <v1.7>Standalone framework for Lobotomy Corporation abnormalities, containment, work and E.G.O. extraction. Anomaly DLC is not required.</v1.7>
-  </descriptionsByVersion>
 </ModMetaData>

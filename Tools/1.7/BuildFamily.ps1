@@ -30,8 +30,19 @@ foreach ($name in $names) {
     $root = Join-Path $modsRoot $name
     [xml]$about = Get-Content -Raw -LiteralPath (Join-Path $root 'About\About.xml')
     [xml]$folders = Get-Content -Raw -LiteralPath (Join-Path $root 'LoadFolders.xml')
-    if ('1.7' -notin $about.ModMetaData.supportedVersions.li -or -not $folders.loadFolders.'v1.7') {
-        throw "$name is missing its 1.7 metadata or load folders."
+    $versions = @($about.ModMetaData.supportedVersions.li)
+    $loadVersions = @($folders.loadFolders.ChildNodes | Where-Object NodeType -eq Element)
+    if ($versions.Count -ne 1 -or $versions[0] -ne '1.7' -or
+        $loadVersions.Count -ne 1 -or $loadVersions[0].Name -ne 'v1.7') {
+        throw "$name must support and load only RimWorld 1.7."
+    }
+    foreach ($obsolete in @('1.5', '1.6', 'Source/1.5', 'Source/1.6', 'Extension/1.5', 'Extension/1.6', 'HAR/1.5', 'HAR/1.6')) {
+        if (Test-Path -LiteralPath (Join-Path $root $obsolete)) {
+            throw "Retired version directory must not be distributed: $name/$obsolete"
+        }
+    }
+    if ($about.SelectSingleNode('//modDependencies/li[translate(packageId, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")="ludeon.rimworld.anomaly"]')) {
+        throw "$name must not require the Anomaly DLC."
     }
     $scanRoots = @((Join-Path $root '1.7'))
     foreach ($entry in $folders.loadFolders.'v1.7'.li) {

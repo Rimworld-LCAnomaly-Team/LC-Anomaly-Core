@@ -42,7 +42,14 @@ public static class GameplayValidation
             platform.Notify_StudyStart(worker);
             int workTicks = name == "MeatLantern" ? 2400 : 1;
             for (int i = 0; i < workTicks; i++) platform.Notify_Studying(worker);
-            for (int i = 0; i < 24; i++) platform.Notify_StudyInterval(employee);
+            float successRate = abnormality.CheckStudierSkillRequire(employee, platform.CurWorkType);
+            if (successRate <= 0f) throw new InvalidOperationException("Test worker cannot perform work: " + name);
+            Rand.PushState(signature);
+            try
+            {
+                for (int i = 0; i < 24; i++) platform.Notify_StudyInterval(employee);
+            }
+            finally { Rand.PopState(); }
             abnormality.Notify_Studied(worker);
             if (abnormality.PeBoxComp.CurAmountIndiPebox <= 0) throw new InvalidOperationException("No PeBox production: " + name);
             held.GetComp<CompAbnormalityStudiable>().Study(worker, 1000f);

@@ -1,11 +1,10 @@
 # Project Maintenance Rules
 
-- Maintain only the RimWorld 1.7 version of this mod.
-- Treat all RimWorld 1.5 and 1.6 files and directories as read-only reference material.
-- Do not edit, build, regenerate, or update files under `1.5/`, `Source/1.5/`, `1.6/`, or `Source/1.6/` unless the user explicitly requests a change for that version in the current conversation.
-- Apply normal code, project, assembly, XML, and asset changes only to the 1.7 version.
-- Build and verify only the 1.7 projects by default, using .NET 10 and the installed RimWorld 1.7 assemblies.
-- Use Rimsage MCP to verify RimWorld types, methods, Defs, and API compatibility when relevant.
-- Write Git commit subjects, bodies, and change summaries in Chinese unless the user explicitly requests another language.
-- If a Git commit is made through Codex, set the commit author identity to `GPT-5 <gpt-5@codex.local>`.
-- The 1.7 series must work without the Anomaly DLC. Do not introduce mandatory DLC metadata, Def, asset, or unguarded runtime dependencies. Validate with Anomaly disabled using the Core Tools/1.7 test profiles.
+- Develop, build, test and release only the RimWorld 1.7 version of this mod, using .NET 10 and the installed RimWorld 1.7 assemblies.
+- RimWorld 1.5 and 1.6 support has been retired. Do not restore old version directories, projects, load folders or metadata. Historical versions remain available in Git history.
+- Runtime content belongs under 1.7/ and shared Cont/; maintained C# projects belong under Source/1.7/. Preserve shared art and asset authoring sources.
+- Use Rimsage MCP to verify RimWorld types, methods, Defs and API compatibility when relevant; verify against the installed 1.7 assemblies and runtime as well.
+- The 1.7 series must work without the Anomaly DLC. Do not introduce mandatory DLC metadata, Def, asset or unguarded runtime dependencies. Validate with Anomaly disabled using the Core Tools/1.7 test profiles.
+- Keep package IDs, Def names and save data stable unless a deliberate migration is implemented.
+- Write Git commit subjects, bodies and change summaries in Chinese unless the user explicitly requests another language.
+- If a Git commit is made through Codex, set the commit author identity to GPT-5 <gpt-5@codex.local>.

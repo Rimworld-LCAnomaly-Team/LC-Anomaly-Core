@@ -95,7 +95,20 @@ public class ValidationComponent : GameComponent
             }
             var map = Find.CurrentMap;
             int pawns = 0, things = 0;
-            var employee = map.mapPawns.FreeColonists.First().GetComp<CompPawnStatus>();
+            // Random scenario colonists can have research disabled by their backstory.
+            // Generate an eligible fixture instead of assuming the first colonist can do this work.
+            Pawn testWorker;
+            Rand.PushState(0x4c4317);
+            try
+            {
+                testWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Colonist, Faction.OfPlayer,
+                    forceGenerateNewPawn: true, canGeneratePawnRelations: false, forceNoBackstory: true,
+                    fixedBiologicalAge: 25f, forceBaselinerChance: 1f,
+                    validatorPreGear: p => p.skills != null && !p.skills.GetSkill(SkillDefOf.Intellectual).TotallyDisabled));
+            }
+            finally { Rand.PopState(); }
+            GenSpawn.Spawn(testWorker, CellFinder.RandomClosewalkCellNear(map.Center, map, 5), map);
+            var employee = testWorker.GetComp<CompPawnStatus>();
             if (employee == null) throw new InvalidOperationException("Employee status component is missing.");
             foreach (var kind in DefDatabase<PawnKindDef>.AllDefsListForReading.Where(Startup.IsSeries).ToList())
             {
