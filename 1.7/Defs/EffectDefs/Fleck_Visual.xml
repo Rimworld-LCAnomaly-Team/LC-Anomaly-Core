@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-  <!-- MeatExplosionSplatter -->
+  <!-- LC_AbnormalitySplatter -->
   <FleckDef ParentName="FleckBase_RandomGraphic">
-    <defName>MeatExplosionSplatter</defName>
+    <defName>LC_AbnormalitySplatter</defName>
     <altitudeLayer>MoteLow</altitudeLayer>
     <solidTime>3</solidTime>
     <fadeOutTime>1</fadeOutTime>
@@ -32,9 +32,9 @@
     </randomGraphics>
   </FleckDef>
 
-  <!-- MeatExplosionSplatterTerrain -->
+  <!-- LC_AbnormalitySplatterTerrain -->
   <FleckDef ParentName="FleckBase_RandomGraphic">
-    <defName>MeatExplosionSplatterTerrain</defName>
+    <defName>LC_AbnormalitySplatterTerrain</defName>
     <altitudeLayer>Terrain</altitudeLayer>
     <solidTime>6</solidTime>
     <fadeOutTime>1</fadeOutTime>

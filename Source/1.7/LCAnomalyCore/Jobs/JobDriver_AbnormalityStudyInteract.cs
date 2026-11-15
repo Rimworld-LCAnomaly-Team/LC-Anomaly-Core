@@ -78,7 +78,8 @@ namespace LCAnomalyCore.Jobs
                     //每点自律提供1%工作速度加成
                     float statusRate = pawn.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status * 0.01f;
                     float unlockRate = ThingToStudy.TryGetComp<CompAbnormalityStudiable>().GetWorkSpeedOffset();
-                    duration = (int)(300 * (1 / (1 + statusRate + unlockRate)));
+                    float workSpeed = pawn.GetStatValue(Defs.StatDefOf.LC_AbnormalityStudyRate);
+                    duration = System.Math.Max(1, (int)(300 / ((1 + statusRate + unlockRate) * workSpeed)));
                     numModified = duration * comp.Props.amountProdueMax + duration;
                     LogUtil.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
 

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <FleshTypeDef>
+    <defName>LC_AbnormalityMechanical</defName>
+    <corpseCategory>CorpsesMechanoid</corpseCategory>
+    <damageEffecter>Damage_HitMechanoid</damageEffecter>
+    <isOrganic>false</isOrganic>
+  </FleshTypeDef>
+  <FleshTypeDef>
+    <defName>LC_AbnormalityOrganic</defName>
+    <corpseCategory>CorpsesAnimal</corpseCategory>
+    <damageEffecter>Damage_HitFlesh</damageEffecter>
+    <isOrganic>true</isOrganic>
+  </FleshTypeDef>
+  <BodyPartDef>
+    <defName>LC_AbnormalityLimb</defName>
+    <label>abnormality limb</label>
+    <hitPoints>30</hitPoints>
+    <frostbiteVulnerability>0.1</frostbiteVulnerability>
+    <tags><li>MovingLimbCore</li></tags>
+  </BodyPartDef>
+  <BodyPartDef>
+    <defName>LC_AbnormalitySpike</defName>
+    <label>abnormality spike</label>
+    <hitPoints>40</hitPoints>
+    <permanentInjuryChanceFactor>0</permanentInjuryChanceFactor>
+    <tags><li>ManipulationLimbCore</li></tags>
+  </BodyPartDef>
+  <BodyPartGroupDef>
+    <defName>LC_MiddleSpike</defName>
+    <label>central spike</label>
+    <labelShort>spike</labelShort>
+  </BodyPartGroupDef>
+  <StatDef>
+    <defName>LC_AbnormalityStudyRate</defName>
+    <label>abnormality work speed</label>
+    <description>A multiplier on the speed of LC abnormality work.</description>
+    <category>PawnWork</category>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0.1</minValue>
+    <toStringStyle>PercentZero</toStringStyle>
+  </StatDef>
+</Defs>

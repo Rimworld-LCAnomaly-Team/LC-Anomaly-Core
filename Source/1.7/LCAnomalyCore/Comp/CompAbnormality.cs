@@ -230,11 +230,6 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         protected virtual string GetBiosignatureName()
         {
-            if (ModsConfig.AnomalyActive)
-            {
-                return AnomalyUtility.GetBiosignatureName(biosignature);
-            }
-
             return $"Entity-{biosignature.ToString("X8")}";
         }
 
@@ -282,8 +277,8 @@ namespace LCAnomalyCore.Comp
             if (Props.shouldNotifyWhenEscape)
             {
                 //TODO 这个写的不对，需要研究如何格式化
-                Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("LetterLabelEscapingFromHoldingPlatform".Translate(),
-                    "LetterEscapingFromHoldingPlatform", LetterDefOf.ThreatBig));
+                Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("LC_AbnormalityEscapedLabel".Translate(),
+                    "LC_AbnormalityEscapedText".Translate(parent.LabelCap), LetterDefOf.ThreatBig, parent));
 
                 //如果未启用警报系统，就不更新警报点数
                 if (Setting_LCAnomalyCore_Main.Settings.If_EnableLCWarning)
@@ -416,6 +411,12 @@ namespace LCAnomalyCore.Comp
         #endregion 触发事件
 
         #region 生命周期
+
+        public override void PostSpawnSetup(bool respawningAfterLoad)
+        {
+            base.PostSpawnSetup(respawningAfterLoad);
+            if (!parent.Position.Fogged(parent.Map)) AbnormalityUtility.Discover(parent.def);
+        }
 
         /// <summary>
         /// 我不知道这是什么，好像和数据保存有关

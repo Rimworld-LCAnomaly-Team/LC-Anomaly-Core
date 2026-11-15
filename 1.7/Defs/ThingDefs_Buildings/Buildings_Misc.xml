@@ -4,6 +4,7 @@
   <LCAnomalyCore.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
     <thingClass>LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform</thingClass>
     <containedPawnsSelectable>true</containedPawnsSelectable>
+    <drawGUIOverlay>true</drawGUIOverlay>
     <passability>PassThroughOnly</passability>
     <rotatable>false</rotatable>
     <fillPercent>0.4</fillPercent>
@@ -45,7 +46,7 @@
   <LCAnomalyCore.Defs.LC_HoldingPlatformDef ParentName="LC_HoldingPlatformBase">
     <defName>LC_HoldingPlatform</defName>
     <label>LobotomyCorporation Holding Platform</label>
-    <description>A platform for holding dangerous entities. The corners have eyelets where strong chains can be attached.\n\nDowned entities can be captured and secured on a holding platform, where they can be studied for Anomaly knowledge. Increase containment strength by building strong walls and doors, and other special containment devices.</description>
+    <description>A platform for holding dangerous entities. The corners have eyelets where strong chains can be attached.\n\nDowned entities can be captured and secured on a holding platform, where employees perform abnormality work and produce PeBox. Increase containment strength by building strong walls and doors, and other special containment devices.</description>
     <graphicData>
       <texPath>Things/Building/LC_HoldingPlatform/HoldingPlatform</texPath>
       <graphicClass>Graphic_Single</graphicClass>

@@ -39,7 +39,7 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         private void TurnIntoAnomaly()
         {
-            EffecterDefOf.MeatExplosionSmall?.SpawnMaintained(Pawn.Position, Pawn.MapHeld);
+            AbnormalityUtility.Burst(Pawn.Position, Pawn.MapHeld);
 
             if (Rand.Chance(Props.deadChance))
             {

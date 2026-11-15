@@ -30,10 +30,16 @@ namespace LCAnomalyCore.Defs
         public Texture2D silhouette;
 
         /// <summary>表示 <c>Visible</c>。</summary>
-        public bool Visible;
+        public bool Visible = true;
 
         /// <summary>表示 <c>Discovered</c>。</summary>
-        public bool Discovered;
+        public bool Discovered
+        {
+            get => Util.Components.LC?.IsAbnormalityDiscovered(this) ?? false;
+            set => Util.Components.LC?.SetAbnormalityDiscovered(this, value);
+        }
+
+        public List<ThingDef> linkedThings = new List<ThingDef>();
 
         private const string SilhouetteTexPathSuffix = "_Silhouette";
 

@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using RimWorld;
+using RimWorld.Planet;
 using Verse;
 using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
@@ -23,6 +24,10 @@ public static class Startup
         {
             try
             {
+                string profile = Environment.GetEnvironmentVariable("LC17_DLC_PROFILE");
+                if (profile != null && ModsConfig.AnomalyActive != (profile == "All"))
+                    throw new InvalidOperationException("Unexpected Anomaly state for profile " + profile);
+                Log.Message("[LC17 Validation] Profile=" + profile + "; AnomalyActive=" + ModsConfig.AnomalyActive);
                 var report = new StringBuilder();
                 foreach (string method in new[] { "AppendGeneralLoadErrors", "AppendDefInjectionsLoadErros" })
                     typeof(LanguageReportGenerator).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Static)
@@ -36,6 +41,7 @@ public static class Startup
                         Log.Error("[LC17 Validation] Missing trainability on " + def.defName);
                 }
                 Log.Message("[LC17 Validation] Def validation complete.");
+                if (Environment.GetEnvironmentVariable("LC17_TEST_MODE") == "startup") return;
                 if (Environment.GetEnvironmentVariable("LC17_TEST_MODE") == "load")
                 {
                     GameDataSaveLoader.LoadGame("LC17_Validation");
@@ -43,8 +49,19 @@ public static class Startup
                 }
                 LongEventHandler.QueueLongEvent(() =>
                 {
-                    Root_Play.SetupForQuickTestPlay();
-                    Find.GameInitData.mapSize = 100;
+                    Current.ProgramState = ProgramState.Entry;
+                    Game.ClearCaches();
+                    Current.Game = new Game { InitData = new GameInitData(), Scenario = ScenarioDefOf.Crashlanded.scenario };
+                    Find.Scenario.PreConfigure();
+                    Current.Game.storyteller = new Storyteller(StorytellerDefOf.Cassandra, DifficultyDefOf.Rough);
+                    // A fixed small world avoids unrelated NPC-leader generation failures in the 1.7 beta.
+                    var factions = DefDatabase<FactionDef>.AllDefsListForReading
+                        .Where(f => f.requiredCountAtGameStart > 0 && (f.isPlayer || f.hidden)).ToList();
+                    Current.Game.World = WorldGenerator.GenerateWorld(0.05f, "LC-Standalone-1.7", OverallRainfall.Normal,
+                        OverallTemperature.Normal, OverallPopulation.Normal, LandmarkDensity.Normal, factions);
+                    Find.GameInitData.ChooseRandomStartingTile();
+                    Find.GameInitData.mapSize = 150;
+                    if (ModsConfig.IdeologyActive) Find.Scenario.PostIdeoChosen();
                     Find.GameInitData.PrepForMapGen();
                     Find.Scenario.PreMapGenerate();
                 }, "Play", "GeneratingMap", true, null);
@@ -72,6 +89,7 @@ public class ValidationComponent : GameComponent
             {
                 Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
                 for (int i = 0; i < 120; i++) Find.TickManager.DoSingleTick();
+                GameplayValidation.CheckReload(Find.CurrentMap);
                 Log.Message("[LC17 Validation] SAVE LOAD PASS; pawns=" + Find.CurrentMap.mapPawns.AllPawnsSpawned.Count);
                 return;
             }
@@ -83,7 +101,7 @@ public class ValidationComponent : GameComponent
             {
                 try
                 {
-                    Pawn pawn = PawnGenerator.GeneratePawn(kind, Faction.OfEntities);
+                    Pawn pawn = PawnGenerator.GeneratePawn(kind, LCContainmentUtility.AbnormalityFaction);
                     IntVec3 cell = CellFinder.RandomClosewalkCellNear(map.Center, map, 25);
                     GenSpawn.Spawn(pawn, cell, map);
                     pawn.Drawer.renderer.EnsureGraphicsInitialized();
@@ -124,6 +142,7 @@ public class ValidationComponent : GameComponent
                 catch (Exception e) { Log.Error("[LC17 Validation] Thing " + def.defName + ": " + e); }
             }
             Find.TickManager.CurTimeSpeed = TimeSpeed.Paused;
+            GameplayValidation.Run(map, employee);
             LCAnomalyCore.Singleton.LCCanvasSingleton.Instance.ShowWarningUI(MusicUtils.EWarningLevel.Third);
             for (int i = 0; i < 120; i++) Find.TickManager.DoSingleTick();
             GameDataSaveLoader.SaveGame("LC17_Validation");

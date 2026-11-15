@@ -21,19 +21,7 @@
   <loadAfter>
     <li>fxz.myafufu</li>
   </loadAfter>
-  <modDependenciesByVersion>
-    <v1.7>
-      <li>
-        <packageId>brrainz.harmony</packageId>
-        <displayName>Harmony</displayName>
-        <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
-        <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
-      </li>
-      <li>
-        <packageId>ludeon.rimworld.anomaly</packageId>
-        <displayName>RimWorld - Anomaly</displayName>
-        <downloadUrl>https://store.steampowered.com/app/2380740/</downloadUrl>
-      </li>
-    </v1.7>
-  </modDependenciesByVersion>
+  <descriptionsByVersion>
+    <v1.7>Standalone framework for Lobotomy Corporation abnormalities, containment, work and E.G.O. extraction. Anomaly DLC is not required.</v1.7>
+  </descriptionsByVersion>
 </ModMetaData>

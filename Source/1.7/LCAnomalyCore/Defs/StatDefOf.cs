@@ -12,6 +12,7 @@ namespace LCAnomalyCore.Defs
 
         /// <summary>表示 <c>LC_MinimumContainmentStrength</c>。</summary>
         public static StatDef LC_MinimumContainmentStrength;
+        public static StatDef LC_AbnormalityStudyRate;
 
         static StatDefOf()
         {

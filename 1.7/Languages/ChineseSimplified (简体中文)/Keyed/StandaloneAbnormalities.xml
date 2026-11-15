@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_HoldingThing>收容中：{0}</LC_HoldingThing>
+  <LC_AbnormalityEscapedLabel>异想体突破收容</LC_AbnormalityEscapedLabel>
+  <LC_AbnormalityEscapedText>{0} 已突破收容。请镇压后将其送回脑叶收容平台。</LC_AbnormalityEscapedText>
+  <LC_UndiscoveredEntity>未识别异想体</LC_UndiscoveredEntity>
+  <LC_UndiscoveredEntityDesc>发现该异想体后可查阅其档案。</LC_UndiscoveredEntityDesc>
+  <LC_ResearchUnlocks>研究解锁</LC_ResearchUnlocks>
+</LanguageData>

@@ -8,3 +8,4 @@
 - Use Rimsage MCP to verify RimWorld types, methods, Defs, and API compatibility when relevant.
 - Write Git commit subjects, bodies, and change summaries in Chinese unless the user explicitly requests another language.
 - If a Git commit is made through Codex, set the commit author identity to `GPT-5 <gpt-5@codex.local>`.
+- The 1.7 series must work without the Anomaly DLC. Do not introduce mandatory DLC metadata, Def, asset, or unguarded runtime dependencies. Validate with Anomaly disabled using the Core Tools/1.7 test profiles.

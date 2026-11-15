@@ -9,6 +9,19 @@ namespace LCAnomalyCore.Comp
     /// </summary>
     public class LC_CompEgg : CompInteractable
     {
+        public int biosignature;
+
+        public override void PostPostMake()
+        {
+            base.PostPostMake();
+            biosignature = Rand.Int;
+        }
+
+        public override void PostExposeData()
+        {
+            base.PostExposeData();
+            Scribe_Values.Look(ref biosignature, "biosignature");
+        }
         /// <summary>获取 <c>Props</c>。</summary>
         public new LC_CompProperties_InteractableEgg Props => (LC_CompProperties_InteractableEgg)props;
 

@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Interface;
 using LCAnomalyCore.ModExtensions;
@@ -221,6 +221,13 @@ namespace LCAnomalyCore.Buildings
                 Rot4 value = Rot4.South;
                 heldPawn.Drawer.renderer.DynamicDrawPhaseAt(phase, this.DrawPos + this.PawnDrawOffset, new Rot4?(value), true);
             }
+        }
+
+        public override void DrawGUIOverlay()
+        {
+            base.DrawGUIOverlay();
+            if (HeldPawn != null && CachedEntityNameGraphic == null)
+                GenMapUI.DrawThingLabel(this, HeldPawn.LabelCap);
         }
 
         /// <summary>
@@ -508,7 +515,7 @@ namespace LCAnomalyCore.Buildings
             Pawn heldPawn = HeldPawn;
             if (heldPawn != null)
             {
-                TaggedString ts = "HoldingThing".Translate() + ": " + heldPawn.NameShortColored.CapitalizeFirst();
+                TaggedString ts = "LC_HoldingThing".Translate() + ": " + heldPawn.NameShortColored.CapitalizeFirst();
                 bool flag = LCContainmentUtility.SafelyContains(this, heldPawn);
                 if (!flag)
                 {
@@ -520,7 +527,7 @@ namespace LCAnomalyCore.Buildings
             }
             else
             {
-                inspectTextSB.Append("HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst());
+                inspectTextSB.Append("LC_HoldingThing".Translate() + ": " + "Nothing".Translate().CapitalizeFirst());
             }
 
             //if (heldPawn != null && heldPawn.def.IsStudiable)

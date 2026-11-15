@@ -241,11 +241,7 @@ namespace LCAnomalyCore.Comp
                     {
                         if (egg.Props.shouldTransferBioSignature)
                         {
-                            var sourceCompAbnormality = parent.TryGetComp<CompAbnormality>();
-                            if (sourceCompAbnormality != null)
-                            {
-                                pawn3.TryGetComp<CompAbnormality>().biosignature = sourceCompAbnormality.biosignature;
-                            }
+                            AbnormalityUtility.TransferSignature(pawn3, egg.biosignature);
 
                             if (pawn3.TryGetComp<CompAbnormalityStudiable>(out var comp1))
                             {
@@ -273,6 +269,7 @@ namespace LCAnomalyCore.Comp
 
             if (pawn != null && HeldPlatform != null)
             {
+                AbnormalityUtility.Discover(pawn.def);
                 pawn.GetLord()?.Notify_PawnLost(pawn, PawnLostCondition.MadePrisoner);
                 if (ModsConfig.AnomalyActive)
                     pawn.TryGetComp<CompActivity>()?.Notify_HeldOnPlatform();

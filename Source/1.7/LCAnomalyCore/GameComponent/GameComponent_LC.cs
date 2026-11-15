@@ -49,6 +49,28 @@ namespace LCAnomalyCore.GameComponent
 
         private int waringPointsCounter;
 
+        private HashSet<string> discoveredAbnormalities = new HashSet<string>();
+
+        public void DiscoverAbnormality(ThingDef thingDef)
+        {
+            if (thingDef == null) return;
+            foreach (var entry in DefDatabase<Defs.AbnormalityCodexEntryDef>.AllDefsListForReading)
+                if (entry.defName == thingDef.defName || entry.linkedThings.Contains(thingDef))
+                    discoveredAbnormalities.Add(entry.defName);
+        }
+
+        public bool IsAbnormalityDiscovered(Defs.AbnormalityCodexEntryDef entry)
+        {
+            return entry != null && discoveredAbnormalities.Contains(entry.defName);
+        }
+
+        public void SetAbnormalityDiscovered(Defs.AbnormalityCodexEntryDef entry, bool discovered)
+        {
+            if (entry == null) return;
+            if (discovered) discoveredAbnormalities.Add(entry.defName);
+            else discoveredAbnormalities.Remove(entry.defName);
+        }
+
         /// <summary>表示 <c>LCGameComponentTickEvent</c>。</summary>
         public LCGameComponentTick LCGameComponentTickEvent;
 
@@ -114,6 +136,8 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Values.Look(ref curWarningPoints, "curWarningPoints", 0);
             Scribe_Values.Look(ref waringPointsCounter, "waringPointsCounter", 0);
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
+            Scribe_Collections.Look(ref discoveredAbnormalities, "lcDiscoveredAbnormalities", LookMode.Value);
+            discoveredAbnormalities ??= new HashSet<string>();
         }
 
         /// <summary>执行 <c>TryGetAnomalyStatusSaved</c> 定义的操作。</summary>

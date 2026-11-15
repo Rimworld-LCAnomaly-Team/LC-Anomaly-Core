@@ -76,6 +76,8 @@ namespace LCAnomalyCore.Misc
             base.ExposeData();
             Scribe_Values.Look(ref completeTick, "completeTick", 0);
             Scribe_Values.Look(ref bioSignature, "bioSignature", 0);
+            Scribe_Values.Look(ref hasInited, "hasInited");
+            Scribe_Values.Look(ref isEscaping, "isEscaping");
         }
     }
 }

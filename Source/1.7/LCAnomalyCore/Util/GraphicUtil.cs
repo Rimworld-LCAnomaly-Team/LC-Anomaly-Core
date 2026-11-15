@@ -189,19 +189,13 @@ namespace LCAnomalyCore.Util
             //初始化
             if (CachedTopGraphic_EntityNamePlatformTop == null || forced)
             {
-                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
-                    .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage
-                    , ShaderDatabase.Transparent
-                    , drawSizeOfHoldingPlatform, Color.white);
-
-                //如果贴图为null就切换到英文版
-                if (CachedTopGraphic_EntityNamePlatformTop.MatSingle.mainTexture == null)
-                {
-                    LogUtil.Warning("EntityNamePlatformTex cant find local language tex, try to use english ver");
-                    CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase
-                        .Get<Graphic_Single>("UI/HoldingPlatform/" + loc + "_English"
-                        , ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
-                }
+                string path = "UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage;
+                if (ContentFinder<Texture2D>.Get(path, false) == null)
+                    path = "UI/HoldingPlatform/" + loc + "_English";
+                if (ContentFinder<Texture2D>.Get(path, false) == null)
+                    return null; // The holding platform draws the localized pawn label instead.
+                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>(path,
+                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
 
                 LogUtil.Message("EntityNamePlatformTex initialized");
             }
@@ -303,12 +297,14 @@ namespace LCAnomalyCore.Util
                 CachedTopGraphicDict_BoxBarUnit_PE.Add(10, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_10", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_PE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_PE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                CachedTopGraphicDict_BoxBarUnit_PE.Add(24, GraphicDatabase.Get<Graphic_Single>(baseLoc + "PEBOX_24", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
             if (CachedTopGraphicDict_BoxBarUnit_NE.NullOrEmpty())
             {
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(10, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_10", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(14, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_14", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(16, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_16", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
+                CachedTopGraphicDict_BoxBarUnit_NE.Add(24, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_24", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
 
             if (BoxType == "PE")

@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Defs;
+using LCAnomalyCore.Defs;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -115,13 +115,13 @@ namespace LCAnomalyCore.UI
                 bool flag = devShowAll || selectedEntry.Discovered;
                 using (new TextBlock(GameFont.Medium))
                 {
-                    Widgets.Label(new Rect(0f, num, viewRect.width, 30f), flag ? selectedEntry.LabelCap : "UndiscoveredEntity".Translate());
+                    Widgets.Label(new Rect(0f, num, viewRect.width, 30f), flag ? selectedEntry.LabelCap : "LC_UndiscoveredEntity".Translate());
                     num += 40f;
                 }
 
                 using (new TextBlock(newWordWrap: true))
                 {
-                    string text = (flag ? selectedEntry.description : ((string)"UndiscoveredEntityDesc".Translate()));
+                    string text = (flag ? selectedEntry.description : ((string)"LC_UndiscoveredEntityDesc".Translate()));
                     float num2 = Text.CalcHeight(text, viewRect.width);
                     Widgets.Label(new Rect(0f, num, viewRect.width, num2), text);
                     num += num2 + 10f;
@@ -155,7 +155,7 @@ namespace LCAnomalyCore.UI
 
                 //    //if (selectedEntry.discoveredResearchProjects.Count > 0)
                 //    //{
-                //    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "ResearchUnlocks".Translate() + ":");
+                //    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "LC_ResearchUnlocks".Translate() + ":");
                 //    //    num += Text.LineHeight;
                 //    //    foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
                 //    //    {

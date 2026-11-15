@@ -5,6 +5,7 @@
     <RootNamespace>LCAnomalyCore</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Util\AbnormalityUtility.cs" />
     <Compile Include="Buildings\Building_CogitoBucket.cs" />
     <Compile Include="Buildings\Building_DepartmentCore.cs" />
     <Compile Include="Buildings\Building_EnkephalinGenerator.cs" />

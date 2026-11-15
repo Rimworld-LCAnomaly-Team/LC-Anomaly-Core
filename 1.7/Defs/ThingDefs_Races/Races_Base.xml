@@ -3,7 +3,7 @@
 
   <LCAnomalyCore.Defs.ThingDef_AbnormalityEntity ParentName="BasePawn" Name="LC_EntityBase" Abstract="True">
     <thingClass>LCAnomalyCore.Comp.LC_EntityBasePawn</thingClass>
-    <hiddenWhileUndiscovered>true</hiddenWhileUndiscovered>
+    <hiddenWhileUndiscovered>false</hiddenWhileUndiscovered>
     <tradeability>None</tradeability>
     <hideStats>true</hideStats>
     <onlyShowInspectString>true</onlyShowInspectString>

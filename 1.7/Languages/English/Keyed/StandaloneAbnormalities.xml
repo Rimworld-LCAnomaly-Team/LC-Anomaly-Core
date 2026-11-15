@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_HoldingThing>Holding: {0}</LC_HoldingThing>
+  <LC_AbnormalityEscapedLabel>Abnormality escaped</LC_AbnormalityEscapedLabel>
+  <LC_AbnormalityEscapedText>{0} has escaped containment. Suppress it and return it to an LC holding platform.</LC_AbnormalityEscapedText>
+  <LC_UndiscoveredEntity>Unidentified abnormality</LC_UndiscoveredEntity>
+  <LC_UndiscoveredEntityDesc>Discover this abnormality to reveal its dossier.</LC_UndiscoveredEntityDesc>
+  <LC_ResearchUnlocks>Research unlocks</LC_ResearchUnlocks>
+</LanguageData>
