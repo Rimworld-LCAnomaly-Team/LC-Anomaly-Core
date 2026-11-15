@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <JobDef>
+    <defName>LC_AbnormalityStudyInteract</defName>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract</driverClass>
+    <reportString>Studying TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+</Defs>

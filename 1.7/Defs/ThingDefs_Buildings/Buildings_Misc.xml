@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <LCAnomalyCore.Defs.LC_HoldingPlatformDef Name="LC_HoldingPlatformBase" ParentName="FurnitureBase" Abstract="True">
+    <thingClass>LCAnomalyCore.Buildings.Building_AbnormalityHoldingPlatform</thingClass>
+    <containedPawnsSelectable>true</containedPawnsSelectable>
+    <passability>PassThroughOnly</passability>
+    <rotatable>false</rotatable>
+    <fillPercent>0.4</fillPercent>
+    <drawerType>RealtimeOnly</drawerType> <!-- Prevents items clipping into it -->
+    <tickerType>Normal</tickerType>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <uiOrder>100</uiOrder>
+    <pathCost>30</pathCost>
+    <canOverlapZones>false</canOverlapZones>
+    <size>(3, 3)</size>
+    <defaultPlacingRot>North</defaultPlacingRot>
+    <thingCategories>
+      <li>LC_Building_Containment</li>
+    </thingCategories>
+    <inspectorTabs>
+      <li>LCAnomalyCore.UI.ITab_AbnormalityStudyNotes</li>
+    </inspectorTabs>
+    <designationCategory>Buildings_LC</designationCategory>
+    <building>
+      <buildingTags>
+        <li>Anomaly</li>
+      </buildingTags>
+    </building>
+    <comps>
+      <li Class="CompProperties_AffectedByFacilities">
+        <linkableFacilities>
+        </linkableFacilities>
+      </li>
+      <li Class="LCAnomalyCore.Comp.CompProperties_WorkableUI" />
+      <li Class="CompProperties_AssignableToPawn">
+        <drawAssignmentOverlay>false</drawAssignmentOverlay>
+        <compClass>LCAnomalyCore.Comp.CompAssignableToPawn_LC_Entity</compClass>
+        <maxAssignedPawnsCount>12</maxAssignedPawnsCount>
+      </li>
+    </comps>
+  </LCAnomalyCore.Defs.LC_HoldingPlatformDef>
+
+  <!-- HoldingPlatform -->
+  <LCAnomalyCore.Defs.LC_HoldingPlatformDef ParentName="LC_HoldingPlatformBase">
+    <defName>LC_HoldingPlatform</defName>
+    <label>LobotomyCorporation Holding Platform</label>
+    <description>A platform for holding dangerous entities. The corners have eyelets where strong chains can be attached.\n\nDowned entities can be captured and secured on a holding platform, where they can be studied for Anomaly knowledge. Increase containment strength by building strong walls and doors, and other special containment devices.</description>
+    <graphicData>
+      <texPath>Things/Building/LC_HoldingPlatform/HoldingPlatform</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+    </graphicData>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <statBases>
+      <MaxHitPoints>500</MaxHitPoints>
+      <WorkToBuild>2000</WorkToBuild>
+      <Mass>30</Mass>
+      <Flammability>0.5</Flammability>
+    </statBases>
+    <costList>
+      <Steel>40</Steel>
+    </costList>
+    <comps>
+      <li Class="LCAnomalyCore.Comp.CompProperties_AbnormalityHolderPlatform">
+        <containmentFactor>0.7</containmentFactor>
+        <untetheredGraphicTexPath>Things/Building/HoldingPlatform/HoldingPlatform_RopesUntethered</untetheredGraphicTexPath>
+        <tilingChainTexPath>Things/Building/HoldingPlatform/HoldingPlatform_EntityRope</tilingChainTexPath>
+        <baseChainFastenerTexPath>Things/Building/HoldingPlatform/HoldingPlatform_ChainFastener</baseChainFastenerTexPath>
+        <targetChainFastenerTexPath>Things/Building/HoldingPlatform/HoldingPlatform_ChainFastener_StrongOutline</targetChainFastenerTexPath>
+      </li>
+    </comps>
+  </LCAnomalyCore.Defs.LC_HoldingPlatformDef>
+
+</Defs>

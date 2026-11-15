@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputPath>../../../.runtime-test-1.7/Harness/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RimWorldRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\..\..'))</RimWorldRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(RimWorldRoot)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityStubs"><HintPath>$(RimWorldRoot)/UnityStubs.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="LCAnomalyCore"><HintPath>$(RimWorldRoot)/Mods/LC Anomaly Core/1.7/Assemblies/LCAnomalyCore.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

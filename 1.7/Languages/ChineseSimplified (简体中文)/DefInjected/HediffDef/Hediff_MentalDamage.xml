@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_MentalDamage.label>精神稳定度</LC_MentalDamage.label>
+  <LC_MentalDamage.description>抵御白色与黑色精神创伤的剩余能力。精神值归零时会陷入恐慌；对白色或黑色伤害导致的恐慌者继续造成此类伤害，可以将其镇压并恢复理智。</LC_MentalDamage.description>
+</LanguageData>

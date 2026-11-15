@@ -1,0 +1,56 @@
+ManifestFileVersion: 0
+CRC: 3298943357
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 53487372732ac9dc793d212e2aa64795
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 6893722305690c6aa69c9e400b45587b
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: -1736529529, guid: f77646ae0af84dd4faaa02b2f48d2a9d, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 225
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Resource/Animator/ShowTextBG_FadeIn.anim
+- Assets/Resource/Animator/DarkEffect_FadeIn.anim
+- Assets/Resource/Textures/CreatureSelect 1.png
+- Assets/Resource/Shader/CustomSilhouette.shader
+- Assets/Resource/Animator/SelectCreature/SelectCreature_UnSelected.anim
+- Assets/Resource/Animator/ShowTextBGAnimator.controller
+- Assets/Resource/Animator/DarkEffectAnimator.controller
+- Assets/Resource/Prefab/Window_SelectCreature.prefab
+- Assets/Resource/Animator/SelectCreature/SelectCreature_Selected.anim
+- Assets/Resource/Material/SilhouetteMat.mat
+- Assets/Resource/Animator/SelectCreature/SelectCreature_Normal.anim
+- Assets/Resource/Shader/NewSurfaceShader.shader
+- Assets/Resource/Animator/SelectCreature/SelectCreatureAnimator.controller
+- Assets/Resource/Textures/CreatureSelect_BG.png
+Dependencies: []

@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Local RimWorld and mod DLL reference paths
 /Source/1.6/LocalDllPaths.props
+
+# RimWorld 1.7 isolated validation data
+/.runtime-test-1.7/

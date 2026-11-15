@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_AssignmentGizmo_DepartmentCore_Label>分配殖民者...</LC_AssignmentGizmo_DepartmentCore_Label>
+  <LC_AssignmentGizmo_DepartmentCore_Desc>点击以分配殖民者到该部门，被分配的殖民者将会被激活员工属性增益。\n取消分配后，增益自动解除。</LC_AssignmentGizmo_DepartmentCore_Desc>
+  <LC_AssignmentGizmo_NoAssignablePawns_Desc>没有可分配的殖民者</LC_AssignmentGizmo_NoAssignablePawns_Desc>
+
+  <ControlTeam>控制部</ControlTeam>
+  <InformationTeam>情报部</InformationTeam>
+  <TrainingTeam>培训部</TrainingTeam>
+  <SafetyTeam>安保部</SafetyTeam>
+
+  <CentralCommandTeam>中央本部</CentralCommandTeam>
+  <WelfareTeam>福利部</WelfareTeam>
+  <DisciplinaryTeam>惩戒部</DisciplinaryTeam>
+
+  <RecordTeam>记录部</RecordTeam>
+  <ExtractionTeam>研发部</ExtractionTeam>
+  <ArchitectureTeam>构筑部</ArchitectureTeam>
+
+</LanguageData>

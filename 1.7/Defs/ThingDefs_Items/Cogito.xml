@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>Cogito</defName>
+    <label>Cogito</label>
+    <description>Cogito</description>
+    <thingClass>ThingWithComps</thingClass>
+    <graphicData>
+      <graphicClass>Graphic_StackCount</graphicClass>
+      <texPath>Things/Item/Resource/Cogito</texPath>
+    </graphicData>
+    <stackLimit>50</stackLimit>
+    <genericMarketSellable>false</genericMarketSellable>
+    <soundInteract>Metal_Drop</soundInteract>
+    <soundDrop>Metal_Drop</soundDrop>
+    <useHitPoints>false</useHitPoints>
+    <healthAffectsPrice>false</healthAffectsPrice>
+    <statBases>
+      <MarketValue>0</MarketValue>
+      <Mass>0.25</Mass>
+    </statBases>
+    <thingCategories>
+      <li>LC_Resource</li>
+    </thingCategories>
+    <burnableByRecipe>false</burnableByRecipe>
+    <smeltable>false</smeltable>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <descriptionHyperlinks>
+      <RecipeDef>ExtractCogito</RecipeDef>
+      <RecipeDef>CogitoInjection</RecipeDef>
+    </descriptionHyperlinks>
+    <researchPrerequisites>
+      <li>CogitoUsages</li>
+    </researchPrerequisites>
+    <comps></comps>
+  </ThingDef>
+
+  <HediffDef>
+    <defName>CogitoExtracted</defName>
+    <label>Extracted Cogito</label>
+    <labelNoun>extracted cogito</labelNoun>
+    <description>extracted cogito</description>
+    <hediffClass>Hediff_High</hediffClass>
+    <defaultLabelColor>(1,0,0.5)</defaultLabelColor>
+    <scenarioCanAdd>true</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <isBad>true</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-1.0</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+    </comps>
+      <stages>
+        <li>
+          <capMods>
+            <li>
+              <capacity>Consciousness</capacity>
+              <setMax>0.1</setMax>
+            </li>
+          </capMods>
+        </li>
+      </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>CogitoInjected</defName>
+    <label>Injected Cogito</label>
+    <labelNoun>injected cogito</labelNoun>
+    <description>injteced cogito</description>
+    <hediffClass>Hediff_High</hediffClass>
+    <defaultLabelColor>(1,0,0.5)</defaultLabelColor>
+    <scenarioCanAdd>true</scenarioCanAdd>
+    <maxSeverity>1.0</maxSeverity>
+    <isBad>true</isBad>
+    <comps>
+      <li Class="HediffCompProperties_SeverityPerDay">
+        <severityPerDay>-0.5</severityPerDay>
+        <showHoursToRecover>true</showHoursToRecover>
+      </li>
+      <li Class="LCAnomalyCore.Comp.HediffCompProperties_CogitoInjected">
+        <deadChance>0.5</deadChance>
+        <sevenSinEnitityChance>0.8</sevenSinEnitityChance>
+        <zayinChance>0.8</zayinChance>
+        <tethChance>0.5</tethChance>
+      </li>
+    </comps>
+      <stages>
+        <li>
+          <capMods>
+            <li>
+              <capacity>Consciousness</capacity>
+              <setMax>0.1</setMax>
+            </li>
+          </capMods>
+        </li>
+      </stages>
+  </HediffDef>
+
+</Defs>

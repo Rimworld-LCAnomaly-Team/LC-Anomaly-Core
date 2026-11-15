@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <LC_Capture>收容 {0}</LC_Capture>
+  <LC_CaptureLower>收容 {0}</LC_CaptureLower>
+  <LC_CaptureEntity>收容异想体</LC_CaptureEntity>
+  <LC_CaptureEntityDesc>命令人员将 {0} 搬运至 LC 收容平台。</LC_CaptureEntityDesc>
+  <LC_CancelCapture>取消收容</LC_CancelCapture>
+  <LC_CancelCaptureDesc>取消收容 {0} 的命令。</LC_CancelCaptureDesc>
+  <LC_CancelTransfer>取消转移</LC_CancelTransfer>
+  <LC_CancelTransferDesc>取消向另一座 LC 收容平台的转移。</LC_CancelTransferDesc>
+  <LC_NoHoldingPlatformsAvailable>没有可用的 LC 收容平台</LC_NoHoldingPlatformsAvailable>
+  <LC_ChooseEntityHolder>选择 LC 收容平台</LC_ChooseEntityHolder>
+  <LC_MessageHolderReserved>{0} 已被预留。</LC_MessageHolderReserved>
+  <LC_MessageTargetBelowMinimumContainmentStrength>{0} 的收容强度不足，无法安全收容 {1}。</LC_MessageTargetBelowMinimumContainmentStrength>
+  <LC_MessageNoPlatformWithMinimumContainmentStrength>没有能够安全收容 {0} 的可用 LC 收容平台。</LC_MessageNoPlatformWithMinimumContainmentStrength>
+  <LC_EntityHolderReservedBy>预留者</LC_EntityHolderReservedBy>
+  <LC_FloatMenuContainmentStrength>LC 收容强度</LC_FloatMenuContainmentStrength>
+  <LC_FloatMenuContainmentRequires>{0} 所需强度</LC_FloatMenuContainmentRequires>
+  <LC_HoldingPlatformRequiresStrength>需要 {0}</LC_HoldingPlatformRequiresStrength>
+  <LC_CommandToggleStudy>允许工作</LC_CommandToggleStudy>
+  <LC_CommandToggleStudyDesc>允许已分配员工对该异想体执行工作。</LC_CommandToggleStudyDesc>
+  <LC_CanBeStudiedInDuration>可在 {0} 后再次工作</LC_CanBeStudiedInDuration>
+  <LC_Capturable>可收容</LC_Capturable>
+</LanguageData>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <StatDef>
+    <defName>LC_ContainmentStrength</defName>
+    <label>LC containment strength</label>
+    <description>How securely this platform can contain an abnormality. Strong walls and doors, lighting, roofing and LC containment flooring improve this value.</description>
+    <cacheable>true</cacheable>
+    <category>Building</category>
+    <defaultBaseValue>0</defaultBaseValue>
+    <minValue>0</minValue>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <toStringStyle>FloatOne</toStringStyle>
+    <workerClass>LCAnomalyCore.Util.StatWorker_LCContainmentStrength</workerClass>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_MinimumContainmentStrength</defName>
+    <label>minimum LC containment strength</label>
+    <description>The LC containment strength required to safely hold this abnormality.</description>
+    <category>PawnMisc</category>
+    <defaultBaseValue>0</defaultBaseValue>
+    <displayPriorityInCategory>9999</displayPriorityInCategory>
+    <overridesHideStats>true</overridesHideStats>
+    <showOnDefaultValue>false</showOnDefaultValue>
+    <toStringStyle>FloatOne</toStringStyle>
+  </StatDef>
+
+</Defs>

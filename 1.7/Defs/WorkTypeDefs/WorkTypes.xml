@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <WorkTypeDef>
+    <defName>AbnormalityStudy</defName>
+    <labelShort>abnormal study</labelShort>
+    <pawnLabel>Employee</pawnLabel>
+    <gerundLabel>abnormality studying</gerundLabel>
+    <description>Interact with abnormalities.</description>
+    <verb>Study at</verb>
+    <naturalPriority>150</naturalPriority>
+    <disabledForSlaves>false</disabledForSlaves>
+    <workTags>
+      <li>AllWork</li>
+    </workTags>
+  </WorkTypeDef>
+
+</Defs>

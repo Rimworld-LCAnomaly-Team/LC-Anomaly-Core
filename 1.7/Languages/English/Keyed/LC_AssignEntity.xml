@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <LC_AssignmentGizmo_HoldingPlatform_Label>AutoWork Assign...</LC_AssignmentGizmo_HoldingPlatform_Label>
+  <LC_AssignmentGizmo_HoldingPlatform_Desc>Click to assign which pawn to work automatically on the platform with abnormality.\nThe assigned pawn will automatically start working when available, in case the dark research job has arranged.\nWarning, incorrect assignment may lead to dangerous result.</LC_AssignmentGizmo_HoldingPlatform_Desc>
+  <LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc>No assignable employee\nPlease check for work and department core assign</LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc>
+  <LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc>No Abnormality on platform</LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc>
+
+  <LC_AssignableEntity_EntityUnassign>Unassign</LC_AssignableEntity_EntityUnassign>
+  <LC_AssignableEntity_EntityAssign>Assign</LC_AssignableEntity_EntityAssign>
+
+  <LC_AssignableEntity_StudySuccessRate>Success Rate: </LC_AssignableEntity_StudySuccessRate>
+  <LC_AssignableEntity_StudySuccessRate_High>High</LC_AssignableEntity_StudySuccessRate_High>
+  <LC_AssignableEntity_StudySuccessRate_Medium>Medium</LC_AssignableEntity_StudySuccessRate_Medium>
+  <LC_AssignableEntity_StudySuccessRate_Low>Low</LC_AssignableEntity_StudySuccessRate_Low>
+
+  <LC_AssignableEntity_SkillDisabled>Skill Forbiddien: </LC_AssignableEntity_SkillDisabled>
+
+</LanguageData>
