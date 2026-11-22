@@ -18,11 +18,8 @@ if (-not (Test-Path -LiteralPath (Join-Path $HarmonyAssembliesDir '0Harmony.dll'
 
 # Build dependencies first. A submod must never distribute another mod's DLL.
 $names = @(
-    'LC Anomaly Core', 'LC-Anomaly-Story', 'LC-Anomaly-Ordeals',
-    'LC Anomaly Laetitia', 'LC Anomaly MeatLantern', 'LC Anomaly OneSin',
-    'LC Anomaly BurrowingHeaven', 'LC SevenSin Entity',
-    'LC Anomaly Portrait of Another World', 'LC-Anomaly-AnimationStudio',
-    'LC Anomaly Backgrounds', 'LC Anomaly HAR Patch'
+    'LC Anomaly Core', 'LC Abnormalities', 'LC-Anomaly-Story', 'LC-Anomaly-Ordeals',
+    'LC-Anomaly-AnimationStudio', 'LC Anomaly Backgrounds', 'LC Anomaly HAR Patch'
 )
 $xmlCount = 0
 $buildCount = 0

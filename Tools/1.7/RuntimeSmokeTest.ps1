@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$RimWorldRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..\..')).Path,
     [ValidateSet('English', 'ChineseSimplified')][string]$Language = 'English',
     [ValidateSet('WithoutAnomaly', 'All', 'BaseGame')][string]$DlcProfile = 'WithoutAnomaly',
@@ -19,10 +19,8 @@ $ids = @(
     'brrainz.harmony', 'ludeon.rimworld', 'ludeon.rimworld.royalty', 'ludeon.rimworld.ideology',
     'ludeon.rimworld.biotech', 'ludeon.rimworld.anomaly', 'ludeon.rimworld.odyssey',
     'erdelf.humanoidalienraces', 'vanillaexpanded.backgrounds',
-    'darthcy.lc.anomalycore', 'darthcy.lc.anomalystory', 'darthcy.lc.anomalyordeals',
-    'darthcy.lc.laetitia', 'darthcy.lc.meatlantern', 'darthcy.lc.onesin',
-    'darthcy.lc.burrowingheaven', 'darthcy.lc.sevensinentity',
-    'darthcy.lc.portraitofanotherworld', 'darthcy.lc.har.patch',
+    'darthcy.lc.anomalycore', 'darthcy.lc.abnormalities', 'darthcy.lc.anomalystory', 'darthcy.lc.anomalyordeals',
+    'darthcy.lc.har.patch',
     'darthcy.lc.anomalybackgrounds', 'lcanomaly.animationstudio'
 )
 if ($DlcProfile -eq 'WithoutAnomaly') { $ids = @($ids | Where-Object { $_ -ne 'ludeon.rimworld.anomaly' }) }

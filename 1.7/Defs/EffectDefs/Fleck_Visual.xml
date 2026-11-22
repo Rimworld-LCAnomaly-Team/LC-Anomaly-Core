@@ -161,4 +161,47 @@
     </graphicData>
   </FleckDef>
 
+  <!-- 四色伤害受击指示图标 -->
+  <FleckDef ParentName="FleckBase_Thrown" Name="LC_FourColorHitIconBase" Abstract="True">
+    <altitudeLayer>MetaOverlays</altitudeLayer>
+    <fadeInTime>0.04</fadeInTime>
+    <solidTime>0.42</solidTime>
+    <fadeOutTime>0.34</fadeOutTime>
+    <growthRate>0.25</growthRate>
+    <graphicData>
+      <graphicClass>Graphic_Fleck</graphicClass>
+      <shaderType>Mote</shaderType>
+      <drawSize>(0.68, 0.68)</drawSize>
+      <renderInstanced>true</renderInstanced>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="LC_FourColorHitIconBase">
+    <defName>LC_FourColorHit_Red</defName>
+    <graphicData>
+      <texPath>Fleck/FourColor/LC_DamageIcon_Red</texPath>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="LC_FourColorHitIconBase">
+    <defName>LC_FourColorHit_White</defName>
+    <graphicData>
+      <texPath>Fleck/FourColor/LC_DamageIcon_White</texPath>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="LC_FourColorHitIconBase">
+    <defName>LC_FourColorHit_Black</defName>
+    <graphicData>
+      <texPath>Fleck/FourColor/LC_DamageIcon_Black</texPath>
+    </graphicData>
+  </FleckDef>
+
+  <FleckDef ParentName="LC_FourColorHitIconBase">
+    <defName>LC_FourColorHit_Pale</defName>
+    <graphicData>
+      <texPath>Fleck/FourColor/LC_DamageIcon_Pale</texPath>
+    </graphicData>
+  </FleckDef>
+
 </Defs>

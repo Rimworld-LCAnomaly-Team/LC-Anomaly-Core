@@ -13,8 +13,13 @@ namespace LCAnomalyCore.Util
         public static bool SevenSinEntityActive => ModsConfig.IsActive("DarthCY.LC.SevenSinEntity");
 
         /// <summary>
+        /// 异想体合集是否激活
+        /// </summary>
+        public static bool AbnormalitiesActive => ModsConfig.IsActive("DarthCY.LC.Abnormalities");
+
+        /// <summary>
         /// 肉食提灯是否激活
         /// </summary>
-        public static bool MeatLanternActive => ModsConfig.IsActive("DarthCY.LC.MeatLantern");
+        public static bool MeatLanternActive => AbnormalitiesActive || ModsConfig.IsActive("DarthCY.LC.MeatLantern");
     }
 }

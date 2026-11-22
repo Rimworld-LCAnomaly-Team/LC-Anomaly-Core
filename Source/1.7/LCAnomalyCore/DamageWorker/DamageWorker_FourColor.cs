@@ -17,33 +17,45 @@ namespace LCAnomalyCore.DamageWorker
             if (extension == null || extension.damageType == FourColorDamageType.None)
                 return base.Apply(dinfo, victim);
 
+            Map hitMap = victim?.MapHeld;
+            Vector3 hitPos = victim == null
+                ? Vector3.zero
+                : (victim.Spawned ? victim.DrawPos : victim.PositionHeld.ToVector3Shifted());
+
             float adjustedAmount = DamageUtils.GetAdjustedDamage(dinfo, victim, extension.damageType,
                 extension.riskLevel);
             dinfo.SetAmount(adjustedAmount);
 
             Pawn pawn = victim as Pawn;
+            DamageResult result;
             switch (extension.damageType)
             {
                 case FourColorDamageType.White:
-                    return DamageUtils.CanTakeMentalDamage(pawn)
+                    result = DamageUtils.CanTakeMentalDamage(pawn)
                         ? ApplyMentalDamage(dinfo, pawn)
                         : base.Apply(dinfo, victim);
+                    break;
                 case FourColorDamageType.Black:
-                {
-                    DamageResult result = base.Apply(dinfo, victim);
+                    result = base.Apply(dinfo, victim);
                     if (pawn != null && !pawn.Dead)
                         DamageUtils.ApplyMentalDamage(pawn, adjustedAmount, dinfo);
-                    return result;
-                }
+                    break;
                 case FourColorDamageType.Pale:
                     dinfo.SetAmount(GetPaleDamage(adjustedAmount, victim));
                     if (pawn != null)
                         dinfo.SetHitPart(pawn.RaceProps.body.corePart);
                     dinfo.SetIgnoreArmor(ignoreArmor: true);
-                    return base.Apply(dinfo, victim);
+                    result = base.Apply(dinfo, victim);
+                    break;
                 default:
-                    return base.Apply(dinfo, victim);
+                    result = base.Apply(dinfo, victim);
+                    break;
             }
+
+            if (hitMap != null && adjustedAmount > 0f)
+                DamageUtils.SpawnFourColorHitIndicator(extension.damageType, hitPos, hitMap, adjustedAmount);
+
+            return result;
         }
 
         private static DamageResult ApplyMentalDamage(DamageInfo dinfo, Pawn pawn)

@@ -102,6 +102,46 @@ namespace LCAnomalyCore.Util
             return Mathf.Max(0f, dinfo.Amount * Mathf.Max(0f, weaponMultiplier) * resistance * levelFactor);
         }
 
+        /// <summary>在受击位置生成四色伤害图标指示。</summary>
+        public static void SpawnFourColorHitIndicator(FourColorDamageType damageType, Vector3 position, Map map, float adjustedAmount)
+        {
+            if (map == null || adjustedAmount <= 0f)
+                return;
+
+            IntVec3 cell = position.ToIntVec3();
+            if (!cell.InBounds(map) || !position.ShouldSpawnMotesAt(map))
+                return;
+
+            FleckDef fleckDef = HitFleckDefFor(damageType);
+            if (fleckDef == null)
+                return;
+
+            FleckCreationData data = new FleckCreationData
+            {
+                def = fleckDef,
+                spawnPosition = position + new Vector3(Rand.Range(-0.28f, 0.28f), 0f, Rand.Range(0.05f, 0.38f)),
+                scale = Mathf.Clamp(0.85f + adjustedAmount * 0.008f, 0.85f, 1.35f),
+                velocityAngle = Rand.Range(-22f, 22f),
+                velocitySpeed = Rand.Range(0.45f, 0.72f),
+                rotation = Rand.Range(-10f, 10f),
+                rotationRate = Rand.Range(-8f, 8f),
+                ageTicksOverride = -1
+            };
+            map.flecks.CreateFleck(data);
+        }
+
+        private static FleckDef HitFleckDefFor(FourColorDamageType damageType)
+        {
+            switch (damageType)
+            {
+                case FourColorDamageType.Red: return Defs.FleckDefOf.LC_FourColorHit_Red;
+                case FourColorDamageType.White: return Defs.FleckDefOf.LC_FourColorHit_White;
+                case FourColorDamageType.Black: return Defs.FleckDefOf.LC_FourColorHit_Black;
+                case FourColorDamageType.Pale: return Defs.FleckDefOf.LC_FourColorHit_Pale;
+                default: return null;
+            }
+        }
+
         /// <summary>执行 <c>ApplyMentalDamage</c> 定义的操作。</summary>
         public static float ApplyMentalDamage(Pawn pawn, float amount, DamageInfo dinfo)
         {
@@ -169,6 +209,9 @@ namespace LCAnomalyCore.Util
 
         private static void StartPanic(Pawn pawn, Pawn instigator)
         {
+            if (pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned || pawn.mindState?.mentalStateHandler == null)
+                return;
+
             MentalStateDef state = MentalStateDefOf.PanicFlee;
             CompPawnStatus status = pawn.TryGetComp<CompPawnStatus>();
             if (status != null && status.Enabled)
@@ -186,6 +229,17 @@ namespace LCAnomalyCore.Util
                     case EPawnStatus.Justice: state = MentalStateDefOf.PanicFlee; break;
                 }
             }
+
+            if (state == null || !state.Worker.StateCanOccur(pawn))
+            {
+                if (MentalStateDefOf.PanicFlee != null && MentalStateDefOf.PanicFlee.Worker.StateCanOccur(pawn))
+                    state = MentalStateDefOf.PanicFlee;
+                else
+                    return;
+            }
+
+            if (pawn.Downed && (state.recoverFromDowned || !state.downedCanDo))
+                return;
 
             pawn.mindState.mentalStateHandler.TryStartMentalState(state,
                 "LC_FourColorPanicReason".Translate(), forced: true, forceWake: true,
