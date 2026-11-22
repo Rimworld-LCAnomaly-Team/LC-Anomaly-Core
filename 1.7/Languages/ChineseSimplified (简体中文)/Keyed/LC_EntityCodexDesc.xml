@@ -13,4 +13,13 @@
   <LC_EntityCodexTip.WAW>这个等级的异想体高度危险，极具破坏力，对大多数员工都怀有敌意。如果这个等级的异想体突破收容，将会导致大量的人员伤亡。</LC_EntityCodexTip.WAW>
   <LC_EntityCodexTip.ALEPH>这个等级的异想体是公司里最危险的异想体。您必须对它们时刻保持关注，确保它们都有好好待在收容单元里。稳定收容这个等级的异想体已经耗费了公司大量的人力物力，请务必不要让他们突破收容。</LC_EntityCodexTip.ALEPH>
 
+  <LC_Codex_ManagementSummary>管理档案</LC_Codex_ManagementSummary>
+  <LC_Codex_ObservationLevel>观察等级：{0}</LC_Codex_ObservationLevel>
+  <LC_Codex_IndiPeBox>独立 PE-Box 余量：{0}</LC_Codex_IndiPeBox>
+  <LC_Codex_ExtractedWeapon>已提取 E.G.O 武器：{0}</LC_Codex_ExtractedWeapon>
+  <LC_Codex_ExtractedArmor>已提取 E.G.O 护甲：{0}</LC_Codex_ExtractedArmor>
+  <LC_Codex_LinkedEntries>关联条目与 E.G.O 装备</LC_Codex_LinkedEntries>
+  <LC_Codex_StudyNotes>观察笔记</LC_Codex_StudyNotes>
+  <LC_Codex_NoStudyNotes>尚未解锁观察笔记，请在收容平台安排工作以推进观察进度。</LC_Codex_NoStudyNotes>
+
 </LanguageData>

@@ -38,6 +38,8 @@
     <Compile Include="Comp\HediffComp_CogitoInjected.cs" />
     <Compile Include="Comp\LC_CompEgg.cs" />
     <Compile Include="Comp\CompAbnormality.cs" />
+    <Compile Include="Comp\CompAbnormalityTool.cs" />
+    <Compile Include="Comp\CompProperties_AbnormalityTool.cs" />
     <Compile Include="Comp\CompPeBoxProduce.cs" />
     <Compile Include="Comp\CompProperties_Abnormality.cs" />
     <Compile Include="Comp\LC_CompProperties_InteractableEgg.cs" />
@@ -47,9 +49,11 @@
     <Compile Include="Comp\CompAbnormalityStudiable.cs" />
     <Compile Include="Comp\AbnormalityStudyUnlocks.cs" />
     <Compile Include="Comp\LC_EntityBasePawn.cs" />
+    <Compile Include="Comp\LC_ToolEntityPawn.cs" />
     <Compile Include="Comp\Pawns\CompPawnStatus.cs" />
     <Compile Include="Comp\Pawns\CompProperties_PawnStatus.cs" />
     <Compile Include="Damage\FourColorDamageType.cs" />
+    <Compile Include="Damage\FourColorOverrides.cs" />
     <Compile Include="DamageWorker\DamageWorker_FourColor.cs" />
     <Compile Include="DamageWorker\DamageWorker_LC_Red.cs" />
     <Compile Include="Defs\AbnormalityCategoryDef.cs" />
@@ -59,6 +63,7 @@
     <Compile Include="Defs\EGO_TYPE.cs" />
     <Compile Include="Defs\AbnormalityCodexEntryDef.cs" />
     <Compile Include="Defs\FleckDefOf.cs" />
+    <Compile Include="Defs\FourColorDefaultsDef.cs" />
     <Compile Include="Defs\HediffDefOf.cs" />
     <Compile Include="Defs\HistoryEventDefOf.cs" />
     <Compile Include="Defs\JobDefOf.cs" />
@@ -78,12 +83,16 @@
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
     <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
+    <Compile Include="Interface\ILCFourColorDynamicResistance.cs" />
+    <Compile Include="Interface\ILCPawnDamageInterceptor.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
     <Compile Include="Jobs\JobDriver_AbnormalityStudyInteract.cs" />
+    <Compile Include="Jobs\JobDriver_UseAbnormalityTool.cs" />
     <Compile Include="Jobs\WorkGiver_AbnormalityStudyBase.cs" />
     <Compile Include="Jobs\WorkGiver_AbnormalityStudyInteract.cs" />
     <Compile Include="Jobs\WorkGiver_TakeAbnormalityToHoldingPlatform.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
+    <Compile Include="Misc\Mote_FourColorDamage.cs" />
     <Compile Include="ModExtensions\AbnormalityCategory.cs" />
     <Compile Include="ModExtensions\FourColorDamageExtensions.cs" />
     <Compile Include="Patch\PatchMain.cs" />
@@ -92,6 +101,8 @@
     <Compile Include="UI\ITab_AbnormalityStudyNotes.cs" />
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
+    <Compile Include="Patch\Patch_PawnRenderTree_HeldScale.cs" />
+    <Compile Include="Patch\Patch_SpecialDisplayStats_FourColor.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
     <Compile Include="Patch\Patch_Thing_TakeDamage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,6 +116,7 @@
     <Compile Include="Render\Normal\PawnRenderNodeProperties_StillState.cs" />
     <Compile Include="Render\Normal\PawnRenderNodeWorker_StillState.cs" />
     <Compile Include="Render\Normal\PawnRenderNode_StillState.cs" />
+    <Compile Include="Settings\FourColorSettingsPages.cs" />
     <Compile Include="Settings\Setting_LCAnomalyLibrary.cs" />
     <Compile Include="Settings\Setting_LCAnomalyLibrary_Main.cs" />
     <Compile Include="Shaders\ImageEffect_Mosaic.cs" />

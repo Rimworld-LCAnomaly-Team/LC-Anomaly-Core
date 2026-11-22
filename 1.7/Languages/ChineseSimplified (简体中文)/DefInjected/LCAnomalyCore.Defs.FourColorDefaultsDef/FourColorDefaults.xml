@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <LC_FourColorDefaults.label>默认四色抗性兼容表</LC_FourColorDefaults.label>
+  <LC_FourColorDefaults.description>为原版、DLC 与第三方模组的种族和作战护甲提供默认四色伤害抗性与等效危险等级映射，无需任何 DLC 前置。</LC_FourColorDefaults.description>
+</LanguageData>

@@ -1,0 +1,68 @@
+using LCAnomalyCore.Buildings;
+using Verse;
+
+namespace LCAnomalyCore.Comp
+{
+    /// <summary>
+    /// 工具型异想体实体 Pawn 基类：
+    /// 收容于收容平台时作为无攻击性实体存在并驱动工具组件；
+    /// 离开收容平台、被击杀或意外流落地面时自动洁净退化为异想体蛋。
+    /// </summary>
+    public class LC_ToolEntityPawn : LC_EntityBasePawn
+    {
+        private CompAbnormalityTool toolComp;
+
+        /// <summary>获取关联的工具组件。</summary>
+        public CompAbnormalityTool ToolComp => toolComp ??= GetComp<CompAbnormalityTool>();
+
+        /// <inheritdoc />
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+            base.SpawnSetup(map, respawningAfterLoad);
+            if (mindState != null)
+            {
+                mindState.Active = false;
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void Tick()
+        {
+            // 工具型异想体严禁离开平台活动：落地且未被搬运时立即温和化蛋并销毁实体
+            if (Spawned && CarriedBy == null && !Dead && !Destroyed)
+            {
+                ToolComp?.RevertToEgg(Map, Position);
+                return;
+            }
+
+            base.Tick();
+        }
+
+        /// <inheritdoc />
+        public override void TickHolded()
+        {
+            base.TickHolded();
+            ToolComp?.TickWhileHeld();
+        }
+
+        /// <inheritdoc />
+        public override void Kill(DamageInfo? dinfo, Hediff exactCulprit = null)
+        {
+            Map prevMap = MapHeld;
+            IntVec3 prevPos = PositionHeld;
+            CompAbnormalityTool tool = ToolComp;
+            tool?.OnLeftPlatform();
+
+            base.Kill(dinfo, exactCulprit);
+
+            tool?.RevertToEgg(prevMap, prevPos);
+        }
+
+        /// <inheritdoc />
+        public override void DrawExtraSelectionOverlays()
+        {
+            base.DrawExtraSelectionOverlays();
+            ToolComp?.DrawExtraSelectionOverlaysForPlatform(ToolComp.HeldPlatform);
+        }
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using LCAnomalyCore.Defs;
 using LCAnomalyCore.ModExtensions;
+using System;
 using System.Collections.Generic;
 using Verse;
 
@@ -13,6 +14,8 @@ namespace LCAnomalyCore.Util
         #region 字段
 
         private static bool hasInited = false;
+
+        private static readonly List<Func<Def, bool>> EligibilityFilters = new List<Func<Def, bool>>();
 
         private static string[] sAnomalyLevel = ["ZAYIN", "TETH", "HE", "WAW", "ALEPH"];
 
@@ -143,6 +146,60 @@ namespace LCAnomalyCore.Util
 
         #region 工具方法
 
+        /// <summary>注册提取池资格过滤器。任一过滤器返回 false 时该条目不会出现在抽取结果中。</summary>
+        public static void RegisterEligibilityFilter(Func<Def, bool> filter)
+        {
+            if (filter == null || EligibilityFilters.Contains(filter))
+            {
+                return;
+            }
+
+            EligibilityFilters.Add(filter);
+        }
+
+        /// <summary>注销提取池资格过滤器。</summary>
+        public static void UnregisterEligibilityFilter(Func<Def, bool> filter)
+        {
+            if (filter == null)
+            {
+                return;
+            }
+
+            EligibilityFilters.Remove(filter);
+        }
+
+        /// <summary>检查指定异想体 Def 当前是否允许被提取。</summary>
+        public static bool IsEligibleForExtraction(Def def)
+        {
+            if (def == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < EligibilityFilters.Count; i++)
+            {
+                Func<Def, bool> filter = EligibilityFilters[i];
+                if (filter == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    if (!filter(def))
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorOnce($"LC Anomaly Core: extraction eligibility filter failed for {def.defName}: {ex}", def.shortHash ^ 0x4C4317);
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// 通过 异想体等级 获取 所有指定等级异想体的列表（仅限仪式召唤）
         /// </summary>
@@ -153,7 +210,7 @@ namespace LCAnomalyCore.Util
             if (CheckIfLevelLegal(level))
             {
                 CheckHasInitial();
-                return anomlayLvl2DefList_Ritual[level];
+                return FilterEligible(anomlayLvl2DefList_Ritual[level]);
             }
 
             return new List<ThingDef_AbnormalityBase>();
@@ -169,7 +226,7 @@ namespace LCAnomalyCore.Util
             if (CheckIfLevelLegal(level))
             {
                 CheckHasInitial();
-                return anomlayLvl2DefList_Cogito[level];
+                return FilterEligible(anomlayLvl2DefList_Cogito[level]);
             }
 
             return new List<ThingDef_AbnormalityBase>();
@@ -185,10 +242,25 @@ namespace LCAnomalyCore.Util
             if (CheckIfLevelLegal(level))
             {
                 CheckHasInitial();
-                return anomlayLvl2DefList_SevenSin[level];
+                return FilterEligible(anomlayLvl2DefList_SevenSin[level]);
             }
 
             return new List<PawnKindDef_AbnormalityBase>();
+        }
+
+        private static List<T> FilterEligible<T>(List<T> source) where T : Def
+        {
+            List<T> result = new List<T>(source.Count);
+            for (int i = 0; i < source.Count; i++)
+            {
+                T item = source[i];
+                if (IsEligibleForExtraction(item))
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

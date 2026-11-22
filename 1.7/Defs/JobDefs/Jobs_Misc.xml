@@ -15,4 +15,11 @@
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 
+  <JobDef>
+    <defName>LC_UseAbnormalityTool</defName>
+    <driverClass>LCAnomalyCore.Jobs.JobDriver_UseAbnormalityTool</driverClass>
+    <reportString>using TargetA.</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
 </Defs>

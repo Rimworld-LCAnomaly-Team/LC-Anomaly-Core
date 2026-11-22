@@ -5,7 +5,10 @@ using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Damage;
 using LCAnomalyCore.Hediffs;
+using LCAnomalyCore.Interface;
+using LCAnomalyCore.Misc;
 using LCAnomalyCore.ModExtensions;
+using LCAnomalyCore.Settings;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -50,13 +53,13 @@ namespace LCAnomalyCore.Util
                 return;
 
             ThingDef sourceDef = dinfo.Weapon ?? dinfo.Instigator?.def;
-            if (!TryGetWeaponProfile(sourceDef, out FourColorDamageType damageType, out _, out _)
-                || damageType == FourColorDamageType.None)
+            if (!FourColorOverrides.TryGetWeaponProfile(sourceDef, out FourColorOverrides.ResolvedWeaponProfile weaponProfile)
+                || weaponProfile.damageType == FourColorDamageType.None)
             {
                 return;
             }
 
-            DamageDef convertedDef = DamageDefFor(damageType);
+            DamageDef convertedDef = DamageDefFor(weaponProfile.damageType);
             if (convertedDef != null)
                 dinfo.Def = convertedDef;
         }
@@ -65,13 +68,34 @@ namespace LCAnomalyCore.Util
         public static float GetAdjustedDamage(DamageInfo dinfo, Thing victim,
             FourColorDamageType damageType, LCRiskLevel fallbackRiskLevel)
         {
+            return ComputeAdjustedDamage(dinfo, victim, damageType, fallbackRiskLevel, out _);
+        }
+
+        /// <summary>计算四色伤害经等级压制与抗性倍率修正后的最终伤害，并返回目标的有效抗性倍率。</summary>
+        public static float ComputeAdjustedDamage(DamageInfo dinfo, Thing victim,
+            FourColorDamageType damageType, LCRiskLevel fallbackRiskLevel, out float effectiveResistance)
+        {
             ThingDef sourceDef = dinfo.Weapon ?? dinfo.Instigator?.def;
             LCRiskLevel attackLevel = fallbackRiskLevel;
             float weaponMultiplier = 1f;
-            if (TryGetWeaponProfile(sourceDef, out _, out LCRiskLevel profileLevel, out float profileMultiplier))
+            bool isAuthoredWeapon = false;
+            if (FourColorOverrides.TryGetWeaponProfile(sourceDef, out FourColorOverrides.ResolvedWeaponProfile weaponProfile))
             {
-                attackLevel = profileLevel;
-                weaponMultiplier = profileMultiplier;
+                attackLevel = weaponProfile.riskLevel;
+                weaponMultiplier = weaponProfile.damageMultiplier;
+                isAuthoredWeapon = weaponProfile.isAuthoredEgo;
+            }
+
+            float weaponQualityFactor = 1f;
+            float weaponBlessingFactor = 1f;
+            if (dinfo.Weapon != null && dinfo.Instigator is Pawn attacker)
+            {
+                Thing weaponThing = FindWeaponThing(attacker, dinfo.Weapon);
+                if (weaponThing != null)
+                {
+                    weaponQualityFactor = FourColorOverrides.GetWeaponQualityFactor(weaponThing, isAuthoredWeapon);
+                    weaponBlessingFactor = GameComponent.GameComponent_LC.Instance?.GetWeaponBlessingMultiplier(weaponThing) ?? 1f;
+                }
             }
 
             float resistance = 1f;
@@ -81,53 +105,165 @@ namespace LCAnomalyCore.Util
                 float bestFactor = float.MaxValue;
                 foreach (Apparel apparel in pawn.apparel.WornApparel)
                 {
-                    if (!TryGetApparelProfile(apparel, damageType, out float apparelResistance,
-                        out LCRiskLevel apparelLevel))
+                    if (apparel == null || !FourColorOverrides.TryGetApparelProfile(apparel.def, out FourColorOverrides.ResolvedApparelProfile apparelProfile))
                     {
                         continue;
                     }
 
-                    float candidate = Mathf.Max(0f, apparelResistance)
-                        * GetDamageLevelFactor((int)attackLevel, (int)apparelLevel);
+                    float effResistance = FourColorOverrides.ApplyApparelQuality(
+                        apparelProfile.ResistanceFor(damageType),
+                        apparel,
+                        apparelProfile.isAuthoredEgo);
+                    float candidate = Mathf.Max(0f, effResistance)
+                        * GetDamageLevelFactor((int)attackLevel, (int)apparelProfile.riskLevel);
                     if (candidate < bestFactor)
                     {
                         bestFactor = candidate;
-                        resistance = Mathf.Max(0f, apparelResistance);
-                        defenseLevel = (int)apparelLevel;
+                        resistance = Mathf.Max(0f, effResistance);
+                        defenseLevel = (int)apparelProfile.riskLevel;
                     }
                 }
             }
 
+            float raceResistance;
+            if (victim is ILCFourColorDynamicResistance dynamicRes
+                && dynamicRes.TryGetDynamicFourColorResistance(damageType, out float dynVal))
+            {
+                raceResistance = Mathf.Max(0f, dynVal);
+            }
+            else
+            {
+                raceResistance = victim is Pawn victimPawn
+                    ? FourColorOverrides.GetRaceResistance(victimPawn.def, damageType)
+                    : 1f;
+            }
+
+            float globalScale = Mathf.Clamp(Setting_LCAnomalyCore_Main.Settings?.FourColorGlobalDamageScale ?? 1f, 0.25f, 3f);
             float levelFactor = GetDamageLevelFactor((int)attackLevel, defenseLevel);
-            return Mathf.Max(0f, dinfo.Amount * Mathf.Max(0f, weaponMultiplier) * resistance * levelFactor);
+            effectiveResistance = Mathf.Max(0f, resistance * raceResistance);
+            return Mathf.Max(0f, dinfo.Amount * Mathf.Max(0f, weaponMultiplier) * weaponQualityFactor * weaponBlessingFactor * effectiveResistance * levelFactor * globalScale);
         }
 
-        /// <summary>在受击位置生成四色伤害图标指示。</summary>
+        /// <summary>将有效抗性倍率归类为脑叶公司标准抗性等级标签。</summary>
+        public static FourColorResistanceTier ClassifyResistanceTier(float effectiveResistance)
+        {
+            if (effectiveResistance <= 0.001f)
+                return FourColorResistanceTier.Immune;
+            if (effectiveResistance < 0.50f)
+                return FourColorResistanceTier.Resist;
+            if (effectiveResistance < 0.99f)
+                return FourColorResistanceTier.Endure;
+            if (effectiveResistance <= 1.01f)
+                return FourColorResistanceTier.Normal;
+            if (effectiveResistance < 1.99f)
+                return FourColorResistanceTier.Weak;
+            return FourColorResistanceTier.Fatal;
+        }
+
+        /// <summary>获取造成该伤害的武器实例附带的古老的信念赐福倍率（无赐福时返回 1）。</summary>
+        public static float GetWeaponBlessingMultiplier(DamageInfo dinfo)
+        {
+            if (dinfo.Weapon != null && dinfo.Instigator is Pawn attacker)
+            {
+                Thing weaponThing = FindWeaponThing(attacker, dinfo.Weapon);
+                if (weaponThing != null)
+                {
+                    return GameComponent.GameComponent_LC.Instance?.GetWeaponBlessingMultiplier(weaponThing) ?? 1f;
+                }
+            }
+
+            return 1f;
+        }
+
+        private static Thing FindWeaponThing(Pawn attacker, ThingDef weaponDef)
+        {
+            if (attacker?.equipment == null || weaponDef == null)
+                return null;
+
+            Thing primary = attacker.equipment.Primary;
+            if (primary != null && primary.def == weaponDef)
+                return primary;
+
+            List<ThingWithComps> all = attacker.equipment.AllEquipmentListForReading;
+            if (all != null)
+            {
+                for (int i = 0; i < all.Count; i++)
+                {
+                    if (all[i] != null && all[i].def == weaponDef)
+                        return all[i];
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>在受击位置生成四色伤害图标指示、抗性等级与伤害数字。</summary>
         public static void SpawnFourColorHitIndicator(FourColorDamageType damageType, Vector3 position, Map map, float adjustedAmount)
         {
-            if (map == null || adjustedAmount <= 0f)
+            SpawnFourColorHitIndicator(damageType, position, map, adjustedAmount, 1f);
+        }
+
+        /// <summary>在受击位置生成统一风格的 `[四色图标] [抗性等级] [伤害数值]` 飘字指示。</summary>
+        public static void SpawnFourColorHitIndicator(FourColorDamageType damageType, Vector3 position, Map map, float adjustedAmount, float effectiveResistance)
+        {
+            FourColorResistanceTier tier = ClassifyResistanceTier(effectiveResistance);
+            if (map == null || (adjustedAmount <= 0f && tier != FourColorResistanceTier.Immune))
                 return;
 
             IntVec3 cell = position.ToIntVec3();
             if (!cell.InBounds(map) || !position.ShouldSpawnMotesAt(map))
                 return;
 
-            FleckDef fleckDef = HitFleckDefFor(damageType);
-            if (fleckDef == null)
+            Setting_LCAnomalyCore settings = Setting_LCAnomalyCore_Main.Settings;
+            bool showIcons = settings?.If_ShowFourColorHitIcons ?? true;
+            bool showNumbers = settings?.If_ShowFourColorDamageNumbers ?? true;
+            if (!showIcons && !showNumbers)
                 return;
 
-            FleckCreationData data = new FleckCreationData
+            ThingDef moteDef = Defs.ThingDefOf.LC_Mote_FourColorDamage;
+            if (moteDef != null && ThingMaker.MakeThing(moteDef) is Mote_FourColorDamage banner)
             {
-                def = fleckDef,
-                spawnPosition = position + new Vector3(Rand.Range(-0.28f, 0.28f), 0f, Rand.Range(0.05f, 0.38f)),
-                scale = Mathf.Clamp(0.85f + adjustedAmount * 0.008f, 0.85f, 1.35f),
-                velocityAngle = Rand.Range(-22f, 22f),
-                velocitySpeed = Rand.Range(0.45f, 0.72f),
-                rotation = Rand.Range(-10f, 10f),
-                rotationRate = Rand.Range(-8f, 8f),
-                ageTicksOverride = -1
-            };
-            map.flecks.CreateFleck(data);
+                Vector3 spawnPos = position + new Vector3(Rand.Range(-0.22f, 0.22f), 0f, Rand.Range(0.22f, 0.45f));
+                IntVec3 spawnCell = spawnPos.ToIntVec3();
+                if (!spawnCell.InBounds(map))
+                {
+                    spawnPos = position;
+                    spawnCell = cell;
+                }
+
+                banner.exactPosition = spawnPos;
+                banner.SetVelocity(Rand.Range(-10f, 10f), Rand.Range(0.38f, 0.48f));
+                banner.damageType = damageType;
+                banner.resistanceTier = tier;
+                banner.damageAmount = tier == FourColorResistanceTier.Immune ? 0f : adjustedAmount;
+                banner.showIcon = showIcons;
+                banner.showNumber = showNumbers;
+                GenSpawn.Spawn(banner, spawnCell, map);
+                return;
+            }
+
+            if (showNumbers)
+            {
+                string numText = tier == FourColorResistanceTier.Immune
+                    ? "0"
+                    : (adjustedAmount >= 10f ? Mathf.RoundToInt(adjustedAmount).ToString() : adjustedAmount.ToString("0.#"));
+                string fallback = tier == FourColorResistanceTier.Normal
+                    ? numText
+                    : $"{tier.ToString().ToUpperInvariant()} {numText}";
+                MoteMaker.ThrowText(position, map, fallback, ColorForDamageType(damageType), 1.3f);
+            }
+        }
+
+        private static Color ColorForDamageType(FourColorDamageType damageType)
+        {
+            switch (damageType)
+            {
+                case FourColorDamageType.Red: return new Color(0.95f, 0.28f, 0.28f);
+                case FourColorDamageType.White: return Color.white;
+                case FourColorDamageType.Black: return new Color(0.75f, 0.38f, 0.98f);
+                case FourColorDamageType.Pale: return new Color(0.45f, 0.92f, 1.0f);
+                default: return Color.white;
+            }
         }
 
         private static FleckDef HitFleckDefFor(FourColorDamageType damageType)
@@ -188,8 +324,7 @@ namespace LCAnomalyCore.Util
             if (pawn?.mindState?.mentalStateHandler == null)
                 return false;
 
-            FourColorTargetKind targetKind = pawn.def
-                .GetModExtension<FourColorTargetExtension>()?.targetKind ?? FourColorTargetKind.Default;
+            FourColorTargetKind targetKind = FourColorOverrides.GetRaceTargetKind(pawn.def);
             if (targetKind == FourColorTargetKind.Abnormality)
                 return false;
             if (targetKind == FourColorTargetKind.Employee)
@@ -244,58 +379,6 @@ namespace LCAnomalyCore.Util
             pawn.mindState.mentalStateHandler.TryStartMentalState(state,
                 "LC_FourColorPanicReason".Translate(), forced: true, forceWake: true,
                 otherPawn: instigator, causedByDamage: true);
-        }
-
-        private static bool TryGetWeaponProfile(ThingDef def, out FourColorDamageType damageType,
-            out LCRiskLevel riskLevel, out float multiplier)
-        {
-            damageType = FourColorDamageType.None;
-            riskLevel = LCRiskLevel.ZAYIN;
-            multiplier = 1f;
-            if (def == null)
-                return false;
-
-            FourColorWeaponExtension extension = def.GetModExtension<FourColorWeaponExtension>();
-            if (extension != null)
-            {
-                damageType = extension.damageType;
-                riskLevel = extension.riskLevel;
-                multiplier = extension.damageMultiplier;
-                return true;
-            }
-
-            CompProperties_EgoWeapon comp = def.comps?.OfType<CompProperties_EgoWeapon>().FirstOrDefault();
-            if (comp == null)
-                return false;
-
-            damageType = comp.damageType;
-            riskLevel = (LCRiskLevel)LevelTag2Int(comp.level);
-            multiplier = comp.damageMultiplier;
-            return true;
-        }
-
-        private static bool TryGetApparelProfile(Apparel apparel, FourColorDamageType damageType,
-            out float resistance, out LCRiskLevel riskLevel)
-        {
-            FourColorApparelExtension extension = apparel.def.GetModExtension<FourColorApparelExtension>();
-            if (extension != null)
-            {
-                resistance = extension.ResistanceFor(damageType);
-                riskLevel = extension.riskLevel;
-                return true;
-            }
-
-            CompEgoSuit comp = apparel.TryGetComp<CompEgoSuit>();
-            if (comp != null)
-            {
-                resistance = comp.ResistanceFor(damageType);
-                riskLevel = (LCRiskLevel)LevelTag2Int(comp.Props.level);
-                return true;
-            }
-
-            resistance = 1f;
-            riskLevel = LCRiskLevel.ZAYIN;
-            return false;
         }
 
         private static DamageDef DamageDefFor(FourColorDamageType damageType)

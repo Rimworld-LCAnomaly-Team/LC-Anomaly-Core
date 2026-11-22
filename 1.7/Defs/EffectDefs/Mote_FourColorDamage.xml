@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="MoteBase">
+    <defName>LC_Mote_FourColorDamage</defName>
+    <graphicData>
+      <texPath>Things/Mote/Transparent</texPath>
+    </graphicData>
+    <thingClass>LCAnomalyCore.Misc.Mote_FourColorDamage</thingClass>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <altitudeLayer>MetaOverlays</altitudeLayer>
+    <mote>
+      <realTime>true</realTime>
+      <fadeInTime>0.06</fadeInTime>
+      <solidTime>0.82</solidTime>
+      <fadeOutTime>0.42</fadeOutTime>
+    </mote>
+  </ThingDef>
+
+</Defs>

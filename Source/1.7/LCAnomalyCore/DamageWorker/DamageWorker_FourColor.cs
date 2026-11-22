@@ -22,8 +22,15 @@ namespace LCAnomalyCore.DamageWorker
                 ? Vector3.zero
                 : (victim.Spawned ? victim.DrawPos : victim.PositionHeld.ToVector3Shifted());
 
-            float adjustedAmount = DamageUtils.GetAdjustedDamage(dinfo, victim, extension.damageType,
-                extension.riskLevel);
+            float adjustedAmount = DamageUtils.ComputeAdjustedDamage(dinfo, victim, extension.damageType,
+                extension.riskLevel, out float effectiveResistance);
+            if (effectiveResistance <= 0.001f || adjustedAmount <= 0f)
+            {
+                if (hitMap != null && effectiveResistance <= 0.001f)
+                    DamageUtils.SpawnFourColorHitIndicator(extension.damageType, hitPos, hitMap, 0f, effectiveResistance);
+                return new DamageResult();
+            }
+
             dinfo.SetAmount(adjustedAmount);
 
             Pawn pawn = victim as Pawn;
@@ -53,7 +60,7 @@ namespace LCAnomalyCore.DamageWorker
             }
 
             if (hitMap != null && adjustedAmount > 0f)
-                DamageUtils.SpawnFourColorHitIndicator(extension.damageType, hitPos, hitMap, adjustedAmount);
+                DamageUtils.SpawnFourColorHitIndicator(extension.damageType, hitPos, hitMap, adjustedAmount, effectiveResistance);
 
             return result;
         }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <SmashThing.reportString>正在砸碎TargetA。</SmashThing.reportString>
+  <CarryToAbnormalityHolder.reportString>正在将TargetB搬运至TargetA。</CarryToAbnormalityHolder.reportString>
+  <LC_UseAbnormalityTool.reportString>正在使用TargetA。</LC_UseAbnormalityTool.reportString>
+
+</LanguageData>

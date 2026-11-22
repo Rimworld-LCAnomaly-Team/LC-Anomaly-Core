@@ -22,4 +22,56 @@
   <DepartmentLabel_ColonistBar_VerticalOffsetText>垂直偏移量</DepartmentLabel_ColonistBar_VerticalOffsetText>
   <DepartmentLabel_ColonistBar_VerticalOffsetPerLineText>每行额外垂直偏移量</DepartmentLabel_ColonistBar_VerticalOffsetPerLineText>
 
+  <LC_Tab_CombatCompat>四色战斗与兼容</LC_Tab_CombatCompat>
+  <LC_Tab_WarningDept>警报与部门</LC_Tab_WarningDept>
+  <LC_Tab_ApparelOverrides>护甲四色配置</LC_Tab_ApparelOverrides>
+  <LC_Tab_WeaponOverrides>武器四色配置</LC_Tab_WeaponOverrides>
+  <LC_Tab_RaceOverrides>种族四色配置</LC_Tab_RaceOverrides>
+
+  <LC_Settings_CombatHeader>四色战斗反馈与全局倍率</LC_Settings_CombatHeader>
+  <LC_Settings_ShowFourColorHitIcons>显示四色命中抗性图标</LC_Settings_ShowFourColorHitIcons>
+  <LC_Settings_ShowFourColorHitIconsDesc>四色伤害命中时，在受击目标上方显示对应抗性等级或特效图标。</LC_Settings_ShowFourColorHitIconsDesc>
+  <LC_Settings_ShowFourColorDamageNumbers>显示四色飘字伤害数值</LC_Settings_ShowFourColorDamageNumbers>
+  <LC_Settings_ShowFourColorDamageNumbersDesc>四色伤害命中时，在受击位置显示带红/白/黑/蓝颜色标识的伤害数值。</LC_Settings_ShowFourColorDamageNumbersDesc>
+  <LC_Settings_GlobalDamageScale>四色伤害全局倍率：x{0}</LC_Settings_GlobalDamageScale>
+  <LC_Settings_GlobalDamageScaleDesc>作用于所有四色伤害计算的全局缩放倍率。</LC_Settings_GlobalDamageScaleDesc>
+
+  <LC_Settings_CompatHeader>原版 / DLC / 第三方护甲与种族兼容</LC_Settings_CompatHeader>
+  <LC_Settings_EnableFourColorDefaults>启用兼容性默认配置表</LC_Settings_EnableFourColorDefaults>
+  <LC_Settings_EnableFourColorDefaultsDesc>为 FourColorDefaults 中定义的原版与 DLC 护甲自动套用内置四色危险等级与抗性。</LC_Settings_EnableFourColorDefaultsDesc>
+  <LC_Settings_AutoInferApparel>自动推断未配置护甲的四色属性</LC_Settings_AutoInferApparel>
+  <LC_Settings_AutoInferApparelDesc>根据第三方或未配置防御护甲的利器、钝器与热能护甲值自动生成保守的四色抗性配置。</LC_Settings_AutoInferApparelDesc>
+  <LC_Settings_EnableQualityScaling>启用兼容装备品质修正</LC_Settings_EnableQualityScaling>
+  <LC_Settings_EnableQualityScalingDesc>根据物品品质微调非 E.G.O 护甲的四色抗性与武器伤害倍率。</LC_Settings_EnableQualityScalingDesc>
+  <LC_Settings_ApplyQualityToEGO>同时对 E.G.O 装备启用品质修正</LC_Settings_ApplyQualityToEGO>
+  <LC_Settings_ApplyQualityToEGODesc>允许物品品质同时修正模组预设的 E.G.O 武器与护甲（默认关闭以保持原作数值）。</LC_Settings_ApplyQualityToEGODesc>
+  <LC_Settings_ResetCombatDefaults>重置四色战斗与兼容设置</LC_Settings_ResetCombatDefaults>
+
+  <LC_Page_OnlyConfigured>仅显示已配置</LC_Page_OnlyConfigured>
+  <LC_Page_OnlyFourColorWeapons>仅显示四色武器</LC_Page_OnlyFourColorWeapons>
+  <LC_Page_OnlyOverridden>仅显示已覆写</LC_Page_OnlyOverridden>
+  <LC_Page_RevertAll>全部还原</LC_Page_RevertAll>
+  <LC_Page_Revert>还原</LC_Page_Revert>
+  <LC_Page_NoMatch>未找到符合条件的定义。</LC_Page_NoMatch>
+  <LC_Page_ApparelHint>抗性数值越低，承受对应四色伤害越少。修改任意一行将创建运行时覆写；点击“还原”即可恢复预设、默认表或自动推断结果。</LC_Page_ApparelHint>
+  <LC_Page_WeaponHint>为任意武器指定四色伤害类型、危险等级与伤害倍率，可作为四色战斗交互的覆写或扩展配置。</LC_Page_WeaponHint>
+  <LC_Page_RaceHint>自定义各类种族的基础四色抗性与目标分类。点击“还原”可恢复种族默认值。</LC_Page_RaceHint>
+  <LC_Page_FilterAll>全部</LC_Page_FilterAll>
+  <LC_Page_FilterHumanlike>类人</LC_Page_FilterHumanlike>
+  <LC_Page_FilterAnimal>动物</LC_Page_FilterAnimal>
+  <LC_Page_FilterMechanoid>机械体</LC_Page_FilterMechanoid>
+  <LC_Page_FilterInsect>虫族</LC_Page_FilterInsect>
+
+  <LC_Col_Apparel>护甲</LC_Col_Apparel>
+  <LC_Col_Weapon>武器</LC_Col_Weapon>
+  <LC_Col_Race>种族</LC_Col_Race>
+  <LC_Col_Level>等级</LC_Col_Level>
+  <LC_Col_DamageType>类型</LC_Col_DamageType>
+  <LC_Col_Multiplier>倍率</LC_Col_Multiplier>
+  <LC_Col_TargetKind>分类</LC_Col_TargetKind>
+  <LC_Col_Red>物理</LC_Col_Red>
+  <LC_Col_White>精神</LC_Col_White>
+  <LC_Col_Black>侵蚀</LC_Col_Black>
+  <LC_Col_Pale>灵魂</LC_Col_Pale>
+
 </LanguageData>

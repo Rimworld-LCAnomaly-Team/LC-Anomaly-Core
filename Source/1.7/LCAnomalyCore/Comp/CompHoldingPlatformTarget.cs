@@ -285,6 +285,7 @@ namespace LCAnomalyCore.Comp
         /// <summary>执行 <c>Notify_ReleasedFromPlatform</c> 定义的操作。</summary>
         public void Notify_ReleasedFromPlatform()
         {
+            parent.TryGetComp<CompAbnormalityTool>()?.OnLeftPlatform();
             if (ModsConfig.AnomalyActive)
                 Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
         }
@@ -292,6 +293,12 @@ namespace LCAnomalyCore.Comp
         /// <summary>执行 <c>Escape</c> 定义的操作。</summary>
         public void Escape()
         {
+            if (parent.TryGetComp<CompAbnormalityTool>() != null)
+            {
+                HeldPlatform?.EjectContents();
+                return;
+            }
+
             var entitiyBasePawn = parent as LC_EntityBasePawn;
             if (entitiyBasePawn == null)
                 return;

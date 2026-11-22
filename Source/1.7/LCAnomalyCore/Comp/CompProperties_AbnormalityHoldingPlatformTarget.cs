@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Comp
@@ -8,6 +9,12 @@ namespace LCAnomalyCore.Comp
     {
         /// <summary>表示 <c>heldPawnKind</c>。</summary>
         public PawnKindDef heldPawnKind;
+
+        /// <summary>收容在收容平台内时的整体渲染缩放系数（默认 1，仅影响平台内显示，不影响出逃/世界实体大小）。</summary>
+        public float heldDrawScale = 1f;
+
+        /// <summary>收容在收容平台内时的额外绘制坐标偏移。</summary>
+        public Vector3 heldDrawOffset = Vector3.zero;
 
         /// <summary>表示 <c>capturedLetterLabel</c>。</summary>
         [MustTranslate]

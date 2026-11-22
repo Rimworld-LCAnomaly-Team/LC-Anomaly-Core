@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_Tool_UseFloatMenu>Use {0}</LC_Tool_UseFloatMenu>
+  <LC_Tool_UseGizmoLabel>Use Tool...</LC_Tool_UseGizmoLabel>
+  <LC_Tool_UseGizmoDesc>Select a colonist to interact with {0}.</LC_Tool_UseGizmoDesc>
+  <LC_Tool_NoEligibleUser>No eligible colonist</LC_Tool_NoEligibleUser>
+  <LC_Tool_OnCooldown>Cooling down ({0})</LC_Tool_OnCooldown>
+  <LC_Tool_InsufficientStat>Employee stats too low</LC_Tool_InsufficientStat>
+  <LC_Tool_InspectUses>Uses recorded: {0}</LC_Tool_InspectUses>
+  <LC_Tool_InspectDuration>Cumulative use time: {0}s</LC_Tool_InspectDuration>
+  <LC_Tool_InspectProgress>Observation progress: {0} / {1}</LC_Tool_InspectProgress>
+  <LC_Tool_InspectCooldown>Cooldown remaining: {0}</LC_Tool_InspectCooldown>
+  <LC_Tool_StopGizmoLabel>Stop Use</LC_Tool_StopGizmoLabel>
+  <LC_Tool_StopGizmoDesc>Interrupt {0} from using this tool abnormality.</LC_Tool_StopGizmoDesc>
+  <LC_Tool_InUse>In use by {0}</LC_Tool_InUse>
+  <LC_Tool_InspectActiveUser>Current user: {0} ({1}s)</LC_Tool_InspectActiveUser>
+  <LC_Tool_RevertToEggLabel>Return to Egg</LC_Tool_RevertToEggLabel>
+  <LC_Tool_RevertToEggDesc>Release {0} from the holding platform and revert it safely back into an abnormality egg for relocation or storage.</LC_Tool_RevertToEggDesc>
+</LanguageData>

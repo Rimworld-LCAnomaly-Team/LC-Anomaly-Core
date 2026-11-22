@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using LCAnomalyCore.Damage;
+using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Settings
@@ -7,7 +10,27 @@ namespace LCAnomalyCore.Settings
     /// </summary>
     public class Setting_LCAnomalyCore : ModSettings
     {
+        public const int CurrentSettingsVersion = 1;
+
+        private int settingsVersion;
+
         #region 字段
+
+        #region 战斗与四色生态兼容
+
+        public bool If_ShowFourColorHitIcons = true;
+        public bool If_ShowFourColorDamageNumbers = true;
+        public bool If_EnableFourColorDefaults = true;
+        public bool If_AutoInferUnlistedApparel = true;
+        public bool If_EnableQualityScaling = true;
+        public bool If_ApplyQualityScalingToEGO = false;
+        public float FourColorGlobalDamageScale = 1.0f;
+
+        public List<FourColorApparelOverride> apparelOverrides = new List<FourColorApparelOverride>();
+        public List<FourColorWeaponOverride> weaponOverrides = new List<FourColorWeaponOverride>();
+        public List<FourColorRaceOverride> raceOverrides = new List<FourColorRaceOverride>();
+
+        #endregion 战斗与四色生态兼容
 
         #region 警报相关
 
@@ -153,6 +176,130 @@ namespace LCAnomalyCore.Settings
             Scribe_Values.Look<float>(ref this.DepartmentLabel_ColonistBar_VerticalOffsetPerLine, "DepartmentLabel_ColonistBar_VerticalOffsetPerLine", 0.1f, false);
 
             #endregion
+
+            #region 战斗与四色生态兼容
+
+            Scribe_Values.Look(ref settingsVersion, "settingsVersion", 0);
+            Scribe_Values.Look(ref If_ShowFourColorHitIcons, "If_ShowFourColorHitIcons", true);
+            Scribe_Values.Look(ref If_ShowFourColorDamageNumbers, "If_ShowFourColorDamageNumbers", true);
+            Scribe_Values.Look(ref If_EnableFourColorDefaults, "If_EnableFourColorDefaults", true);
+            Scribe_Values.Look(ref If_AutoInferUnlistedApparel, "If_AutoInferUnlistedApparel", true);
+            Scribe_Values.Look(ref If_EnableQualityScaling, "If_EnableQualityScaling", true);
+            Scribe_Values.Look(ref If_ApplyQualityScalingToEGO, "If_ApplyQualityScalingToEGO", false);
+            Scribe_Values.Look(ref FourColorGlobalDamageScale, "FourColorGlobalDamageScale", 1.0f);
+
+            Scribe_Collections.Look(ref apparelOverrides, "apparelOverrides", LookMode.Deep);
+            Scribe_Collections.Look(ref weaponOverrides, "weaponOverrides", LookMode.Deep);
+            Scribe_Collections.Look(ref raceOverrides, "raceOverrides", LookMode.Deep);
+
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                apparelOverrides ??= new List<FourColorApparelOverride>();
+                weaponOverrides ??= new List<FourColorWeaponOverride>();
+                raceOverrides ??= new List<FourColorRaceOverride>();
+
+                apparelOverrides.RemoveAll(e => e == null || e.defName.NullOrEmpty());
+                weaponOverrides.RemoveAll(e => e == null || e.defName.NullOrEmpty());
+                raceOverrides.RemoveAll(e => e == null || e.defName.NullOrEmpty());
+
+                FourColorGlobalDamageScale = Mathf.Clamp(FourColorGlobalDamageScale, 0.25f, 3.0f);
+
+                if (settingsVersion < CurrentSettingsVersion)
+                {
+                    ApplyMigrations();
+                }
+
+                if (FourColorOverrides.IsInitialized)
+                {
+                    FourColorOverrides.RebuildCache();
+                }
+            }
+
+            #endregion
+        }
+
+        private void ApplyMigrations()
+        {
+            if (settingsVersion < 1)
+            {
+                settingsVersion = 1;
+            }
+        }
+
+        public FourColorApparelOverride GetOrCreateApparelOverride(string defName)
+        {
+            apparelOverrides ??= new List<FourColorApparelOverride>();
+            for (int i = 0; i < apparelOverrides.Count; i++)
+            {
+                if (apparelOverrides[i] != null && apparelOverrides[i].defName == defName)
+                {
+                    return apparelOverrides[i];
+                }
+            }
+
+            var entry = new FourColorApparelOverride { defName = defName };
+            apparelOverrides.Add(entry);
+            return entry;
+        }
+
+        public void RemoveApparelOverride(string defName)
+        {
+            apparelOverrides?.RemoveAll(e => e != null && e.defName == defName);
+        }
+
+        public FourColorWeaponOverride GetOrCreateWeaponOverride(string defName)
+        {
+            weaponOverrides ??= new List<FourColorWeaponOverride>();
+            for (int i = 0; i < weaponOverrides.Count; i++)
+            {
+                if (weaponOverrides[i] != null && weaponOverrides[i].defName == defName)
+                {
+                    return weaponOverrides[i];
+                }
+            }
+
+            var entry = new FourColorWeaponOverride { defName = defName };
+            weaponOverrides.Add(entry);
+            return entry;
+        }
+
+        public void RemoveWeaponOverride(string defName)
+        {
+            weaponOverrides?.RemoveAll(e => e != null && e.defName == defName);
+        }
+
+        public FourColorRaceOverride GetOrCreateRaceOverride(string defName)
+        {
+            raceOverrides ??= new List<FourColorRaceOverride>();
+            for (int i = 0; i < raceOverrides.Count; i++)
+            {
+                if (raceOverrides[i] != null && raceOverrides[i].defName == defName)
+                {
+                    return raceOverrides[i];
+                }
+            }
+
+            var entry = new FourColorRaceOverride { defName = defName };
+            raceOverrides.Add(entry);
+            return entry;
+        }
+
+        public void RemoveRaceOverride(string defName)
+        {
+            raceOverrides?.RemoveAll(e => e != null && e.defName == defName);
+        }
+
+        public void ResetCombatDefaults()
+        {
+            If_ShowFourColorHitIcons = true;
+            If_ShowFourColorDamageNumbers = true;
+            If_EnableFourColorDefaults = true;
+            If_AutoInferUnlistedApparel = true;
+            If_EnableQualityScaling = true;
+            If_ApplyQualityScalingToEGO = false;
+            FourColorGlobalDamageScale = 1.0f;
+
+            FourColorOverrides.RebuildCache();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LCAnomalyCore.Damage;
 using System.Reflection;
 using Verse;
 
@@ -21,6 +22,7 @@ namespace LCAnomalyCore.Patch
             //对所有特性标签的方法进行patch
             instance.PatchAll(Assembly.GetExecutingAssembly());
 
+            FourColorOverrides.Initialize();
             Log.Message("LCAnomalyCore Patched");
         }
     }

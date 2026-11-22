@@ -1,4 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <LC_FourColorPanicReason>白色或黑色伤害耗尽了其精神值。</LC_FourColorPanicReason>
+
+  <LC_FourColorSource_Authored>模组预设</LC_FourColorSource_Authored>
+  <LC_FourColorSource_DefaultTable>兼容默认表</LC_FourColorSource_DefaultTable>
+  <LC_FourColorSource_AutoInferred>自动推断</LC_FourColorSource_AutoInferred>
+  <LC_FourColorSource_UserOverride>玩家覆写</LC_FourColorSource_UserOverride>
+  <LC_FourColorSource_None>未配置</LC_FourColorSource_None>
+
+  <LC_DamageType_Red>物理（红）</LC_DamageType_Red>
+  <LC_DamageType_White>精神（白）</LC_DamageType_White>
+  <LC_DamageType_Black>侵蚀（黑）</LC_DamageType_Black>
+  <LC_DamageType_Pale>灵魂（蓝）</LC_DamageType_Pale>
+  <LC_DamageType_None>常规</LC_DamageType_None>
+
+  <LC_TargetKind_Employee>员工 / 类人</LC_TargetKind_Employee>
+  <LC_TargetKind_Abnormality>异想体</LC_TargetKind_Abnormality>
+  <LC_TargetKind_Default>默认</LC_TargetKind_Default>
+
+  <LC_Stat_FourColorArmor>四色抗性</LC_Stat_FourColorArmor>
+  <LC_Stat_FourColorArmorDesc>该护甲在脑叶公司四色（红 / 白 / 黑 / 蓝）伤害体系下的危险等级与承伤倍率。数值越低，减伤越强。</LC_Stat_FourColorArmorDesc>
+  <LC_Stat_FourColorWeapon>四色攻击属性</LC_Stat_FourColorWeapon>
+  <LC_Stat_FourColorWeaponDesc>该武器在四色伤害体系下的伤害类型、危险等级与伤害倍率。</LC_Stat_FourColorWeaponDesc>
+  <LC_Stat_FourColorPawn>四色防御属性</LC_Stat_FourColorPawn>
+  <LC_Stat_FourColorPawnDesc>结合种族基础抗性、所穿戴护甲与玩家覆写配置后的实际四色承伤倍率。</LC_Stat_FourColorPawnDesc>
+
+  <LC_Stat_RiskLevel>危险等级：{0}</LC_Stat_RiskLevel>
+  <LC_Stat_ResistLine>{0}倍率：x{1}（基础 x{2}）</LC_Stat_ResistLine>
+  <LC_Stat_QualityFactor>品质修正：x{0}</LC_Stat_QualityFactor>
+  <LC_Stat_ProfileSource>数据来源：{0}</LC_Stat_ProfileSource>
+  <LC_Stat_WeaponDamageType>伤害类型：{0}</LC_Stat_WeaponDamageType>
+  <LC_Stat_WeaponMultiplier>伤害倍率：x{0}（实际 x{1}）</LC_Stat_WeaponMultiplier>
+  <LC_Stat_PawnMentalSusceptible>受精神伤害影响：{0}</LC_Stat_PawnMentalSusceptible>
+  <LC_Stat_PawnTargetKind>目标分类：{0}</LC_Stat_PawnTargetKind>
+  <LC_Stat_PawnResistRow>{0}倍率：x{1}（种族 x{2}，护甲：{3}）</LC_Stat_PawnResistRow>
+  <LC_Stat_WeaponBlessing>古老的信念赐福</LC_Stat_WeaponBlessing>
+  <LC_Stat_WeaponBlessingDesc>该武器已获得“古老的信念与承诺”的永恒赐福，造成的伤害永久提高 {0}。</LC_Stat_WeaponBlessingDesc>
+  <LC_Stat_WeaponBlessingLine>信念赐福加成：{0}</LC_Stat_WeaponBlessingLine>
 </LanguageData>

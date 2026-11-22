@@ -52,6 +52,12 @@ namespace LCAnomalyCore.Jobs
             {
                 LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the platform compare!");
 
+                if (building.IsHoldingTool)
+                {
+                    JobFailReason.IsSilent();
+                    return false;
+                }
+
                 var compAbnormalityStudiable = building.CompAbnormalityStudiable;
                 if (compAbnormalityStudiable != null)
                 {

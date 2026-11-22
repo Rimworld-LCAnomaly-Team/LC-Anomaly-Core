@@ -51,6 +51,51 @@ namespace LCAnomalyCore.GameComponent
 
         private HashSet<string> discoveredAbnormalities = new HashSet<string>();
 
+        private Dictionary<int, float> blessedWeaponBonusDict = new Dictionary<int, float>();
+
+        public static GameComponent_LC Instance => Current.Game?.GetComponent<GameComponent_LC>();
+
+        public bool IsWeaponBlessed(Thing weapon)
+        {
+            return weapon != null
+                && blessedWeaponBonusDict != null
+                && blessedWeaponBonusDict.TryGetValue(weapon.thingIDNumber, out float mult)
+                && mult > 1.0001f;
+        }
+
+        public float GetWeaponBlessingMultiplier(Thing weapon)
+        {
+            if (weapon != null
+                && blessedWeaponBonusDict != null
+                && blessedWeaponBonusDict.TryGetValue(weapon.thingIDNumber, out float mult)
+                && mult > 1f)
+            {
+                return mult;
+            }
+
+            return 1f;
+        }
+
+        public void SetWeaponBlessing(Thing weapon, float multiplier)
+        {
+            if (weapon == null) return;
+            blessedWeaponBonusDict ??= new Dictionary<int, float>();
+            if (multiplier <= 1.0001f)
+            {
+                blessedWeaponBonusDict.Remove(weapon.thingIDNumber);
+            }
+            else
+            {
+                blessedWeaponBonusDict[weapon.thingIDNumber] = Mathf.Clamp(multiplier, 1f, 3f);
+            }
+        }
+
+        public void RemoveWeaponBlessing(Thing weapon)
+        {
+            if (weapon == null || blessedWeaponBonusDict == null) return;
+            blessedWeaponBonusDict.Remove(weapon.thingIDNumber);
+        }
+
         public void DiscoverAbnormality(ThingDef thingDef)
         {
             if (thingDef == null) return;
@@ -137,7 +182,9 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Values.Look(ref waringPointsCounter, "waringPointsCounter", 0);
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
             Scribe_Collections.Look(ref discoveredAbnormalities, "lcDiscoveredAbnormalities", LookMode.Value);
+            Scribe_Collections.Look(ref blessedWeaponBonusDict, "lcBlessedWeaponBonusDict", LookMode.Value, LookMode.Value);
             discoveredAbnormalities ??= new HashSet<string>();
+            blessedWeaponBonusDict ??= new Dictionary<int, float>();
         }
 
         /// <summary>执行 <c>TryGetAnomalyStatusSaved</c> 定义的操作。</summary>

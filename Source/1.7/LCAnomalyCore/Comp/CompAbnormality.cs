@@ -522,6 +522,11 @@ namespace LCAnomalyCore.Comp
                 yield return gizmo;
             }
 
+            if (HoldingPlaformTargetComp == null || !HoldingPlaformTargetComp.CurrentlyHeldOnPlatform)
+            {
+                yield return Util.Gizmos.Get_EntityCodex(parent);
+            }
+
             if (DebugSettings.ShowDevGizmos)
             {
                 yield return new Command_Action

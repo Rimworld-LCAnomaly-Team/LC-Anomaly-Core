@@ -10,7 +10,7 @@ namespace LCAnomalyCore.Util
         /// <summary>
         /// 大罪生物是否激活
         /// </summary>
-        public static bool SevenSinEntityActive => ModsConfig.IsActive("DarthCY.LC.SevenSinEntity");
+        public static bool SevenSinEntityActive => AbnormalitiesActive || ModsConfig.IsActive("DarthCY.LC.SevenSinEntity");
 
         /// <summary>
         /// 异想体合集是否激活

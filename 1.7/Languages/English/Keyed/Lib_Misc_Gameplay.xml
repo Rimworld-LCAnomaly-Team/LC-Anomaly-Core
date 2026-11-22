@@ -22,4 +22,56 @@
   <DepartmentLabel_ColonistBar_VerticalOffsetText>Vertial Offset</DepartmentLabel_ColonistBar_VerticalOffsetText>
   <DepartmentLabel_ColonistBar_VerticalOffsetPerLineText>Extra Vertical Offset per Line</DepartmentLabel_ColonistBar_VerticalOffsetPerLineText>
 
+  <LC_Tab_CombatCompat>Combat &amp; Compat</LC_Tab_CombatCompat>
+  <LC_Tab_WarningDept>Warning &amp; Dept</LC_Tab_WarningDept>
+  <LC_Tab_ApparelOverrides>Apparel Armor</LC_Tab_ApparelOverrides>
+  <LC_Tab_WeaponOverrides>Weapons</LC_Tab_WeaponOverrides>
+  <LC_Tab_RaceOverrides>Races</LC_Tab_RaceOverrides>
+
+  <LC_Settings_CombatHeader>Four-Color Combat Feedback &amp; Scaling</LC_Settings_CombatHeader>
+  <LC_Settings_ShowFourColorHitIcons>Show four-color hit indicator icons</LC_Settings_ShowFourColorHitIcons>
+  <LC_Settings_ShowFourColorHitIconsDesc>Display floating resistance grade/effectiveness icons above struck targets when four-color damage hits.</LC_Settings_ShowFourColorHitIconsDesc>
+  <LC_Settings_ShowFourColorDamageNumbers>Show floating four-color damage numbers</LC_Settings_ShowFourColorDamageNumbers>
+  <LC_Settings_ShowFourColorDamageNumbersDesc>Display color-coded numeric four-color damage values (RED / WHITE / BLACK / PALE) when hits connect.</LC_Settings_ShowFourColorDamageNumbersDesc>
+  <LC_Settings_GlobalDamageScale>Global four-color damage scale: x{0}</LC_Settings_GlobalDamageScale>
+  <LC_Settings_GlobalDamageScaleDesc>Global multiplier applied to four-color damage calculations.</LC_Settings_GlobalDamageScaleDesc>
+
+  <LC_Settings_CompatHeader>Vanilla / DLC / Mod Apparel &amp; Race Compatibility</LC_Settings_CompatHeader>
+  <LC_Settings_EnableFourColorDefaults>Enable compatibility default table</LC_Settings_EnableFourColorDefaults>
+  <LC_Settings_EnableFourColorDefaultsDesc>Apply built-in four-color risk levels and resistances to vanilla and DLC armors defined in FourColorDefaults.</LC_Settings_EnableFourColorDefaultsDesc>
+  <LC_Settings_AutoInferApparel>Auto-infer four-color profiles for unconfigured armor</LC_Settings_AutoInferApparel>
+  <LC_Settings_AutoInferApparelDesc>Automatically derive conservative four-color defense profiles for modded or unconfigured protective apparel using Sharp/Blunt/Heat armor ratings.</LC_Settings_AutoInferApparelDesc>
+  <LC_Settings_EnableQualityScaling>Enable quality scaling for compatibility gear</LC_Settings_EnableQualityScaling>
+  <LC_Settings_EnableQualityScalingDesc>Scale non-E.G.O weapon damage multipliers and apparel four-color resistances by item quality.</LC_Settings_EnableQualityScalingDesc>
+  <LC_Settings_ApplyQualityToEGO>Also apply quality scaling to E.G.O equipment</LC_Settings_ApplyQualityToEGO>
+  <LC_Settings_ApplyQualityToEGODesc>Allow item quality to scale authored E.G.O weapons and E.G.O suits (off by default to preserve canon values).</LC_Settings_ApplyQualityToEGODesc>
+  <LC_Settings_ResetCombatDefaults>Reset Combat &amp; Compat to Defaults</LC_Settings_ResetCombatDefaults>
+
+  <LC_Page_OnlyConfigured>Configured only</LC_Page_OnlyConfigured>
+  <LC_Page_OnlyFourColorWeapons>Four-color only</LC_Page_OnlyFourColorWeapons>
+  <LC_Page_OnlyOverridden>Overridden only</LC_Page_OnlyOverridden>
+  <LC_Page_RevertAll>Revert All</LC_Page_RevertAll>
+  <LC_Page_Revert>Revert</LC_Page_Revert>
+  <LC_Page_NoMatch>No matching definitions found.</LC_Page_NoMatch>
+  <LC_Page_ApparelHint>Lower resistance values reduce incoming damage. Editing any row creates a runtime override; click Revert to restore its authored, default-table, or inferred profile.</LC_Page_ApparelHint>
+  <LC_Page_WeaponHint>Assign a four-color damage type, risk grade, and output multiplier to override or enable four-color scaling for any weapon.</LC_Page_WeaponHint>
+  <LC_Page_RaceHint>Customize race baseline four-color resistances and target classification. Click Revert to restore defaults.</LC_Page_RaceHint>
+  <LC_Page_FilterAll>All</LC_Page_FilterAll>
+  <LC_Page_FilterHumanlike>Humanlike</LC_Page_FilterHumanlike>
+  <LC_Page_FilterAnimal>Animals</LC_Page_FilterAnimal>
+  <LC_Page_FilterMechanoid>Mechanoids</LC_Page_FilterMechanoid>
+  <LC_Page_FilterInsect>Insects</LC_Page_FilterInsect>
+
+  <LC_Col_Apparel>Apparel</LC_Col_Apparel>
+  <LC_Col_Weapon>Weapon</LC_Col_Weapon>
+  <LC_Col_Race>Race</LC_Col_Race>
+  <LC_Col_Level>Risk</LC_Col_Level>
+  <LC_Col_DamageType>Type</LC_Col_DamageType>
+  <LC_Col_Multiplier>Mult</LC_Col_Multiplier>
+  <LC_Col_TargetKind>Kind</LC_Col_TargetKind>
+  <LC_Col_Red>RED</LC_Col_Red>
+  <LC_Col_White>WHITE</LC_Col_White>
+  <LC_Col_Black>BLACK</LC_Col_Black>
+  <LC_Col_Pale>PALE</LC_Col_Pale>
+
 </LanguageData>

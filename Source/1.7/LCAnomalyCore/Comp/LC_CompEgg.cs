@@ -44,5 +44,19 @@ namespace LCAnomalyCore.Comp
         {
             yield break;
         }
+
+        /// <inheritdoc />
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        {
+            foreach (Gizmo gizmo in base.CompGetGizmosExtra())
+            {
+                yield return gizmo;
+            }
+
+            if (parent != null)
+            {
+                yield return Util.Gizmos.Get_EntityCodex(parent);
+            }
+        }
     }
 }

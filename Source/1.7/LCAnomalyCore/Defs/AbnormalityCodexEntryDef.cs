@@ -39,7 +39,11 @@ namespace LCAnomalyCore.Defs
             set => Util.Components.LC?.SetAbnormalityDiscovered(this, value);
         }
 
+        /// <summary>与图鉴条目关联的实体或物品 Def。</summary>
         public List<ThingDef> linkedThings = new List<ThingDef>();
+
+        /// <summary>与图鉴条目关联的解锁研究项目。</summary>
+        public List<ResearchProjectDef> discoveredResearchProjects = new List<ResearchProjectDef>();
 
         private const string SilhouetteTexPathSuffix = "_Silhouette";
 

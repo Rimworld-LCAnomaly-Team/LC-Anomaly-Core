@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using LCAnomalyCore.Damage;
+using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Settings
@@ -6,6 +8,15 @@ namespace LCAnomalyCore.Settings
     /// <summary>表示 <c>Setting_LCAnomalyCore_Main</c> 类型。</summary>
     public class Setting_LCAnomalyCore_Main : Mod
     {
+        private enum SettingsTab
+        {
+            Combat,
+            WarningAndDepartment,
+            ApparelOverrides,
+            WeaponOverrides,
+            RaceOverrides
+        }
+
         /// <summary>
         /// 设置文件对象
         /// </summary>
@@ -13,6 +24,10 @@ namespace LCAnomalyCore.Settings
 
         /// <summary>表示 <c>ContentDir</c>。</summary>
         public static string ContentDir;
+
+        private SettingsTab activeTab = SettingsTab.Combat;
+        private Vector2 warningScroll;
+        private float warningScrollHeight = 620f;
 
         private string PointsOfWarning_FadeDurationEditBuffer;
         private string PointsOfWarning_FadeAmountEditBuffer;
@@ -50,21 +65,159 @@ namespace LCAnomalyCore.Settings
         /// <param name="inRect"></param>
         public override void DoSettingsWindowContents(Rect inRect)
         {
-            float y = 0;
+            if (Settings == null)
+            {
+                return;
+            }
 
-            //警报选项
-            y += 40;
-            Widgets.Checkbox(0f, y, ref Settings.If_ShowWarningSettings, 25f, false, false, null, null);
-            Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), Translator.Translate("If_ShowWarningSettingsText"));
-            ShowWarningSettings(Settings.If_ShowWarningSettings, ref y, inRect);
+            Rect sectionRect = new Rect(inRect.x, inRect.y + 36f, inRect.width, inRect.height - 36f);
+            List<TabRecord> tabs = new List<TabRecord>
+            {
+                new TabRecord("LC_Tab_CombatCompat".Translate(), () => SelectTab(SettingsTab.Combat), activeTab == SettingsTab.Combat),
+                new TabRecord("LC_Tab_WarningDept".Translate(), () => SelectTab(SettingsTab.WarningAndDepartment), activeTab == SettingsTab.WarningAndDepartment),
+                new TabRecord("LC_Tab_ApparelOverrides".Translate(), () => SelectTab(SettingsTab.ApparelOverrides), activeTab == SettingsTab.ApparelOverrides),
+                new TabRecord("LC_Tab_WeaponOverrides".Translate(), () => SelectTab(SettingsTab.WeaponOverrides), activeTab == SettingsTab.WeaponOverrides),
+                new TabRecord("LC_Tab_RaceOverrides".Translate(), () => SelectTab(SettingsTab.RaceOverrides), activeTab == SettingsTab.RaceOverrides),
+            };
 
-            //部门选项
-            y += 40;
-            Widgets.Checkbox(0f, y, ref Settings.If_ShowDepartmentSettings, 25f, false, false, null, null);
-            Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), Translator.Translate("If_ShowDepartmentSettingsText"));
-            ShowDepartmentSettings(Settings.If_ShowDepartmentSettings, ref y, inRect);
+            Widgets.DrawMenuSection(sectionRect);
+            TabDrawer.DrawTabs(sectionRect, tabs);
+
+            Rect contentRect = sectionRect.ContractedBy(10f);
+            switch (activeTab)
+            {
+                case SettingsTab.Combat:
+                    DrawCombatTab(contentRect);
+                    break;
+                case SettingsTab.WarningAndDepartment:
+                    DrawWarningAndDepartmentTab(contentRect);
+                    break;
+                case SettingsTab.ApparelOverrides:
+                    FourColorSettingsPages.DrawApparelPage(contentRect);
+                    break;
+                case SettingsTab.WeaponOverrides:
+                    FourColorSettingsPages.DrawWeaponPage(contentRect);
+                    break;
+                case SettingsTab.RaceOverrides:
+                    FourColorSettingsPages.DrawRacePage(contentRect);
+                    break;
+            }
 
             base.DoSettingsWindowContents(inRect);
+        }
+
+        private void SelectTab(SettingsTab tab)
+        {
+            if (activeTab != tab)
+            {
+                activeTab = tab;
+                FourColorSettingsPages.ClearBuffers();
+            }
+        }
+
+        private void DrawCombatTab(Rect rect)
+        {
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(rect);
+            try
+            {
+                Text.Font = GameFont.Medium;
+                listing.Label("LC_Settings_CombatHeader".Translate());
+                Text.Font = GameFont.Small;
+                listing.GapLine(6f);
+
+                listing.CheckboxLabeled(
+                    "LC_Settings_ShowFourColorHitIcons".Translate(),
+                    ref Settings.If_ShowFourColorHitIcons,
+                    "LC_Settings_ShowFourColorHitIconsDesc".Translate());
+                listing.CheckboxLabeled(
+                    "LC_Settings_ShowFourColorDamageNumbers".Translate(),
+                    ref Settings.If_ShowFourColorDamageNumbers,
+                    "LC_Settings_ShowFourColorDamageNumbersDesc".Translate());
+
+                string scaleLabel = "LC_Settings_GlobalDamageScale".Translate(Settings.FourColorGlobalDamageScale.ToString("0.00"));
+                Settings.FourColorGlobalDamageScale = Mathf.Clamp(
+                    listing.SliderLabeled(scaleLabel, Settings.FourColorGlobalDamageScale, 0.25f, 3.0f,
+                        tooltip: "LC_Settings_GlobalDamageScaleDesc".Translate()),
+                    0.25f, 3.0f);
+                Settings.FourColorGlobalDamageScale = Mathf.Round(Settings.FourColorGlobalDamageScale * 20f) / 20f;
+
+                listing.Gap(12f);
+                Text.Font = GameFont.Medium;
+                listing.Label("LC_Settings_CompatHeader".Translate());
+                Text.Font = GameFont.Small;
+                listing.GapLine(6f);
+
+                bool oldDefaults = Settings.If_EnableFourColorDefaults;
+                bool oldAutoInfer = Settings.If_AutoInferUnlistedApparel;
+
+                listing.CheckboxLabeled(
+                    "LC_Settings_EnableFourColorDefaults".Translate(),
+                    ref Settings.If_EnableFourColorDefaults,
+                    "LC_Settings_EnableFourColorDefaultsDesc".Translate());
+                listing.CheckboxLabeled(
+                    "LC_Settings_AutoInferApparel".Translate(),
+                    ref Settings.If_AutoInferUnlistedApparel,
+                    "LC_Settings_AutoInferApparelDesc".Translate());
+                listing.CheckboxLabeled(
+                    "LC_Settings_EnableQualityScaling".Translate(),
+                    ref Settings.If_EnableQualityScaling,
+                    "LC_Settings_EnableQualityScalingDesc".Translate());
+
+                if (Settings.If_EnableQualityScaling)
+                {
+                    listing.CheckboxLabeled(
+                        "LC_Settings_ApplyQualityToEGO".Translate(),
+                        ref Settings.If_ApplyQualityScalingToEGO,
+                        "LC_Settings_ApplyQualityToEGODesc".Translate(),
+                        height: 0f,
+                        labelPct: 1f);
+                }
+
+                if (oldDefaults != Settings.If_EnableFourColorDefaults || oldAutoInfer != Settings.If_AutoInferUnlistedApparel)
+                {
+                    FourColorOverrides.RebuildCache();
+                    FourColorSettingsPages.ClearBuffers();
+                }
+
+                listing.Gap(16f);
+                if (listing.ButtonText("LC_Settings_ResetCombatDefaults".Translate(), widthPct: 0.3f))
+                {
+                    Settings.ResetCombatDefaults();
+                    FourColorSettingsPages.ClearBuffers();
+                }
+            }
+            finally
+            {
+                listing.End();
+            }
+        }
+
+        private void DrawWarningAndDepartmentTab(Rect rect)
+        {
+            Rect viewRect = new Rect(0f, 0f, rect.width - 20f, Mathf.Max(warningScrollHeight, rect.height));
+            Widgets.BeginScrollView(rect, ref warningScroll, viewRect);
+            try
+            {
+                float y = 0f;
+
+                //警报选项
+                Widgets.Checkbox(0f, y, ref Settings.If_ShowWarningSettings, 25f, false, false, null, null);
+                Widgets.Label(new Rect(35f, y + 1f, viewRect.width - 50f, 25f), Translator.Translate("If_ShowWarningSettingsText"));
+                ShowWarningSettings(Settings.If_ShowWarningSettings, ref y, viewRect);
+
+                //部门选项
+                y += 40f;
+                Widgets.Checkbox(0f, y, ref Settings.If_ShowDepartmentSettings, 25f, false, false, null, null);
+                Widgets.Label(new Rect(35f, y + 1f, viewRect.width - 50f, 25f), Translator.Translate("If_ShowDepartmentSettingsText"));
+                ShowDepartmentSettings(Settings.If_ShowDepartmentSettings, ref y, viewRect);
+
+                warningScrollHeight = y + 60f;
+            }
+            finally
+            {
+                Widgets.EndScrollView();
+            }
         }
 
         /// <summary>

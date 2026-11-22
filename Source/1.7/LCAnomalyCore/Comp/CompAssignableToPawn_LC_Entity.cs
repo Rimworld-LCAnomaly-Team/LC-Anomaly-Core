@@ -36,6 +36,11 @@ namespace LCAnomalyCore.Comp
         /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
+            if (parent is Building_AbnormalityHoldingPlatform holdingPlatform && holdingPlatform.IsHoldingTool)
+            {
+                yield break;
+            }
+
             if (ShouldShowAssignmentGizmo())
             {
                 Command_Action command_Action = new Command_Action();

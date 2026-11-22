@@ -43,5 +43,15 @@ namespace LCAnomalyCore.Defs
         /// 控制部核心（建筑）
         /// </summary>
         public static ThingDef LC_DepartmentCore_ControlTeam;
+
+        /// <summary>
+        /// 四色伤害组合飘字 Mote
+        /// </summary>
+        public static ThingDef LC_Mote_FourColorDamage;
+
+        static ThingDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(ThingDefOf));
+        }
     }
 }

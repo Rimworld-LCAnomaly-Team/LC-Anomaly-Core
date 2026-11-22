@@ -1,18 +1,50 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Damage;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.GameComponent;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.Misc;
+using LCAnomalyCore.Settings;
+using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
 using RimWorld;
 using RimWorld.Planet;
+using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace LC17Validation;
 
 public static class GameplayValidation
 {
+    private static IntVec3 FindSafePlatformCell(Map map)
+    {
+        return map.AllCells.First(c =>
+            c.x >= 8 && c.z >= 8 && c.x < map.Size.x - 8 && c.z < map.Size.z - 8
+            && CellRect.CenteredOn(c, 2).Cells.All(p =>
+                p.InBounds(map) && !p.Fogged(map) && p.Standable(map) && p.GetRegion(map) != null
+                && p.GetEdifice(map) == null && p.GetFirstPawn(map) == null));
+    }
+
+    private static IntVec3 FindSafePawnCell(Map map, IntVec3 near)
+    {
+        if (near.InBounds(map) && near.GetRegion(map) != null
+            && CellFinder.TryRandomClosewalkCellNear(near, map, 4, out IntVec3 res,
+                c => c.InBounds(map) && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null && c.GetFirstBuilding(map) == null && c.GetEdifice(map) == null))
+        {
+            return res;
+        }
+        return map.AllCells.First(c => c.x >= 8 && c.z >= 8 && c.x < map.Size.x - 8 && c.z < map.Size.z - 8
+            && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null && c.GetFirstBuilding(map) == null && c.GetFirstPawn(map) == null);
+    }
+
     public static void Run(Map map, CompPawnStatus employee)
     {
         Pawn worker = (Pawn)employee.parent;
@@ -22,9 +54,9 @@ public static class GameplayValidation
         {
             var platform = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform"));
             platform.SetFaction(Faction.OfPlayer);
-            IntVec3 cell = map.AllCells.First(c => CellRect.CenteredOn(c, 2).Cells.All(p =>
-                p.InBounds(map) && p.Walkable(map) && p.GetEdifice(map) == null && p.GetFirstPawn(map) == null));
+            IntVec3 cell = FindSafePlatformCell(map);
             GenSpawn.Spawn(platform, cell, map);
+            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
             Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg"));
             int signature = 0x4c430010 + index++;
             AbnormalityUtility.TransferSignature(egg, signature);
@@ -39,6 +71,17 @@ public static class GameplayValidation
             platform.GetGizmos().ToList();
             held.Drawer.renderer.EnsureGraphicsInitialized();
             held.Drawer.renderer.RenderPawnAt(platform.DrawPos);
+            if (name == "BurrowingHeaven")
+            {
+                CompAbnormalityHoldingPlatformTarget bhTarget = held.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+                if (bhTarget == null || bhTarget.Props.heldDrawScale >= 1f || bhTarget.Props.heldDrawScale <= 0f)
+                    throw new InvalidOperationException("BurrowingHeaven expected heldDrawScale < 1 inside holding platform.");
+                platform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, platform.DrawPos);
+                platform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, platform.DrawPos);
+                platform.DynamicDrawPhaseAt(DrawPhase.Draw, platform.DrawPos);
+            }
+            platform.CurWorkType = Enum.GetValues(typeof(EAnomalyWorkType)).Cast<EAnomalyWorkType>()
+                .OrderByDescending(w => abnormality.CheckStudierSkillRequire(employee, w)).First();
             platform.Notify_StudyStart(worker);
             int workTicks = name == "MeatLantern" ? 2400 : 1;
             for (int i = 0; i < workTicks; i++) platform.Notify_Studying(worker);
@@ -75,8 +118,9 @@ public static class GameplayValidation
             if (returnedEgg == null) throw new InvalidOperationException("Identity did not survive death and egg return: " + name);
             Log.Message("[LC17 Validation] GAMEPLAY PASS; " + name + "; capture/work/PeBox/EGO/release/death/identity");
         }
-        var spawnEffect = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("SpawningLaetitiaMonster"), map.Center, map);
-        spawnEffect.GetType().GetMethod("Init").Invoke(spawnEffect, null);
+        IntVec3 monsterCell = FindSafePawnCell(map, map.Center);
+        var spawnEffect = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("SpawningLaetitiaMonster"), monsterCell, map);
+        spawnEffect.GetType().GetMethod("Init").Invoke(spawnEffect, new object[] { -1 });
         int beforeMonsters = map.mapPawns.AllPawnsSpawned.Count(p => p.def.defName == "LaetitiaMonster");
         spawnEffect.Complete();
         Pawn monster = map.mapPawns.AllPawnsSpawned.Last(p => p.def.defName == "LaetitiaMonster");
@@ -84,12 +128,1466 @@ public static class GameplayValidation
             monster.Faction != LCContainmentUtility.AbnormalityFaction)
             throw new InvalidOperationException("Monster spawning failed.");
         Pawn target = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist, Faction.OfPlayer);
-        GenSpawn.Spawn(target, CellFinder.RandomClosewalkCellNear(map.Center, map, 3), map);
+        IntVec3 targetCell = monster.Position.GetRegion(map) != null
+            && CellFinder.TryRandomClosewalkCellNear(monster.Position, map, 1, out IntVec3 adjTarget,
+                c => c.InBounds(map) && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null && c.GetEdifice(map) == null)
+            ? adjTarget
+            : monster.Position;
+        GenSpawn.Spawn(target, targetCell, map);
         float healthBefore = target.health.summaryHealth.SummaryHealthPercent;
         monster.GetType().GetMethod("AttackDirect", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(monster, new object[] { target });
         if (target.health.summaryHealth.SummaryHealthPercent >= healthBefore)
             throw new InvalidOperationException("Monster attack caused no damage.");
         Log.Message("[LC17 Validation] GAMEPLAY PASS; LaetitiaMonster; spawn/faction/ability/damage/effects");
+
+        ValidateP0AndP1(map, monster, target);
+    }
+
+    private static void ValidateP0AndP1(Map map, Pawn monster, Pawn target)
+    {
+        // P0: Codex resolution & LC-only dialog construction
+        List<AbnormalityCodexEntryDef> codexEntries = DefDatabase<AbnormalityCodexEntryDef>.AllDefsListForReading;
+        if (codexEntries.Count < 4)
+            throw new InvalidOperationException($"Expected at least 4 codex entries, found {codexEntries.Count}.");
+
+        foreach (AbnormalityCodexEntryDef entry in codexEntries)
+        {
+            if (entry.linkedThings == null || entry.linkedThings.Count == 0)
+                throw new InvalidOperationException($"Codex entry {entry.defName} has no linkedThings.");
+
+            foreach (ThingDef linked in entry.linkedThings)
+            {
+                AbnormalityCodexEntryDef resolved = AbnormalityUtility.ResolveCodexEntry(linked);
+                if (resolved != entry)
+                    throw new InvalidOperationException($"ResolveCodexEntry({linked.defName}) returned {resolved?.defName ?? "null"}, expected {entry.defName}.");
+            }
+
+            if (new Dialog_LC_EntityCodex(entry) == null)
+                throw new InvalidOperationException($"Failed to instantiate Dialog_LC_EntityCodex for {entry.defName}.");
+        }
+
+        if (new Dialog_LC_EntityCodex() == null)
+            throw new InvalidOperationException("Failed to instantiate default Dialog_LC_EntityCodex.");
+
+        // P0: ExtractUtil eligibility hook registration/unregistration
+        ThingDef oneSinEgg = DefDatabase<ThingDef>.GetNamed("OneSinEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(oneSinEgg))
+            throw new InvalidOperationException("Expected OneSinEgg in ZAYIN ritual extraction list before filtering.");
+
+        Func<Def, bool> tempFilter = def => def != oneSinEgg;
+        ExtractUtil.RegisterEligibilityFilter(tempFilter);
+        try
+        {
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(oneSinEgg))
+                throw new InvalidOperationException("Eligibility filter failed to exclude OneSinEgg.");
+        }
+        finally
+        {
+            ExtractUtil.UnregisterEligibilityFilter(tempFilter);
+        }
+
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(oneSinEgg))
+            throw new InvalidOperationException("UnregisterEligibilityFilter failed to restore OneSinEgg.");
+
+        // P1: Four-color defaults, overrides, and authored E.G.O precedence
+        ThingDef powerArmor = DefDatabase<ThingDef>.GetNamed("Apparel_PowerArmor", true);
+        if (!FourColorOverrides.TryGetApparelProfile(powerArmor, out FourColorOverrides.ResolvedApparelProfile powerProf)
+            || powerProf.source != FourColorProfileSource.DefaultTable
+            || powerProf.riskLevel != LCRiskLevel.HE
+            || Math.Abs(powerProf.red - 0.8f) > 0.001f)
+        {
+            throw new InvalidOperationException(
+                $"Unexpected Apparel_PowerArmor profile: source={powerProf.source}, risk={powerProf.riskLevel}, red={powerProf.red}.");
+        }
+
+        ThingDef basicShirt = DefDatabase<ThingDef>.GetNamed("Apparel_BasicShirt", true);
+        if (FourColorOverrides.TryGetApparelProfile(basicShirt, out FourColorOverrides.ResolvedApparelProfile shirtProf))
+            throw new InvalidOperationException($"Expected Apparel_BasicShirt to stay unconfigured, got {shirtProf.source}.");
+
+        ThingDef bhSuit = DefDatabase<ThingDef>.GetNamed("Apparel_BurrowingHeavenSuit", true);
+        if (!FourColorOverrides.TryGetApparelProfile(bhSuit, out FourColorOverrides.ResolvedApparelProfile bhProf)
+            || bhProf.source != FourColorProfileSource.Authored
+            || bhProf.riskLevel != LCRiskLevel.WAW)
+        {
+            throw new InvalidOperationException(
+                $"Unexpected Apparel_BurrowingHeavenSuit profile: source={bhProf.source}, risk={bhProf.riskLevel}.");
+        }
+
+        FourColorOverrides.SetApparelOverride(powerArmor, true, LCRiskLevel.ALEPH, 0.5f, 0.6f, 0.7f, 1.2f);
+        try
+        {
+            if (!FourColorOverrides.TryGetApparelProfile(powerArmor, out FourColorOverrides.ResolvedApparelProfile overrideProf)
+                || overrideProf.source != FourColorProfileSource.UserOverride
+                || overrideProf.riskLevel != LCRiskLevel.ALEPH
+                || Math.Abs(overrideProf.red - 0.5f) > 0.001f)
+            {
+                throw new InvalidOperationException("SetApparelOverride did not take immediate effect on Apparel_PowerArmor.");
+            }
+        }
+        finally
+        {
+            FourColorOverrides.RevertApparel(powerArmor.defName);
+        }
+
+        if (!FourColorOverrides.TryGetApparelProfile(powerArmor, out FourColorOverrides.ResolvedApparelProfile revertedProf)
+            || revertedProf.source != FourColorProfileSource.DefaultTable
+            || revertedProf.riskLevel != LCRiskLevel.HE
+            || Math.Abs(revertedProf.red - 0.8f) > 0.001f)
+        {
+            throw new InvalidOperationException("RevertApparel did not restore Apparel_PowerArmor default profile.");
+        }
+
+        // P1: SpecialDisplayStats InfoCard entries (apparel, weapon, pawn)
+        string expectedArmorLabel = "LC_Stat_FourColorArmor".Translate().CapitalizeFirst();
+        if (!powerArmor.SpecialDisplayStats(StatRequest.For(powerArmor, null)).Any(e => e.LabelCap == expectedArmorLabel))
+            throw new InvalidOperationException("Apparel_PowerArmor SpecialDisplayStats missing four-color armor StatDrawEntry.");
+
+        ThingDef egoOneSinWeapon = DefDatabase<ThingDef>.GetNamed("EgoWeapon_OneSin", true);
+        string expectedWeaponLabel = "LC_Stat_FourColorWeapon".Translate().CapitalizeFirst();
+        if (!egoOneSinWeapon.SpecialDisplayStats(StatRequest.For(egoOneSinWeapon, null)).Any(e => e.LabelCap == expectedWeaponLabel))
+            throw new InvalidOperationException("EgoWeapon_OneSin SpecialDisplayStats missing four-color weapon StatDrawEntry.");
+
+        Pawn victim = (!target.Destroyed && !target.Dead)
+            ? target
+            : (map.mapPawns.FreeColonistsSpawned.FirstOrDefault() ?? monster);
+        string expectedPawnLabel = "LC_Stat_FourColorPawn".Translate().CapitalizeFirst();
+        if (!victim.SpecialDisplayStats().Any(e => e.LabelCap == expectedPawnLabel))
+            throw new InvalidOperationException($"Pawn {victim.def.defName} SpecialDisplayStats missing four-color pawn StatDrawEntry.");
+
+        // P1: Four-color TakeDamage with both hit icons and damage numbers enabled
+        DamageDef redDamage = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);
+        Setting_LCAnomalyCore settings = Setting_LCAnomalyCore_Main.Settings;
+        bool prevIcons = settings != null && settings.If_ShowFourColorHitIcons;
+        bool prevNumbers = settings != null && settings.If_ShowFourColorDamageNumbers;
+        try
+        {
+            if (settings != null)
+            {
+                settings.If_ShowFourColorHitIcons = true;
+                settings.If_ShowFourColorDamageNumbers = true;
+            }
+
+            if (!victim.Destroyed && !victim.Dead && victim.Spawned)
+            {
+                victim.TakeDamage(new DamageInfo(redDamage, 2f, instigator: monster));
+            }
+        }
+        finally
+        {
+            if (settings != null)
+            {
+                settings.If_ShowFourColorHitIcons = prevIcons;
+                settings.If_ShowFourColorDamageNumbers = prevNumbers;
+            }
+        }
+
+        foreach (string name in new[]
+        {
+            "OneSin", "Laetitia", "MeatLanternContained", "BurrowingHeaven",
+            "PortraitOfAnotherWorld", "FleshIdol", "WeCanChangeAnything", "OldBeliefAndPromise", "NothingThere"
+        })
+        {
+            if (GraphicUtil.EntityNamePlatformTopGraphic_Get(name) == null)
+                throw new InvalidOperationException($"Missing or unresolvable HoldingPlatform name graphic for {name}.");
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; P0/P1; codex/eligibility/fourcolor/infocard/feedback");
+
+        ValidateP2BatchA(map, monster);
+    }
+
+    private static (Building_AbnormalityHoldingPlatform platform, Pawn held, CompAbnormalityTool tool) ContainToolOnPlatform(
+        Map map,
+        Pawn testColonist,
+        string toolName,
+        int signature)
+    {
+        Building_AbnormalityHoldingPlatform platform =
+            (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        platform.SetFaction(Faction.OfPlayer);
+        IntVec3 cell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(platform, cell, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+        Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(toolName + "Egg", true));
+        AbnormalityUtility.TransferSignature(egg, signature);
+        platform.innerContainer.TryAdd(egg);
+        egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(platform.innerContainer);
+
+        Pawn held = platform.HeldPawn
+            ?? throw new InvalidOperationException($"Tool egg failed to materialize on holding platform: {toolName}");
+        if (!platform.IsHoldingTool)
+            throw new InvalidOperationException($"Holding platform did not recognize held tool abnormality: {toolName}");
+
+        CompAbnormality abn = held.GetComp<CompAbnormality>()
+            ?? throw new InvalidOperationException($"Tool entity missing CompAbnormality: {toolName}");
+        if (abn.biosignature != signature)
+            throw new InvalidOperationException($"Biosignature mismatch after holding tool: {toolName}");
+
+        if (held.kindDef.canMeleeAttack)
+            throw new InvalidOperationException($"Tool entity should have canMeleeAttack=false: {toolName}");
+
+        if (!held.ThreatDisabled(null))
+            throw new InvalidOperationException($"Tool entity should be non-aggressive (ThreatDisabled=true): {toolName}");
+
+        if (platform.CompAbnormalityStudiable == null || platform.CompAbnormalityStudiable.CurrentlyStudiable())
+            throw new InvalidOperationException($"Tool entity must not be subject to PE-Box work: {toolName}");
+
+        platform.GetGizmos().ToList();
+        platform.GetInspectString();
+        if (testColonist != null && testColonist.Spawned)
+        {
+            platform.GetFloatMenuOptions(testColonist).ToList();
+        }
+
+        held.Drawer.renderer.EnsureGraphicsInitialized();
+        held.Drawer.renderer.RenderPawnAt(platform.DrawPos);
+
+        return (platform, held, platform.HeldToolComp);
+    }
+
+    private static void ValidateP2BatchA(Map map, Pawn monster)
+    {
+        // Portrait of Another World (Holding Platform + Egg): extraction pool, Codex, binding, PreApplyDamage redirection, substitute death, eject->egg
+        ThingDef portraitDef = DefDatabase<ThingDef>.GetNamed("PortraitOfAnotherWorld", true);
+        ThingDef portraitEggDef = DefDatabase<ThingDef>.GetNamed("PortraitOfAnotherWorldEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("HE").Contains(portraitEggDef))
+            throw new InvalidOperationException("PortraitOfAnotherWorldEgg missing from HE ritual extraction list.");
+
+        if (AbnormalityUtility.ResolveCodexEntry(portraitDef)?.defName != "PortraitOfAnotherWorld"
+            || AbnormalityUtility.ResolveCodexEntry(portraitEggDef)?.defName != "PortraitOfAnotherWorld")
+            throw new InvalidOperationException("PortraitOfAnotherWorld or its egg failed Codex resolution.");
+
+        HediffDef portraitProtected = DefDatabase<HediffDef>.GetNamed("LC_PortraitProtected", true);
+        HediffDef portraitSubstitute = DefDatabase<HediffDef>.GetNamed("LC_PortraitSubstitute", true);
+
+        Pawn ward = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist, Faction.OfPlayer);
+        GenSpawn.Spawn(ward, FindSafePawnCell(map, map.Center), map);
+
+        const int ejectSig = 0x4c430081;
+        var (portraitPlatform, heldPortrait, tool) = ContainToolOnPlatform(map, ward, "PortraitOfAnotherWorld", ejectSig);
+        if (!tool.CanUseTool(ward).Accepted)
+            throw new InvalidOperationException("Colonist should be able to bind PortraitOfAnotherWorld on platform.");
+
+        ShaderDef portraitShaderDef = DefDatabase<ShaderDef>.GetNamedSilentFail("LC_PortraitOfAnotherWorld");
+        if (portraitShaderDef == null || portraitShaderDef.Shader == null)
+            throw new InvalidOperationException("LC_PortraitOfAnotherWorld ShaderDef failed to resolve or compile.");
+
+        tool.OnToolUsed(ward);
+        if (tool.UseCount != 1 || tool.StudyUnlocksComp == null || tool.StudyUnlocksComp.Progress < 1)
+            throw new InvalidOperationException("PortraitOfAnotherWorld failed to record tool use or unlock StudyNote I.");
+
+        portraitPlatform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, portraitPlatform.DrawPos);
+        portraitPlatform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, portraitPlatform.DrawPos);
+        portraitPlatform.DynamicDrawPhaseAt(DrawPhase.Draw, portraitPlatform.DrawPos);
+
+        PropertyInfo propSub = tool.GetType().GetProperty("SubstitutePawn")
+            ?? throw new InvalidOperationException("Missing SubstitutePawn property on CompPortraitOfAnotherWorld.");
+        PropertyInfo propCrimson = tool.GetType().GetProperty("CrimsonStained")
+            ?? throw new InvalidOperationException("Missing CrimsonStained property on CompPortraitOfAnotherWorld.");
+        PropertyInfo propRedirected = tool.GetType().GetProperty("TotalDamageRedirected")
+            ?? throw new InvalidOperationException("Missing TotalDamageRedirected property.");
+        PropertyInfo propIsBound = tool.GetType().GetProperty("IsBound")
+            ?? throw new InvalidOperationException("Missing IsBound property on CompPortraitOfAnotherWorld.");
+
+        Pawn sub = propSub.GetValue(tool) as Pawn;
+        if (sub == null || sub == ward)
+            throw new InvalidOperationException("PortraitOfAnotherWorld failed to bind a distinct substitute pawn.");
+
+        if (!ward.health.hediffSet.HasHediff(portraitProtected) || !sub.health.hediffSet.HasHediff(portraitSubstitute))
+            throw new InvalidOperationException("Portrait bond Hediffs missing after binding.");
+
+        float wardHpBefore = ward.health.summaryHealth.SummaryHealthPercent;
+        float subHpBefore = sub.health.summaryHealth.SummaryHealthPercent;
+        DamageDef redDamage = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);
+        ward.TakeDamage(new DamageInfo(redDamage, 10f, armorPenetration: 1f, instigator: monster));
+
+        if (Math.Abs(ward.health.summaryHealth.SummaryHealthPercent - wardHpBefore) > 0.0001f)
+            throw new InvalidOperationException("PortraitOfAnotherWorld failed to absorb incoming damage on protected ward.");
+
+        if (sub.health.summaryHealth.SummaryHealthPercent >= subHpBefore)
+            throw new InvalidOperationException("PortraitOfAnotherWorld failed to transfer damage to substitute pawn.");
+
+        if ((int)propRedirected.GetValue(tool) <= 0)
+            throw new InvalidOperationException("PortraitOfAnotherWorld TotalDamageRedirected remained zero.");
+
+        if (!sub.Dead) sub.Kill(null);
+        if (!(bool)propCrimson.GetValue(tool))
+            throw new InvalidOperationException("PortraitOfAnotherWorld did not stain crimson after substitute death.");
+
+        portraitPlatform.DynamicDrawPhaseAt(DrawPhase.Draw, portraitPlatform.DrawPos);
+
+        // Eject from holding platform: clears bond immediately and reverts pawn to Egg on tick without corpse/hostility
+        portraitPlatform.EjectContents();
+        if (ward.health.hediffSet.HasHediff(portraitProtected))
+            throw new InvalidOperationException("PortraitOfAnotherWorld failed to clear bond Hediff when leaving platform.");
+
+        for (int i = 0; i < 3; i++) Find.TickManager.DoSingleTick();
+        if (!heldPortrait.Destroyed && heldPortrait.Spawned)
+            throw new InvalidOperationException("PortraitOfAnotherWorld pawn did not revert/despawn after leaving holding platform.");
+
+        Thing returnedPortraitEgg = map.listerThings.ThingsOfDef(portraitEggDef)
+            .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ejectSig);
+        if (returnedPortraitEgg == null)
+            throw new InvalidOperationException("PortraitOfAnotherWorld did not revert to matching biosignature egg after leaving platform.");
+
+        // Contain a second bound Portrait on a holding platform to verify Scribe_References survival across save/reload
+        const int savedPortraitSig = 0x4c430082;
+        Pawn savedWard = map.mapPawns.FreeColonistsSpawned.First(p => !p.Dead && !p.Destroyed);
+        var (_, _, savedTool) = ContainToolOnPlatform(map, savedWard, "PortraitOfAnotherWorld", savedPortraitSig);
+        savedTool.OnToolUsed(savedWard);
+        if (!(bool)propIsBound.GetValue(savedTool))
+            throw new InvalidOperationException("Saved PortraitOfAnotherWorld failed to enter bound state on holding platform.");
+
+        // SevenSin Entities: active check, extract list, Codex, four-color weapons & race resistances
+        if (!ExpansionActive.SevenSinEntityActive)
+            throw new InvalidOperationException("ExpansionActive.SevenSinEntityActive returned false with LC Abnormalities active.");
+
+        var sevenSinList = ExtractUtil.Get_AnomlayLvl2DefList_SevenSin("ZAYIN");
+        foreach (string sinName in new[] { "GluttonyEntity", "LustEntity", "MelancholyEntity", "PrideEntity", "SlothEntity", "WrathEntity" })
+        {
+            ThingDef sinThing = DefDatabase<ThingDef>.GetNamed(sinName, true);
+            PawnKindDef sinKind = DefDatabase<PawnKindDef>.GetNamed(sinName, true);
+            if (!sevenSinList.Contains(sinKind))
+                throw new InvalidOperationException($"SevenSin extraction list missing {sinName}.");
+            if (AbnormalityUtility.ResolveCodexEntry(sinThing)?.defName != "SevenSinEntity_ZAYIN")
+                throw new InvalidOperationException($"Codex resolution failed for {sinName}.");
+        }
+
+        ThingDef melDef = DefDatabase<ThingDef>.GetNamed("MelancholyEntity", true);
+        if (!FourColorOverrides.TryGetWeaponProfile(melDef, out FourColorOverrides.ResolvedWeaponProfile melWp)
+            || melWp.damageType != FourColorDamageType.White)
+            throw new InvalidOperationException("MelancholyEntity expected White four-color weapon profile.");
+
+        ThingDef gluDef = DefDatabase<ThingDef>.GetNamed("GluttonyEntity", true);
+        if (!FourColorOverrides.TryGetWeaponProfile(gluDef, out FourColorOverrides.ResolvedWeaponProfile gluWp)
+            || gluWp.damageType != FourColorDamageType.Black)
+            throw new InvalidOperationException("GluttonyEntity expected Black four-color weapon profile.");
+
+        ThingDef sloDef = DefDatabase<ThingDef>.GetNamed("SlothEntity", true);
+        FourColorOverrides.ResolvedRaceProfile sloRp = FourColorOverrides.GetRaceProfile(sloDef);
+        if (sloRp.targetKind != FourColorTargetKind.Abnormality || Math.Abs(sloRp.red - 0.6f) > 0.001f)
+            throw new InvalidOperationException($"Unexpected SlothEntity race profile: kind={sloRp.targetKind}, red={sloRp.red}.");
+
+        // Verify LCAbnormalities settings toggles filter Portrait egg and SevenSin via ExtractUtil
+        Type settingsHolder = GenTypes.GetTypeInAnyAssembly("LCAbnormalities.Settings.LCAbnormalitiesMod")
+            ?? throw new InvalidOperationException("LCAbnormalities.Settings.LCAbnormalitiesMod type not found.");
+        object abnSettings = settingsHolder.GetProperty("Settings", BindingFlags.Public | BindingFlags.Static)?.GetValue(null)
+            ?? throw new InvalidOperationException("LCAbnormalitiesMod.Settings is null.");
+        FieldInfo fPortrait = abnSettings.GetType().GetField("EnablePortraitOfAnotherWorld");
+        FieldInfo fSevenSin = abnSettings.GetType().GetField("EnableSevenSinEntities");
+        bool prevPortrait = (bool)fPortrait.GetValue(abnSettings);
+        bool prevSevenSin = (bool)fSevenSin.GetValue(abnSettings);
+        try
+        {
+            fPortrait.SetValue(abnSettings, false);
+            fSevenSin.SetValue(abnSettings, false);
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("HE").Contains(portraitEggDef))
+                throw new InvalidOperationException("EnablePortraitOfAnotherWorld=false did not filter PortraitOfAnotherWorldEgg.");
+            if (ExtractUtil.Get_AnomlayLvl2DefList_SevenSin("ZAYIN").Any())
+                throw new InvalidOperationException("EnableSevenSinEntities=false did not filter SevenSin entities.");
+        }
+        finally
+        {
+            fPortrait.SetValue(abnSettings, prevPortrait);
+            fSevenSin.SetValue(abnSettings, prevSevenSin);
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; P2A; platform_tool/portrait/redirection/eject_egg/sevensin/fourcolor");
+
+        ValidateP2BatchB(map, monster, abnSettings);
+    }
+
+    private static void ValidateP2BatchB(Map map, Pawn monster, object abnSettings)
+    {
+        // 1. Flesh Idol (T-09-79, WAW Continuous Tool on Holding Platform)
+        ThingDef fleshDef = DefDatabase<ThingDef>.GetNamed("FleshIdol", true);
+        ThingDef fleshEggDef = DefDatabase<ThingDef>.GetNamed("FleshIdolEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("WAW").Contains(fleshEggDef))
+            throw new InvalidOperationException("FleshIdolEgg missing from WAW ritual extraction list.");
+        if (AbnormalityUtility.ResolveCodexEntry(fleshDef)?.defName != "FleshIdol"
+            || AbnormalityUtility.ResolveCodexEntry(fleshEggDef)?.defName != "FleshIdol")
+            throw new InvalidOperationException("FleshIdol or its egg failed Codex resolution.");
+
+        Pawn prayUser = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f));
+        GenSpawn.Spawn(prayUser, FindSafePawnCell(map, map.Center), map);
+        Hediff prayWound = HediffMaker.MakeHediff(RimWorld.DamageDefOf.Cut.hediff, prayUser, prayUser.RaceProps.body.corePart);
+        prayWound.Severity = 8f;
+        prayUser.health.AddHediff(prayWound);
+        float prayHpWithInjury = prayUser.health.summaryHealth.SummaryHealthPercent;
+
+        const int fleshSig = 0x4c430083;
+        var (fleshPlatform, heldFlesh, fleshTool) = ContainToolOnPlatform(map, prayUser, "FleshIdol", fleshSig);
+
+        fleshTool.OnContinuousStart(prayUser);
+        for (int t = 60; t <= 1980; t += 60)
+        {
+            fleshTool.OnContinuousTick(prayUser, 60, t);
+        }
+        int fleshPulses = (int)fleshTool.GetType().GetProperty("HealPulsesTriggered").GetValue(fleshTool);
+        if (fleshPulses <= 0)
+            throw new InvalidOperationException("FleshIdol failed to trigger colony heal pulse inside 20-80s window.");
+        if (prayUser.health.summaryHealth.SummaryHealthPercent <= prayHpWithInjury)
+            throw new InvalidOperationException("FleshIdol heal pulse did not heal injured colonist.");
+        if (fleshTool.StudyUnlocksComp == null || fleshTool.StudyUnlocksComp.Progress < 1)
+            throw new InvalidOperationException("FleshIdol failed to unlock StudyNote I after 33s prayer.");
+        fleshTool.OnContinuousEnd(prayUser, 1980, completedNaturally: true);
+
+        Pawn impatientUser = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f));
+        GenSpawn.Spawn(impatientUser, FindSafePawnCell(map, fleshPlatform.Position), map);
+        float impHpBefore = impatientUser.health.summaryHealth.SummaryHealthPercent;
+        int impMissingBefore = impatientUser.health.hediffSet.GetMissingPartsCommonAncestors().Count;
+        fleshTool.OnContinuousStart(impatientUser);
+        fleshTool.OnContinuousTick(impatientUser, 60, 300);
+        fleshTool.OnContinuousEnd(impatientUser, 300, completedNaturally: true);
+        float mentalSev = impatientUser.health.hediffSet.GetFirstHediffOfDef(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage)?.Severity ?? 0f;
+        int impMissingAfter = impatientUser.health.hediffSet.GetMissingPartsCommonAncestors().Count;
+        bool punishedHealth = impatientUser.Dead
+            || impatientUser.health.summaryHealth.SummaryHealthPercent < impHpBefore
+            || impMissingAfter > impMissingBefore;
+        if (!punishedHealth || (!impatientUser.Dead && mentalSev <= 0.1f))
+        {
+            string hediffsStr = string.Join(",", impatientUser.health.hediffSet.hediffs.Select(h => $"{h.def.defName}:{h.Severity:0.##}"));
+            string apparelStr = string.Join(",", impatientUser.apparel?.WornApparel?.Select(a => a.def.defName) ?? Array.Empty<string>());
+            DamageDef blackDef = DefDatabase<DamageDef>.GetNamed("LC_BlackDamage", false);
+            throw new InvalidOperationException(
+                $"FleshIdol failed to punish premature <20s prayer termination. " +
+                $"hpBefore={impHpBefore:0.###}, hpAfter={impatientUser.health.summaryHealth.SummaryHealthPercent:0.###}, " +
+                $"missing={impMissingBefore}->{impMissingAfter}, mental={mentalSev:0.###}, dead={impatientUser.Dead}, " +
+                $"useCount={fleshTool.UseCount}, blackDef={blackDef?.defName ?? "NULL"}, hediffs=[{hediffsStr}], apparel=[{apparelStr}].");
+        }
+
+        // Eject Flesh Idol from platform -> verifies peaceful reversion to Egg
+        fleshPlatform.EjectContents();
+        for (int i = 0; i < 3; i++) Find.TickManager.DoSingleTick();
+        if (!heldFlesh.Destroyed && heldFlesh.Spawned)
+            throw new InvalidOperationException("FleshIdol did not despawn after leaving platform.");
+        if (!map.listerThings.ThingsOfDef(fleshEggDef).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == fleshSig))
+            throw new InvalidOperationException("FleshIdol did not revert to egg with matching biosignature.");
+
+        // 2. We Can Change Anything (T-09-85, ZAYIN Continuous Tool on Holding Platform)
+        ThingDef ironDef = DefDatabase<ThingDef>.GetNamed("WeCanChangeAnything", true);
+        ThingDef ironEggDef = DefDatabase<ThingDef>.GetNamed("WeCanChangeAnythingEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(ironEggDef))
+            throw new InvalidOperationException("WeCanChangeAnythingEgg missing from ZAYIN ritual extraction list.");
+        if (AbnormalityUtility.ResolveCodexEntry(ironDef)?.defName != "WeCanChangeAnything"
+            || AbnormalityUtility.ResolveCodexEntry(ironEggDef)?.defName != "WeCanChangeAnything")
+            throw new InvalidOperationException("WeCanChangeAnything or its egg failed Codex resolution.");
+
+        Pawn ironSubject = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f,
+            allowDowned: false,
+            allowAddictions: false,
+            validatorPreGear: p => p.story?.traits == null || !p.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        TraitDef toughTrait = DefDatabase<TraitDef>.GetNamed("Tough", true);
+        ironSubject.story?.traits?.allTraits?.Clear();
+        ironSubject.story?.traits?.GainTrait(new Trait(toughTrait));
+        GenSpawn.Spawn(ironSubject, FindSafePawnCell(map, map.Center), map);
+
+        const int ironSig = 0x4c430084;
+        var (ironPlatform, heldIron, ironTool) = ContainToolOnPlatform(map, ironSubject, "WeCanChangeAnything", ironSig);
+        if (ironTool.CanManuallyStopContinuous(prayUser))
+            throw new InvalidOperationException("WeCanChangeAnything should disallow manual cancel by default.");
+
+        ThingDef boxDef = DefDatabase<ThingDef>.GetNamed("EnkephalinBox", true);
+        int boxesBefore = map.listerThings.ThingsOfDef(boxDef).Sum(t => t.stackCount);
+
+        if (!ironTool.TryAcceptEnclosedUser(ironSubject))
+            throw new InvalidOperationException("WeCanChangeAnything failed to enclose colonist inside its chamber.");
+        if (ironSubject.Spawned || !ironTool.HasEnclosedOccupant || ironTool.EnclosedOccupant != ironSubject || !ironTool.IsActiveContinuous)
+            throw new InvalidOperationException("Enclosed WeCanChangeAnything occupant should be hidden from map and held internally.");
+        if (!ironTool.TryDrawHeldOverride(DrawPhase.Draw, ironPlatform.DrawPos))
+            throw new InvalidOperationException("WeCanChangeAnything failed to activate bloody override graphic draw while in use.");
+
+        LC_EntityBasePawn heldIronEntity = (LC_EntityBasePawn)heldIron;
+        for (int t = 0; t < 720; t++)
+        {
+            heldIronEntity.TickHolded();
+        }
+
+        int boxesAfter = map.listerThings.ThingsOfDef(boxDef).Sum(t => t.stackCount);
+        int boxesRecorded = (int)ironTool.GetType().GetProperty("TotalBoxesProduced").GetValue(ironTool);
+        if (boxesAfter <= boxesBefore || boxesRecorded <= 0)
+            throw new InvalidOperationException("WeCanChangeAnything did not produce EnkephalinBox outputs.");
+        if (ironTool.StudyUnlocksComp == null || ironTool.StudyUnlocksComp.Progress < 1)
+            throw new InvalidOperationException("WeCanChangeAnything failed to unlock StudyNote I after 12s use.");
+
+        // Continue grinding until fatal completion -> occupant dies, corpse drops to platform, active state resets
+        for (int t = 0; t < 3600 && !ironSubject.Dead; t++)
+        {
+            heldIronEntity.TickHolded();
+        }
+        if (!ironSubject.Dead || ironTool.HasEnclosedOccupant || ironTool.IsActiveContinuous)
+            throw new InvalidOperationException("WeCanChangeAnything did not fatally finish enclosed occupant or release container.");
+        if (ironSubject.Corpse == null || !ironSubject.Corpse.Spawned)
+            throw new InvalidOperationException("WeCanChangeAnything did not eject occupant corpse onto map upon death.");
+        int victimsRecorded = (int)ironTool.GetType().GetProperty("TotalVictims").GetValue(ironTool);
+        bool bloodStained = (bool)ironTool.GetType().GetProperty("StainedWithBlood").GetValue(ironTool);
+        if (victimsRecorded < 1 || !bloodStained)
+            throw new InvalidOperationException("WeCanChangeAnything did not record victim death / blood stain.");
+
+        // Safety-ejection check: ejecting platform while an occupant is enclosed safely returns the living colonist before egg reversion
+        Pawn ironSurvivor = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f,
+            allowDowned: false,
+            allowAddictions: false,
+            validatorPreGear: p => p.story?.traits == null || !p.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        GenSpawn.Spawn(ironSurvivor, FindSafePawnCell(map, ironPlatform.Position), map);
+        if (!ironTool.TryAcceptEnclosedUser(ironSurvivor) || ironSurvivor.Spawned || !ironTool.HasEnclosedOccupant)
+            throw new InvalidOperationException("WeCanChangeAnything failed second enclosure for safety-ejection check.");
+        ironPlatform.EjectContents();
+        if (!ironSurvivor.Spawned || ironSurvivor.Dead || ironTool.HasEnclosedOccupant)
+            throw new InvalidOperationException("Platform eject failed to safely expel enclosed WeCanChangeAnything occupant.");
+        for (int i = 0; i < 3; i++) Find.TickManager.DoSingleTick();
+        if (!map.listerThings.ThingsOfDef(ironEggDef).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ironSig))
+            throw new InvalidOperationException("WeCanChangeAnything did not revert to matching biosignature egg after eject.");
+
+        // 3. Old Belief and Promise (T-09-97, ZAYIN SingleUse Tool + Weapon Blessing on Holding Platform)
+        ThingDef promiseDef = DefDatabase<ThingDef>.GetNamed("OldBeliefAndPromise", true);
+        ThingDef promiseEggDef = DefDatabase<ThingDef>.GetNamed("OldBeliefAndPromiseEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(promiseEggDef))
+            throw new InvalidOperationException("OldBeliefAndPromiseEgg missing from ZAYIN ritual extraction list.");
+        if (AbnormalityUtility.ResolveCodexEntry(promiseDef)?.defName != "OldBeliefAndPromise"
+            || AbnormalityUtility.ResolveCodexEntry(promiseEggDef)?.defName != "OldBeliefAndPromise")
+            throw new InvalidOperationException("OldBeliefAndPromise or its egg failed Codex resolution.");
+
+        Pawn blessedWielder = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist, Faction.OfPlayer);
+        GenSpawn.Spawn(blessedWielder, FindSafePawnCell(map, map.Center), map);
+        blessedWielder.equipment?.DestroyAllEquipment();
+
+        const int promiseSig = 0x4c430085;
+        var (_, _, promiseTool) = ContainToolOnPlatform(map, blessedWielder, "OldBeliefAndPromise", promiseSig);
+        if (promiseTool.CanUseTool(blessedWielder).Accepted)
+            throw new InvalidOperationException("OldBeliefAndPromise should reject unarmed colonist.");
+
+        ThingWithComps egoWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_OneSin", true));
+        blessedWielder.equipment.AddEquipment(egoWeapon);
+        DamageDef whiteDef = DefDatabase<DamageDef>.GetNamed("LC_WhiteDamage", true);
+        float unblessedDamage = DamageUtils.GetAdjustedDamage(
+            new DamageInfo(whiteDef, 20f, armorPenetration: 1f, instigator: blessedWielder, weapon: egoWeapon.def),
+            monster,
+            FourColorDamageType.White,
+            LCRiskLevel.ZAYIN);
+
+        // Pick a deterministic seed where Rand.Chance(0.20f) evaluates to false (success)
+        int successSeed = 1;
+        for (int candidate = 1; candidate <= 50; candidate++)
+        {
+            Rand.PushState(candidate);
+            bool betrayed = Rand.Chance(0.20f);
+            Rand.PopState();
+            if (!betrayed)
+            {
+                successSeed = candidate;
+                break;
+            }
+        }
+
+        Rand.PushState(successSeed);
+        try
+        {
+            promiseTool.OnToolUsed(blessedWielder);
+        }
+        finally
+        {
+            Rand.PopState();
+        }
+
+        GameComponent_LC lcComp = GameComponent_LC.Instance ?? throw new InvalidOperationException("GameComponent_LC.Instance is null.");
+        if (!lcComp.IsWeaponBlessed(egoWeapon))
+            throw new InvalidOperationException("OldBeliefAndPromise did not register blessed weapon in GameComponent_LC.");
+
+        float blessedMult = lcComp.GetWeaponBlessingMultiplier(egoWeapon);
+        if (Math.Abs(blessedMult - 1.25f) > 0.01f)
+            throw new InvalidOperationException($"Unexpected OldBelief tier-1 blessing multiplier: {blessedMult}");
+
+        float blessedDamage = DamageUtils.GetAdjustedDamage(
+            new DamageInfo(whiteDef, 20f, armorPenetration: 1f, instigator: blessedWielder, weapon: egoWeapon.def),
+            monster,
+            FourColorDamageType.White,
+            LCRiskLevel.ZAYIN);
+        if (blessedDamage < unblessedDamage * 1.23f)
+            throw new InvalidOperationException($"Weapon blessing did not scale DamageUtils.GetAdjustedDamage ({unblessedDamage} -> {blessedDamage}).");
+
+        string blessingLabel = "LC_Stat_WeaponBlessing".Translate();
+        if (!egoWeapon.def.SpecialDisplayStats(StatRequest.For(egoWeapon)).Any(s => s.LabelCap == blessingLabel.CapitalizeFirst()))
+            throw new InvalidOperationException("InfoCard SpecialDisplayStats missing LC_Stat_WeaponBlessing entry for blessed weapon.");
+
+        // 4. Verify extraction pool settings toggles for all 3 tool eggs
+        FieldInfo fFlesh = abnSettings.GetType().GetField("EnableFleshIdol");
+        FieldInfo fIron = abnSettings.GetType().GetField("EnableWeCanChangeAnything");
+        FieldInfo fPromise = abnSettings.GetType().GetField("EnableOldBeliefAndPromise");
+        bool prevFlesh = (bool)fFlesh.GetValue(abnSettings);
+        bool prevIron = (bool)fIron.GetValue(abnSettings);
+        bool prevPromise = (bool)fPromise.GetValue(abnSettings);
+        try
+        {
+            fFlesh.SetValue(abnSettings, false);
+            fIron.SetValue(abnSettings, false);
+            fPromise.SetValue(abnSettings, false);
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("WAW").Contains(fleshEggDef))
+                throw new InvalidOperationException("EnableFleshIdol=false did not filter FleshIdolEgg.");
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(ironEggDef))
+                throw new InvalidOperationException("EnableWeCanChangeAnything=false did not filter WeCanChangeAnythingEgg.");
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(promiseEggDef))
+                throw new InvalidOperationException("EnableOldBeliefAndPromise=false did not filter OldBeliefAndPromiseEgg.");
+        }
+        finally
+        {
+            fFlesh.SetValue(abnSettings, prevFlesh);
+            fIron.SetValue(abnSettings, prevIron);
+            fPromise.SetValue(abnSettings, prevPromise);
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; P2B; platform_continuous/fleshidol/ironmaiden/oldbelief/blessing");
+
+        ValidateBurrowingHeavenTrophyHeads(map);
+        ValidateNothingThere(map, abnSettings);
+
+        // Save/Load check: keep one enclosed living colonist inside WeCanChangeAnything across save/reload (takes only 120 pre-save + 120 post-load ticks)
+        Pawn ironSavedOccupant = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f,
+            allowDowned: false,
+            allowAddictions: false,
+            validatorPreGear: p => p.story?.traits == null || !p.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        ironSavedOccupant.story?.traits?.allTraits?.Clear();
+        ironSavedOccupant.story?.traits?.GainTrait(new Trait(toughTrait));
+        GenSpawn.Spawn(ironSavedOccupant, FindSafePawnCell(map, map.Center), map);
+        const int ironSavedSig = 0x4c430086;
+        var (_, _, ironSavedTool) = ContainToolOnPlatform(map, ironSavedOccupant, "WeCanChangeAnything", ironSavedSig);
+        if (!ironSavedTool.TryAcceptEnclosedUser(ironSavedOccupant) || ironSavedOccupant.Spawned || !ironSavedTool.HasEnclosedOccupant)
+            throw new InvalidOperationException("Saved WeCanChangeAnything failed to enclose colonist.");
+    }
+
+    private static void ValidateBurrowingHeavenTrophyHeads(Map map)
+    {
+        const int bhTrophySig = 0x4c430089;
+        var bhPlatform = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform"));
+        bhPlatform.SetFaction(Faction.OfPlayer);
+        IntVec3 bhCell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(bhPlatform, bhCell, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+        Thing bhEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("BurrowingHeavenEgg"));
+        AbnormalityUtility.TransferSignature(bhEgg, bhTrophySig);
+        bhPlatform.innerContainer.TryAdd(bhEgg);
+        bhEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(bhPlatform.innerContainer);
+        Pawn heldBh = bhPlatform.HeldPawn ?? throw new InvalidOperationException("BurrowingHeavenEgg failed to enter trophy test containment.");
+
+        Assembly lcAbnAsm = heldBh.GetType().Assembly;
+        Type recordType = lcAbnAsm.GetType("BurrowingHeaven.Things.HangingHeadRecord", throwOnError: true);
+        Type compType = lcAbnAsm.GetType("BurrowingHeaven.Comp.CompBurrowingHeaven", throwOnError: true);
+        MethodInfo createFrom = recordType.GetMethod("CreateFrom", BindingFlags.Public | BindingFlags.Static);
+        FieldInfo capturedLayersField = recordType.GetField("capturedLayers", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo hasUsableProp = recordType.GetProperty("HasUsableCapturedLayers", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo getCompositeMethod = recordType.GetMethod("GetCompositeLayers", BindingFlags.Public | BindingFlags.Instance);
+
+        ThingComp bhComp = heldBh.AllComps.FirstOrDefault(c => compType.IsInstanceOfType(c))
+            ?? throw new InvalidOperationException("CompBurrowingHeaven missing on held BurrowingHeaven.");
+        FieldInfo hangingHeadsField = compType.GetField("hangingHeads", BindingFlags.Instance | BindingFlags.NonPublic);
+        IList hangingHeads = (IList)hangingHeadsField.GetValue(bhComp);
+        if (hangingHeads == null)
+        {
+            hangingHeads = (IList)Activator.CreateInstance(hangingHeadsField.FieldType);
+            hangingHeadsField.SetValue(bhComp, hangingHeads);
+        }
+
+        // Slot 0: Vanilla humanlike colonist with explicit hair
+        HairDef vanillaHair = DefDatabase<HairDef>.AllDefsListForReading
+            .FirstOrDefault(h => h != null && !h.noGraphic && !h.texPath.NullOrEmpty())
+            ?? throw new InvalidOperationException("No non-empty HairDef found for trophy head validation.");
+        BeardDef vanillaBeard = DefDatabase<BeardDef>.AllDefsListForReading
+            .FirstOrDefault(b => b != null && !b.noGraphic && !b.texPath.NullOrEmpty());
+
+        Pawn vanillaVictim = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            fixedGender: Gender.Male,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f));
+        vanillaVictim.story.hairDef = vanillaHair;
+        if (vanillaBeard != null && vanillaVictim.style != null)
+        {
+            vanillaVictim.style.beardDef = vanillaBeard;
+        }
+        GenSpawn.Spawn(vanillaVictim, FindSafePawnCell(map, bhCell), map);
+        vanillaVictim.Drawer?.renderer?.renderTree?.SetDirty();
+
+        object vanillaRec = createFrom.Invoke(null, new object[] { vanillaVictim, 0, -18f });
+        IList vanillaCaptured = (IList)capturedLayersField.GetValue(vanillaRec);
+        if (vanillaCaptured == null || vanillaCaptured.Count < 2)
+            throw new InvalidOperationException($"Vanilla trophy capture expected >= 2 layers, got {vanillaCaptured?.Count ?? 0}.");
+
+        bool hasVanillaHairLayer = false;
+        foreach (object layerObj in vanillaCaptured)
+        {
+            string texPath = (string)layerObj.GetType().GetField("texPath").GetValue(layerObj);
+            if (texPath == vanillaHair.texPath)
+            {
+                hasVanillaHairLayer = true;
+                break;
+            }
+        }
+        if (!hasVanillaHairLayer)
+            throw new InvalidOperationException($"Vanilla trophy capture missing HairDef texPath '{vanillaHair.texPath}'.");
+
+        if (!(bool)hasUsableProp.GetValue(vanillaRec))
+            throw new InvalidOperationException("Vanilla trophy HasUsableCapturedLayers returned false.");
+        IList vanillaComposite = (IList)getCompositeMethod.Invoke(vanillaRec, null);
+        if (vanillaComposite == null || vanillaComposite.Count < 3)
+            throw new InvalidOperationException($"Vanilla trophy composite expected >= 3 layers (with NeckBlood), got {vanillaComposite?.Count ?? 0}.");
+
+        hangingHeads.Add(vanillaRec);
+
+        // Slot 1 (when HAR Monolyn Race is active): Monolyn colonist wearing hood hiding back hair
+        Pawn monolynVictim = null;
+        PawnKindDef monolynKind = DefDatabase<PawnKindDef>.GetNamedSilentFail("Monolyn_WandererPlayer");
+        if (monolynKind != null)
+        {
+            monolynVictim = PawnGenerator.GeneratePawn(monolynKind, Faction.OfPlayer);
+            GenSpawn.Spawn(monolynVictim, FindSafePawnCell(map, bhCell), map);
+
+            ThingDef hoodDef = DefDatabase<ThingDef>.GetNamedSilentFail("Apparel_MNHatHood");
+            if (hoodDef != null && monolynVictim.apparel != null)
+            {
+                ThingDef hoodStuff = GenStuff.DefaultStuffFor(hoodDef);
+                if (ThingMaker.MakeThing(hoodDef, hoodStuff) is Apparel hood)
+                {
+                    monolynVictim.apparel.Wear(hood, dropReplacedApparel: false);
+                }
+            }
+
+            monolynVictim.Drawer?.renderer?.renderTree?.SetDirty();
+            object monolynRec = createFrom.Invoke(null, new object[] { monolynVictim, 1, 16f });
+            IList monoCaptured = (IList)capturedLayersField.GetValue(monolynRec);
+            if (monoCaptured == null || monoCaptured.Count < 3)
+                throw new InvalidOperationException($"Monolyn trophy capture expected >= 3 layers, got {monoCaptured?.Count ?? 0}.");
+
+            var layerSummary = new List<string>();
+            float? hairBY = null;
+            float? faceHeadY = null;
+            float? hairFY = null;
+            foreach (object layerObj in monoCaptured)
+            {
+                Type lt = layerObj.GetType();
+                string texPath = (string)lt.GetField("texPath").GetValue(layerObj);
+                float relY = (float)lt.GetField("relativeY").GetValue(layerObj);
+                Vector2 offXZ = (Vector2)lt.GetField("localOffsetXZ").GetValue(layerObj);
+                Vector2 scaleXZ = (Vector2)lt.GetField("localScale").GetValue(layerObj);
+                Vector2 meshSz = (Vector2)lt.GetField("meshSize").GetValue(layerObj);
+                layerSummary.Add($"{texPath}(y={relY:F4},off={offXZ.x:F3},{offXZ.y:F3},sc={scaleXZ.x:F2},{scaleXZ.y:F2},mesh={meshSz.x:F2}x{meshSz.y:F2})");
+                if (texPath != null)
+                {
+                    if (texPath.IndexOf("HairB", StringComparison.OrdinalIgnoreCase) >= 0) hairBY = relY;
+                    if (texPath.IndexOf("HairF", StringComparison.OrdinalIgnoreCase) >= 0) hairFY = relY;
+                    if (texPath.IndexOf("MonolynHead", StringComparison.OrdinalIgnoreCase) >= 0) faceHeadY = relY;
+                }
+            }
+
+            if (!hairFY.HasValue || !hairBY.HasValue || !faceHeadY.HasValue)
+                throw new InvalidOperationException($"Monolyn trophy capture missing HairF/HairB/MonolynHead. Captured: {string.Join("; ", layerSummary)}");
+            if (!(hairBY.Value < faceHeadY.Value && faceHeadY.Value < hairFY.Value))
+                throw new InvalidOperationException($"Unexpected Monolyn layer ordering HairB={hairBY} Face={faceHeadY} HairF={hairFY}");
+            if (!(bool)hasUsableProp.GetValue(monolynRec))
+                throw new InvalidOperationException("Monolyn trophy HasUsableCapturedLayers returned false.");
+
+            hangingHeads.Add(monolynRec);
+            Log.Message($"[LC17 Validation] MONOLYN TROPHY PASS; count={monoCaptured.Count}; layers={string.Join("; ", layerSummary)}");
+        }
+
+        heldBh.Drawer?.renderer?.renderTree?.SetDirty();
+        bhPlatform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, bhPlatform.DrawPos);
+        bhPlatform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, bhPlatform.DrawPos);
+        bhPlatform.DynamicDrawPhaseAt(DrawPhase.Draw, bhPlatform.DrawPos);
+
+        if (!vanillaVictim.Destroyed && vanillaVictim.Spawned) { vanillaVictim.DeSpawn(); vanillaVictim.Destroy(); }
+        if (monolynVictim != null && !monolynVictim.Destroyed && monolynVictim.Spawned) { monolynVictim.DeSpawn(); monolynVictim.Destroy(); }
+
+        Log.Message($"[LC17 Validation] GAMEPLAY PASS; BurrowingHeavenTrophy; vanillaLayers={vanillaCaptured.Count}; monolynTested={monolynKind != null}");
+    }
+
+    private static void ValidateNothingThere(Map map, object abnSettings)
+    {
+        ThingDef ntDef = DefDatabase<ThingDef>.GetNamed("NothingThere", true);
+        ThingDef ntEggDef = DefDatabase<ThingDef>.GetNamed("NothingThereEgg", true);
+        if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ALEPH").Contains(ntEggDef))
+            throw new InvalidOperationException("NothingThereEgg missing from ALEPH ritual extraction list.");
+
+        FieldInfo fNt = abnSettings.GetType().GetField("EnableNothingThere")
+            ?? throw new InvalidOperationException("Missing EnableNothingThere field on Setting_LCAbnormalities.");
+        bool prevNt = (bool)fNt.GetValue(abnSettings);
+        try
+        {
+            fNt.SetValue(abnSettings, false);
+            if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ALEPH").Contains(ntEggDef))
+                throw new InvalidOperationException("EnableNothingThere=false did not filter NothingThereEgg.");
+        }
+        finally
+        {
+            fNt.SetValue(abnSettings, prevNt);
+        }
+
+        if (AbnormalityUtility.ResolveCodexEntry(ntDef)?.defName != "NothingThere"
+            || AbnormalityUtility.ResolveCodexEntry(ntEggDef)?.defName != "NothingThere")
+            throw new InvalidOperationException("NothingThere or its egg failed Codex resolution.");
+
+        // 1. Contain NothingThereEgg and verify platform/render/biosignature
+        const int ntSig = 0x4c430090;
+        var ntPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        ntPlat.SetFaction(Faction.OfPlayer);
+        IntVec3 ntCell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(ntPlat, ntCell, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+        Thing ntEgg = ThingMaker.MakeThing(ntEggDef);
+        AbnormalityUtility.TransferSignature(ntEgg, ntSig);
+        ntPlat.innerContainer.TryAdd(ntEgg);
+        ntEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ntPlat.innerContainer);
+
+        Pawn heldNt = ntPlat.HeldPawn ?? throw new InvalidOperationException("NothingThereEgg failed to materialize in holding platform.");
+        CompAbnormality abnNt = heldNt.GetComp<CompAbnormality>()
+            ?? throw new InvalidOperationException("NothingThere missing CompAbnormality.");
+        if (abnNt.biosignature != ntSig)
+            throw new InvalidOperationException($"NothingThere biosignature mismatch: expected {ntSig}, got {abnNt.biosignature}.");
+
+        CompAbnormalityHoldingPlatformTarget ntHoldTarget = heldNt.GetComp<CompAbnormalityHoldingPlatformTarget>()
+            ?? throw new InvalidOperationException("NothingThere missing CompAbnormalityHoldingPlatformTarget.");
+        if (!ntHoldTarget.Props.hasAnimation)
+            throw new InvalidOperationException("NothingThere CompProperties_AbnormalityHoldingPlatformTarget.hasAnimation must be true.");
+
+        foreach (string animName in new[]
+        {
+            "NothingThere_DogIdle", "NothingThere_DogWork", "NothingThere_DogWalk", "NothingThere_DogAttack",
+            "NothingThere_DisguiseIdle", "NothingThere_DisguiseWalk",
+            "NothingThere_CocoonIdle",
+            "NothingThere_TrueIdle", "NothingThere_TrueWalk", "NothingThere_TrueMelee", "NothingThere_TrueThrow", "NothingThere_TrueGoodbye"
+        })
+        {
+            if (DefDatabase<AnimationDef>.GetNamed(animName, true) == null)
+                throw new InvalidOperationException($"Missing AnimationDef {animName}.");
+        }
+
+        MethodInfo mTickHolded = heldNt.GetType().GetMethod("TickHolded", BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException("NothingThere missing public TickHolded method.");
+        mTickHolded.Invoke(heldNt, null);
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_DogIdle")
+            throw new InvalidOperationException($"Contained NothingThere expected NothingThere_DogIdle animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.Draw, ntPlat.DrawPos);
+
+        abnNt.Notify_Studying(null);
+        mTickHolded.Invoke(heldNt, null);
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_DogWork")
+            throw new InvalidOperationException($"Studying NothingThere expected NothingThere_DogWork animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.Draw, ntPlat.DrawPos);
+
+        heldNt.Drawer.renderer.EnsureGraphicsInitialized();
+        heldNt.Drawer.renderer.RenderPawnAt(ntPlat.DrawPos);
+
+        // 2. Level V veteran colonist work rates, PE-Box production, study unlock, and Mimicry E.G.O extraction
+        Pawn veteran = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f,
+            allowDowned: false,
+            allowAddictions: false,
+            validatorPreGear: p => p.story?.traits == null || !p.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        GenSpawn.Spawn(veteran, FindSafePawnCell(map, ntCell), map);
+        CompPawnStatus vetStatus = veteran.GetComp<CompPawnStatus>()
+            ?? throw new InvalidOperationException("Veteran colonist missing CompPawnStatus.");
+        vetStatus.SetPawnStatusEnabled(true, null);
+        vetStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 100;
+        vetStatus.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 100;
+        vetStatus.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 100;
+        vetStatus.GetPawnStatusLevel(EPawnStatus.Justice).Status = 100;
+
+        float insightRate = abnNt.CheckStudierSkillRequire(vetStatus, EAnomalyWorkType.Insight);
+        float repressionRate = abnNt.CheckStudierSkillRequire(vetStatus, EAnomalyWorkType.Repression);
+        float attachRate = abnNt.CheckStudierSkillRequire(vetStatus, EAnomalyWorkType.Attachment);
+        if (insightRate > 0.001f || repressionRate > 0.001f || attachRate < 0.50f)
+            throw new InvalidOperationException($"Unexpected NothingThere work rates for Level V: insight={insightRate}, repression={repressionRate}, attach={attachRate}.");
+
+        int passSeed = 1;
+        while (passSeed <= 1000)
+        {
+            Rand.PushState(passSeed);
+            bool pass = Rand.Chance(attachRate);
+            Rand.PopState();
+            if (pass)
+                break;
+            passSeed++;
+        }
+
+        ntPlat.CurWorkType = EAnomalyWorkType.Attachment;
+        ntPlat.Notify_StudyStart(veteran);
+        for (int i = 0; i < 33; i++)
+        {
+            Rand.PushState(passSeed);
+            try
+            {
+                ntPlat.Notify_StudyInterval(vetStatus);
+            }
+            finally
+            {
+                Rand.PopState();
+            }
+        }
+        abnNt.Notify_Studied(veteran, false);
+
+        if (veteran.Dead)
+            throw new InvalidOperationException("Level V veteran colonist died unexpectedly during successful Attachment work on NothingThere.");
+        if (abnNt.PeBoxComp.CurAmountIndiPebox <= 0)
+            throw new InvalidOperationException("NothingThere produced 0 PE-Boxes after Level V Attachment work.");
+
+        heldNt.GetComp<CompAbnormalityStudiable>().Study(veteran, 1000f);
+        if (abnNt.StudyUnlocksComp == null || !abnNt.StudyUnlocksComp.Completed)
+            throw new InvalidOperationException("NothingThere failed to complete study unlocks.");
+
+        CompEgoExtractable ego = heldNt.GetComp<CompEgoExtractable>()
+            ?? throw new InvalidOperationException("NothingThere missing CompEgoExtractable.");
+        abnNt.PeBoxComp.CurAmountIndiPebox = 1000;
+        MethodInfo extractMethod = typeof(CompEgoExtractable).GetMethod("ExtractEGO", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("CompEgoExtractable.ExtractEGO method not found.");
+        int beforeWeapon = ego.CurAmountWeapon;
+        int beforeArmor = ego.CurAmountArmor;
+        extractMethod.Invoke(ego, new object[] { EGO_TYPE.Weapon });
+        extractMethod.Invoke(ego, new object[] { EGO_TYPE.Armor });
+        if (ego.CurAmountWeapon != beforeWeapon + 1 || ego.CurAmountArmor != beforeArmor + 1)
+            throw new InvalidOperationException($"NothingThere EGO extraction count mismatch: weapon={ego.CurAmountWeapon}, armor={ego.CurAmountArmor}.");
+
+        ThingDef mimicryWeaponDef = DefDatabase<ThingDef>.GetNamed("EgoWeapon_NothingThere", true);
+        ThingDef mimicrySuitDef = DefDatabase<ThingDef>.GetNamed("Apparel_NothingThereSuit", true);
+        ThingWithComps mimicryWeapon = map.listerThings.ThingsOfDef(mimicryWeaponDef).OfType<ThingWithComps>().LastOrDefault()
+            ?? throw new InvalidOperationException("Extracted EgoWeapon_NothingThere not found on map.");
+        Apparel mimicrySuit = map.listerThings.ThingsOfDef(mimicrySuitDef).OfType<Apparel>().LastOrDefault()
+            ?? throw new InvalidOperationException("Extracted Apparel_NothingThereSuit not found on map.");
+
+        // 3. Mimicry E.G.O four-color profiles, cellular suit regen & unequip cleanup
+        if (!FourColorOverrides.TryGetApparelProfile(mimicrySuitDef, out FourColorOverrides.ResolvedApparelProfile suitProf)
+            || suitProf.source != FourColorProfileSource.Authored
+            || suitProf.riskLevel != LCRiskLevel.ALEPH
+            || Math.Abs(suitProf.red - 0.2f) > 0.001f
+            || Math.Abs(suitProf.white - 0.5f) > 0.001f
+            || Math.Abs(suitProf.black - 0.5f) > 0.001f
+            || Math.Abs(suitProf.pale - 1.0f) > 0.001f)
+        {
+            throw new InvalidOperationException($"Unexpected Apparel_NothingThereSuit four-color profile: {suitProf.riskLevel}, R={suitProf.red}, W={suitProf.white}, B={suitProf.black}, P={suitProf.pale}.");
+        }
+
+        if (!FourColorOverrides.TryGetWeaponProfile(mimicryWeaponDef, out FourColorOverrides.ResolvedWeaponProfile wepProf)
+            || wepProf.source != FourColorProfileSource.Authored
+            || wepProf.riskLevel != LCRiskLevel.ALEPH
+            || wepProf.damageType != FourColorDamageType.Red)
+        {
+            throw new InvalidOperationException($"Unexpected EgoWeapon_NothingThere four-color profile: {wepProf.riskLevel}, {wepProf.damageType}.");
+        }
+
+        HediffDef regenDef = DefDatabase<HediffDef>.GetNamed("LC_MimicrySuitRegen", true);
+        veteran.apparel?.DestroyAll();
+        veteran.equipment?.DestroyAllEquipment();
+        if (mimicrySuit.Spawned) mimicrySuit.DeSpawn();
+        veteran.apparel.Wear(mimicrySuit, dropReplacedApparel: false);
+        if (!veteran.health.hediffSet.HasHediff(regenDef))
+            throw new InvalidOperationException("Equipping Apparel_NothingThereSuit did not grant LC_MimicrySuitRegen hediff.");
+
+        DamageInfo testWound = new DamageInfo(RimWorld.DamageDefOf.Cut, 8f, 2f, -1f, null, veteran.RaceProps.body.corePart);
+        testWound.SetIgnoreArmor(true);
+        veteran.TakeDamage(testWound);
+        float hpBeforeRegen = veteran.health.summaryHealth.SummaryHealthPercent;
+        if (hpBeforeRegen >= 0.999f)
+            throw new InvalidOperationException("Test cut failed to injure Mimicry suit wearer before regen test.");
+
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        for (int i = 0; i < 200; i++) Find.TickManager.DoSingleTick();
+        if (veteran.health.summaryHealth.SummaryHealthPercent <= hpBeforeRegen)
+            throw new InvalidOperationException("LC_MimicrySuitRegen failed to heal wearer over 200 ticks.");
+
+        veteran.apparel.Remove(mimicrySuit);
+        if (veteran.health.hediffSet.HasHediff(regenDef))
+            throw new InvalidOperationException("Unequipping Apparel_NothingThereSuit did not remove LC_MimicrySuitRegen hediff.");
+        if (mimicrySuit.Spawned) mimicrySuit.DeSpawn();
+        veteran.apparel.Wear(mimicrySuit, dropReplacedApparel: false);
+        if (!veteran.health.hediffSet.HasHediff(regenDef))
+            throw new InvalidOperationException("Re-equipping Apparel_NothingThereSuit failed to re-apply LC_MimicrySuitRegen.");
+
+        // 4. Mimicry weapon melee Red lifesteal & Mimicry_Goodbye active ability
+        if (mimicryWeapon.Spawned) mimicryWeapon.DeSpawn();
+        veteran.equipment.AddEquipment(mimicryWeapon);
+
+        PawnKindDef animalKind = DefDatabase<PawnKindDef>.AllDefsListForReading
+            .FirstOrDefault(k => k.RaceProps?.Animal == true && !k.RaceProps.IsMechanoid && k.RaceProps.baseBodySize >= 1.5f)
+            ?? DefDatabase<PawnKindDef>.AllDefsListForReading.First(k => k.RaceProps?.Animal == true && !k.RaceProps.IsMechanoid);
+
+        Pawn target1 = PawnGenerator.GeneratePawn(animalKind, null);
+        GenSpawn.Spawn(target1, FindSafePawnCell(map, veteran.Position), map);
+        DamageInfo preLifeWound = new DamageInfo(RimWorld.DamageDefOf.Cut, 10f, 2f, -1f, null, veteran.RaceProps.body.corePart);
+        preLifeWound.SetIgnoreArmor(true);
+        veteran.TakeDamage(preLifeWound);
+        float hpBeforeLife = veteran.health.summaryHealth.SummaryHealthPercent;
+        DamageDef lifestealDef = DefDatabase<DamageDef>.GetNamed("LC_Mimicry_RedLifesteal", true);
+        target1.TakeDamage(new DamageInfo(lifestealDef, 28f, 0.6f, instigator: veteran, weapon: mimicryWeaponDef));
+        if (veteran.health.summaryHealth.SummaryHealthPercent <= hpBeforeLife)
+            throw new InvalidOperationException("LC_Mimicry_RedLifesteal melee hit did not heal wielder.");
+
+        Pawn target2 = PawnGenerator.GeneratePawn(animalKind, null);
+        GenSpawn.Spawn(target2, FindSafePawnCell(map, veteran.Position), map);
+        DamageInfo preGoodbyeWound = new DamageInfo(RimWorld.DamageDefOf.Cut, 12f, 2f, -1f, null, veteran.RaceProps.body.corePart);
+        preGoodbyeWound.SetIgnoreArmor(true);
+        veteran.TakeDamage(preGoodbyeWound);
+        float hpBeforeGoodbye = veteran.health.summaryHealth.SummaryHealthPercent;
+
+        Ability goodbyeAbility = mimicryWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+            ?? throw new InvalidOperationException("EgoWeapon_NothingThere missing Mimicry_Goodbye AbilityForReading.");
+        if (goodbyeAbility.def.defName != "Mimicry_Goodbye")
+            throw new InvalidOperationException($"Unexpected EgoWeapon_NothingThere ability: {goodbyeAbility.def.defName}.");
+        int target2MissingBefore = target2.health.hediffSet.hediffs.Count(h => h is Hediff_MissingPart);
+        goodbyeAbility.Activate(new LocalTargetInfo(target2), LocalTargetInfo.Invalid);
+        bool target2Damaged = target2.Dead
+            || target2.health.summaryHealth.SummaryHealthPercent < 0.999f
+            || target2.health.hediffSet.hediffs.Count(h => h is Hediff_MissingPart) > target2MissingBefore;
+        if (!target2Damaged)
+            throw new InvalidOperationException($"Mimicry_Goodbye ability dealt no damage to target (kind={animalKind.defName}, hediffs={target2.health.hediffSet.hediffs.Count}, casterDead={veteran.Dead}).");
+        if (veteran.health.summaryHealth.SummaryHealthPercent <= hpBeforeGoodbye)
+            throw new InvalidOperationException("Mimicry_Goodbye ability did not lifesteal-heal wielder.");
+
+        if (!target1.Destroyed && target1.Spawned) { target1.DeSpawn(); target1.Destroy(); }
+        if (!target2.Destroyed && target2.Spawned) { target2.DeSpawn(); target2.Destroy(); }
+
+        // 5. Wiki Rules I/II/IV/V/VI + 3 Forms + Left/Right Facing + Doubled Skill Durations + Regen + Egg Return
+        Type ntCompType = abnNt.GetType();
+        PropertyInfo propForm = ntCompType.GetProperty("CurrentForm", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propHasDisguise = ntCompType.GetProperty("HasDisguise", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propIsPerformingGoodbye = ntCompType.GetProperty("IsPerformingGoodbye", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propIsThrowingBoneSpike = ntCompType.GetProperty("IsThrowingBoneSpike", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propGoodbyeWindup = ntCompType.GetProperty("GoodbyeWindupTicks", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propGoodbyeSlash = ntCompType.GetProperty("GoodbyeSlashTicks", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo propLastDamaged = ntCompType.GetProperty("LastDamagedTick", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo mToForm2 = ntCompType.GetMethod("TransitionToForm2", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo mToForm3 = ntCompType.GetMethod("TransitionToForm3", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo mStartThrow = ntCompType.GetMethod("StartBoneSpikeThrow", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo mStartGoodbye = ntCompType.GetMethod("StartGoodbyeWindup", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo mTickBreachCombat = ntCompType.GetMethod("TickBreachCombat", BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException("CompNothingThere missing TickBreachCombat.");
+
+        // 5a. Wiki Rule II test on temporary undisguised platform: Justice < IV breaches immediately WITHOUT killing worker (Dog form East & West)
+        Thing rule2Egg = ThingMaker.MakeThing(ntEggDef);
+        var rule2Plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        rule2Plat.SetFaction(Faction.OfPlayer);
+        IntVec3 rule2Cell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(rule2Plat, rule2Cell, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        rule2Plat.innerContainer.TryAdd(rule2Egg);
+        rule2Egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(rule2Plat.innerContainer);
+        Pawn rule2Nt = rule2Plat.HeldPawn;
+        CompAbnormality abnRule2 = rule2Nt.GetComp<CompAbnormality>();
+
+        Pawn lowJustWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
+        GenSpawn.Spawn(lowJustWorker, FindSafePawnCell(map, rule2Cell), map);
+        CompPawnStatus lowJustStatus = lowJustWorker.GetComp<CompPawnStatus>();
+        lowJustStatus.SetPawnStatusEnabled(true, null);
+        lowJustStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 50; // Lv III -> 0.6x scaling
+        lowJustStatus.GetPawnStatusLevel(EPawnStatus.Justice).Status = 20;   // Lv I (< IV)
+        float scaledRate = abnRule2.CheckStudierSkillRequire(lowJustStatus, EAnomalyWorkType.Attachment);
+        if (scaledRate >= attachRate)
+            throw new InvalidOperationException($"Rule I Fortitude scaling did not reduce work rate for Lv III Fortitude: lv3={scaledRate}, lv5={attachRate}.");
+
+        rule2Plat.CurWorkType = EAnomalyWorkType.Attachment;
+        rule2Plat.Notify_StudyStart(lowJustWorker);
+        abnRule2.Notify_Studied(lowJustWorker, false);
+        if (lowJustWorker.Dead)
+            throw new InvalidOperationException("Wiki Rule II violated: Justice < IV worker was killed instead of direct breach.");
+        if (!abnRule2.Escaped || !rule2Nt.Spawned || (bool)propHasDisguise.GetValue(abnRule2))
+            throw new InvalidOperationException("Wiki Rule II failed: undisguised Dog did not breach on Justice < IV completion.");
+        rule2Nt.Drawer.renderer.EnsureGraphicsInitialized();
+        rule2Nt.Rotation = Rot4.East;
+        rule2Nt.Drawer.renderer.RenderPawnAt(rule2Nt.DrawPos);
+        rule2Nt.Rotation = Rot4.West;
+        rule2Nt.Drawer.renderer.RenderPawnAt(rule2Nt.DrawPos);
+        if (!lowJustWorker.Destroyed && lowJustWorker.Spawned) { lowJustWorker.DeSpawn(); lowJustWorker.Destroy(); }
+        if (!rule2Nt.Destroyed && rule2Nt.Spawned) { rule2Nt.DeSpawn(); rule2Nt.Destroy(); }
+        if (!rule2Plat.Destroyed && rule2Plat.Spawned) { rule2Plat.DeSpawn(); rule2Plat.Destroy(); }
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+        // 5b. Wiki Rule IV: Bad result with Justice >= IV kills worker & enters Contained Disguised state (without breaching)
+        Pawn victimWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
+        GenSpawn.Spawn(victimWorker, FindSafePawnCell(map, ntCell), map);
+        CompPawnStatus victimStatus = victimWorker.GetComp<CompPawnStatus>()
+            ?? throw new InvalidOperationException("Justice IV worker missing CompPawnStatus.");
+        victimStatus.SetPawnStatusEnabled(true, null);
+        victimStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 80;
+        victimStatus.GetPawnStatusLevel(EPawnStatus.Justice).Status = 80;
+
+        ntPlat.CurWorkType = EAnomalyWorkType.Attachment;
+        ntPlat.Notify_StudyStart(victimWorker);
+        abnNt.Notify_Studied(victimWorker, false); // 0 PE-Boxes -> Bad result
+        if (!victimWorker.Dead)
+            throw new InvalidOperationException("Wiki Rule IV failed: Bad result with Justice >= IV did not kill worker.");
+        if (abnNt.Escaped || !(bool)propHasDisguise.GetValue(abnNt) || Convert.ToInt32(propForm.GetValue(abnNt)) != 0)
+            throw new InvalidOperationException("Wiki Rule IV failed: NothingThere did not enter Contained Disguised state inside unit.");
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ntPlat.DrawPos);
+        ntPlat.DynamicDrawPhaseAt(DrawPhase.Draw, ntPlat.DrawPos);
+
+        // 5c. Wiki Rules V & VI: Low-Fortitude worker enters Contained Disguised unit -> killed, skin stolen, breaches as Form1_Disguised
+        Pawn weakWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
+        GenSpawn.Spawn(weakWorker, FindSafePawnCell(map, ntCell), map);
+        CompPawnStatus weakStatus = weakWorker.GetComp<CompPawnStatus>()
+            ?? throw new InvalidOperationException("Low-Fortitude worker missing CompPawnStatus.");
+        weakStatus.SetPawnStatusEnabled(true, null);
+        weakStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 10;
+
+        ntPlat.CurWorkType = EAnomalyWorkType.Attachment;
+        ntPlat.Notify_StudyStart(weakWorker);
+        abnNt.Notify_Studied(weakWorker, false);
+
+        if (!weakWorker.Dead)
+            throw new InvalidOperationException("Wiki Rule V/VI failed: Low-Fortitude (< IV) worker was not killed when finishing Contained Disguised NothingThere work.");
+        if (!abnNt.Escaped || !heldNt.Spawned || ntPlat.HeldPawn != null)
+            throw new InvalidOperationException("NothingThere did not breach containment after low-Fortitude panic/skin-steal.");
+        if (Convert.ToInt32(propForm.GetValue(abnNt)) != 1 || !(bool)propHasDisguise.GetValue(abnNt))
+            throw new InvalidOperationException("NothingThere did not enter Form1_Disguised with stolen skin after breach.");
+
+        HediffDef form1Buff = DefDatabase<HediffDef>.GetNamed("LC_NothingThere_Form1Buff", true);
+        if (!heldNt.health.hediffSet.HasHediff(form1Buff))
+            throw new InvalidOperationException("Form1_Disguised missing LC_NothingThere_Form1Buff speed boost.");
+
+        heldNt.Drawer.renderer.EnsureGraphicsInitialized();
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+
+        DamageDef redDef = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);
+        DamageDef whiteDef = DefDatabase<DamageDef>.GetNamed("LC_WhiteDamage", true);
+        DamageDef paleDef = DefDatabase<DamageDef>.GetNamed("LC_PaleDamage", true);
+
+        // Verify four-color banner classification + ThingDef + dynamic resistance interface
+        if (DamageUtils.ClassifyResistanceTier(0.0f) != FourColorResistanceTier.Immune
+            || DamageUtils.ClassifyResistanceTier(0.3f) != FourColorResistanceTier.Resist
+            || DamageUtils.ClassifyResistanceTier(0.6f) != FourColorResistanceTier.Endure
+            || DamageUtils.ClassifyResistanceTier(1.0f) != FourColorResistanceTier.Normal
+            || DamageUtils.ClassifyResistanceTier(1.4f) != FourColorResistanceTier.Weak
+            || DamageUtils.ClassifyResistanceTier(2.0f) != FourColorResistanceTier.Fatal)
+        {
+            throw new InvalidOperationException("FourColorResistanceTier classification mismatch.");
+        }
+        ThingDef fourColorMoteDef = DefDatabase<ThingDef>.GetNamed("LC_Mote_FourColorDamage", true);
+        ILCFourColorDynamicResistance ntDynResist = heldNt as ILCFourColorDynamicResistance
+            ?? throw new InvalidOperationException("LC_NothingTherePawn must implement ILCFourColorDynamicResistance.");
+        if (!ntDynResist.TryGetDynamicFourColorResistance(FourColorDamageType.Red, out float f1Red) || Math.Abs(f1Red - 0.3f) > 0.001f)
+            throw new InvalidOperationException($"Form1 Red dynamic resistance expected 0.3, got {f1Red}.");
+
+        // Form 2: Cocoon
+        mToForm2.Invoke(abnNt, null);
+        if (Convert.ToInt32(propForm.GetValue(abnNt)) != 2)
+            throw new InvalidOperationException("NothingThere failed TransitionToForm2.");
+        if (!ntDynResist.TryGetDynamicFourColorResistance(FourColorDamageType.White, out float f2White) || Math.Abs(f2White - 0.6f) > 0.001f)
+            throw new InvalidOperationException($"Form2 White dynamic resistance expected 0.6, got {f2White}.");
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_CocoonIdle")
+            throw new InvalidOperationException($"Form2_Cocoon expected NothingThere_CocoonIdle animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+        heldNt.Rotation = Rot4.East;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        heldNt.Rotation = Rot4.West;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+
+        int inj2Before = heldNt.health.hediffSet.hediffs.Count(h => h is Hediff_Injury);
+        int motes2Before = map.listerThings.ThingsOfDef(fourColorMoteDef).Count;
+        heldNt.TakeDamage(new DamageInfo(redDef, 50f, 1f));
+        if (heldNt.health.hediffSet.hediffs.Count(h => h is Hediff_Injury) != inj2Before)
+            throw new InvalidOperationException("Form2_Cocoon failed Red 0.0 damage immunity.");
+        Mote_FourColorDamage immuneBanner = map.listerThings.ThingsOfDef(fourColorMoteDef)
+            .OfType<Mote_FourColorDamage>()
+            .Skip(motes2Before)
+            .LastOrDefault()
+            ?? throw new InvalidOperationException("Immune Red hit on Form2_Cocoon did not spawn LC_Mote_FourColorDamage.");
+        if (immuneBanner.damageType != FourColorDamageType.Red
+            || immuneBanner.resistanceTier != FourColorResistanceTier.Immune
+            || Math.Abs(immuneBanner.damageAmount) > 0.001f)
+        {
+            throw new InvalidOperationException($"Unexpected Form2 Immune banner payload: type={immuneBanner.damageType}, tier={immuneBanner.resistanceTier}, amt={immuneBanner.damageAmount}.");
+        }
+
+        DamageUtils.SpawnFourColorHitIndicator(FourColorDamageType.Pale, heldNt.DrawPos, map, 42f, 1.4f);
+        Mote_FourColorDamage weakBanner = map.listerThings.ThingsOfDef(fourColorMoteDef)
+            .OfType<Mote_FourColorDamage>()
+            .LastOrDefault()
+            ?? throw new InvalidOperationException("Weak Pale indicator did not spawn LC_Mote_FourColorDamage.");
+        if (weakBanner.damageType != FourColorDamageType.Pale
+            || weakBanner.resistanceTier != FourColorResistanceTier.Weak
+            || Math.Abs(weakBanner.damageAmount - 42f) > 0.01f)
+        {
+            throw new InvalidOperationException($"Unexpected Weak banner payload: type={weakBanner.damageType}, tier={weakBanner.resistanceTier}, amt={weakBanner.damageAmount}.");
+        }
+        foreach (Thing m in map.listerThings.ThingsOfDef(fourColorMoteDef).ToList())
+        {
+            if (!m.Destroyed && m.Spawned) m.DeSpawn();
+            if (!m.Destroyed) m.Destroy();
+        }
+
+        float hp2Before = heldNt.health.summaryHealth.SummaryHealthPercent;
+        DamageWorker.DamageResult whiteRes = heldNt.TakeDamage(new DamageInfo(whiteDef, 30f, 1f, hitPart: heldNt.RaceProps.body.corePart));
+        float hp2After = heldNt.health.summaryHealth.SummaryHealthPercent;
+        if (hp2After >= hp2Before || whiteRes.totalDamageDealt <= 0f)
+        {
+            string hSummary = string.Join(", ", heldNt.health.hediffSet.hediffs.Select(h => $"{h.def.defName}@{h.Part?.Label ?? "null"}:{h.Severity:0.##}/imp={h.SummaryHealthPercentImpact:0.####}"));
+            throw new InvalidOperationException(
+                $"Form2_Cocoon did not take White damage. hpBefore={hp2Before:0.####}, hpAfter={hp2After:0.####}, " +
+                $"dealt={whiteRes.totalDamageDealt}, deflected={whiteRes.deflected}, diminished={whiteRes.diminished}, " +
+                $"hitPart={whiteRes.LastHitPart?.Label ?? "null"}, hediffs=[{hSummary}]");
+        }
+
+        // Form 3: True Form + Out-of-Combat Regen + Doubled Throw (44+76=120t) & Goodbye (120+48=168t) + Left/Right Facing
+        mToForm3.Invoke(abnNt, null);
+        if (Convert.ToInt32(propForm.GetValue(abnNt)) != 3)
+            throw new InvalidOperationException("NothingThere failed TransitionToForm3.");
+        HediffDef trueFormBuff = DefDatabase<HediffDef>.GetNamed("LC_NothingThere_TrueFormBuff", true);
+        if (!heldNt.health.hediffSet.HasHediff(trueFormBuff))
+            throw new InvalidOperationException("Form3_TrueForm missing LC_NothingThere_TrueFormBuff.");
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_TrueIdle")
+            throw new InvalidOperationException($"Form3_TrueForm expected NothingThere_TrueIdle animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+        heldNt.Rotation = Rot4.East;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        heldNt.Rotation = Rot4.West;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+
+        int inj3Before = heldNt.health.hediffSet.hediffs.Count(h => h is Hediff_Injury);
+        heldNt.TakeDamage(new DamageInfo(redDef, 50f, 1f));
+        if (heldNt.health.hediffSet.hediffs.Count(h => h is Hediff_Injury) != inj3Before)
+            throw new InvalidOperationException("Form3_TrueForm failed Red 0.0 damage immunity.");
+
+        float hp3Before = heldNt.health.summaryHealth.SummaryHealthPercent;
+        heldNt.TakeDamage(new DamageInfo(paleDef, 15f, 1f));
+        float hp3Damaged = heldNt.health.summaryHealth.SummaryHealthPercent;
+        if (hp3Damaged >= hp3Before)
+            throw new InvalidOperationException("Form3_TrueForm did not take Pale damage.");
+
+        // Form 3 Out-of-combat Regen check: stays unhealed while lastDamagedTick is recent; heals after 600 ticks
+        for (int i = 0; i < 60; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if (heldNt.health.summaryHealth.SummaryHealthPercent > hp3Damaged + 0.0001f)
+            throw new InvalidOperationException("Form3_TrueForm regenerated prematurely before 600 ticks out of combat.");
+        propLastDamaged.SetValue(abnNt, (Find.TickManager?.TicksGame ?? 0) - 700);
+        for (int i = 0; i < 65; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if (heldNt.health.summaryHealth.SummaryHealthPercent <= hp3Damaged)
+            throw new InvalidOperationException("Form3_TrueForm failed to regenerate once 10s out of combat.");
+
+        Pawn throwTarget = PawnGenerator.GeneratePawn(animalKind, null);
+        GenSpawn.Spawn(throwTarget, FindSafePawnCell(map, heldNt.Position), map);
+        ThingDef boneProjDef = DefDatabase<ThingDef>.GetNamed("NothingThere_BoneSpikeProj", true);
+        int projBefore = map.listerThings.ThingsOfDef(boneProjDef).Count;
+        mStartThrow.Invoke(abnNt, new object[] { throwTarget });
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_TrueThrow")
+            throw new InvalidOperationException($"StartBoneSpikeThrow expected NothingThere_TrueThrow animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        for (int i = 0; i < 43; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if (map.listerThings.ThingsOfDef(boneProjDef).Count > projBefore)
+            throw new InvalidOperationException("StartBoneSpikeThrow launched projectile early before 44-tick windup finished.");
+        mTickBreachCombat.Invoke(abnNt, null);
+        if (map.listerThings.ThingsOfDef(boneProjDef).Count <= projBefore)
+            throw new InvalidOperationException("StartBoneSpikeThrow did not launch NothingThere_BoneSpikeProj after 44-tick windup.");
+        if (!(bool)propIsThrowingBoneSpike.GetValue(abnNt))
+            throw new InvalidOperationException("Form3_TrueForm dropped IsThrowingBoneSpike state immediately instead of staying planted for 76-tick recovery.");
+        for (int i = 0; i < 76; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if ((bool)propIsThrowingBoneSpike.GetValue(abnNt))
+            throw new InvalidOperationException("IsThrowingBoneSpike did not clear after 76-tick recovery.");
+        foreach (Thing p in map.listerThings.ThingsOfDef(boneProjDef).ToList())
+        {
+            if (!p.Destroyed && p.Spawned) p.DeSpawn();
+            if (!p.Destroyed) p.Destroy();
+        }
+        if (!throwTarget.Destroyed && throwTarget.Spawned) { throwTarget.DeSpawn(); throwTarget.Destroy(); }
+
+        Pawn slashTarget = PawnGenerator.GeneratePawn(animalKind, null);
+        GenSpawn.Spawn(slashTarget, heldNt.Position, map);
+        mStartGoodbye.Invoke(abnNt, new object[] { slashTarget });
+        if (Convert.ToInt32(propGoodbyeWindup.GetValue(abnNt)) != 120)
+            throw new InvalidOperationException($"StartGoodbyeWindup expected 120-tick windup, got {propGoodbyeWindup.GetValue(abnNt)}.");
+        if (heldNt.Drawer.renderer.CurAnimation?.defName != "NothingThere_TrueGoodbye")
+            throw new InvalidOperationException($"StartGoodbyeWindup expected NothingThere_TrueGoodbye animation, got {heldNt.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+        heldNt.Rotation = Rot4.East;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        heldNt.Rotation = Rot4.West;
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        for (int i = 0; i < 120; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if (Convert.ToInt32(propGoodbyeSlash.GetValue(abnNt)) != 48 || !(bool)propIsPerformingGoodbye.GetValue(abnNt))
+            throw new InvalidOperationException($"Goodbye slash expected 48-tick planted follow-through, got slash={propGoodbyeSlash.GetValue(abnNt)}.");
+        heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
+        for (int i = 0; i < 48; i++) mTickBreachCombat.Invoke(abnNt, null);
+        if ((bool)propIsPerformingGoodbye.GetValue(abnNt))
+            throw new InvalidOperationException("IsPerformingGoodbye did not clear after 48-tick follow-through.");
+        if (!slashTarget.Destroyed && slashTarget.Spawned) { slashTarget.DeSpawn(); slashTarget.Destroy(); }
+
+        // Pursuit resilience check: multi-part melee tools + BladeArm loss does NOT freeze pursuit after skill recovery
+        if (ntDef.tools == null || ntDef.tools.Count < 4)
+            throw new InvalidOperationException($"NothingThere expected >= 4 backup melee tools, found {ntDef.tools?.Count ?? 0}.");
+        BodyPartRecord bladePart = heldNt.health.hediffSet.GetNotMissingParts()
+            .FirstOrDefault(p => p.def.defName == "NothingThere_BladeArm")
+            ?? throw new InvalidOperationException("NothingThere missing NothingThere_BladeArm part record.");
+        heldNt.health.AddHediff(RimWorld.HediffDefOf.MissingBodyPart, bladePart);
+
+        IntVec3 chaseCell = IntVec3.Invalid;
+        foreach (IntVec3 offset in new[]
+        {
+            new IntVec3(9, 0, 0), new IntVec3(-9, 0, 0),
+            new IntVec3(0, 0, 9), new IntVec3(0, 0, -9),
+            new IntVec3(7, 0, 7), new IntVec3(-7, 0, -7)
+        })
+        {
+            IntVec3 c = heldNt.Position + offset;
+            if (c.InBounds(map) && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null
+                && c.GetEdifice(map) == null && heldNt.CanReach(c, PathEndMode.Touch, Danger.Deadly, canBashDoors: true))
+            {
+                chaseCell = c;
+                break;
+            }
+        }
+        if (!chaseCell.IsValid)
+        {
+            chaseCell = FindSafePawnCell(map, heldNt.Position);
+        }
+
+        Pawn chaseTarget = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f,
+            allowDowned: false, validatorPreGear: p => p.story?.traits == null || !p.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        GenSpawn.Spawn(chaseTarget, chaseCell, map);
+        chaseTarget.equipment?.DestroyAllEquipment();
+        if (chaseTarget.drafter != null) chaseTarget.drafter.Drafted = true;
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+        if (heldNt.TryGetAttackVerb(chaseTarget, true, true) == null)
+            throw new InvalidOperationException("NothingThere TryGetAttackVerb returned null when BladeArm was missing.");
+
+        // Spawn perpendicular projectile decoy so BoneSpike fires safely without killing chaseTarget, then verify full skill lock -> resume pursuit
+        Pawn spikeDecoy = PawnGenerator.GeneratePawn(animalKind, null);
+        IntVec3 decoyCell = FindSafePawnCell(map, heldNt.Position);
+        if (decoyCell == chaseTarget.Position) decoyCell = heldNt.Position;
+        GenSpawn.Spawn(spikeDecoy, decoyCell, map);
+
+        IntVec3 ntStartPos = heldNt.Position;
+        mStartThrow.Invoke(abnNt, new object[] { spikeDecoy });
+        for (int i = 0; i < 150 && (bool)propIsThrowingBoneSpike.GetValue(abnNt); i++)
+        {
+            Find.TickManager.DoSingleTick();
+            if (heldNt.Position != ntStartPos)
+                throw new InvalidOperationException($"NothingThere moved during BoneSpike skill lock ({ntStartPos} -> {heldNt.Position}).");
+        }
+        if ((bool)propIsThrowingBoneSpike.GetValue(abnNt))
+            throw new InvalidOperationException("NothingThere did not finish BoneSpike skill lock within 150 ticks.");
+        if (!spikeDecoy.Destroyed && spikeDecoy.Spawned) { spikeDecoy.DeSpawn(); spikeDecoy.Destroy(); }
+        foreach (Thing p in map.listerThings.ThingsOfDef(boneProjDef).ToList())
+        {
+            if (!p.Destroyed && p.Spawned) p.DeSpawn();
+            if (!p.Destroyed) p.Destroy();
+        }
+
+        // Wait up to 60 real ticks for chase AI to engage & advance toward target (with BladeArm still missing)
+        for (int i = 0; i < 60; i++)
+        {
+            Find.TickManager.DoSingleTick();
+            if (heldNt.CurJobDef == RimWorld.JobDefOf.AttackMelee
+                && heldNt.CurJob.canBashDoors
+                && (heldNt.Position != ntStartPos
+                    || (heldNt.CurJob.targetA.Thing != null && heldNt.Position.AdjacentTo8WayOrInside(heldNt.CurJob.targetA.Thing))))
+            {
+                break;
+            }
+        }
+        if (heldNt.CurJobDef != RimWorld.JobDefOf.AttackMelee || !heldNt.CurJob.canBashDoors)
+            throw new InvalidOperationException($"NothingThere failed to resume AttackMelee pursuit with missing BladeArm (job={heldNt.CurJobDef?.defName ?? "<null>"}, canBashDoors={heldNt.CurJob?.canBashDoors}).");
+        bool adjacentToCurTarget = heldNt.CurJob.targetA.Thing != null && heldNt.Position.AdjacentTo8WayOrInside(heldNt.CurJob.targetA.Thing);
+        if (heldNt.Position == ntStartPos && heldNt.pather?.Moving != true && !adjacentToCurTarget)
+            throw new InvalidOperationException($"NothingThere stalled during pursuit after skill recovery (pos={heldNt.Position}, moving={heldNt.pather?.Moving}, target={heldNt.CurJob.targetA.Thing?.LabelShort ?? "<null>"}).");
+
+        // Morph transition must restore missing limbs
+        mToForm3.Invoke(abnNt, null);
+        if (heldNt.health.hediffSet.PartIsMissing(bladePart))
+            throw new InvalidOperationException("TransitionToForm3 did not restore missing NothingThere_BladeArm.");
+
+        if (!chaseTarget.Destroyed && chaseTarget.Spawned) { chaseTarget.DeSpawn(); chaseTarget.Destroy(); }
+        foreach (Thing m in map.listerThings.ThingsOfDef(fourColorMoteDef).ToList())
+        {
+            if (!m.Destroyed && m.Spawned) m.DeSpawn();
+            if (!m.Destroyed) m.Destroy();
+        }
+
+        // Suppression death effect -> NothingThereEgg with matching biosignature
+        var dyingNt = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("DyingNothingThere", true), heldNt.Position, map);
+        dyingNt.InitWith(heldNt);
+        heldNt.DeSpawn();
+        Find.WorldPawns.PassToWorld(heldNt, PawnDiscardDecideMode.Decide);
+        dyingNt.Complete();
+
+        Thing returnedNtEgg = map.listerThings.ThingsOfDef(ntEggDef)
+            .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ntSig);
+        if (returnedNtEgg == null)
+            throw new InvalidOperationException("NothingThere biosignature did not survive suppression and egg return.");
+
+        // 6. Leave one contained NothingThere platform + healthy Mimicry veteran for Save/Reload validation
+        const int ntSavedSig = 0x4c430091;
+        var ntSavedPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        ntSavedPlat.SetFaction(Faction.OfPlayer);
+        IntVec3 ntSavedCell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(ntSavedPlat, ntSavedCell, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        Thing ntSavedEgg = ThingMaker.MakeThing(ntEggDef);
+        AbnormalityUtility.TransferSignature(ntSavedEgg, ntSavedSig);
+        ntSavedPlat.innerContainer.TryAdd(ntSavedEgg);
+        ntSavedEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ntSavedPlat.innerContainer);
+        if (ntSavedPlat.HeldPawn?.def?.defName != "NothingThere")
+            throw new InvalidOperationException("Saved NothingThere egg failed to enter containment.");
+
+        var leftoverInjuries = new List<Hediff_Injury>();
+        veteran.health.hediffSet.GetHediffs(ref leftoverInjuries);
+        foreach (Hediff_Injury inj in leftoverInjuries)
+            inj.Heal(1000f);
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; NothingThere; aleph/work/ego/lifesteal/3forms/red_immune/egg_return");
     }
 
     public static void CheckReload(Map map)
@@ -103,6 +1601,129 @@ public static class GameplayValidation
                 throw new InvalidOperationException("Egg identity did not survive save/load: " + name);
             var entry = DefDatabase<AbnormalityCodexEntryDef>.GetNamedSilentFail(name);
             if (entry != null && !entry.Discovered) throw new InvalidOperationException("Codex did not survive save/load: " + name);
+        }
+
+        ThingDef portraitEggDef = DefDatabase<ThingDef>.GetNamed("PortraitOfAnotherWorldEgg", true);
+        if (!map.listerThings.ThingsOfDef(portraitEggDef).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == 0x4c430081))
+            throw new InvalidOperationException("Ejected PortraitOfAnotherWorldEgg identity did not survive save/load.");
+
+        bool foundSavedBoundPortrait = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "PortraitOfAnotherWorld" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430082)
+            {
+                CompAbnormalityTool comp = plat.HeldToolComp;
+                PropertyInfo isBoundProp = comp?.GetType().GetProperty("IsBound");
+                if (comp != null && isBoundProp != null && (bool)isBoundProp.GetValue(comp))
+                {
+                    plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+                    plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+                    plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                    foundSavedBoundPortrait = true;
+                    break;
+                }
+            }
+        }
+        if (!foundSavedBoundPortrait)
+            throw new InvalidOperationException("Bound PortraitOfAnotherWorld on HoldingPlatform did not survive save/load.");
+
+        bool foundSavedEnclosedIron = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "WeCanChangeAnything" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430086)
+            {
+                CompAbnormalityTool comp = plat.HeldToolComp;
+                if (comp != null && comp.HasEnclosedOccupant && comp.EnclosedOccupant != null && !comp.EnclosedOccupant.Spawned && comp.IsActiveContinuous)
+                {
+                    foundSavedEnclosedIron = true;
+                    break;
+                }
+            }
+        }
+        if (!foundSavedEnclosedIron)
+            throw new InvalidOperationException("Enclosed occupant inside WeCanChangeAnything on HoldingPlatform did not survive save/load.");
+
+        bool foundSavedTrophyPlatform = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "BurrowingHeaven" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430089)
+            {
+                Pawn heldBh = plat.HeldPawn;
+                Assembly lcAbnAsm = heldBh.GetType().Assembly;
+                Type recordType = lcAbnAsm.GetType("BurrowingHeaven.Things.HangingHeadRecord", throwOnError: true);
+                Type compType = lcAbnAsm.GetType("BurrowingHeaven.Comp.CompBurrowingHeaven", throwOnError: true);
+                ThingComp bhComp = heldBh.AllComps.FirstOrDefault(c => compType.IsInstanceOfType(c));
+                MethodInfo getHead = compType.GetMethod("GetHangingHead", BindingFlags.Public | BindingFlags.Instance);
+                FieldInfo capturedLayersField = recordType.GetField("capturedLayers", BindingFlags.Public | BindingFlags.Instance);
+                PropertyInfo hasUsableProp = recordType.GetProperty("HasUsableCapturedLayers", BindingFlags.Public | BindingFlags.Instance);
+                MethodInfo getCompositeMethod = recordType.GetMethod("GetCompositeLayers", BindingFlags.Public | BindingFlags.Instance);
+
+                object vanillaRec = getHead.Invoke(bhComp, new object[] { 0 })
+                    ?? throw new InvalidOperationException("Saved BurrowingHeaven slot 0 HangingHeadRecord missing after reload.");
+                IList vanillaCaptured = (IList)capturedLayersField.GetValue(vanillaRec);
+                if (vanillaCaptured == null || vanillaCaptured.Count < 2 || !(bool)hasUsableProp.GetValue(vanillaRec))
+                    throw new InvalidOperationException("Saved BurrowingHeaven slot 0 capturedLayers invalid after reload.");
+                if (((IList)getCompositeMethod.Invoke(vanillaRec, null)).Count < 3)
+                    throw new InvalidOperationException("Saved BurrowingHeaven slot 0 composite layers invalid after reload.");
+
+                if (DefDatabase<PawnKindDef>.GetNamedSilentFail("Monolyn_WandererPlayer") != null)
+                {
+                    object monolynRec = getHead.Invoke(bhComp, new object[] { 1 })
+                        ?? throw new InvalidOperationException("Saved BurrowingHeaven slot 1 Monolyn HangingHeadRecord missing after reload.");
+                    IList monoCaptured = (IList)capturedLayersField.GetValue(monolynRec);
+                    bool hasHairF = false;
+                    bool hasHairB = false;
+                    if (monoCaptured != null)
+                    {
+                        foreach (object layerObj in monoCaptured)
+                        {
+                            string texPath = (string)layerObj.GetType().GetField("texPath").GetValue(layerObj);
+                            if (texPath != null && texPath.IndexOf("HairF", StringComparison.OrdinalIgnoreCase) >= 0) hasHairF = true;
+                            if (texPath != null && texPath.IndexOf("HairB", StringComparison.OrdinalIgnoreCase) >= 0) hasHairB = true;
+                        }
+                    }
+                    if (!hasHairF || !hasHairB || !(bool)hasUsableProp.GetValue(monolynRec))
+                        throw new InvalidOperationException("Saved Monolyn HairF/HairB capturedLayers did not survive save/load.");
+                }
+
+                plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                foundSavedTrophyPlatform = true;
+                break;
+            }
+        }
+        if (!foundSavedTrophyPlatform)
+            throw new InvalidOperationException("Saved BurrowingHeaven trophy platform did not survive save/load.");
+
+        bool foundSavedNtPlatform = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "NothingThere" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430091)
+            {
+                plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                foundSavedNtPlatform = true;
+                break;
+            }
+        }
+        if (!foundSavedNtPlatform)
+            throw new InvalidOperationException("Saved NothingThere holding platform did not survive save/load.");
+
+        HediffDef regenDef = DefDatabase<HediffDef>.GetNamed("LC_MimicrySuitRegen", true);
+        if (!map.mapPawns.FreeColonistsSpawned.Any(p =>
+            p.equipment?.Primary?.def?.defName == "EgoWeapon_NothingThere"
+            && p.apparel?.WornApparel?.Any(a => a.def.defName == "Apparel_NothingThereSuit") == true
+            && p.health?.hediffSet?.HasHediff(regenDef) == true))
+        {
+            throw new InvalidOperationException("Mimicry E.G.O weapon/suit or LC_MimicrySuitRegen did not survive save/load.");
+        }
+
+        GameComponent_LC gc = GameComponent_LC.Instance;
+        if (gc == null || !map.mapPawns.FreeColonistsSpawned.Any(p => p.equipment?.Primary != null && gc.IsWeaponBlessed(p.equipment.Primary)))
+        {
+            throw new InvalidOperationException("Blessed weapon state in GameComponent_LC did not survive save/load.");
         }
     }
 }

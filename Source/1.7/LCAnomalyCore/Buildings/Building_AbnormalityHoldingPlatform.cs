@@ -91,6 +91,14 @@ namespace LCAnomalyCore.Buildings
 
         private CompAbnormality cachedEntity;
 
+        private CompAbnormalityTool cachedTool;
+
+        /// <summary>获取当前收容平台内工具组件（若当前收容物为工具型异想体）。</summary>
+        public CompAbnormalityTool HeldToolComp => cachedTool ?? (HeldPawn?.GetComp<CompAbnormalityTool>());
+
+        /// <summary>指示当前平台内收容的是否为工具型异想体。</summary>
+        public bool IsHoldingTool => HeldToolComp != null;
+
         /// <summary>
         /// 缓存altitude
         /// </summary>
@@ -99,10 +107,28 @@ namespace LCAnomalyCore.Buildings
         /// <summary>
         /// 缓存名称贴图
         /// </summary>
-        protected Graphic CachedEntityNameGraphic => cachedEntityNameGraphic
-            ??= Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+        protected Graphic CachedEntityNameGraphic
+        {
+            get
+            {
+                if (cachedEntity == null)
+                    return null;
+
+                string lang = LanguageDatabase.activeLanguage?.ToString() ?? "English";
+                if (!entityNameGraphicResolved || cachedEntityNameLang != lang)
+                {
+                    cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, false);
+                    cachedEntityNameLang = lang;
+                    entityNameGraphicResolved = true;
+                }
+
+                return cachedEntityNameGraphic;
+            }
+        }
 
         private Graphic cachedEntityNameGraphic;
+        private bool entityNameGraphicResolved;
+        private string cachedEntityNameLang;
 
         private List<Graphic> cachedPeBoxBarGraphics = new List<Graphic>();
         private List<Graphic> cachedNeBoxBarGraphics = new List<Graphic>();
@@ -194,6 +220,19 @@ namespace LCAnomalyCore.Buildings
         /// <param name="mode"></param>
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
+            CompAbnormalityTool tool = HeldToolComp;
+            if (tool != null)
+            {
+                Map prevMap = Map;
+                IntVec3 prevPos = Position;
+                tool.OnLeftPlatform();
+                if (mode != DestroyMode.Vanish && prevMap != null)
+                {
+                    EjectContents();
+                    tool.RevertToEgg(prevMap, prevPos);
+                }
+            }
+
             base.DeSpawn(mode);
 
             innerContainer.OnContentsChanged -= OnContentChanged;
@@ -218,16 +257,75 @@ namespace LCAnomalyCore.Buildings
             Pawn heldPawn = this.HeldPawn;
             if (heldPawn != null)
             {
+                Vector3 pawnDrawPos = this.DrawPos + this.PawnDrawOffset;
+                CompAbnormalityHoldingPlatformTarget targetComp = heldPawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+                if (targetComp != null)
+                {
+                    pawnDrawPos += targetComp.Props.heldDrawOffset;
+                }
+
+                if (HeldToolComp != null && HeldToolComp.TryDrawHeldOverride(phase, pawnDrawPos))
+                {
+                    return;
+                }
+
                 Rot4 value = Rot4.South;
-                heldPawn.Drawer.renderer.DynamicDrawPhaseAt(phase, this.DrawPos + this.PawnDrawOffset, new Rot4?(value), true);
+                heldPawn.Drawer.renderer.DynamicDrawPhaseAt(phase, pawnDrawPos, new Rot4?(value), true);
             }
         }
+
+        private static readonly Color PlatformHeaderNameColor = new Color(1f, 1f, 161f / 255f);
 
         public override void DrawGUIOverlay()
         {
             base.DrawGUIOverlay();
             if (HeldPawn != null && CachedEntityNameGraphic == null)
-                GenMapUI.DrawThingLabel(this, HeldPawn.LabelCap);
+            {
+                DrawHeaderNameOverlay(HeldPawn.LabelCap);
+            }
+        }
+
+        private static Vector2 WorldToUIPoint(Vector3 worldPos)
+        {
+            Vector2 pt = Find.Camera.WorldToScreenPoint(worldPos) / Prefs.UIScale;
+            pt.y = Verse.UI.screenHeight - pt.y;
+            return pt;
+        }
+
+        private void DrawHeaderNameOverlay(string label)
+        {
+            if (label.NullOrEmpty() || Find.Camera == null)
+            {
+                return;
+            }
+
+            Vector3 drawCenter = this.DrawPos;
+            Vector2 topLeft = WorldToUIPoint(new Vector3(drawCenter.x - 0.48f, drawCenter.y, drawCenter.z + 1.28f));
+            Vector2 bottomRight = WorldToUIPoint(new Vector3(drawCenter.x + 0.78f, drawCenter.y, drawCenter.z + 1.06f));
+            float width = Mathf.Abs(bottomRight.x - topLeft.x);
+            float height = Mathf.Abs(bottomRight.y - topLeft.y);
+            if (width < 20f || height < 8f)
+            {
+                return;
+            }
+
+            Rect rect = new Rect(Mathf.Min(topLeft.x, bottomRight.x), Mathf.Min(topLeft.y, bottomRight.y), width, height);
+            GameFont oldFont = Text.Font;
+            TextAnchor oldAnchor = Text.Anchor;
+            Color oldColor = GUI.color;
+            try
+            {
+                Text.Font = height >= 24f ? GameFont.Medium : (height >= 15f ? GameFont.Small : GameFont.Tiny);
+                Text.Anchor = TextAnchor.MiddleCenter;
+                GUI.color = PlatformHeaderNameColor;
+                Widgets.LabelFit(rect, label);
+            }
+            finally
+            {
+                Text.Font = oldFont;
+                Text.Anchor = oldAnchor;
+                GUI.color = oldColor;
+            }
         }
 
         /// <summary>
@@ -244,39 +342,44 @@ namespace LCAnomalyCore.Buildings
 
             if (HeldPawn != null)
             {
-                #region 右下角可工作状态
+                bool isTool = IsHoldingTool;
 
-                //如果分配工作者，就显示自动图标，否则就显示是否可工作
-                if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
+                if (!isTool)
                 {
-                    CompWorkable?.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
-                }
-                else
-                {
-                    //工作状态更新
-                    if (CompWorkable != null && CompWorkable.UIAllowed)
+                    #region 右下角可工作状态
+
+                    //如果分配工作者，就显示自动图标，否则就显示是否可工作
+                    if (CompAssignable.AssignedPawns.Any() && CompWorkable.UIAllowed)
                     {
-                        var comp = HeldPawn.GetComp<CompAbnormalityStudiable>();
-                        if (comp != null)
+                        CompWorkable?.AutoWorkGraphic.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                    }
+                    else
+                    {
+                        //工作状态更新
+                        if (CompWorkable != null && CompWorkable.UIAllowed)
                         {
-                            var studiable = !(comp.TicksTilNextStudy > 0);
-                            var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
-                            graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                            var comp = HeldPawn.GetComp<CompAbnormalityStudiable>();
+                            if (comp != null)
+                            {
+                                var studiable = !(comp.TicksTilNextStudy > 0);
+                                var graphic = studiable ? CompWorkable.AllowWorkGraphic : CompWorkable.NotAllowWorkGraphic;
+                                graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                            }
                         }
                     }
+
+                    #endregion 右下角可工作状态
+
+                    #region 左下角工作类型
+
+                    if (cachedEntity != null)
+                    {
+                        var graphic = Util.GraphicUtil.WorkTypePlatformTopGraphic_Get(CurWorkType);
+                        graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
+                    }
+
+                    #endregion 左下角工作类型
                 }
-
-                #endregion 右下角可工作状态
-
-                #region 左下角工作类型
-
-                if (cachedEntity != null)
-                {
-                    var graphic = Util.GraphicUtil.WorkTypePlatformTopGraphic_Get(CurWorkType);
-                    graphic?.Draw(drawPosUpperCached, base.Rotation, this, 0f);
-                }
-
-                #endregion 左下角工作类型
 
                 #region 逆卡巴拉计数器
 
@@ -301,13 +404,16 @@ namespace LCAnomalyCore.Buildings
 
                 #endregion 逆卡巴拉计数器
 
-                #region Pebox计数器
+                if (!isTool)
+                {
+                    #region Pebox计数器
 
-                var list = GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic(PeBoxCounter);
-                foreach (var graphic in list)
-                    graphic?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
+                    var list = GraphicUtil.IndiPeBoxIndicator_GetCachedTopGraphic(PeBoxCounter);
+                    foreach (var graphic in list)
+                        graphic?.Draw(this.DrawPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
-                #endregion Pebox计数器
+                    #endregion Pebox计数器
+                }
 
                 #region 平台上的异常名字UI
 
@@ -329,31 +435,41 @@ namespace LCAnomalyCore.Buildings
 
                 #endregion 分类等级UI
 
-                #region 左侧Box条
-
-                if (EntityCached)
+                if (!isTool)
                 {
-                    //NE-BOX
-                    if (cachedNeBoxBarGraphics != null && cachedNeBoxBarGraphics.Count > 0)
+                    #region 左侧Box条
+
+                    if (EntityCached)
                     {
-                        for (int i = 0; i < cachedNeBoxBarGraphics.Count; i++)
+                        //NE-BOX
+                        if (cachedNeBoxBarGraphics != null && cachedNeBoxBarGraphics.Count > 0)
                         {
-                            cachedNeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.back * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                            for (int i = 0; i < cachedNeBoxBarGraphics.Count; i++)
+                            {
+                                cachedNeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.back * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                            }
+                        }
+
+                        //PE-BOX
+                        if (cachedPeBoxBarGraphics != null && cachedPeBoxBarGraphics.Count > 0)
+                        {
+                            for (int i = 0; i < cachedPeBoxBarGraphics.Count; i++)
+                            {
+                                cachedPeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.forward * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
+                            }
                         }
                     }
 
-                    //PE-BOX
-                    if (cachedPeBoxBarGraphics != null && cachedPeBoxBarGraphics.Count > 0)
-                    {
-                        for (int i = 0; i < cachedPeBoxBarGraphics.Count; i++)
-                        {
-                            cachedPeBoxBarGraphics[i].Draw(drawPosUpperCached + Vector3.forward * cachedEntity.PeBoxComp.Props.boxTexOffsetZ * i, base.Rotation, this, 0f);
-                        }
-                    }
+                    #endregion 左侧Box条
                 }
-
-                #endregion 左侧Box条
             }
+        }
+
+        /// <inheritdoc />
+        public override void DrawExtraSelectionOverlays()
+        {
+            base.DrawExtraSelectionOverlays();
+            HeldToolComp?.DrawExtraSelectionOverlaysForPlatform(this);
         }
 
         /// <summary>
@@ -424,14 +540,23 @@ namespace LCAnomalyCore.Buildings
         /// </summary>
         protected void Init()
         {
+            cachedEntityNameGraphic = null;
+            entityNameGraphicResolved = false;
+            cachedEntityNameLang = null;
+
             if (HeldPawn == null)
+            {
+                cachedEntity = null;
+                compAbnormalityStudiable = null;
+                cachedTool = null;
+                cachedPeBoxBarGraphics.Clear();
+                cachedNeBoxBarGraphics.Clear();
                 return;
+            }
 
-            var entity = HeldPawn.GetComp<CompAbnormality>();
-            cachedEntity = entity ?? null;
-
-            var studiable = HeldPawn.GetComp<CompAbnormalityStudiable>();
-            compAbnormalityStudiable = studiable ?? null;
+            cachedEntity = HeldPawn.GetComp<CompAbnormality>();
+            compAbnormalityStudiable = HeldPawn.GetComp<CompAbnormalityStudiable>();
+            cachedTool = HeldPawn.GetComp<CompAbnormalityTool>();
         }
 
         /// <summary>
@@ -453,8 +578,14 @@ namespace LCAnomalyCore.Buildings
         /// </summary>
         protected void EntityNameUpdateForce()
         {
+            entityNameGraphicResolved = false;
+            cachedEntityNameGraphic = null;
             if (EntityCached)
+            {
                 cachedEntityNameGraphic = Util.GraphicUtil.EntityNamePlatformTopGraphic_Get(cachedEntity.parent.def.defName, true);
+                cachedEntityNameLang = LanguageDatabase.activeLanguage?.ToString() ?? "English";
+                entityNameGraphicResolved = true;
+            }
             //Log.Warning("Building_HoldingPlatform：检测到容器内异想体变化，强制更新名称贴图");
         }
 
@@ -473,7 +604,14 @@ namespace LCAnomalyCore.Buildings
                 yield return gizmo;
             }
 
-            if (CompWorkable != null)
+            if (IsHoldingTool)
+            {
+                foreach (Gizmo toolGizmo in HeldToolComp.GetPlatformGizmos())
+                {
+                    yield return toolGizmo;
+                }
+            }
+            else if (CompWorkable != null)
             {
                 yield return new Command_Toggle
                 {
@@ -505,6 +643,25 @@ namespace LCAnomalyCore.Buildings
 
                 yield return command_Action;
             }
+
+            yield return Util.Gizmos.Get_EntityCodex(HeldPawn);
+        }
+
+        /// <inheritdoc />
+        public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Pawn selPawn)
+        {
+            foreach (FloatMenuOption opt in base.GetFloatMenuOptions(selPawn))
+            {
+                yield return opt;
+            }
+
+            if (IsHoldingTool)
+            {
+                foreach (FloatMenuOption toolOpt in HeldToolComp.CompFloatMenuOptions(selPawn))
+                {
+                    yield return toolOpt;
+                }
+            }
         }
 
         /// <inheritdoc />
@@ -524,6 +681,15 @@ namespace LCAnomalyCore.Buildings
                 }
 
                 inspectTextSB.Append(ts.Colorize(flag ? Color.white : ColorLibrary.RedReadable));
+
+                if (IsHoldingTool)
+                {
+                    string toolInspect = HeldToolComp.CompInspectStringExtra();
+                    if (!toolInspect.NullOrEmpty())
+                    {
+                        inspectTextSB.Append("\n").Append(toolInspect);
+                    }
+                }
             }
             else
             {

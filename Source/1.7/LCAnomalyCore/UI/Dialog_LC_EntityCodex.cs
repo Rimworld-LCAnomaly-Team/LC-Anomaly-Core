@@ -1,4 +1,7 @@
+using LCAnomalyCore.Comp;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.GameComponent;
+using LCAnomalyCore.Util;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -75,7 +78,19 @@ namespace LCAnomalyCore.UI
                 value.SortBy((AbnormalityCodexEntryDef e) => e.orderInCategory, (AbnormalityCodexEntryDef e) => e.label);
             }
 
-            this.selectedEntry = selectedEntry ?? DefDatabase<AbnormalityCodexEntryDef>.AllDefs.OrderBy((AbnormalityCodexEntryDef x) => x.label).FirstOrDefault((Defs.AbnormalityCodexEntryDef x) => x.Discovered);
+            this.selectedEntry = selectedEntry
+                ?? DefDatabase<AbnormalityCodexEntryDef>.AllDefs
+                    .Where(x => x.Visible)
+                    .OrderBy(x => x.category?.listOrder ?? int.MaxValue)
+                    .ThenBy(x => x.orderInCategory)
+                    .ThenBy(x => x.label)
+                    .FirstOrDefault(x => x.Discovered)
+                ?? DefDatabase<AbnormalityCodexEntryDef>.AllDefs
+                    .Where(x => x.Visible)
+                    .OrderBy(x => x.category?.listOrder ?? int.MaxValue)
+                    .ThenBy(x => x.orderInCategory)
+                    .ThenBy(x => x.label)
+                    .FirstOrDefault();
         }
 
         /// <inheritdoc />
@@ -116,85 +131,263 @@ namespace LCAnomalyCore.UI
                 using (new TextBlock(GameFont.Medium))
                 {
                     Widgets.Label(new Rect(0f, num, viewRect.width, 30f), flag ? selectedEntry.LabelCap : "LC_UndiscoveredEntity".Translate());
-                    num += 40f;
+                    num += 36f;
+                }
+
+                if (flag && selectedEntry.category != null)
+                {
+                    using (new TextBlock(GameFont.Tiny, ColoredText.SubtleGrayColor))
+                    {
+                        Widgets.Label(new Rect(0f, num, viewRect.width, 20f), selectedEntry.category.LabelCap);
+                        num += 22f;
+                    }
                 }
 
                 using (new TextBlock(newWordWrap: true))
                 {
-                    string text = (flag ? selectedEntry.description : ((string)"LC_UndiscoveredEntityDesc".Translate()));
+                    string text = flag ? selectedEntry.description : ((string)"LC_UndiscoveredEntityDesc".Translate());
                     float num2 = Text.CalcHeight(text, viewRect.width);
                     Widgets.Label(new Rect(0f, num, viewRect.width, num2), text);
-                    num += num2 + 10f;
+                    num += num2 + 12f;
                 }
 
-                //if (flag)
-                //{
-                //    //if (selectedEntry.linkedThings.Count > 0)
-                //    //{
-                //    //    foreach (ThingDef linkedThing in selectedEntry.linkedThings)
-                //    //    {
-                //    //        Rect rect = new Rect(0f, num, viewRect.width, Text.LineHeight);
-                //    //        if (devShowAll || Find.EntityCodex.Discovered(linkedThing))
-                //    //        {
-                //    //            Widgets.HyperlinkWithIcon(rect, new Dialog_InfoCard.Hyperlink(linkedThing));
-                //    //        }
-                //    //        else
-                //    //        {
-                //    //            rect.xMin += rect.height;
-                //    //            using (new TextBlock(ColoredText.SubtleGrayColor))
-                //    //            {
-                //    //                Widgets.Label(rect, "Undiscovered".Translate());
-                //    //            }
-                //    //        }
+                if (flag)
+                {
+                    ThingDef primaryDef = AbnormalityUtility.ResolvePrimaryAbnormalityDef(selectedEntry);
+                    AnomalyStatusSaved saved = default;
+                    bool hasSaved = primaryDef != null && Components.LC != null;
+                    if (hasSaved)
+                    {
+                        Components.LC.TryGetAnomalyStatusSaved(primaryDef, out saved);
+                    }
 
-                //    //        num += rect.height;
-                //    //    }
+                    num = DrawManagementSummary(viewRect.width, num, primaryDef, hasSaved, saved);
+                    num = DrawLinkedEntries(viewRect.width, num, primaryDef);
+                    num = DrawResearchUnlocks(viewRect.width, num);
+                    num = DrawStudyNotes(viewRect.width, num, primaryDef, hasSaved ? saved.StudyProgress : 0);
+                }
+                else if (Prefs.DevMode && DebugSettings.godMode)
+                {
+                    if (Widgets.ButtonText(new Rect(0f, num, viewRect.width, ButSize.y), "DEV: Discover"))
+                    {
+                        selectedEntry.Discovered = true;
+                        SoundDefOf.Tick_High.PlayOneShotOnCamera();
+                    }
 
-                //    //    num += 10f;
-                //    //}
-
-                //    //if (selectedEntry.discoveredResearchProjects.Count > 0)
-                //    //{
-                //    //    Widgets.Label(new Rect(0f, num, viewRect.width, Text.LineHeight), "LC_ResearchUnlocks".Translate() + ":");
-                //    //    num += Text.LineHeight;
-                //    //    foreach (ResearchProjectDef discoveredResearchProject in selectedEntry.discoveredResearchProjects)
-                //    //    {
-                //    //        Rect rect2 = new Rect(0f, num, viewRect.width, Text.LineHeight);
-                //    //        if (Widgets.ButtonText(rect2, "ViewHyperlink".Translate(discoveredResearchProject.LabelCap), drawBackground: false))
-                //    //        {
-                //    //            Close();
-                //    //            Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
-                //    //            ((MainTabWindow_Research)MainButtonDefOf.Research.TabWindow).Select(discoveredResearchProject);
-                //    //        }
-
-                //    //        num += rect2.height;
-                //    //    }
-                //    //}
-                //}
-                //else if (Prefs.DevMode && DebugSettings.godMode)
-                //{
-                //    if (Widgets.ButtonText(new Rect(0f, num, viewRect.width, ButSize.y), "DEV: Discover"))
-                //    {
-                //        if (!selectedEntry.linkedThings.NullOrEmpty())
-                //        {
-                //            for (int i = 0; i < selectedEntry.linkedThings.Count; i++)
-                //            {
-                //                Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry, selectedEntry.linkedThings[i]);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            Find.EntityCodex.SetDiscovered((AbnormalityCodexEntryDef)selectedEntry);
-                //        }
-                //    }
-
-                //    num += ButSize.y;
-                //}
+                    num += ButSize.y + 8f;
+                }
 
                 leftScrollHeight = num;
             }
 
             Widgets.EndScrollView();
+        }
+
+        private float DrawManagementSummary(float width, float y, ThingDef primaryDef, bool hasSaved, AnomalyStatusSaved saved)
+        {
+            var studyProps = primaryDef?.GetCompProperties<CompProperties_AbnormalityStudyUnlocks>();
+            var egoProps = primaryDef?.GetCompProperties<CompProperties_EgoExtractable>();
+            bool hasPeBox = hasSaved && primaryDef != null && primaryDef.HasComp(typeof(CompPeBoxProduce));
+            if (!hasPeBox && studyProps == null && egoProps == null)
+            {
+                return y;
+            }
+
+            DrawSectionHeader(width, ref y, "LC_Codex_ManagementSummary".Translate());
+
+            if (studyProps != null)
+            {
+                int maxNotes = studyProps.studyNotes?.Count ?? 0;
+                int progress = hasSaved ? Mathf.Min(saved.StudyProgress, maxNotes) : 0;
+                DrawSummaryLine(width, ref y, "LC_Codex_ObservationLevel".Translate($"{progress} / {maxNotes}"));
+            }
+
+            if (hasPeBox)
+            {
+                DrawSummaryLine(width, ref y, "LC_Codex_IndiPeBox".Translate(saved.IndiPeBoxAmount));
+            }
+
+            if (egoProps != null)
+            {
+                if (egoProps.weaponExtracted != null)
+                {
+                    int extracted = hasSaved ? saved.ExtractedEgoWeaponAmount : 0;
+                    DrawSummaryLine(width, ref y, "LC_Codex_ExtractedWeapon".Translate($"{extracted} / {egoProps.amountMaxWeapon}"));
+                }
+                if (egoProps.armorExtracted != null)
+                {
+                    int extracted = hasSaved ? saved.ExtractedEgoArmorAmount : 0;
+                    DrawSummaryLine(width, ref y, "LC_Codex_ExtractedArmor".Translate($"{extracted} / {egoProps.amountMaxArmor}"));
+                }
+            }
+
+            return y + 10f;
+        }
+
+        private float DrawLinkedEntries(float width, float y, ThingDef primaryDef)
+        {
+            List<ThingDef> linked = CollectLinkedThings(primaryDef);
+            if (linked.Count == 0)
+            {
+                return y;
+            }
+
+            DrawSectionHeader(width, ref y, "LC_Codex_LinkedEntries".Translate());
+            foreach (ThingDef thingDef in linked)
+            {
+                Rect row = new Rect(0f, y, width, Text.LineHeight);
+                Widgets.HyperlinkWithIcon(row, new Dialog_InfoCard.Hyperlink(thingDef));
+                y += row.height + 2f;
+            }
+
+            return y + 10f;
+        }
+
+        private List<ThingDef> CollectLinkedThings(ThingDef primaryDef)
+        {
+            List<ThingDef> results = new List<ThingDef>();
+            if (selectedEntry.linkedThings != null)
+            {
+                foreach (ThingDef t in selectedEntry.linkedThings)
+                {
+                    if (t != null && !results.Contains(t))
+                    {
+                        results.Add(t);
+                    }
+                }
+            }
+
+            if (primaryDef != null)
+            {
+                var egoProps = primaryDef.GetCompProperties<CompProperties_EgoExtractable>();
+                if (egoProps != null)
+                {
+                    if (egoProps.weaponExtracted != null && !results.Contains(egoProps.weaponExtracted))
+                    {
+                        results.Add(egoProps.weaponExtracted);
+                    }
+                    if (egoProps.armorExtracted != null && !results.Contains(egoProps.armorExtracted))
+                    {
+                        results.Add(egoProps.armorExtracted);
+                    }
+                }
+
+                var accProps = primaryDef.GetCompProperties<CompProperties_Accessoryable>();
+                if (accProps?.accessoryDef != null && !results.Contains(accProps.accessoryDef))
+                {
+                    results.Add(accProps.accessoryDef);
+                }
+            }
+
+            return results;
+        }
+
+        private float DrawResearchUnlocks(float width, float y)
+        {
+            if (selectedEntry.discoveredResearchProjects.NullOrEmpty())
+            {
+                return y;
+            }
+
+            bool anyValid = selectedEntry.discoveredResearchProjects.Any(p => p != null);
+            if (!anyValid)
+            {
+                return y;
+            }
+
+            DrawSectionHeader(width, ref y, "LC_ResearchUnlocks".Translate());
+            foreach (ResearchProjectDef project in selectedEntry.discoveredResearchProjects)
+            {
+                if (project == null)
+                {
+                    continue;
+                }
+
+                Rect row = new Rect(0f, y, width, Text.LineHeight);
+                if (Widgets.ButtonText(row, "ViewHyperlink".Translate(project.LabelCap), drawBackground: false))
+                {
+                    Close();
+                    Find.MainTabsRoot.SetCurrentTab(MainButtonDefOf.Research);
+                    if (MainButtonDefOf.Research.TabWindow is MainTabWindow_Research researchWindow)
+                    {
+                        researchWindow.Select(project);
+                    }
+                }
+                y += row.height + 2f;
+            }
+
+            return y + 10f;
+        }
+
+        private float DrawStudyNotes(float width, float y, ThingDef primaryDef, int savedProgress)
+        {
+            var studyProps = primaryDef?.GetCompProperties<CompProperties_AbnormalityStudyUnlocks>();
+            if (studyProps == null || studyProps.studyNotes.NullOrEmpty())
+            {
+                return y;
+            }
+
+            DrawSectionHeader(width, ref y, "LC_Codex_StudyNotes".Translate());
+            int visibleCount = devShowAll
+                ? studyProps.studyNotes.Count
+                : Mathf.Clamp(savedProgress, 0, studyProps.studyNotes.Count);
+
+            if (visibleCount <= 0)
+            {
+                using (new TextBlock(ColoredText.SubtleGrayColor))
+                {
+                    string emptyText = "LC_Codex_NoStudyNotes".Translate();
+                    float h = Text.CalcHeight(emptyText, width);
+                    Widgets.Label(new Rect(0f, y, width, h), emptyText);
+                    y += h + 6f;
+                }
+                return y;
+            }
+
+            for (int i = 0; i < visibleCount; i++)
+            {
+                StudyNote note = studyProps.studyNotes[i];
+                if (note == null)
+                {
+                    continue;
+                }
+
+                string noteLabel = note.label ?? string.Empty;
+                using (new TextBlock(GameFont.Small, ColoredText.TipSectionTitleColor))
+                {
+                    float lh = Text.CalcHeight(noteLabel, width);
+                    Widgets.Label(new Rect(0f, y, width, lh), noteLabel);
+                    y += lh + 2f;
+                }
+
+                string noteText = note.text ?? string.Empty;
+                using (new TextBlock(newWordWrap: true))
+                {
+                    float th = Text.CalcHeight(noteText, width);
+                    Widgets.Label(new Rect(0f, y, width, th), noteText);
+                    y += th + 10f;
+                }
+            }
+
+            return y;
+        }
+
+        private static void DrawSectionHeader(float width, ref float y, string label)
+        {
+            using (new TextBlock(GameFont.Small, ColoredText.TipSectionTitleColor))
+            {
+                Widgets.Label(new Rect(0f, y, width, Text.LineHeight), label);
+            }
+            y += Text.LineHeight;
+            Widgets.DrawLineHorizontal(0f, y, width);
+            y += 6f;
+        }
+
+        private static void DrawSummaryLine(float width, ref float y, string text)
+        {
+            float h = Text.CalcHeight(text, width);
+            Widgets.Label(new Rect(0f, y, width, h), text);
+            y += h + 2f;
         }
 
         private void RightRect(Rect rect)

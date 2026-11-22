@@ -13,4 +13,13 @@
   <LC_EntityCodexTip.WAW>These are high risk and carry devastating force.\nMost will be hostile toward employees, and the death toll could reach into the dozens.</LC_EntityCodexTip.WAW>
   <LC_EntityCodexTip.ALEPH>The most dangerous. You should devote as much concentration and attention as possible to this Risk Level.\nYou’ll be thankful if the Abnormality is suppressed without ravaging entire departments.</LC_EntityCodexTip.ALEPH>
 
+  <LC_Codex_ManagementSummary>Management Dossier</LC_Codex_ManagementSummary>
+  <LC_Codex_ObservationLevel>Observation Level: {0}</LC_Codex_ObservationLevel>
+  <LC_Codex_IndiPeBox>Individual PE-Boxes: {0}</LC_Codex_IndiPeBox>
+  <LC_Codex_ExtractedWeapon>Extracted E.G.O Weapons: {0}</LC_Codex_ExtractedWeapon>
+  <LC_Codex_ExtractedArmor>Extracted E.G.O Suits: {0}</LC_Codex_ExtractedArmor>
+  <LC_Codex_LinkedEntries>Linked Entries &amp; E.G.O</LC_Codex_LinkedEntries>
+  <LC_Codex_StudyNotes>Observation Logs</LC_Codex_StudyNotes>
+  <LC_Codex_NoStudyNotes>No observation logs unlocked yet. Conduct work on a containment platform to reveal details.</LC_Codex_NoStudyNotes>
+
 </LanguageData>

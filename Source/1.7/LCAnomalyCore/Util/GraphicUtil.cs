@@ -181,26 +181,34 @@ namespace LCAnomalyCore.Util
 
         #region 收容平台实体名字显示
 
-        private static Graphic CachedTopGraphic_EntityNamePlatformTop;
+        private static readonly Dictionary<string, Graphic> CachedTopGraphics_EntityNamePlatformTop = new Dictionary<string, Graphic>();
 
         /// <summary>执行 <c>EntityNamePlatformTopGraphic_Get</c> 定义的操作。</summary>
         public static Graphic EntityNamePlatformTopGraphic_Get(string loc, bool forced = false)
         {
-            //初始化
-            if (CachedTopGraphic_EntityNamePlatformTop == null || forced)
-            {
-                string path = "UI/HoldingPlatform/" + loc + "_" + LanguageDatabase.activeLanguage;
-                if (ContentFinder<Texture2D>.Get(path, false) == null)
-                    path = "UI/HoldingPlatform/" + loc + "_English";
-                if (ContentFinder<Texture2D>.Get(path, false) == null)
-                    return null; // The holding platform draws the localized pawn label instead.
-                CachedTopGraphic_EntityNamePlatformTop = GraphicDatabase.Get<Graphic_Single>(path,
-                    ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+            if (loc.NullOrEmpty())
+                return null;
 
-                LogUtil.Message("EntityNamePlatformTex initialized");
+            string lang = LanguageDatabase.activeLanguage?.ToString() ?? "English";
+            string key = loc + "|" + lang;
+            if (!forced && CachedTopGraphics_EntityNamePlatformTop.TryGetValue(key, out Graphic cached))
+                return cached;
+
+            string path = "UI/HoldingPlatform/" + loc + "_" + lang;
+            if (ContentFinder<Texture2D>.Get(path, false) == null)
+                path = "UI/HoldingPlatform/" + loc + "_English";
+            if (ContentFinder<Texture2D>.Get(path, false) == null)
+            {
+                CachedTopGraphics_EntityNamePlatformTop[key] = null;
+                return null; // The holding platform draws the localized pawn label instead.
             }
 
-            return CachedTopGraphic_EntityNamePlatformTop;
+            Graphic graphic = GraphicDatabase.Get<Graphic_Single>(path,
+                ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white);
+            CachedTopGraphics_EntityNamePlatformTop[key] = graphic;
+
+            LogUtil.Message("EntityNamePlatformTex initialized: " + key);
+            return graphic;
         }
 
         #endregion 收容平台实体名字显示
@@ -307,10 +315,15 @@ namespace LCAnomalyCore.Util
                 CachedTopGraphicDict_BoxBarUnit_NE.Add(24, GraphicDatabase.Get<Graphic_Single>(baseLoc + "NEBOX_24", ShaderDatabase.Transparent, drawSizeOfHoldingPlatform, Color.white));
             }
 
-            if (BoxType == "PE")
-                return CachedTopGraphicDict_BoxBarUnit_PE[maxNum];
-            else
-                return CachedTopGraphicDict_BoxBarUnit_NE[maxNum];
+            Dictionary<int, Graphic> dict = BoxType == "PE"
+                ? CachedTopGraphicDict_BoxBarUnit_PE
+                : CachedTopGraphicDict_BoxBarUnit_NE;
+
+            if (dict.TryGetValue(maxNum, out Graphic exact))
+                return exact;
+
+            int fallbackTier = maxNum <= 10 ? 10 : (maxNum <= 14 ? 14 : (maxNum <= 16 ? 16 : 24));
+            return dict[fallbackTier];
         }
 
         #endregion 收容平台Box显示

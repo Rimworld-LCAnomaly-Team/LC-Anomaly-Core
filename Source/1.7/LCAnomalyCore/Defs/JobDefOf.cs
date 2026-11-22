@@ -13,5 +13,8 @@ namespace LCAnomalyCore.Defs
         /// <summary>表示 <c>CarryToAbnormalityHolder</c>。</summary>
         public static JobDef CarryToAbnormalityHolder;
 
+        /// <summary>表示 <c>LC_UseAbnormalityTool</c>。</summary>
+        public static JobDef LC_UseAbnormalityTool;
+
     }
 }

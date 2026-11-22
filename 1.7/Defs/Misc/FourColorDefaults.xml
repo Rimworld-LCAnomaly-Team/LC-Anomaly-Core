@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <LCAnomalyCore.Defs.FourColorDefaultsDef>
+    <defName>LC_FourColorDefaults</defName>
+    <label>Default four-color compatibility table</label>
+    <description>Provides default four-color damage resistances and equivalent risk levels for vanilla, DLC, and modded races and combat armors without requiring any DLC.</description>
+    <enabled>true</enabled>
+
+    <raceCategories>
+      <li>
+        <category>Humanlike</category>
+        <targetKind>Default</targetKind>
+        <red>1.0</red>
+        <white>1.0</white>
+        <black>1.0</black>
+        <pale>1.0</pale>
+      </li>
+      <li>
+        <category>Animal</category>
+        <targetKind>Default</targetKind>
+        <red>1.0</red>
+        <white>1.0</white>
+        <black>1.0</black>
+        <pale>1.0</pale>
+      </li>
+      <li>
+        <category>Mechanoid</category>
+        <targetKind>Abnormality</targetKind>
+        <red>0.9</red>
+        <white>0.8</white>
+        <black>1.0</black>
+        <pale>1.0</pale>
+      </li>
+      <li>
+        <category>Insect</category>
+        <targetKind>Default</targetKind>
+        <red>1.0</red>
+        <white>0.9</white>
+        <black>1.0</black>
+        <pale>1.0</pale>
+      </li>
+    </raceCategories>
+
+    <apparelEntries>
+      <!-- TETH combat armors & helmets -->
+      <li><thingDef>Apparel_PlateArmor</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_FlakVest</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_FlakJacket</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_FlakPants</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_SimpleHelmet</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_AdvancedHelmet</thingDef><riskLevel>TETH</riskLevel><red>0.9</red><white>1.2</white><black>1.2</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_PsychicFoilHelmet</thingDef><riskLevel>TETH</riskLevel><red>1.2</red><white>0.75</white><black>1.1</black><pale>2.0</pale></li>
+      <li><thingDef>Apparel_CultistMask</thingDef><riskLevel>TETH</riskLevel><red>1.0</red><white>0.95</white><black>1.05</black><pale>1.9</pale></li>
+      <li><thingDef>Apparel_CeremonialCultistMask</thingDef><riskLevel>TETH</riskLevel><red>1.0</red><white>0.95</white><black>1.05</black><pale>1.9</pale></li>
+
+      <!-- HE spacer/recon/marine/psyfocus armors -->
+      <li><thingDef>Apparel_ArmorRecon</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetRecon</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_ArmorLocust</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_Vacsuit</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_VacsuitChildren</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_VacsuitHelmet</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>1.1</white><black>1.1</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_PowerArmor</thingDef><riskLevel>HE</riskLevel><red>0.8</red><white>1.05</white><black>1.05</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_PowerArmorHelmet</thingDef><riskLevel>HE</riskLevel><red>0.8</red><white>1.05</white><black>1.05</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_ArmorMarineGrenadier</thingDef><riskLevel>HE</riskLevel><red>0.8</red><white>1.05</white><black>1.05</black><pale>1.8</pale></li>
+      <li><thingDef>Apparel_PsyfocusShirt</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_PsyfocusVest</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_PsyfocusRobe</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_PsyfocusHelmet</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_EltexSkullcap</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_ArmorReconPrestige</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetReconPrestige</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_ArmorMarinePrestige</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+      <li><thingDef>Apparel_ArmorMarineHelmetPrestige</thingDef><riskLevel>HE</riskLevel><red>0.85</red><white>0.85</white><black>0.95</black><pale>1.7</pale></li>
+
+      <!-- WAW cataphract & mechlord armors -->
+      <li><thingDef>Apparel_ArmorCataphract</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetCataphract</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_ArmorCataphractPhoenix</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_MechlordSuit</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetMechlordHelmet</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetMechCommander</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>1.0</white><black>1.0</black><pale>1.6</pale></li>
+      <li><thingDef>Apparel_ArmorCataphractPrestige</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>0.85</white><black>0.9</black><pale>1.5</pale></li>
+      <li><thingDef>Apparel_ArmorHelmetCataphractPrestige</thingDef><riskLevel>WAW</riskLevel><red>0.75</red><white>0.85</white><black>0.9</black><pale>1.5</pale></li>
+    </apparelEntries>
+  </LCAnomalyCore.Defs.FourColorDefaultsDef>
+</Defs>

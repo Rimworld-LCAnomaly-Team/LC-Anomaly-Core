@@ -41,6 +41,13 @@ if (-not $languageNode) {
     $prefs.DocumentElement.AppendChild($languageNode) | Out-Null
 }
 $languageNode.InnerText = if ($Language -eq 'ChineseSimplified') { 'ChineseSimplified (简体中文)' } else { $Language }
+# RimWorld 1.7.5014 Waylith pauses hidden windows unless runInBackground is true.
+$runInBgNode = $prefs.SelectSingleNode('/PrefsData/runInBackground')
+if (-not $runInBgNode) {
+    $runInBgNode = $prefs.CreateElement('runInBackground')
+    $prefs.DocumentElement.AppendChild($runInBgNode) | Out-Null
+}
+$runInBgNode.InnerText = 'True'
 $prefs.Save($prefsPath)
 $previousEnabled = $env:LC17_RUNTIME_TEST
 $previousMode = $env:LC17_TEST_MODE

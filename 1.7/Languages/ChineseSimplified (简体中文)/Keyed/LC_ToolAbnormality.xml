@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_Tool_UseFloatMenu>使用 {0}</LC_Tool_UseFloatMenu>
+  <LC_Tool_UseGizmoLabel>使用工具...</LC_Tool_UseGizmoLabel>
+  <LC_Tool_UseGizmoDesc>指派一名殖民者前往使用 {0}。</LC_Tool_UseGizmoDesc>
+  <LC_Tool_NoEligibleUser>没有符合条件的殖民者</LC_Tool_NoEligibleUser>
+  <LC_Tool_OnCooldown>冷却中（{0}）</LC_Tool_OnCooldown>
+  <LC_Tool_InsufficientStat>员工属性等级不足</LC_Tool_InsufficientStat>
+  <LC_Tool_InspectUses>累计使用次数：{0}</LC_Tool_InspectUses>
+  <LC_Tool_InspectDuration>累计使用时长：{0} 秒</LC_Tool_InspectDuration>
+  <LC_Tool_InspectProgress>观察笔记进度：{0} / {1}</LC_Tool_InspectProgress>
+  <LC_Tool_InspectCooldown>剩余冷却：{0}</LC_Tool_InspectCooldown>
+  <LC_Tool_StopGizmoLabel>停止使用</LC_Tool_StopGizmoLabel>
+  <LC_Tool_StopGizmoDesc>中断 {0} 对该工具型异想体的持续使用。</LC_Tool_StopGizmoDesc>
+  <LC_Tool_InUse>正被 {0} 使用</LC_Tool_InUse>
+  <LC_Tool_InspectActiveUser>当前使用者：{0}（{1} 秒）</LC_Tool_InspectActiveUser>
+  <LC_Tool_RevertToEggLabel>收回为蛋</LC_Tool_RevertToEggLabel>
+  <LC_Tool_RevertToEggDesc>将 {0} 从收容平台上解除收容，并安全还原为异想体蛋以便搬运或存放。</LC_Tool_RevertToEggDesc>
+</LanguageData>

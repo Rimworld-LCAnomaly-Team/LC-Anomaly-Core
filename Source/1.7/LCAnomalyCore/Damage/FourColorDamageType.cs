@@ -40,4 +40,21 @@ namespace LCAnomalyCore.Damage
         /// <summary>表示 <c>Abnormality</c>。</summary>
         Abnormality
     }
+
+    /// <summary>四色伤害实际命中目标时显示的抗性等级分类。</summary>
+    public enum FourColorResistanceTier
+    {
+        /// <summary>普通 (1.0x)</summary>
+        Normal,
+        /// <summary>免疫 (0.0x)</summary>
+        Immune,
+        /// <summary>抗性 (0.01x ~ 0.49x)</summary>
+        Resist,
+        /// <summary>耐受 (0.50x ~ 0.99x)</summary>
+        Endure,
+        /// <summary>弱点 (1.01x ~ 1.99x)</summary>
+        Weak,
+        /// <summary>致命 (>= 2.00x)</summary>
+        Fatal
+    }
 }

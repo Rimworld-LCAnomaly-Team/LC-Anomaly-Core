@@ -4,8 +4,8 @@
   <!-- ExtractRituals -->
   <ResearchProjectDef>
     <defName>ExtractAbnormalityRiturals</defName>
-    <label>Extract abnormality Riturals</label>
-    <description>Extract abnormality from the Well.</description>
+    <label>Extract Abnormality Rituals</label>
+    <description>Research protocols for drawing Abnormality archetypes from the Well into containment-ready eggs and tools.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -13,14 +13,13 @@
     <researchViewY>1.80</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->Extract Abnormalities</li>
+        <li>subject->Abnormality extraction</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->studied how subconscious archetypes are drawn out from the Well</li>
+        <li>subject_story->calibrated extraction procedures to manifest dormant Abnormalities safely</li>
+        <li>subject_story->cataloged early containment intake protocols for newly extracted entities</li>
 
-        <li>subject_gerund->Now Extracting Abnormalities</li>
+        <li>subject_gerund->researching Abnormality extraction rituals</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -29,7 +28,7 @@
   <ResearchProjectDef>
     <defName>CogitoUsages</defName>
     <label>Cogito Usages</label>
-    <description>Carry out a research into the usage of cogito.</description>
+    <description>Investigate how raw Cogito interacts with living minds to awaken dormant Abnormalities and synthesize containment materials.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -37,12 +36,12 @@
     <researchViewY>1.20</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->Cogito Usages</li>
+        <li>subject->Cogito applications</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->analyzed the properties of Cogito drawn from the Well's depths</li>
+        <li>subject_story->documented safe handling procedures for Cogito extraction and injection</li>
 
-        <li>subject_gerund->Now learning how to use cogito.</li>
+        <li>subject_gerund->researching Cogito applications</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -51,7 +50,7 @@
   <ResearchProjectDef>
     <defName>ExtractEnkephalin</defName>
     <label>Extract Enkephalin</label>
-    <description>Extract Enkephalin from Anomalies.</description>
+    <description>Develop methods to harvest PE-Boxes and refine Enkephalin produced during Abnormality containment work.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -59,12 +58,12 @@
     <researchViewY>0.60</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->Extract Enkephalin</li>
+        <li>subject->Enkephalin extraction</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->refined techniques to capture PE-Boxes generated during entity work</li>
+        <li>subject_story->measured how different work types affect Enkephalin yield</li>
 
-        <li>subject_gerund->Now Extracting Enkephalin</li>
+        <li>subject_gerund->researching Enkephalin extraction</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -72,8 +71,8 @@
   <!-- Enkephalin Convert -->
   <ResearchProjectDef>
     <defName>EnkephalinConvert</defName>
-    <label>Enkephalin Convert</label>
-    <description>Convert Enkephalin to other things.</description>
+    <label>Enkephalin Conversion</label>
+    <description>Establish industrial conversion processes to compress Enkephalin into stable modules and specialized facility supplies.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -84,12 +83,12 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin Convert</li>
+        <li>subject->Enkephalin conversion</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->standardized methods for condensing loose Enkephalin into usable modules</li>
+        <li>subject_story->tested containment-grade stabilization for stored energy cells</li>
 
-        <li>subject_gerund->Now Converting Enkephalin</li>
+        <li>subject_gerund->researching Enkephalin conversion</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -98,7 +97,7 @@
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGenerator</defName>
     <label>Enkephalin Generator</label>
-    <description>EnkephalinGenerator</description>
+    <description>Construct clean power generators fueled by refined Enkephalin to sustain facility grids and containment systems.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -109,12 +108,12 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin ElectricGenerator</li>
+        <li>subject->Enkephalin power generation</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->designed Lobotomy Corporation's signature Enkephalin-burning turbines</li>
+        <li>subject_story->tested steady-state electrical output from PE-Box fuel cells</li>
 
-        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+        <li>subject_gerund->designing Enkephalin power generators</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -123,7 +122,7 @@
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGeneratorECO</defName>
     <label>Enkephalin Generator (ECO)</label>
-    <description>ECO EnkephalinGenerator</description>
+    <description>Optimize Enkephalin reactor efficiency to minimize fuel consumption during long-term facility operations.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -134,12 +133,12 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin ElectricGenerator</li>
+        <li>subject->fuel-efficient Enkephalin power</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->engineered closed-loop Enkephalin recovery manifolds to cut waste</li>
+        <li>subject_story->balanced turbine load curves for maximum energy yield per unit</li>
 
-        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+        <li>subject_gerund->optimizing Enkephalin generator efficiency</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -148,7 +147,7 @@
   <ResearchProjectDef>
     <defName>Enkephalin_ElectricGeneratorAdvanced</defName>
     <label>Enkephalin Generator (Advanced)</label>
-    <description>Advanced EnkephalinGenerator</description>
+    <description>Build high-output Enkephalin reactors capable of powering heavy department cores and emergency suppression grids.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -159,12 +158,12 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin ElectricGenerator</li>
+        <li>subject->high-output Enkephalin power</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->pushed Enkephalin combustion chambers to peak megawatt output</li>
+        <li>subject_story->reinforced reactor shielding for high-density energy production</li>
 
-        <li>subject_gerund->Now building Enkephalin Electric Generator</li>
+        <li>subject_gerund->developing high-output Enkephalin reactors</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -172,8 +171,8 @@
   <!-- Enkephalin Drug -->
   <ResearchProjectDef>
     <defName>Enkephalin_Drug</defName>
-    <label>Drug of Enkephalin</label>
-    <description>Drug of Enkephalin.</description>
+    <label>Enkephalin Pharmaceuticals</label>
+    <description>Synthesize potent Enkephalin-based inhalants and stimulants to relieve employee mental strain at the risk of addiction.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -184,12 +183,12 @@
     </prerequisites>
     <generalRules>
       <rulesStrings>
-        <li>subject->Enkephalin Drug</li>
+        <li>subject->Enkephalin pharmaceuticals</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->discovered psychoactive calming compounds derived from raw Enkephalin</li>
+        <li>subject_story->evaluated dosage limits to soothe traumatized employees without overdose</li>
 
-        <li>subject_gerund->Now Enkephalin_Drug</li>
+        <li>subject_gerund->synthesizing Enkephalin pharmaceuticals</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>
@@ -197,8 +196,8 @@
   <!-- EntityContainment -->
   <ResearchProjectDef>
     <defName>LC_EntityContainment</defName>
-    <label>LobotomyCorporation Containment</label>
-    <description>.</description>
+    <label>Lobotomy Corporation Containment</label>
+    <description>Research reinforced containment platforms, isolation walls, and department infrastructure required to house Abnormalities.</description>
     <tab>LCAnomaly</tab>
     <baseCost>500</baseCost>
     <techLevel>Industrial</techLevel>
@@ -206,12 +205,12 @@
     <researchViewY>0.00</researchViewY>
     <generalRules>
       <rulesStrings>
-        <li>subject->Cogito Usages</li>
+        <li>subject->Abnormality containment engineering</li>
 
-        <li>subject_story->empty</li>
-        <li>subject_story->empty</li>
+        <li>subject_story->drafted structural standards for reinforced containment chambers</li>
+        <li>subject_story->designed specialized holding platforms and observation interfaces</li>
 
-        <li>subject_gerund->Now learning how to use cogito.</li>
+        <li>subject_gerund->researching Abnormality containment engineering</li>
       </rulesStrings>
     </generalRules>
   </ResearchProjectDef>

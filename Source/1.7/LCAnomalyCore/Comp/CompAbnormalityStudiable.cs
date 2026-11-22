@@ -123,6 +123,11 @@ namespace LCAnomalyCore.Comp
         /// <summary>执行 <c>CurrentlyStudiable</c> 定义的操作。</summary>
         public bool CurrentlyStudiable()
         {
+            if (parent.TryGetComp<CompAbnormalityTool>() != null)
+            {
+                return false;
+            }
+
             if (!studyEnabled)
             {
                 return false;

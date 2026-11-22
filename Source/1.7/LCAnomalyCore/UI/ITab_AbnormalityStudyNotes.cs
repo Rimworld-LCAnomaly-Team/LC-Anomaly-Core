@@ -120,7 +120,7 @@ namespace LCAnomalyCore.UI
                     Widgets.LabelFit(rect2, StudiableThing.LabelCap);
             }
             CompAbnormalityStudiable compStudiable = StudiableThing?.TryGetComp<CompAbnormalityStudiable>();
-            if (compStudiable == null)
+            if (compStudiable == null || StudiableThing.TryGetComp<CompAbnormalityTool>() != null)
             {
                 return;
             }

@@ -58,5 +58,27 @@ namespace LCAnomalyCore.ModExtensions
     {
         /// <summary>表示 <c>targetKind</c>。</summary>
         public FourColorTargetKind targetKind = FourColorTargetKind.Default;
+
+        /// <summary>表示 <c>redResistance</c>。</summary>
+        public float redResistance = 1f;
+        /// <summary>表示 <c>whiteResistance</c>。</summary>
+        public float whiteResistance = 1f;
+        /// <summary>表示 <c>blackResistance</c>。</summary>
+        public float blackResistance = 1f;
+        /// <summary>表示 <c>paleResistance</c>。</summary>
+        public float paleResistance = 1f;
+
+        /// <summary>返回指定四色伤害类型的承伤倍率。</summary>
+        public float ResistanceFor(FourColorDamageType damageType)
+        {
+            switch (damageType)
+            {
+                case FourColorDamageType.Red: return redResistance;
+                case FourColorDamageType.White: return whiteResistance;
+                case FourColorDamageType.Black: return blackResistance;
+                case FourColorDamageType.Pale: return paleResistance;
+                default: return 1f;
+            }
+        }
     }
 }
