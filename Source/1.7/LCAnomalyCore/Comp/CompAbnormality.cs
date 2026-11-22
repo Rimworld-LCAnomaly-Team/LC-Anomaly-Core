@@ -15,6 +15,16 @@ namespace LCAnomalyCore.Comp
     /// </summary>
     public class CompAbnormality : ThingComp
     {
+        #region 事件与平台扩展
+
+        /// <summary>任意标准异想体开始工作/研究时触发（供妖精盛宴等跨异想体规则监听）。</summary>
+        public static event Action<Pawn, CompAbnormality> OnAnyAbnormalityStudyStarted;
+
+        /// <summary>任意标准异想体完成一次工作/研究结算时触发（供狂徒笔记等跨异想体规则监听）。</summary>
+        public static event Action<Pawn, CompAbnormality, LC_StudyResult> OnAnyAbnormalityStudyCompleted;
+
+        #endregion 事件与平台扩展
+
         #region 变量
 
         /// <summary>
@@ -335,6 +345,12 @@ namespace LCAnomalyCore.Comp
         {
         }
 
+        /// <summary>开始对当前收容异想体进行工作/研究时调用。</summary>
+        public virtual void Notify_StudyStart(Pawn studier)
+        {
+            OnAnyAbnormalityStudyStarted?.Invoke(studier, this);
+        }
+
         /// <summary>执行 <c>Notify_StudyInterval</c> 定义的操作。</summary>
         public virtual bool Notify_StudyInterval(CompPawnStatus studier, EAnomalyWorkType workType)
         {
@@ -373,6 +389,7 @@ namespace LCAnomalyCore.Comp
             AccessoryableComp?.CheckGiveAccessory(studier);
 
             QliphothCountCurrent++;
+            OnAnyAbnormalityStudyCompleted?.Invoke(studier, this, LC_StudyResult.Good);
         }
 
         /// <summary>
@@ -384,6 +401,7 @@ namespace LCAnomalyCore.Comp
             PeBoxComp?.CheckSpawnPeBox(studier, PeBoxProducedTemp);
             StudyUtil.DoStudyResultEffect(studier, (Pawn)parent, LC_StudyResult.Normal);
             AccessoryableComp?.CheckGiveAccessory(studier);
+            OnAnyAbnormalityStudyCompleted?.Invoke(studier, this, LC_StudyResult.Normal);
         }
 
         /// <summary>
@@ -397,6 +415,7 @@ namespace LCAnomalyCore.Comp
             AccessoryableComp?.CheckGiveAccessory(studier);
 
             QliphothCountCurrent--;
+            OnAnyAbnormalityStudyCompleted?.Invoke(studier, this, LC_StudyResult.Bad);
         }
 
         /// <summary>
@@ -510,6 +529,15 @@ namespace LCAnomalyCore.Comp
         #endregion 工具功能
 
         #region UI
+
+        /// <summary>供收容平台转发展示的异想体专属 Gizmo（如魔弹射手请求射击、雪皇后决斗救援）。</summary>
+        public virtual IEnumerable<Verse.Gizmo> GetPlatformGizmos()
+        {
+            yield break;
+        }
+
+        /// <summary>供收容平台附加展示的异想体状态检查文本。</summary>
+        public virtual string GetPlatformInspectString() => null;
 
         /// <summary>
         /// Gizmos

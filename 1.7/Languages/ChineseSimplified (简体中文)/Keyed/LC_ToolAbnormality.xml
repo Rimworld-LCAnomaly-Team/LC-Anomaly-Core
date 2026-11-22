@@ -16,4 +16,9 @@
   <LC_Tool_InspectActiveUser>当前使用者：{0}（{1} 秒）</LC_Tool_InspectActiveUser>
   <LC_Tool_RevertToEggLabel>收回为蛋</LC_Tool_RevertToEggLabel>
   <LC_Tool_RevertToEggDesc>将 {0} 从收容平台上解除收容，并安全还原为异想体蛋以便搬运或存放。</LC_Tool_RevertToEggDesc>
+  <LC_Tool_ReturnFloatMenu>归还 {0}</LC_Tool_ReturnFloatMenu>
+  <LC_Tool_ReturnGizmoLabel>归还工具</LC_Tool_ReturnGizmoLabel>
+  <LC_Tool_ReturnGizmoDesc>命令 {0} 返回收容平台并将该可佩戴异想体归还。</LC_Tool_ReturnGizmoDesc>
+  <LC_Tool_EquippedBy>正由 {0} 佩戴</LC_Tool_EquippedBy>
+  <LC_Tool_InspectEquippedBy>当前佩戴者：{0}（{1} 秒）</LC_Tool_InspectEquippedBy>
 </LanguageData>

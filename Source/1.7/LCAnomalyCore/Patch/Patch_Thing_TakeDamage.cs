@@ -12,6 +12,9 @@ namespace LCAnomalyCore.Patch
     [HarmonyPatch(typeof(Thing), nameof(Thing.TakeDamage))]
     public static class Patch_Thing_TakeDamage
     {
+        /// <summary>当任意 Pawn 对目标造成有效伤害后触发（仅在存在订阅者且伤害大于 0 时派发）。</summary>
+        public static event Action<Pawn, Thing, DamageInfo, float> OnPawnDealtDamage;
+
         /// <summary>执行 <c>Prefix</c> 定义的操作。</summary>
         public static void Prefix(ref DamageInfo dinfo)
         {
@@ -25,6 +28,15 @@ namespace LCAnomalyCore.Patch
                 {
                     dinfo.SetAmount(dinfo.Amount * blessingMult);
                 }
+            }
+        }
+
+        /// <summary>执行 <c>Postfix</c> 定义的全局伤害监听回调。</summary>
+        public static void Postfix(Thing __instance, DamageInfo dinfo, Verse.DamageWorker.DamageResult __result)
+        {
+            if (OnPawnDealtDamage != null && __result.totalDamageDealt > 0f && dinfo.Instigator is Pawn attacker)
+            {
+                OnPawnDealtDamage.Invoke(attacker, __instance, dinfo, __result.totalDamageDealt);
             }
         }
     }

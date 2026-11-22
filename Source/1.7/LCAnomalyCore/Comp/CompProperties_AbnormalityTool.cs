@@ -48,6 +48,15 @@ namespace LCAnomalyCore.Comp
         public string useGizmoLabelKey = "LC_Tool_UseGizmoLabel";
         public string useGizmoDescKey = "LC_Tool_UseGizmoDesc";
 
+        public HediffDef equipHediffDef;
+        public string returnLabelKey = "LC_Tool_ReturnFloatMenu";
+        public string returnGizmoLabelKey = "LC_Tool_ReturnGizmoLabel";
+        public string returnGizmoDescKey = "LC_Tool_ReturnGizmoDesc";
+        public int equipTickInterval = 60;
+
+        [NoTranslate]
+        public string emptyPlatformTexPath;
+
         [NoTranslate]
         public string useIconPath;
 

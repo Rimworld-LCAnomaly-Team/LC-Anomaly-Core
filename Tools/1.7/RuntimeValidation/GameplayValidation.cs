@@ -284,7 +284,9 @@ public static class GameplayValidation
         foreach (string name in new[]
         {
             "OneSin", "Laetitia", "MeatLanternContained", "BurrowingHeaven",
-            "PortraitOfAnotherWorld", "FleshIdol", "WeCanChangeAnything", "OldBeliefAndPromise", "NothingThere"
+            "PortraitOfAnotherWorld", "FleshIdol", "WeCanChangeAnything", "OldBeliefAndPromise", "NothingThere",
+            "FairyFestival", "WellCheers", "PunishingBird", "VoidDream", "HeartOfAspiration",
+            "ScorchedGirl", "DerFreischutz", "FuneralOfDeadButterflies", "SnowQueen", "NotesFromCrazedResearcher"
         })
         {
             if (GraphicUtil.EntityNamePlatformTopGraphic_Get(name) == null)
@@ -677,8 +679,16 @@ public static class GameplayValidation
             || AbnormalityUtility.ResolveCodexEntry(promiseEggDef)?.defName != "OldBeliefAndPromise")
             throw new InvalidOperationException("OldBeliefAndPromise or its egg failed Codex resolution.");
 
-        Pawn blessedWielder = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist, Faction.OfPlayer);
-        GenSpawn.Spawn(blessedWielder, FindSafePawnCell(map, map.Center), map);
+        Pawn blessedWielder = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f));
+        GenSpawn.Spawn(blessedWielder, FindFarthestSafeCell(map), map);
+        if (blessedWielder.drafter != null) blessedWielder.drafter.Drafted = true;
         blessedWielder.equipment?.DestroyAllEquipment();
 
         const int promiseSig = 0x4c430085;
@@ -1588,6 +1598,8 @@ public static class GameplayValidation
             inj.Heal(1000f);
 
         Log.Message("[LC17 Validation] GAMEPLAY PASS; NothingThere; aleph/work/ego/lifesteal/3forms/red_immune/egg_return");
+
+        ValidatePhase1And2(map, abnSettings);
     }
 
     public static void CheckReload(Map map)
@@ -1723,7 +1735,432 @@ public static class GameplayValidation
         GameComponent_LC gc = GameComponent_LC.Instance;
         if (gc == null || !map.mapPawns.FreeColonistsSpawned.Any(p => p.equipment?.Primary != null && gc.IsWeaponBlessed(p.equipment.Primary)))
         {
-            throw new InvalidOperationException("Blessed weapon state in GameComponent_LC did not survive save/load.");
+            string colDiag = string.Join(", ", map.mapPawns.FreeColonistsSpawned.Select(p =>
+                $"{p.ThingID}@{p.Position}:down={p.Downed}:wep={p.equipment?.Primary?.ThingID ?? "null"}"));
+            throw new InvalidOperationException($"Blessed weapon state in GameComponent_LC did not survive save/load. gcNull={gc == null}, colonists=[{colDiag}]");
         }
+
+        ValidatePhase1And2AfterLoad(map);
+    }
+
+    private static IntVec3 FindFarthestSafeCell(Map map, int minColonistDist = 0)
+    {
+        List<IntVec3> hostiles = map.mapPawns.AllPawnsSpawned
+            .Where(p => p != null && !p.Dead && p.Faction != null && p.Faction.HostileTo(Faction.OfPlayer))
+            .Select(p => p.Position)
+            .ToList();
+        List<IntVec3> colonists = minColonistDist > 0
+            ? map.mapPawns.FreeColonistsSpawned.Select(p => p.Position).ToList()
+            : null;
+        IntVec3 best = IntVec3.Invalid;
+        int bestDistSq = -1;
+        for (int x = 12; x < map.Size.x - 12; x += 4)
+        {
+            for (int z = 12; z < map.Size.z - 12; z += 4)
+            {
+                IntVec3 c = new IntVec3(x, 0, z);
+                if (!c.InBounds(map) || c.Fogged(map) || !c.Standable(map) || c.GetRegion(map) == null
+                    || c.GetFirstBuilding(map) != null || c.GetEdifice(map) != null || c.GetFirstPawn(map) != null)
+                {
+                    continue;
+                }
+                if (colonists != null && colonists.Any(col => (c.x - col.x) * (c.x - col.x) + (c.z - col.z) * (c.z - col.z) < minColonistDist * minColonistDist))
+                {
+                    continue;
+                }
+                int minDistSq = hostiles.Count == 0
+                    ? 0
+                    : hostiles.Min(h => (c.x - h.x) * (c.x - h.x) + (c.z - h.z) * (c.z - h.z));
+                if (minDistSq > bestDistSq)
+                {
+                    bestDistSq = minDistSq;
+                    best = c;
+                }
+            }
+        }
+        return best.IsValid ? best : FindSafePawnCell(map, map.Center);
+    }
+
+    private static Pawn SpawnValidationColonist(Map map, IntVec3 near)
+    {
+        Pawn p = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f,
+            allowDowned: false,
+            allowAddictions: false,
+            validatorPreGear: c => c.story?.traits == null || !c.story.traits.allTraits.Any(t => t.def.defName == "Wimp")));
+        GenSpawn.Spawn(p, FindSafePawnCell(map, near), map);
+        return p;
+    }
+
+    private static void ValidatePhase1And2(Map map, object abnSettings)
+    {
+        (string name, string cat, bool isTool)[] all10 =
+        {
+            ("FairyFestival", "ZAYIN", false),
+            ("WellCheers", "ZAYIN", false),
+            ("PunishingBird", "TETH", false),
+            ("VoidDream", "TETH", false),
+            ("HeartOfAspiration", "TETH", true),
+            ("ScorchedGirl", "TETH", false),
+            ("DerFreischutz", "HE", false),
+            ("FuneralOfDeadButterflies", "HE", false),
+            ("SnowQueen", "HE", false),
+            ("NotesFromCrazedResearcher", "HE", true),
+        };
+
+        // 1. Codex, ritual extraction pool, E.G.O gear defs, and settings eligibility toggles
+        foreach (var (name, cat, isTool) in all10)
+        {
+            ThingDef raceDef = DefDatabase<ThingDef>.GetNamed(name, true);
+            ThingDef eggDef = DefDatabase<ThingDef>.GetNamed(name + "Egg", true);
+            if (AbnormalityUtility.ResolveCodexEntry(raceDef)?.defName != name
+                || AbnormalityUtility.ResolveCodexEntry(eggDef)?.defName != name)
+            {
+                throw new InvalidOperationException($"Codex entry resolution failed for {name} / {name}Egg.");
+            }
+
+            if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+            {
+                throw new InvalidOperationException($"{name}Egg missing from {cat} ritual extraction list.");
+            }
+
+            if (!isTool)
+            {
+                DefDatabase<ThingDef>.GetNamed("EgoWeapon_" + name, true);
+                DefDatabase<ThingDef>.GetNamed("Apparel_" + name + "Suit", true);
+                DefDatabase<ThingDef>.GetNamed("Accessory_" + name, true);
+            }
+
+            FieldInfo toggleField = abnSettings.GetType().GetField("Enable" + name)
+                ?? throw new InvalidOperationException($"Missing setting toggle Enable{name}.");
+            bool prev = (bool)toggleField.GetValue(abnSettings);
+            try
+            {
+                toggleField.SetValue(abnSettings, false);
+                if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+                {
+                    throw new InvalidOperationException($"Enable{name}=false did not filter {name}Egg.");
+                }
+            }
+            finally
+            {
+                toggleField.SetValue(abnSettings, prev);
+            }
+        }
+
+        // 2. Standard containment, work, PeBox, E.G.O extraction, rendering, and egg-return across all 8 standard entities
+        int pIndex = 0;
+        Pawn worker = null;
+        foreach (var (name, _, isTool) in all10)
+        {
+            if (isTool) continue;
+
+            worker = SpawnValidationColonist(map, map.Center);
+            worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
+            CompPawnStatus emp = worker.GetComp<CompPawnStatus>() ?? throw new InvalidOperationException("Phase1And2 validation worker missing CompPawnStatus.");
+
+            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+            plat.SetFaction(Faction.OfPlayer);
+            IntVec3 cell = FindSafePlatformCell(map);
+            GenSpawn.Spawn(plat, cell, map);
+            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+            Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
+            int sig = 0x4c430100 + pIndex++;
+            AbnormalityUtility.TransferSignature(egg, sig);
+            plat.innerContainer.TryAdd(egg);
+            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+
+            Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Egg failed to enter containment: {name}");
+            CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Missing CompAbnormality: {name}");
+            if (abn.biosignature != sig) throw new InvalidOperationException($"Identity mismatch: {name}");
+
+            AbnormalityUtility.Discover(held.def);
+            plat.GetGizmos().ToList();
+            held.Drawer.renderer.EnsureGraphicsInitialized();
+            plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+
+            plat.CurWorkType = Enum.GetValues(typeof(EAnomalyWorkType)).Cast<EAnomalyWorkType>()
+                .OrderByDescending(w => abn.CheckStudierSkillRequire(emp, w)).First();
+            float rate = abn.CheckStudierSkillRequire(emp, plat.CurWorkType);
+            if (rate <= 0f) throw new InvalidOperationException($"Worker cannot work on {name}: rate={rate}");
+
+            abn.PeBoxComp.CurAmountIndiPebox = 0;
+            Rand.PushState(sig);
+            try
+            {
+                for (int i = 0; i < 24; i++) plat.Notify_StudyInterval(emp);
+            }
+            finally { Rand.PopState(); }
+            abn.Notify_Studied(worker);
+            if (abn.PeBoxComp.CurAmountIndiPebox <= 0) throw new InvalidOperationException($"No PeBox produced by {name}");
+
+            held.GetComp<CompAbnormalityStudiable>().Study(worker, 1000f);
+            CompEgoExtractable ego = held.GetComp<CompEgoExtractable>();
+            if (ego != null && ego.Props.weaponExtracted != null)
+            {
+                abn.PeBoxComp.CurAmountIndiPebox = 1000;
+                int before = ego.CurAmountWeapon;
+                typeof(CompEgoExtractable).GetMethod("ExtractEGO", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(ego, new object[] { EGO_TYPE.Weapon });
+                if (ego.CurAmountWeapon != before + 1) throw new InvalidOperationException($"EGO extraction failed: {name}");
+            }
+
+            plat.EjectContents();
+            var fx = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("Dying" + name, true), cell, map);
+            fx.InitWith(held);
+            if (held.Spawned) held.DeSpawn();
+            Find.WorldPawns.PassToWorld(held, PawnDiscardDecideMode.Discard);
+            fx.Complete();
+            Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg", true))
+                .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
+            if (returnedEgg == null) throw new InvalidOperationException($"Identity did not survive egg return: {name}");
+            plat.Destroy();
+        }
+
+        // 3. Unique Mechanics Verification
+        worker = SpawnValidationColonist(map, map.Center);
+        // 3a. FairyFestival care + jealousy devour on studying another abnormality
+        var fairyPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        fairyPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(fairyPlat, FindSafePlatformCell(map), map);
+        Thing fEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("FairyFestivalEgg", true));
+        fairyPlat.innerContainer.TryAdd(fEgg);
+        fEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(fairyPlat.innerContainer);
+
+        var otherPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        otherPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(otherPlat, FindSafePlatformCell(map), map);
+        Thing wEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WellCheersEgg", true));
+        otherPlat.innerContainer.TryAdd(wEgg);
+        wEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(otherPlat.innerContainer);
+
+        Pawn betrayer = SpawnValidationColonist(map, fairyPlat.Position);
+        fairyPlat.HeldPawn.GetComp<CompAbnormality>().Notify_Studied(betrayer);
+        HediffDef fairyCareDef = DefDatabase<HediffDef>.GetNamed("LC_FairyCare", true);
+        if (!betrayer.health.hediffSet.HasHediff(fairyCareDef))
+            throw new InvalidOperationException("FairyFestival did not apply LC_FairyCare after study.");
+        otherPlat.Notify_StudyStart(betrayer);
+        if (!betrayer.Dead)
+            throw new InvalidOperationException("LC_FairyCare failed to devour worker who started studying another Abnormality.");
+        fairyPlat.Destroy();
+        otherPlat.Destroy();
+
+        // 3b. PunishingBird breach -> damage triggers Enraged Maw & 0.1 dynamic four-color resistance -> return to egg
+        Pawn pb = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("PunishingBird", true), LCContainmentUtility.AbnormalityFaction);
+        GenSpawn.Spawn(pb, FindSafePawnCell(map, map.Center), map);
+        Find.TickManager.DoSingleTick();
+        CompAbnormality pbAbn = pb.GetComp<CompAbnormality>();
+        int pbSig = pbAbn.biosignature;
+        PropertyInfo isEnragedProp = pbAbn.GetType().GetProperty("IsEnraged", BindingFlags.Public | BindingFlags.Instance);
+        if ((bool)isEnragedProp.GetValue(pbAbn))
+            throw new InvalidOperationException("PunishingBird should start calm upon breaching.");
+        DamageDef redDef = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);
+        pb.TakeDamage(new DamageInfo(redDef, 2f, instigator: worker));
+        if (!(bool)isEnragedProp.GetValue(pbAbn))
+            throw new InvalidOperationException("PunishingBird failed to enter Enraged state when attacked.");
+        if (!(pb is ILCFourColorDynamicResistance dynRes)
+            || !dynRes.TryGetDynamicFourColorResistance(FourColorDamageType.Red, out float pbRes)
+            || Math.Abs(pbRes - 0.1f) > 0.001f)
+        {
+            throw new InvalidOperationException("Enraged PunishingBird did not expose 0.1 dynamic resistance.");
+        }
+        pbAbn.GetType().GetMethod("ReturnQuietlyToEgg", BindingFlags.Public | BindingFlags.Instance).Invoke(pbAbn, null);
+        if (!map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("PunishingBirdEgg", true))
+            .Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == pbSig))
+        {
+            throw new InvalidOperationException("PunishingBird ReturnQuietlyToEgg failed to spawn matching egg.");
+        }
+
+        // 3c. VoidDream sleep hediff consciousness cap & Wake Sleeper gizmo
+        Pawn sleeper = SpawnValidationColonist(map, map.Center);
+        HediffDef sleepDef = DefDatabase<HediffDef>.GetNamed("LC_VoidDreamSleep", true);
+        Hediff sleepHediff = HediffMaker.MakeHediff(sleepDef, sleeper);
+        sleeper.health.AddHediff(sleepHediff);
+        if (sleeper.health.capacities.GetLevel(PawnCapacityDefOf.Consciousness) > 0.15f)
+            throw new InvalidOperationException("LC_VoidDreamSleep failed to cap consciousness.");
+        string wakeLabel = "LC_VoidDream_WakeGizmoLabel".Translate();
+        if (!sleeper.GetGizmos().Any(g => g is Command_Action ca && ca.defaultLabel == wakeLabel))
+            throw new InvalidOperationException("LC_VoidDreamSleep missing Wake Sleeper gizmo.");
+        sleeper.health.RemoveHediff(sleepHediff);
+
+        // 3d. DerFreischutz request shot & PeBox deduction / counter increment
+        var derPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        derPlat.SetFaction(Faction.OfPlayer);
+        IntVec3 cornerCell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(derPlat, cornerCell, map);
+        Thing dEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("DerFreischutzEgg", true));
+        derPlat.innerContainer.TryAdd(dEgg);
+        dEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(derPlat.innerContainer);
+        CompAbnormality derAbn = derPlat.HeldPawn.GetComp<CompAbnormality>();
+        derAbn.PeBoxComp.CurAmountIndiPebox = 20;
+        IntVec3 safeAim = new IntVec3(cornerCell.x + 2 <= map.Size.x - 2 ? cornerCell.x + 2 : cornerCell.x - 2, 0, cornerCell.z);
+        bool fired = (bool)derAbn.GetType().GetMethod("RequestMagicBulletAt", BindingFlags.Public | BindingFlags.Instance)
+            .Invoke(derAbn, new object[] { safeAim });
+        int shotsFired = (int)derAbn.GetType().GetProperty("ShotsFired", BindingFlags.Public | BindingFlags.Instance).GetValue(derAbn);
+        if (!fired || derAbn.PeBoxComp.CurAmountIndiPebox != 10 || shotsFired != 1)
+            throw new InvalidOperationException($"DerFreischutz request failed: fired={fired}, pe={derAbn.PeBoxComp.CurAmountIndiPebox}, shots={shotsFired}");
+        foreach (Thing p in map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("MagicBullet_Request", true)).ToList())
+        {
+            if (!p.Destroyed) p.Destroy();
+        }
+        derPlat.Destroy();
+
+        // 3e. HeartOfAspiration equip -> combat -> safe return AND second active equipper saved across save/load
+        var (_, _, heartTool1) = ContainToolOnPlatform(map, worker, "HeartOfAspiration", 0x4c430201);
+        Pawn heartTester = SpawnValidationColonist(map, map.Center);
+        heartTool1.OnEquipped(heartTester);
+        HediffDef heartBuffDef = DefDatabase<HediffDef>.GetNamed("LC_HeartOfAspirationBuff", true);
+        if (!heartTool1.IsEquipped || heartTool1.ActiveEquipper != heartTester || !heartTester.health.hediffSet.HasHediff(heartBuffDef))
+            throw new InvalidOperationException("HeartOfAspiration OnEquipped failed.");
+        heartTool1.GetType().GetMethod("NotifyCombatDamageDealt", BindingFlags.Public | BindingFlags.Instance)
+            .Invoke(heartTool1, new object[] { heartTester, worker, 12f });
+        heartTool1.OnUnequipped(heartTester, 900, returnedNormally: true);
+        if (heartTool1.IsEquipped || heartTester.InMentalState)
+            throw new InvalidOperationException("HeartOfAspiration safe return after combat damage failed.");
+
+        Pawn savedHeartBearer = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 10));
+        if (savedHeartBearer.drafter != null) savedHeartBearer.drafter.Drafted = true;
+        var (_, _, savedHeartTool) = ContainToolOnPlatform(map, savedHeartBearer, "HeartOfAspiration", 0x4c430202);
+        savedHeartTool.OnEquipped(savedHeartBearer);
+        savedHeartTool.GetType().GetMethod("NotifyCombatDamageDealt", BindingFlags.Public | BindingFlags.Instance)
+            .Invoke(savedHeartTool, new object[] { savedHeartBearer, worker, 10f });
+
+        // 3f. SnowQueen freeze captive into IThingHolder across save/load
+        Pawn savedCaptive = SpawnValidationColonist(map, map.Center);
+        var sqPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        sqPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(sqPlat, FindSafePlatformCell(map), map);
+        Thing sqEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("SnowQueenEgg", true));
+        AbnormalityUtility.TransferSignature(sqEgg, 0x4c430203);
+        sqPlat.innerContainer.TryAdd(sqEgg);
+        sqEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(sqPlat.innerContainer);
+        CompAbnormality sqAbn = sqPlat.HeldPawn.GetComp<CompAbnormality>();
+        sqAbn.GetType().GetMethod("FreezeCaptive", BindingFlags.Public | BindingFlags.Instance)
+            .Invoke(sqAbn, new object[] { savedCaptive });
+        if (!(bool)sqAbn.GetType().GetProperty("HasFrozenCaptive", BindingFlags.Public | BindingFlags.Instance).GetValue(sqAbn)
+            || savedCaptive.Spawned)
+        {
+            throw new InvalidOperationException("SnowQueen FreezeCaptive did not seal colonist into frozenContainer.");
+        }
+
+        // 3g. NotesFromCrazedResearcher study tracking, safe return, AND damage explosion
+        var (_, _, noteTool) = ContainToolOnPlatform(map, worker, "NotesFromCrazedResearcher", 0x4c430204);
+        Pawn noteScholar = SpawnValidationColonist(map, map.Center);
+        noteTool.OnEquipped(noteScholar);
+        HediffDef noteBuffDef = DefDatabase<HediffDef>.GetNamed("LC_ResearcherNoteBuff", true);
+        if (!noteScholar.health.hediffSet.HasHediff(noteBuffDef))
+            throw new InvalidOperationException("NotesFromCrazedResearcher did not grant LC_ResearcherNoteBuff.");
+        sqAbn.Notify_Studied(noteScholar);
+        noteTool.OnUnequipped(noteScholar, 1800, returnedNormally: true);
+        if (noteScholar.Dead || noteTool.IsEquipped)
+            throw new InvalidOperationException("NotesFromCrazedResearcher safe return failed.");
+
+        Pawn noteVictim = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 16));
+        var (_, _, noteToolBoom) = ContainToolOnPlatform(map, noteVictim, "NotesFromCrazedResearcher", 0x4c430205);
+        noteToolBoom.OnEquipped(noteVictim);
+        noteVictim.TakeDamage(new DamageInfo(redDef, 105f, instigator: worker));
+        if (!noteVictim.Dead)
+            throw new InvalidOperationException("NotesFromCrazedResearcher >=100 damage threshold did not detonate wearer.");
+
+        // Ensure save/reload fixture colonists start healthy and away from roaming test hostiles
+        GameComponent_LC gcNow = GameComponent_LC.Instance;
+        Pawn savedBlessed = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(p => p.equipment?.Primary != null && gcNow != null && gcNow.IsWeaponBlessed(p.equipment.Primary))
+            ?? throw new InvalidOperationException("No live colonist holds blessed weapon before save.");
+        foreach (Pawn fixturePawn in new[] { savedBlessed, savedHeartBearer })
+        {
+            var injuries = new List<Hediff_Injury>();
+            fixturePawn.health.hediffSet.GetHediffs(ref injuries);
+            foreach (Hediff_Injury inj in injuries) inj.Heal(1000f);
+            fixturePawn.Position = FindFarthestSafeCell(map);
+            fixturePawn.Notify_Teleported(true, true);
+            if (fixturePawn.drafter != null) fixturePawn.drafter.Drafted = true;
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; Phase1And2; 10_abnormalities/equippables/freischutz/snowqueen/mechanics");
+    }
+
+    private static void ValidatePhase1And2AfterLoad(Map map)
+    {
+        bool foundSavedHeart = false;
+        bool foundSavedSnowQueen = false;
+        HediffDef heartBuffDef = DefDatabase<HediffDef>.GetNamed("LC_HeartOfAspirationBuff", true);
+
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "HeartOfAspiration"
+                && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430202)
+            {
+                CompAbnormalityTool tool = plat.HeldToolComp;
+                Pawn carrier = tool?.ActiveEquipper;
+                if (tool == null || !tool.IsEquipped || carrier == null || carrier.Dead
+                    || !carrier.health.hediffSet.HasHediff(heartBuffDef))
+                {
+                    throw new InvalidOperationException("Saved HeartOfAspiration active equip state did not survive save/load.");
+                }
+
+                Hediff h = carrier.health.hediffSet.GetFirstHediffOfDef(heartBuffDef);
+                object hc = (h as HediffWithComps)?.comps?.FirstOrDefault(c => c.GetType().Name == "HediffComp_HeartOfAspiration");
+                Thing linked = (Thing)hc?.GetType().GetField("toolThing", BindingFlags.Public | BindingFlags.Instance)?.GetValue(hc);
+                if (linked != plat.HeldPawn)
+                {
+                    throw new InvalidOperationException("Saved HeartOfAspiration toolThing link did not survive save/load.");
+                }
+
+                foundSavedHeart = true;
+            }
+            else if (plat.HeldPawn?.def?.defName == "SnowQueen"
+                && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430203)
+            {
+                CompAbnormality sq = plat.HeldPawn.GetComp<CompAbnormality>();
+                bool hasFrozen = (bool)sq.GetType().GetProperty("HasFrozenCaptive", BindingFlags.Public | BindingFlags.Instance).GetValue(sq);
+                Pawn captive = (Pawn)sq.GetType().GetProperty("FrozenCaptive", BindingFlags.Public | BindingFlags.Instance).GetValue(sq);
+                if (!hasFrozen || captive == null || captive.Dead)
+                {
+                    throw new InvalidOperationException("Saved SnowQueen frozenContainer captive did not survive save/load.");
+                }
+
+                Pawn rescuer = SpawnValidationColonist(map, plat.Position);
+                CompPawnStatus emp = rescuer.GetComp<CompPawnStatus>();
+                emp.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 100;
+                int winSeed = 1;
+                for (int s = 1; s <= 30; s++)
+                {
+                    Rand.PushState(s);
+                    bool won = Rand.Chance(0.95f);
+                    Rand.PopState();
+                    if (won) { winSeed = s; break; }
+                }
+
+                Rand.PushState(winSeed);
+                try
+                {
+                    sq.GetType().GetMethod("ResolveDuel", BindingFlags.Public | BindingFlags.Instance)
+                        .Invoke(sq, new object[] { rescuer });
+                }
+                finally { Rand.PopState(); }
+
+                bool stillFrozen = (bool)sq.GetType().GetProperty("HasFrozenCaptive", BindingFlags.Public | BindingFlags.Instance).GetValue(sq);
+                if (stillFrozen || !captive.Spawned || captive.Dead)
+                {
+                    throw new InvalidOperationException("SnowQueen ResolveDuel post-load failed to rescue frozen captive.");
+                }
+
+                foundSavedSnowQueen = true;
+            }
+        }
+
+        if (!foundSavedHeart)
+            throw new InvalidOperationException("Saved HeartOfAspiration holding platform missing after reload.");
+        if (!foundSavedSnowQueen)
+            throw new InvalidOperationException("Saved SnowQueen holding platform missing after reload.");
     }
 }

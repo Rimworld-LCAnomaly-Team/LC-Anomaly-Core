@@ -16,4 +16,9 @@
   <LC_Tool_InspectActiveUser>Current user: {0} ({1}s)</LC_Tool_InspectActiveUser>
   <LC_Tool_RevertToEggLabel>Return to Egg</LC_Tool_RevertToEggLabel>
   <LC_Tool_RevertToEggDesc>Release {0} from the holding platform and revert it safely back into an abnormality egg for relocation or storage.</LC_Tool_RevertToEggDesc>
+  <LC_Tool_ReturnFloatMenu>Return {0}</LC_Tool_ReturnFloatMenu>
+  <LC_Tool_ReturnGizmoLabel>Return Tool</LC_Tool_ReturnGizmoLabel>
+  <LC_Tool_ReturnGizmoDesc>Order {0} to walk back and return this equippable abnormality to the holding platform.</LC_Tool_ReturnGizmoDesc>
+  <LC_Tool_EquippedBy>Equipped by {0}</LC_Tool_EquippedBy>
+  <LC_Tool_InspectEquippedBy>Current wearer: {0} ({1}s)</LC_Tool_InspectEquippedBy>
 </LanguageData>

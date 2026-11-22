@@ -53,12 +53,15 @@ namespace LCAnomalyCore.Comp
                 if (Props.peBoxDef != null)
                 {
                     CurAmountIndiPebox += amount;
-                    //Log.Message($"工作：{parent.def.label.Translate()}生成了{amount}单位的独立PeBox");
-
-                    Thing thing = ThingMaker.MakeThing(Props.peBoxDef);
-                    thing.stackCount = amount;
-                    GenSpawn.Spawn(thing, studier.Position, studier.Map);
-                    LogUtil.Message($"Study: {parent.def.label.Translate()} spawned {amount} PeBox");
+                    Map spawnMap = studier.Map ?? parent?.MapHeld;
+                    IntVec3 spawnPos = studier.Map != null ? studier.Position : (parent?.PositionHeld ?? IntVec3.Invalid);
+                    if (spawnMap != null && spawnPos.InBounds(spawnMap))
+                    {
+                        Thing thing = ThingMaker.MakeThing(Props.peBoxDef);
+                        thing.stackCount = amount;
+                        GenSpawn.Spawn(thing, spawnPos, spawnMap);
+                        LogUtil.Message($"Study: {parent.def.label.Translate()} spawned {amount} PeBox");
+                    }
                 }
             }
         }

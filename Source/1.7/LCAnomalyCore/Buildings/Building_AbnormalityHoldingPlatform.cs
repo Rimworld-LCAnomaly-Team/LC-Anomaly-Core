@@ -533,6 +533,7 @@ namespace LCAnomalyCore.Buildings
         {
             cachedPeBoxBarGraphics.Clear();
             cachedNeBoxBarGraphics.Clear();
+            cachedEntity?.Notify_StudyStart(studier);
         }
 
         /// <summary>
@@ -642,6 +643,14 @@ namespace LCAnomalyCore.Buildings
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
+
+                if (EntityCached)
+                {
+                    foreach (Verse.Gizmo entityGizmo in cachedEntity.GetPlatformGizmos())
+                    {
+                        yield return entityGizmo;
+                    }
+                }
             }
 
             yield return Util.Gizmos.Get_EntityCodex(HeldPawn);
@@ -688,6 +697,14 @@ namespace LCAnomalyCore.Buildings
                     if (!toolInspect.NullOrEmpty())
                     {
                         inspectTextSB.Append("\n").Append(toolInspect);
+                    }
+                }
+                else if (EntityCached)
+                {
+                    string entityInspect = cachedEntity.GetPlatformInspectString();
+                    if (!entityInspect.NullOrEmpty())
+                    {
+                        inspectTextSB.Append("\n").Append(entityInspect);
                     }
                 }
             }

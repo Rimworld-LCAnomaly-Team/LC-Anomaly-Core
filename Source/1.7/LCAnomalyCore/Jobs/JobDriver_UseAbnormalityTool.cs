@@ -180,7 +180,21 @@ namespace LCAnomalyCore.Jobs
 
                 Thing toolThing = TargetThingA;
                 SoundDef finishSound = activeComp.Props.soundUsed;
-                activeComp.OnToolUsed(pawn);
+                if (activeComp.Props.toolMode == AbnormalityToolMode.Equippable)
+                {
+                    if (activeComp.ActiveEquipper == pawn)
+                    {
+                        activeComp.OnUnequipped(pawn, activeComp.CurrentEquipTicks, returnedNormally: true);
+                    }
+                    else
+                    {
+                        activeComp.OnEquipped(pawn);
+                    }
+                }
+                else
+                {
+                    activeComp.OnToolUsed(pawn);
+                }
 
                 if (finishSound != null && toolThing != null && toolThing.MapHeld != null)
                 {

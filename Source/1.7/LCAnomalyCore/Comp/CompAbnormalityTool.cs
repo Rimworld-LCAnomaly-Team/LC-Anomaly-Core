@@ -24,6 +24,9 @@ namespace LCAnomalyCore.Comp
         protected Pawn activeContinuousUser;
         protected int currentSessionTicks;
         protected bool stopRequested;
+        protected Pawn activeEquipper;
+        protected int currentEquipTicks;
+        protected int equipTickAccumulator;
         protected ThingOwner<Thing> enclosedContainer;
         protected int enclosedTickAccumulator;
         private bool revertedToEgg;
@@ -100,6 +103,18 @@ namespace LCAnomalyCore.Comp
 
         public bool StopRequested => stopRequested;
 
+        /// <summary>返回当前佩戴该工具型异想体的殖民者（若有）。</summary>
+        public Pawn ActiveEquipper => activeEquipper;
+
+        /// <summary>指示该工具当前是否处于被殖民者佩戴外借状态。</summary>
+        public bool IsEquipped => activeEquipper != null && !activeEquipper.Dead && !activeEquipper.Destroyed;
+
+        /// <summary>返回当前本次佩戴已持续的 Tick 数。</summary>
+        public int CurrentEquipTicks => currentEquipTicks;
+
+        /// <summary>返回当前本次佩戴已持续的秒数。</summary>
+        public float CurrentEquipSeconds => currentEquipTicks / 60f;
+
         public float CurrentStudyMetricValue =>
             Props.studyMetric == ToolStudyMetric.UseSeconds ? TotalUseSeconds : useCount;
 
@@ -149,6 +164,17 @@ namespace LCAnomalyCore.Comp
                 }
 
                 // 同一使用者正在持续交互期间跳过冷却检查
+                return true;
+            }
+
+            if (Props.toolMode == AbnormalityToolMode.Equippable && IsEquipped)
+            {
+                if (activeEquipper != pawn)
+                {
+                    return "LC_Tool_EquippedBy".Translate(activeEquipper.LabelShortCap);
+                }
+
+                // 佩戴者本人前来归还时跳过冷却检查
                 return true;
             }
 
@@ -258,6 +284,82 @@ namespace LCAnomalyCore.Comp
             StudyUnlocksComp?.OnStudied(user, CurrentStudyMetricValue);
         }
 
+        /// <summary>可佩戴工具型异想体被殖民者佩戴取走时调用。</summary>
+        public virtual void OnEquipped(Pawn user)
+        {
+            activeEquipper = user;
+            currentEquipTicks = 0;
+            equipTickAccumulator = 0;
+            AbnormalityUtility.Discover(parent.def);
+
+            if (Props.equipHediffDef != null && user?.health?.hediffSet != null)
+            {
+                if (!user.health.hediffSet.HasHediff(Props.equipHediffDef))
+                {
+                    Hediff hediff = HediffMaker.MakeHediff(Props.equipHediffDef, user);
+                    user.health.AddHediff(hediff);
+                }
+            }
+        }
+
+        /// <summary>可佩戴工具型异想体佩戴期间按间隔 Tick 时调用。</summary>
+        public virtual void OnEquippableTick(Pawn user, int intervalTicks, int equippedTicks)
+        {
+            RecordToolUse(user, countDelta: 0, ticksDelta: intervalTicks);
+        }
+
+        /// <summary>可佩戴工具型异想体归还或卸载时调用。</summary>
+        public virtual void OnUnequipped(Pawn user, int equippedTicks, bool returnedNormally)
+        {
+            RemoveEquipHediff(user);
+            activeEquipper = null;
+            currentEquipTicks = 0;
+            equipTickAccumulator = 0;
+
+            if (equippedTicks > 0)
+            {
+                useCount++;
+                lastUsedTick = Find.TickManager?.TicksGame ?? 0;
+            }
+
+            StudyUnlocksComp?.OnStudied(user, CurrentStudyMetricValue);
+        }
+
+        /// <summary>可佩戴工具型异想体在佩戴者死亡、销毁或状态异常丢失时调用。</summary>
+        public virtual void OnEquippableCarrierLost(Pawn lastUser, int equippedTicks)
+        {
+            RemoveEquipHediff(lastUser);
+            activeEquipper = null;
+            currentEquipTicks = 0;
+            equipTickAccumulator = 0;
+            StudyUnlocksComp?.OnStudied(lastUser, CurrentStudyMetricValue);
+        }
+
+        /// <summary>命令当前佩戴者返回收容平台归还可佩戴工具。</summary>
+        public virtual bool TryOrderReturnEquipped()
+        {
+            if (Props.toolMode != AbnormalityToolMode.Equippable || !IsEquipped)
+            {
+                return false;
+            }
+
+            return TryOrderUse(activeEquipper);
+        }
+
+        protected void RemoveEquipHediff(Pawn user)
+        {
+            if (Props.equipHediffDef == null || user?.health?.hediffSet == null)
+            {
+                return;
+            }
+
+            Hediff existing = user.health.hediffSet.GetFirstHediffOfDef(Props.equipHediffDef);
+            if (existing != null)
+            {
+                user.health.RemoveHediff(existing);
+            }
+        }
+
         /// <summary>请求中断当前持续使用工作。</summary>
         public void RequestStopContinuous()
         {
@@ -335,6 +437,7 @@ namespace LCAnomalyCore.Comp
             base.CompTick();
             CheckContinuousUserValidity();
             TickEnclosedContinuous();
+            TickEquipped();
         }
 
         /// <summary>收容在平台内时由 <see cref="LC_ToolEntityPawn.TickHolded"/> 驱动的每 Tick 检查。</summary>
@@ -342,6 +445,38 @@ namespace LCAnomalyCore.Comp
         {
             CheckContinuousUserValidity();
             TickEnclosedContinuous();
+            TickEquipped();
+        }
+
+        private void TickEquipped()
+        {
+            if (Props.toolMode != AbnormalityToolMode.Equippable || activeEquipper == null)
+            {
+                return;
+            }
+
+            bool missingHediff = Props.equipHediffDef != null
+                && !(activeEquipper.health?.hediffSet?.HasHediff(Props.equipHediffDef) ?? false);
+            bool carrierLost = activeEquipper.Dead || activeEquipper.Destroyed || missingHediff;
+
+            if (carrierLost)
+            {
+                Pawn prevUser = activeEquipper;
+                int ticks = currentEquipTicks;
+                OnEquippableCarrierLost(prevUser, ticks);
+                return;
+            }
+
+            currentEquipTicks++;
+            equipTickAccumulator++;
+
+            int interval = Mathf.Max(1, Props.equipTickInterval);
+            if (equipTickAccumulator >= interval)
+            {
+                int delta = equipTickAccumulator;
+                equipTickAccumulator = 0;
+                OnEquippableTick(activeEquipper, delta, currentEquipTicks);
+            }
         }
 
         private void CheckContinuousUserValidity()
@@ -481,6 +616,13 @@ namespace LCAnomalyCore.Comp
                     OnContinuousEnd(endingUser, ticks, completedNaturally: false);
                 }
             }
+
+            if (Props.toolMode == AbnormalityToolMode.Equippable && activeEquipper != null)
+            {
+                Pawn prevUser = activeEquipper;
+                int ticks = currentEquipTicks;
+                OnUnequipped(prevUser, ticks, returnedNormally: false);
+            }
         }
 
         /// <summary>无条件洁净退化为对应的异想体蛋（保留生物特征且不触发警报/不留尸体）。</summary>
@@ -531,7 +673,17 @@ namespace LCAnomalyCore.Comp
         }
 
         /// <summary>提供供收容平台转发给玩家的自定义贴图路径（默认不覆盖）。</summary>
-        protected virtual string GetHeldOverrideTexPath() => null;
+        protected virtual string GetHeldOverrideTexPath()
+        {
+            if (Props.toolMode == AbnormalityToolMode.Equippable
+                && IsEquipped
+                && !Props.emptyPlatformTexPath.NullOrEmpty())
+            {
+                return Props.emptyPlatformTexPath;
+            }
+
+            return null;
+        }
 
         /// <summary>提供供收容平台转发给玩家的自定义染色（默认白色不染色）。</summary>
         protected virtual Color GetHeldOverrideColor() => Color.white;
@@ -617,7 +769,12 @@ namespace LCAnomalyCore.Comp
             }
 
             AcceptanceReport canUse = CanUseTool(selPawn);
-            string baseLabel = Props.useLabelKey.Translate(parent.LabelCap);
+            bool isReturningEquippable = Props.toolMode == AbnormalityToolMode.Equippable
+                && IsEquipped
+                && activeEquipper == selPawn;
+            string baseLabel = isReturningEquippable
+                ? Props.returnLabelKey.Translate(parent.LabelCap)
+                : Props.useLabelKey.Translate(parent.LabelCap);
             if (!canUse.Accepted)
             {
                 string disabledLabel = canUse.Reason.NullOrEmpty()
@@ -679,6 +836,22 @@ namespace LCAnomalyCore.Comp
                 };
             }
 
+            bool equippableBusy = Props.toolMode == AbnormalityToolMode.Equippable && IsEquipped;
+            if (equippableBusy)
+            {
+                Texture2D returnIcon = ContentFinder<Texture2D>.Get("UI/Designators/Cancel", false) ?? icon;
+                yield return new Command_Action
+                {
+                    defaultLabel = Props.returnGizmoLabelKey.Translate(),
+                    defaultDesc = Props.returnGizmoDescKey.Translate(activeEquipper.LabelShortCap),
+                    icon = returnIcon,
+                    action = delegate
+                    {
+                        TryOrderReturnEquipped();
+                    }
+                };
+            }
+
             Command_Action useCmd = new Command_Action
             {
                 defaultLabel = Props.useGizmoLabelKey.Translate(),
@@ -722,6 +895,10 @@ namespace LCAnomalyCore.Comp
             {
                 useCmd.Disable("LC_Tool_InUse".Translate(activeContinuousUser.LabelShortCap));
             }
+            else if (equippableBusy)
+            {
+                useCmd.Disable("LC_Tool_EquippedBy".Translate(activeEquipper.LabelShortCap));
+            }
             yield return useCmd;
 
             if (HeldPlatform != null && Props.eggDef != null)
@@ -747,6 +924,10 @@ namespace LCAnomalyCore.Comp
                 if (continuousBusy && !CanManuallyStopContinuous(activeContinuousUser))
                 {
                     revertCmd.Disable("LC_Tool_InUse".Translate(activeContinuousUser.LabelShortCap));
+                }
+                else if (equippableBusy)
+                {
+                    revertCmd.Disable("LC_Tool_EquippedBy".Translate(activeEquipper.LabelShortCap));
                 }
                 yield return revertCmd;
             }
@@ -797,6 +978,11 @@ namespace LCAnomalyCore.Comp
                 sb.AppendLine("LC_Tool_InspectActiveUser".Translate(activeContinuousUser.LabelShortCap, CurrentSessionSeconds.ToString("0.#")));
             }
 
+            if (Props.toolMode == AbnormalityToolMode.Equippable && IsEquipped)
+            {
+                sb.AppendLine("LC_Tool_InspectEquippedBy".Translate(activeEquipper.LabelShortCap, CurrentEquipSeconds.ToString("0.#")));
+            }
+
             string custom = GetToolStatusInspectString();
             if (!custom.NullOrEmpty())
             {
@@ -815,6 +1001,9 @@ namespace LCAnomalyCore.Comp
             Scribe_References.Look(ref activeContinuousUser, "lcToolActiveUser");
             Scribe_Values.Look(ref currentSessionTicks, "lcToolCurrentSessionTicks", 0);
             Scribe_Values.Look(ref stopRequested, "lcToolStopRequested", false);
+            Scribe_References.Look(ref activeEquipper, "lcToolActiveEquipper");
+            Scribe_Values.Look(ref currentEquipTicks, "lcToolCurrentEquipTicks", 0);
+            Scribe_Values.Look(ref equipTickAccumulator, "lcToolEquipTickAcc", 0);
             Scribe_Values.Look(ref enclosedTickAccumulator, "lcToolEnclosedTickAcc", 0);
             Scribe_Deep.Look(ref enclosedContainer, "lcToolEnclosedContainer", this);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)

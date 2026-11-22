@@ -107,7 +107,17 @@ public class ValidationComponent : GameComponent
                     validatorPreGear: p => p.skills != null && !p.skills.GetSkill(SkillDefOf.Intellectual).TotallyDisabled));
             }
             finally { Rand.PopState(); }
-            GenSpawn.Spawn(testWorker, CellFinder.RandomClosewalkCellNear(map.Center, map, 5), map);
+            IntVec3 spawnCenter = map.Center;
+            if (!spawnCenter.Standable(map) || spawnCenter.GetRegion(map) == null)
+            {
+                if (!CellFinder.TryFindRandomCellNear(map.Center, map, 35,
+                        c => c.InBounds(map) && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null && c.GetEdifice(map) == null,
+                        out spawnCenter))
+                {
+                    spawnCenter = map.AllCells.First(c => c.InBounds(map) && !c.Fogged(map) && c.Standable(map) && c.GetRegion(map) != null && c.GetEdifice(map) == null);
+                }
+            }
+            GenSpawn.Spawn(testWorker, CellFinder.RandomClosewalkCellNear(spawnCenter, map, 5), map);
             var employee = testWorker.GetComp<CompPawnStatus>();
             if (employee == null) throw new InvalidOperationException("Employee status component is missing.");
             foreach (var kind in DefDatabase<PawnKindDef>.AllDefsListForReading.Where(Startup.IsSeries).ToList())
@@ -115,7 +125,7 @@ public class ValidationComponent : GameComponent
                 try
                 {
                     Pawn pawn = PawnGenerator.GeneratePawn(kind, LCContainmentUtility.AbnormalityFaction);
-                    IntVec3 cell = CellFinder.RandomClosewalkCellNear(map.Center, map, 25);
+                    IntVec3 cell = CellFinder.RandomClosewalkCellNear(spawnCenter, map, 25);
                     GenSpawn.Spawn(pawn, cell, map);
                     pawn.Drawer.renderer.EnsureGraphicsInitialized();
                     pawn.Drawer.renderer.RenderPawnAt(pawn.DrawPos);
