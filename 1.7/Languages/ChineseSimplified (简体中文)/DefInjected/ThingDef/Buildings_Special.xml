@@ -2,9 +2,36 @@
 <LanguageData>
 
   <CogitoBucket.label>“水桶”</CogitoBucket.label>
-  <CogitoBucket.description>.</CogitoBucket.description>
+  <CogitoBucket.description>用于盛放与抽取 Cogito 原液的深井装置，是异想体提取与公司运作的源头。</CogitoBucket.description>
 
   <LC_DepartmentCore_ControlTeam.label>部门核心（控制部）</LC_DepartmentCore_ControlTeam.label>
-  <LC_DepartmentCore_ControlTeam.description>.</LC_DepartmentCore_ControlTeam.description>
+  <LC_DepartmentCore_ControlTeam.description>控制部的运转中枢。通电后消耗 K 公司安瓿周期性修复同房间内激活员工的伤势。\n\n部门加成（已分配员工）：\n- 移动速度 ×115%\n- 全局工作速度 ×110%</LC_DepartmentCore_ControlTeam.description>
+
+  <LC_DepartmentCore_InformationTeam.label>部门核心（情报部）</LC_DepartmentCore_InformationTeam.label>
+  <LC_DepartmentCore_InformationTeam.description>情报部的数据解析中枢。周期性修复同房间员工伤势，并实时为员工提供异想体观测与工作分析。\n\n部门加成（已分配员工）：\n- 异想体研究速率 +25%\n- 异想体工作成功率 +8%</LC_DepartmentCore_InformationTeam.description>
+
+  <LC_DepartmentCore_TrainingTeam.label>部门核心（培训部）</LC_DepartmentCore_TrainingTeam.label>
+  <LC_DepartmentCore_TrainingTeam.description>培训部的员工教导中枢。周期性修复同房间员工伤势，并大幅加快员工在收容工作中的成长。\n\n部门加成（已分配员工）：\n- 四维属性工作经验获取 +50%\n- 全局学习速率 ×115%</LC_DepartmentCore_TrainingTeam.description>
+
+  <LC_DepartmentCore_SafetyTeam.label>部门核心（安保部）</LC_DepartmentCore_SafetyTeam.label>
+  <LC_DepartmentCore_SafetyTeam.description>安保部的医疗与精神恢复中枢。以更低的 K 公司安瓿消耗同步修复同房间员工的肉体伤势与精神损伤（LC_MentalDamage）。\n\n部门加成：\n- 房间再生器每次修复 14 点伤口并恢复 25% 精神损伤（仅消耗 7 燃料/次）\n- 已分配员工：伤口自然愈合速度 ×110%</LC_DepartmentCore_SafetyTeam.description>
+
+  <LC_DepartmentCore_CentralCommandTeam.label>部门核心（中央本部）</LC_DepartmentCore_CentralCommandTeam.label>
+  <LC_DepartmentCore_CentralCommandTeam.description>中央本部的双翼指挥核心，最多可同时分配 10 名员工，并在通电时解锁主管战术子弹。\n\n部门加成：\n- 最大可分配员工数：10；移动 ×108%，工作 ×110%，承伤 ×92%\n- 战术子弹（充能上限 +4）：生命恢复弹、精神恢复弹、四色护盾弹</LC_DepartmentCore_CentralCommandTeam.description>
+
+  <LC_DepartmentCore_WelfareTeam.label>部门核心（福利部）</LC_DepartmentCore_WelfareTeam.label>
+  <LC_DepartmentCore_WelfareTeam.description>福利部的后勤保障与心理支援核心。保护已分配员工免受精神崩溃与重创，提升 PE-Box 产出效率，并在通电时解锁减速弹。\n\n部门加成：\n- 已分配员工：承伤 ×90%，崩溃临界值 -12%，工作 15% 概率额外 +1 PE-Box\n- 战术子弹（充能上限 +3）：减速弹</LC_DepartmentCore_WelfareTeam.description>
+
+  <LC_DepartmentCore_DisciplinaryTeam.label>部门核心（惩戒部）</LC_DepartmentCore_DisciplinaryTeam.label>
+  <LC_DepartmentCore_DisciplinaryTeam.description>惩戒部的镇压武装核心。强化已分配员工的作战能力，并在通电时扩充全设施 E.G.O 提取上限及解锁处决弹。\n\n部门加成：\n- 全设施生效（通电时）：所有异想体 E.G.O 武器与护甲最大提取上限 +1\n- 已分配员工：近战伤害 ×115%，瞄准时间 ×88%\n- 战术子弹（充能上限 +3）：处决弹</LC_DepartmentCore_DisciplinaryTeam.description>
+
+  <LC_DepartmentCore_RecordTeam.label>部门核心（记录部）</LC_DepartmentCore_RecordTeam.label>
+  <LC_DepartmentCore_RecordTeam.description>记录部的档案记忆核心。以制度与历史沉淀稳固员工心智并强化长期训练。\n\n部门加成（已分配员工）：\n- 全局学习速率 ×112%，四维属性工作经验获取 +20%\n- 崩溃临界值 -15%</LC_DepartmentCore_RecordTeam.description>
+
+  <LC_DepartmentCore_ExtractionTeam.label>部门核心（研发部）</LC_DepartmentCore_ExtractionTeam.label>
+  <LC_DepartmentCore_ExtractionTeam.description>研发部的深层 Cogito 与 E.G.O 锻造核心。在通电时显著降低全设施的 E.G.O 制造消耗。\n\n部门加成：\n- 全设施生效（通电时）：E.G.O 提取所需 PE-Box 消耗降低 25%\n- 已分配员工：异想体研究速率 +15%</LC_DepartmentCore_ExtractionTeam.description>
+
+  <LC_DepartmentCore_ArchitectureTeam.label>部门核心（构筑部）</LC_DepartmentCore_ArchitectureTeam.label>
+  <LC_DepartmentCore_ArchitectureTeam.description>构筑部的最深层整合核心。汇集公司各部门的综合优势，为已分配员工提供全面强化。\n\n部门加成（已分配员工）：\n- 移动速度 ×110%，全局工作速度 ×110%\n- 异想体研究速率 +10%，承伤系数 ×92%</LC_DepartmentCore_ArchitectureTeam.description>
 
 </LanguageData>

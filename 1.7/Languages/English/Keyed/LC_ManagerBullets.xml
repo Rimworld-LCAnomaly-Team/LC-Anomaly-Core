@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_Bullet_HpHeal_Label>HP Bullet</LC_Bullet_HpHeal_Label>
+  <LC_Bullet_HpHeal_Desc>Fire an HP Recovery Bullet at a target area (radius 3.5), healing up to 20 injury severity on friendly colonists.\n\nCharges remaining: {0}/{1}</LC_Bullet_HpHeal_Desc>
+
+  <LC_Bullet_SpHeal_Label>SP Bullet</LC_Bullet_SpHeal_Label>
+  <LC_Bullet_SpHeal_Desc>Fire an SP Recovery Bullet at a target area (radius 3.5), reducing LC Mental Damage by 50% and calming non-aggressive mental breaks.\n\nCharges remaining: {0}/{1}</LC_Bullet_SpHeal_Desc>
+
+  <LC_Bullet_RedShield_Label>RED Shield</LC_Bullet_RedShield_Label>
+  <LC_Bullet_RedShield_Desc>Deploy a RED damage barrier (absorbs up to 50 RED / physical damage) on friendly colonists in a 3.5-cell radius.\n\nCharges remaining: {0}/{1}</LC_Bullet_RedShield_Desc>
+
+  <LC_Bullet_WhiteShield_Label>WHITE Shield</LC_Bullet_WhiteShield_Label>
+  <LC_Bullet_WhiteShield_Desc>Deploy a WHITE damage barrier (absorbs up to 50 WHITE / psychic damage) on friendly colonists in a 3.5-cell radius.\n\nCharges remaining: {0}/{1}</LC_Bullet_WhiteShield_Desc>
+
+  <LC_Bullet_BlackShield_Label>BLACK Shield</LC_Bullet_BlackShield_Label>
+  <LC_Bullet_BlackShield_Desc>Deploy a BLACK damage barrier (absorbs up to 50 BLACK erosion damage) on friendly colonists in a 3.5-cell radius.\n\nCharges remaining: {0}/{1}</LC_Bullet_BlackShield_Desc>
+
+  <LC_Bullet_PaleShield_Label>PALE Shield</LC_Bullet_PaleShield_Label>
+  <LC_Bullet_PaleShield_Desc>Deploy a PALE damage barrier (absorbs up to 50 PALE soul damage) on friendly colonists in a 3.5-cell radius.\n\nCharges remaining: {0}/{1}</LC_Bullet_PaleShield_Desc>
+
+  <LC_Bullet_Slow_Label>Slow Bullet</LC_Bullet_Slow_Label>
+  <LC_Bullet_Slow_Desc>Fire a Welfare Team Slowing Bullet (radius 4.0) that halves the movement speed of hostile entities, abnormalities, and ordeals.\n\nCharges remaining: {0}/{1}</LC_Bullet_Slow_Desc>
+
+  <LC_Bullet_Execution_Label>Execution Bullet</LC_Bullet_Execution_Label>
+  <LC_Bullet_Execution_Desc>Fire a Disciplinary Team Execution Bullet to cleanly erase a targeted humanlike pawn without leaving a corpse or triggering death morale penalties.\n\nCharges remaining: {0}/{1}</LC_Bullet_Execution_Desc>
+
+  <LC_Bullet_NoCharges>No Manager Bullet charges remaining. Recharges automatically over time.</LC_Bullet_NoCharges>
+  <LC_Bullet_ExecutionInvalidTarget>No valid humanlike non-abnormality target near the selected cell.</LC_Bullet_ExecutionInvalidTarget>
+  <LC_Bullet_ExecutedTag>EXECUTED</LC_Bullet_ExecutedTag>
+</LanguageData>

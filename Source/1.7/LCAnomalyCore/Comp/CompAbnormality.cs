@@ -389,7 +389,13 @@ namespace LCAnomalyCore.Comp
         /// <param name="studier">研究者</param>
         protected virtual void StudyEvent_Good(Pawn studier)
         {
-            PeBoxComp?.CheckSpawnPeBox(studier, PeBoxProducedTemp);
+            int peBoxAmount = PeBoxProducedTemp;
+            if (peBoxAmount > 0 && Rand.Chance(DepartmentCoreUtility.GetBonusPeBoxChance(studier)))
+            {
+                peBoxAmount++;
+            }
+
+            PeBoxComp?.CheckSpawnPeBox(studier, peBoxAmount);
             StudyUtil.DoStudyResultEffect(studier, (Pawn)parent, LC_StudyResult.Good);
             AccessoryableComp?.CheckGiveAccessory(studier);
 
@@ -403,7 +409,13 @@ namespace LCAnomalyCore.Comp
         /// <param name="studier">研究者</param>
         protected virtual void StudyEvent_Normal(Pawn studier)
         {
-            PeBoxComp?.CheckSpawnPeBox(studier, PeBoxProducedTemp);
+            int peBoxAmount = PeBoxProducedTemp;
+            if (peBoxAmount > 0 && Rand.Chance(DepartmentCoreUtility.GetBonusPeBoxChance(studier)))
+            {
+                peBoxAmount++;
+            }
+
+            PeBoxComp?.CheckSpawnPeBox(studier, peBoxAmount);
             StudyUtil.DoStudyResultEffect(studier, (Pawn)parent, LC_StudyResult.Normal);
             AccessoryableComp?.CheckGiveAccessory(studier);
             OnAnyAbnormalityStudyCompleted?.Invoke(studier, this, LC_StudyResult.Normal);
@@ -471,8 +483,10 @@ namespace LCAnomalyCore.Comp
             float baseRate = studier.GetPawnStatusLevel(EPawnStatus.Justice).Status * 0.002f;
             //观察等级解锁的成功率
             float unlockRate = StudiableComp.GetWorkSuccessRateOffset();
+            //情报部员工额外成功率加成
+            float deptBonus = DepartmentCoreUtility.GetStudySuccessRateBonus(studier?.parent as Pawn);
 
-            return baseRate + unlockRate;
+            return baseRate + unlockRate + deptBonus;
         }
 
         /// <summary>
@@ -486,7 +500,7 @@ namespace LCAnomalyCore.Comp
             if (!string.IsNullOrEmpty(abnormalityCategory))
             {
                 float value = StudyUtil.GetPawnStatusIncreaseValue(studier, workType, abnormalityCategory);
-                value *= 0.05f;
+                value *= 0.05f * DepartmentCoreUtility.GetExpGainMultiplier(studier?.parent as Pawn);
 
                 switch (workType)
                 {

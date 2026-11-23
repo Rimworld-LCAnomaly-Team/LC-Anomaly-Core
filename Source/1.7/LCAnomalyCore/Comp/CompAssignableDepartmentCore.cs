@@ -114,7 +114,8 @@ namespace LCAnomalyCore.Comp
         public int DoHeal(Pawn employee, float curFuel)
         {
             int times = 0;
-            int maxTimes = (int)(curFuel / Props.healConsumeAmount);
+            float unitConsume = DepartmentCoreUtility.GetEffectiveHealFuelCost(Props.healConsumeAmount);
+            int maxTimes = unitConsume > 0f ? (int)(curFuel / unitConsume) : 999;
 
             //治疗断肢
             List<BodyPartRecord> list_missingPart = HealthUtil.FindAllMissingBodyPart(employee);
@@ -139,6 +140,7 @@ namespace LCAnomalyCore.Comp
             employee.health.hediffSet.GetHediffs(ref list_injury);
             if (list_injury.Count > 0)
             {
+                int healedInjuries = 0;
                 foreach (Hediff_Injury injury in list_injury)
                 {
                     //检查燃料是否够用
@@ -148,12 +150,48 @@ namespace LCAnomalyCore.Comp
                     //以1倍率和指定耐久来治疗伤口
                     injury.Heal(Props.healAmount);
                     times++;
+                    healedInjuries++;
                 }
 
-                DoHealEffect(employee, Props.healAmount, list_injury.Count);
+                if (healedInjuries > 0)
+                {
+                    DoHealEffect(employee, Props.healAmount, healedInjuries);
+                }
+            }
+
+            //安保部及安保部核心抑制永久奖励额外提供精神损伤（LC_MentalDamage）恢复
+            float effectiveMentalHeal = DepartmentCoreUtility.GetEffectiveHealMentalAmount(Props.healMentalAmount);
+            if (effectiveMentalHeal > 0f && Defs.HediffDefOf.LC_MentalDamage != null && times + 1 <= maxTimes)
+            {
+                Hediff mentalDamage = employee.health?.hediffSet?.GetFirstHediffOfDef(Defs.HediffDefOf.LC_MentalDamage);
+                if (mentalDamage != null && mentalDamage.Severity > 0.001f)
+                {
+                    float recovered = Mathf.Min(effectiveMentalHeal, mentalDamage.Severity);
+                    mentalDamage.Severity -= recovered;
+                    if (mentalDamage.Severity <= 0.001f)
+                    {
+                        employee.health.RemoveHediff(mentalDamage);
+                    }
+                    times++;
+                    DoMentalHealEffect(employee, recovered);
+                }
             }
 
             return times;
+        }
+
+        /// <summary>
+        /// 触发精神恢复特效
+        /// </summary>
+        protected void DoMentalHealEffect(Pawn employee, float recovered)
+        {
+            if (employee?.MapHeld == null)
+            {
+                return;
+            }
+
+            MoteMaker.ThrowText(employee.PositionHeld.ToVector3(), employee.MapHeld, $"SP +{Mathf.RoundToInt(recovered * 100f)}%", Color.cyan);
+            FleckMaker.ThrowMetaIcon(employee.PositionHeld, employee.MapHeld, FleckDefOf.HealingCross, 0.42f);
         }
 
         /// <summary>

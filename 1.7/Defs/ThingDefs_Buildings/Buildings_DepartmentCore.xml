@@ -52,11 +52,11 @@
     <tradeability>None</tradeability>
   </ThingDef>
 
-  <!-- Control Team Core-->
+  <!-- Control Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_ControlTeam</defName>
     <label>Department Core (Control Team)</label>
-    <description>.</description>
+    <description>The operational heart of the Control Team. Periodically regenerates wounds for active employees in the same room using K Corp. Ampoules.\n\nDepartment Bonus (Assigned Employees):\n- Move speed x115%\n- Global work speed x110%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -67,7 +67,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.76, 0.48, 0.22, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -79,11 +79,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Information Team Core-->
+  <!-- Information Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_InformationTeam</defName>
     <label>Department Core (Information Team)</label>
-    <description>.</description>
+    <description>The analytical core of the Information Team. Periodically regenerates wounds for active employees in the same room and feeds live abnormality telemetry to its staff.\n\nDepartment Bonus (Assigned Employees):\n- Abnormality study rate +25%\n- Abnormality work success rate +8%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -94,7 +94,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.55, 0.34, 0.78, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -106,11 +106,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Training Team Core-->
+  <!-- Training Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_TrainingTeam</defName>
     <label>Department Core (Training Team)</label>
-    <description>.</description>
+    <description>The employee education hub of the Training Team. Periodically regenerates wounds for active employees in the same room and accelerates hands-on skill growth.\n\nDepartment Bonus (Assigned Employees):\n- Four-attribute work XP gain +50%\n- Global learning factor x115%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -121,7 +121,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.88, 0.56, 0.16, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -133,11 +133,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Safety Team Core-->
+  <!-- Safety Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_SafetyTeam</defName>
     <label>Department Core (Safety Team)</label>
-    <description>.</description>
+    <description>The medical and mental-care regenerator of the Safety Team. Restores both physical wounds and mental trauma (LC Mental Damage) at higher efficiency and lower K Corp. Ampoule cost.\n\nDepartment Bonus:\n- Room regenerator heals +14 injury and -25% mental damage at 7 fuel/pulse\n- Assigned employees: Injury healing factor x110%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -145,10 +145,11 @@
     <comps>
       <li Class="LCAnomalyCore.Comp.CompProperties_AssignableDepartmentCore">
         <departmentType>SafetyTeam</departmentType>
-        <healConsumeAmount>10</healConsumeAmount>
-        <healAmount>10</healAmount>
+        <healConsumeAmount>7</healConsumeAmount>
+        <healAmount>14</healAmount>
+        <healMentalAmount>0.25</healMentalAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.18, 0.72, 0.42, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -160,11 +161,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- CentralCommand Team Core-->
+  <!-- Central Command Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_CentralCommandTeam</defName>
-    <label>Department Core (CentralCommand Team)</label>
-    <description>.</description>
+    <label>Department Core (Central Command Team)</label>
+    <description>The twin-wing command core of the Central Command Team, supporting up to 10 assigned employees simultaneously and unlocking Manager Tactical Bullets.\n\nDepartment Bonus:\n- Max assigned employees: 10\n- Assigned employees: Move speed x108%, Global work speed x110%, Incoming damage x92%\n- Tactical Bullets (+4 max charges): HP, SP, and RED/WHITE/BLACK/PALE Shield Bullets</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -175,7 +176,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.90, 0.76, 0.22, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>10</maxAssignedPawnsCount>
@@ -187,11 +188,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Welfare Team Core-->
+  <!-- Welfare Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_WelfareTeam</defName>
     <label>Department Core (Welfare Team)</label>
-    <description>.</description>
+    <description>The employee welfare and logistics core of the Welfare Team. Protects assigned staff against stress and harm, improves PE-Box yield, and unlocks the Slow Bullet.\n\nDepartment Bonus:\n- Assigned employees: Incoming damage x90%, Mental break threshold -12%, 15% chance for +1 bonus PE-Box\n- Tactical Bullets (+3 max charges): Slowing Bullet</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -202,7 +203,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.24, 0.62, 0.88, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -214,11 +215,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Disciplinary Team Core-->
+  <!-- Disciplinary Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_DisciplinaryTeam</defName>
     <label>Department Core (Disciplinary Team)</label>
-    <description>.</description>
+    <description>The suppression armory core of the Disciplinary Team. Sharpens employee combat lethality, expands the facility's E.G.O armory capacity, and unlocks the Execution Bullet while powered.\n\nDepartment Bonus:\n- Facility-wide (when powered): Max extractable E.G.O weapon &amp; suit cap +1\n- Assigned employees: Melee damage x115%, Aiming delay x88%\n- Tactical Bullets (+3 max charges): Execution Bullet</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -229,7 +230,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.82, 0.18, 0.22, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -241,11 +242,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Record Team Core-->
+  <!-- Record Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_RecordTeam</defName>
-    <label>Department Core (RecordTeam)</label>
-    <description>.</description>
+    <label>Department Core (Record Team)</label>
+    <description>The archival memory core of the Record Team. Preserves institutional discipline, calms employee minds, and reinforces long-term training.\n\nDepartment Bonus (Assigned Employees):\n- Global learning factor x112%, Four-attribute work XP gain +20%\n- Mental break threshold -15%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -256,7 +257,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.68, 0.70, 0.76, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -268,11 +269,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Extraction Team Core-->
+  <!-- Extraction Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_ExtractionTeam</defName>
     <label>Department Core (Extraction Team)</label>
-    <description>.</description>
+    <description>The deep-layer Cogito and E.G.O forging core of the Extraction Team. Streamlines E.G.O manufacturing across the entire facility while powered.\n\nDepartment Bonus:\n- Facility-wide (when powered): E.G.O PE-Box extraction cost -25%\n- Assigned employees: Abnormality study rate +15%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -283,7 +284,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.74, 0.56, 0.24, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>
@@ -295,11 +296,11 @@
     <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- Architecture Team Core-->
+  <!-- Architecture Team Core -->
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_ArchitectureTeam</defName>
     <label>Department Core (Architecture Team)</label>
-    <description>.</description>
+    <description>The deepest foundational core of the Architecture Team. Integrates all corporate disciplines into a comprehensive buff for assigned staff.\n\nDepartment Bonus (Assigned Employees):\n- Move speed x110%, Global work speed x110%\n- Abnormality study rate +10%, Incoming damage x92%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>
@@ -310,7 +311,7 @@
         <healConsumeAmount>10</healConsumeAmount>
         <healAmount>10</healAmount>
         <healDuration>600</healDuration>
-        <fillableBarColor>(0.144, 0.613, 0.243, 0.85)</fillableBarColor>
+        <fillableBarColor>(0.85, 0.94, 0.98, 0.85)</fillableBarColor>
         <drawAssignmentOverlay>false</drawAssignmentOverlay>
         <compClass>LCAnomalyCore.Comp.CompAssignableDepartmentCore</compClass>
         <maxAssignedPawnsCount>5</maxAssignedPawnsCount>

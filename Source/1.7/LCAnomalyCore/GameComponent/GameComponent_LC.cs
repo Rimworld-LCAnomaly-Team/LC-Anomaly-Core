@@ -49,11 +49,111 @@ namespace LCAnomalyCore.GameComponent
 
         private int waringPointsCounter;
 
+        public const string CoreSuppression_Malkuth = "CoreSuppression_Malkuth";
+        public const string CoreSuppression_Yesod = "CoreSuppression_Yesod";
+        public const string CoreSuppression_Hod = "CoreSuppression_Hod";
+        public const string CoreSuppression_Netzach = "CoreSuppression_Netzach";
+        public const string CoreSuppression_Gebura = "CoreSuppression_Gebura";
+        public const string CoreSuppression_Binah = "CoreSuppression_Binah";
+
         private HashSet<string> discoveredAbnormalities = new HashSet<string>();
 
         private Dictionary<int, float> blessedWeaponBonusDict = new Dictionary<int, float>();
 
+        private HashSet<string> completedCoreSuppressions = new HashSet<string>();
+        private bool suppressionHealLocked;
+
+        private int managerBulletCharges;
+        private int managerBulletRechargeCounter;
+        private bool managerBulletsInitialized;
+
         public static GameComponent_LC Instance => Current.Game?.GetComponent<GameComponent_LC>();
+
+        /// <summary>当前是否处于安保部核心抑制的再生器封锁期间。</summary>
+        public bool SuppressionHealLocked
+        {
+            get => suppressionHealLocked;
+            set => suppressionHealLocked = value;
+        }
+
+        /// <summary>检查指定的核心抑制永久强化是否已完成。</summary>
+        public bool HasCoreSuppression(string suppressionId)
+        {
+            return !string.IsNullOrEmpty(suppressionId)
+                && completedCoreSuppressions != null
+                && completedCoreSuppressions.Contains(suppressionId);
+        }
+
+        /// <summary>永久激活指定的核心抑制强化并刷新所有在线员工的部门增益。</summary>
+        public bool CompleteCoreSuppression(string suppressionId)
+        {
+            if (string.IsNullOrEmpty(suppressionId))
+            {
+                return false;
+            }
+
+            completedCoreSuppressions ??= new HashSet<string>();
+            completedCoreSuppressions.Add(suppressionId);
+
+            if (Find.Maps != null)
+            {
+                foreach (Map map in Find.Maps)
+                {
+                    foreach (Pawn pawn in map.mapPawns.FreeColonistsSpawned)
+                    {
+                        Hediff h = pawn.health?.hediffSet?.GetFirstHediffOfDef(Defs.HediffDefOf.LC_PawnStatus);
+                        (h as Hediffs.HediffComp_PawnStatus)?.RefreshStatus();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>获取指定地图当前可用的主管战术子弹充能次数。</summary>
+        public int GetManagerBulletCharges(Map map)
+        {
+            int max = Util.ManagerBulletUtility.GetMaxBulletCharges(map);
+            if (max <= 0)
+            {
+                return 0;
+            }
+
+            if (!managerBulletsInitialized)
+            {
+                managerBulletCharges = max;
+                managerBulletsInitialized = true;
+            }
+
+            if (managerBulletCharges > max)
+            {
+                managerBulletCharges = max;
+            }
+
+            return managerBulletCharges;
+        }
+
+        /// <summary>尝试消耗 1 发主管战术子弹。</summary>
+        public bool TryConsumeManagerBullet(Map map)
+        {
+            int cur = GetManagerBulletCharges(map);
+            if (cur <= 0)
+            {
+                return false;
+            }
+
+            managerBulletCharges = cur - 1;
+            return true;
+        }
+
+        /// <summary>将主管战术子弹充能补满至当前地图上限。</summary>
+        public void RefillManagerBullets(Map map)
+        {
+            int max = Util.ManagerBulletUtility.GetMaxBulletCharges(map);
+            managerBulletCharges = max;
+            managerBulletsInitialized = max > 0;
+            managerBulletRechargeCounter = 0;
+        }
 
         public bool IsWeaponBlessed(Thing weapon)
         {
@@ -153,6 +253,8 @@ namespace LCAnomalyCore.GameComponent
             WarningOverlay.Tick();
             LCGameComponentTickEvent?.Invoke();
 
+            TickManagerBulletRecharge();
+
             //如果启用警报系统，就自动更新警报点数
             if (Setting_LCAnomalyCore_Main.Settings.If_EnableLCWarning)
             {
@@ -183,8 +285,61 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
             Scribe_Collections.Look(ref discoveredAbnormalities, "lcDiscoveredAbnormalities", LookMode.Value);
             Scribe_Collections.Look(ref blessedWeaponBonusDict, "lcBlessedWeaponBonusDict", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref completedCoreSuppressions, "lcCompletedCoreSuppressions", LookMode.Value);
+            Scribe_Values.Look(ref suppressionHealLocked, "lcSuppressionHealLocked", false);
+            Scribe_Values.Look(ref managerBulletCharges, "lcManagerBulletCharges", 0);
+            Scribe_Values.Look(ref managerBulletRechargeCounter, "lcManagerBulletRechargeCounter", 0);
+            Scribe_Values.Look(ref managerBulletsInitialized, "lcManagerBulletsInitialized", false);
             discoveredAbnormalities ??= new HashSet<string>();
             blessedWeaponBonusDict ??= new Dictionary<int, float>();
+            completedCoreSuppressions ??= new HashSet<string>();
+        }
+
+        private void TickManagerBulletRecharge()
+        {
+            if (Find.Maps == null || Find.Maps.Count == 0)
+            {
+                return;
+            }
+
+            int maxAcrossColony = 0;
+            for (int i = 0; i < Find.Maps.Count; i++)
+            {
+                int mapMax = Util.ManagerBulletUtility.GetMaxBulletCharges(Find.Maps[i]);
+                if (mapMax > maxAcrossColony)
+                {
+                    maxAcrossColony = mapMax;
+                }
+            }
+
+            if (maxAcrossColony <= 0)
+            {
+                return;
+            }
+
+            if (!managerBulletsInitialized)
+            {
+                managerBulletCharges = maxAcrossColony;
+                managerBulletsInitialized = true;
+                return;
+            }
+
+            if (managerBulletCharges >= maxAcrossColony)
+            {
+                managerBulletCharges = maxAcrossColony;
+                managerBulletRechargeCounter = 0;
+                return;
+            }
+
+            int rechargeInterval = HasCoreSuppression(CoreSuppression_Binah)
+                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
+                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            managerBulletRechargeCounter++;
+            if (managerBulletRechargeCounter >= rechargeInterval)
+            {
+                managerBulletRechargeCounter = 0;
+                managerBulletCharges++;
+            }
         }
 
         /// <summary>执行 <c>TryGetAnomalyStatusSaved</c> 定义的操作。</summary>

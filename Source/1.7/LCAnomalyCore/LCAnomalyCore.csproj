@@ -80,6 +80,7 @@
     <Compile Include="Defs\ThoughtDefOf.cs" />
     <Compile Include="Defs\WorkTypeDefOf.cs" />
     <Compile Include="GameComponent\GameComponent_LC.cs" />
+    <Compile Include="Hediffs\HediffComp_BulletShield.cs" />
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
     <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Util\Components.cs" />
     <Compile Include="Util\Curves.cs" />
     <Compile Include="Util\DamageUtils.cs" />
+    <Compile Include="Util\DepartmentCoreUtility.cs" />
     <Compile Include="Util\ExpansionActive.cs" />
     <Compile Include="Util\ExtractUtil.cs" />
     <Compile Include="Util\FileUtil.cs" />
@@ -141,6 +143,7 @@
     <Compile Include="Util\HealthUtil.cs" />
     <Compile Include="Util\LabelDrawerUtil.cs" />
     <Compile Include="Util\LogUtil.cs" />
+    <Compile Include="Util\ManagerBulletUtility.cs" />
     <Compile Include="Util\MaterialDatabase.cs" />
     <Compile Include="Util\MusicUtils.cs" />
     <Compile Include="Util\SightUtil.cs" />

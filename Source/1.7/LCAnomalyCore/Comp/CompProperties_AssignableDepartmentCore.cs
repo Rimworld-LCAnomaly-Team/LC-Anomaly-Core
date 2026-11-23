@@ -15,6 +15,8 @@ namespace LCAnomalyCore.Comp
         public float healConsumeAmount;
         /// <summary>表示 <c>healAmount</c>。</summary>
         public float healAmount;
+        /// <summary>每次再生周期可恢复的精神损伤（LC_MentalDamage）严重度，默认 0（安保部启用）。</summary>
+        public float healMentalAmount = 0f;
         /// <summary>表示 <c>healDuration</c>。</summary>
         public int healDuration;
 

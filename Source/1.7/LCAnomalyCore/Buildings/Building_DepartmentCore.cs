@@ -2,6 +2,7 @@
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Util;
 using RimWorld;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -77,6 +78,20 @@ namespace LCAnomalyCore.Buildings
         }
 
         /// <inheritdoc />
+        public override IEnumerable<Gizmo> GetGizmos()
+        {
+            foreach (Gizmo gizmo in base.GetGizmos())
+            {
+                yield return gizmo;
+            }
+
+            foreach (Gizmo bulletGizmo in ManagerBulletUtility.GetBulletGizmos(this))
+            {
+                yield return bulletGizmo;
+            }
+        }
+
+        /// <inheritdoc />
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
             //清理所有已分配员工
@@ -85,17 +100,23 @@ namespace LCAnomalyCore.Buildings
         }
 
         /// <summary>
-        /// 房间内的员工治疗
+        /// 房间内的员工治疗（供周期再生与运行时校验调用）
         /// </summary>
-        protected void TryHeal()
+        public void TryHeal()
         {
+            // 安保部核心抑制期间临时封锁部门核心再生器
+            if (GameComponent.GameComponent_LC.Instance?.SuppressionHealLocked == true)
+                return;
+
             //不在房间内则不进行治疗
             var room = InteractionCell.GetRoom(this.MapHeld);
             if (room == null)
                 return;
 
-            //获取房间内所有的Pawn
+            //获取房间内所有的Pawn并累计消耗燃料
             int healTimes = 0;
+            float unitConsume = DepartmentCoreUtility.GetEffectiveHealFuelCost(CompDepartmentCore.Props.healConsumeAmount);
+            float remainingFuel = CompRefuelable.Fuel;
             var roomPawns = room.ContainedThings<Pawn>();
             foreach (Pawn employee in roomPawns)
             {
@@ -108,13 +129,21 @@ namespace LCAnomalyCore.Buildings
                 if (comp == null || !comp.Enabled)
                     continue;
 
-                healTimes = CompDepartmentCore.DoHeal(employee, CompRefuelable.Fuel);
+                if (remainingFuel < unitConsume)
+                    break;
+
+                int used = CompDepartmentCore.DoHeal(employee, remainingFuel);
+                if (used > 0)
+                {
+                    healTimes += used;
+                    remainingFuel -= unitConsume * used;
+                }
             }
 
             //按照治疗次数消耗燃料
             if (healTimes > 0)
             {
-                float amount = CompDepartmentCore.Props.healConsumeAmount * healTimes;
+                float amount = unitConsume * healTimes;
                 CompRefuelable.ConsumeFuel(amount);
 
                 LogUtil.Message($"{def.defName} consumed {amount} KCorpAmpoule.");

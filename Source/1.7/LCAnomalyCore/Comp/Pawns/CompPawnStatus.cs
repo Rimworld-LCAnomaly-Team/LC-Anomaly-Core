@@ -267,6 +267,12 @@ namespace LCAnomalyCore.Comp.Pawns
             else
                 AssignedCore = null;
             Enabled = state;
+
+            if (state)
+            {
+                Hediff hediff = (parent as Pawn)?.health?.hediffSet?.GetFirstHediffOfDef(HediffDefOf.LC_PawnStatus);
+                (hediff as Hediffs.HediffComp_PawnStatus)?.RefreshStatus();
+            }
         }
 
         #endregion 外部方法

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_BulletShield_Red.label>物理护盾</LC_BulletShield_Red.label>
+  <LC_BulletShield_Red.description>主管战术护盾，破碎前最多吸收 50 点 RED（物理）伤害。</LC_BulletShield_Red.description>
+
+  <LC_BulletShield_White.label>精神护盾</LC_BulletShield_White.label>
+  <LC_BulletShield_White.description>主管战术护盾，破碎前最多吸收 50 点 WHITE（精神/灵能）伤害。</LC_BulletShield_White.description>
+
+  <LC_BulletShield_Black.label>侵蚀护盾</LC_BulletShield_Black.label>
+  <LC_BulletShield_Black.description>主管战术护盾，破碎前最多吸收 50 点 BLACK（侵蚀）伤害。</LC_BulletShield_Black.description>
+
+  <LC_BulletShield_Pale.label>灵魂护盾</LC_BulletShield_Pale.label>
+  <LC_BulletShield_Pale.description>主管战术护盾，破碎前最多吸收 50 点 PALE（灵魂）伤害。</LC_BulletShield_Pale.description>
+
+  <LC_BulletSlow.label>战术减速</LC_BulletSlow.label>
+  <LC_BulletSlow.description>受福利部减速弹影响，移动速度降低 50%。</LC_BulletSlow.description>
+
+  <LC_CoreSuppression_HodDebuff.label>培训核心抑制压制</LC_CoreSuppression_HodDebuff.label>
+  <LC_CoreSuppression_HodDebuff.description>培训部核心抑制考核进行中，全员移动速度与全局工作速度降低 25%。</LC_CoreSuppression_HodDebuff.description>
+</LanguageData>

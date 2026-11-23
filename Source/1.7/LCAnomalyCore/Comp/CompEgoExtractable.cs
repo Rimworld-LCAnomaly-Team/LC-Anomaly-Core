@@ -1,6 +1,8 @@
 ﻿using LCAnomalyCore.Defs;
 using LCAnomalyCore.GameComponent;
+using LCAnomalyCore.Util;
 using RimWorld;
+using System;
 using System.Collections.Generic;
 using Verse;
 
@@ -9,6 +11,8 @@ namespace LCAnomalyCore.Comp
     /// <summary>表示 <c>CompEgoExtractable</c> 类型。</summary>
     public class CompEgoExtractable : ThingComp
     {
+        /// <summary>任意异想体成功提取 E.G.O 时触发。</summary>
+        public static event Action<CompEgoExtractable, EGO_TYPE, ThingDef> OnAnyEgoExtracted;
         #region 字段
 
         /// <summary>
@@ -95,8 +99,8 @@ namespace LCAnomalyCore.Comp
                 return false;
             }
 
-            //消耗独立PeBox
-            int delta = type == EGO_TYPE.Weapon ? Props.weaponExtractedNeed : Props.armorExtractedNeed;
+            //消耗独立PeBox（含研发部核心折扣）
+            int delta = GetExtractPeBoxCost(type);
             if (delta <= PeBoxComp.CurAmountIndiPebox)
             {
                 PeBoxComp.CurAmountIndiPebox -= delta;
@@ -107,6 +111,29 @@ namespace LCAnomalyCore.Comp
                 //Log.Warning($"提取EGO：{parent.Label.Translate()}的独立pebox数量不足，无法提取");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 获取考虑研发部核心折扣后的当前 E.G.O 提取 PE-Box 消耗。
+        /// </summary>
+        public virtual int GetExtractPeBoxCost(EGO_TYPE type)
+        {
+            int baseCost = type == EGO_TYPE.Weapon ? Props.weaponExtractedNeed : Props.armorExtractedNeed;
+            return DepartmentCoreUtility.ApplyEgoExtractionCost(baseCost, parent?.MapHeld);
+        }
+
+        /// <summary>
+        /// 获取考虑惩戒部核心加成后的当前 E.G.O 最大提取上限。
+        /// </summary>
+        public virtual int GetMaxExtractAmount(EGO_TYPE type)
+        {
+            int baseMax = type == EGO_TYPE.Weapon ? Props.amountMaxWeapon : Props.amountMaxArmor;
+            if (baseMax <= 0)
+            {
+                return baseMax;
+            }
+
+            return baseMax + DepartmentCoreUtility.GetEgoExtractionCapBonus(parent?.MapHeld);
         }
 
         /// <summary>
@@ -153,6 +180,7 @@ namespace LCAnomalyCore.Comp
                 Thing thing = ThingMaker.MakeThing(ego);
                 thing.stackCount = 1;
                 GenPlace.TryPlaceThing(thing, parent.PositionHeld, parent.MapHeld, ThingPlaceMode.Near);
+                OnAnyEgoExtracted?.Invoke(this, type, ego);
                 Messages.Message("EGOExtractSucceedText".Translate() + thing.def.label.Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             else
@@ -189,10 +217,10 @@ namespace LCAnomalyCore.Comp
             switch (type)
             {
                 case EGO_TYPE.Weapon:
-                    return CurAmountWeapon >= Props.amountMaxWeapon;
+                    return CurAmountWeapon >= GetMaxExtractAmount(EGO_TYPE.Weapon);
 
                 case EGO_TYPE.Armor:
-                    return CurAmountArmor >= Props.amountMaxArmor;
+                    return CurAmountArmor >= GetMaxExtractAmount(EGO_TYPE.Armor);
 
                 default:
                     //Log.Error("提取EGO:EGO类型不存在");
@@ -222,14 +250,18 @@ namespace LCAnomalyCore.Comp
                 if (CheckIfEGOExtractUnlocked())
                 {
                     component.TryGetAnomalyStatusSaved(parent.def, out AnomalyStatusSaved saved);
+                    int maxWeapon = GetMaxExtractAmount(EGO_TYPE.Weapon);
+                    int weaponCost = GetExtractPeBoxCost(EGO_TYPE.Weapon);
+                    int maxArmor = GetMaxExtractAmount(EGO_TYPE.Armor);
+                    int armorCost = GetExtractPeBoxCost(EGO_TYPE.Armor);
 
                     //提取EGO武器
                     yield return new Command_Action
                     {
                         icon = ContentFinder<UnityEngine.Texture2D>.Get(Props.weaponIconPath),
                         defaultLabel = "ExtractEGOWeaponCommandText".Translate(),
-                        defaultDesc = $"{"ExtractEGOCommandText".Translate()}{CurAmountWeapon}/{Props.amountMaxWeapon}"
-                        + $"\n{"ExtractEGONeedPeboxAmountCommandText".Translate()}{Props.weaponExtractedNeed}"
+                        defaultDesc = $"{"ExtractEGOCommandText".Translate()}{CurAmountWeapon}/{maxWeapon}"
+                        + $"\n{"ExtractEGONeedPeboxAmountCommandText".Translate()}{weaponCost}"
                         + $"\n{"IndiPeBoxAmountCommandText".Translate()}{saved.IndiPeBoxAmount}",
                         Disabled = HasReachedMaxExtractAmount(EGO_TYPE.Weapon),
                         disabledReason = "ExtractEGODisabledReasonText".Translate(),
@@ -244,8 +276,8 @@ namespace LCAnomalyCore.Comp
                     {
                         icon = ContentFinder<UnityEngine.Texture2D>.Get(Props.armorIconPath),
                         defaultLabel = "ExtractEGOArmorCommandText".Translate(),
-                        defaultDesc = $"{"ExtractEGOCommandText".Translate()}{CurAmountArmor}/{Props.amountMaxArmor}"
-                        + $"\n{"ExtractEGONeedPeboxAmountCommandText".Translate()}{Props.armorExtractedNeed}"
+                        defaultDesc = $"{"ExtractEGOCommandText".Translate()}{CurAmountArmor}/{maxArmor}"
+                        + $"\n{"ExtractEGONeedPeboxAmountCommandText".Translate()}{armorCost}"
                         + $"\n{"IndiPeBoxAmountCommandText".Translate()}{saved.IndiPeBoxAmount}",
                         Disabled = HasReachedMaxExtractAmount(EGO_TYPE.Armor),
                         disabledReason = "ExtractEGODisabledReasonText".Translate(),

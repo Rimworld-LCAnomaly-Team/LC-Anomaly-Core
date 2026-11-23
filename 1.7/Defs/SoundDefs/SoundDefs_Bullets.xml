@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <SoundDef>
+    <defName>LC_Sound_BulletHeal</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Heal</clipPath></li></grains>
+        <volumeRange>50~58</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_BulletShield</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Shield</clipPath></li></grains>
+        <volumeRange>50~58</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_BulletSlow</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Slow</clipPath></li></grains>
+        <volumeRange>50~58</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_BulletExecution</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>3</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Execution</clipPath></li></grains>
+        <volumeRange>55~64</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_BulletEmpty</defName>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Empty</clipPath></li></grains>
+        <volumeRange>48~54</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ShieldHit</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/shieldHit</clipPath></li></grains>
+        <volumeRange>42~50</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ShieldBroken</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Shield_Broken</clipPath></li></grains>
+        <volumeRange>48~56</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+</Defs>

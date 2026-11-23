@@ -2547,6 +2547,580 @@ public static class GameplayValidation
         if (!sfPawn.Destroyed) sfPawn.Destroy();
 
         Log.Message("[LC17 Validation] GAMEPLAY PASS; Phase3; 6_abnormalities/pale_justitia/bigbird_deaths/littlered_hire/backward_clock/schadenfreude");
+        ValidateOrdealAndDepartmentExpansionPhase1(map);
+    }
+
+    private static void ValidateOrdealAndDepartmentExpansionPhase1(Map map)
+    {
+        // 1. Validate all 10 Department Cores exist with real descriptions and differentiated buffs
+        string[] coreDefNames =
+        {
+            "LC_DepartmentCore_ControlTeam",
+            "LC_DepartmentCore_InformationTeam",
+            "LC_DepartmentCore_TrainingTeam",
+            "LC_DepartmentCore_SafetyTeam",
+            "LC_DepartmentCore_CentralCommandTeam",
+            "LC_DepartmentCore_WelfareTeam",
+            "LC_DepartmentCore_DisciplinaryTeam",
+            "LC_DepartmentCore_RecordTeam",
+            "LC_DepartmentCore_ExtractionTeam",
+            "LC_DepartmentCore_ArchitectureTeam"
+        };
+
+        foreach (string defName in coreDefNames)
+        {
+            ThingDef coreDef = DefDatabase<ThingDef>.GetNamed(defName, true);
+            if (string.IsNullOrWhiteSpace(coreDef.description) || coreDef.description.Trim() == ".")
+                throw new InvalidOperationException($"Department core {defName} still has placeholder description.");
+        }
+
+        // 1b. Spawn Control, Safety, Disciplinary, and Extraction cores to verify employee & facility buffs
+        Pawn tester = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist,
+            Faction.OfPlayer,
+            forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false,
+            forceNoBackstory: true,
+            fixedBiologicalAge: 25f,
+            forceBaselinerChance: 1f));
+        IntVec3 testerCell = FindSafePawnCell(map, map.Center);
+        GenSpawn.Spawn(tester, testerCell, map);
+
+        var spawnedCores = new List<Building_DepartmentCore>();
+        try
+        {
+            float baseMove = tester.GetStatValue(RimWorld.StatDefOf.MoveSpeed);
+
+            Building_DepartmentCore SpawnCore(string defName)
+            {
+                var core = (Building_DepartmentCore)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(defName, true));
+                core.SetFaction(Faction.OfPlayer);
+                GenSpawn.Spawn(core, FindSafePlatformCell(map), map);
+                if (core.CompPower != null) core.CompPower.PowerOn = true;
+                spawnedCores.Add(core);
+                return core;
+            }
+
+            Building_DepartmentCore ctrlCore = SpawnCore("LC_DepartmentCore_ControlTeam");
+            ctrlCore.CompDepartmentCore.TryAssignPawn(tester);
+            float ctrlMove = tester.GetStatValue(RimWorld.StatDefOf.MoveSpeed);
+            if (ctrlMove <= baseMove + 0.05f)
+                throw new InvalidOperationException($"ControlTeam core failed to boost MoveSpeed ({baseMove:F2} -> {ctrlMove:F2}).");
+            ctrlCore.CompDepartmentCore.TryUnassignPawn(tester);
+
+            Building_DepartmentCore infoCore = SpawnCore("LC_DepartmentCore_InformationTeam");
+            infoCore.CompDepartmentCore.TryAssignPawn(tester);
+            if (Math.Abs(DepartmentCoreUtility.GetStudySuccessRateBonus(tester) - 0.08f) > 0.001f)
+                throw new InvalidOperationException("InformationTeam core expected +8% study success rate bonus.");
+            infoCore.CompDepartmentCore.TryUnassignPawn(tester);
+
+            Building_DepartmentCore trainCore = SpawnCore("LC_DepartmentCore_TrainingTeam");
+            trainCore.CompDepartmentCore.TryAssignPawn(tester);
+            if (Math.Abs(DepartmentCoreUtility.GetExpGainMultiplier(tester) - 1.5f) > 0.001f)
+                throw new InvalidOperationException("TrainingTeam core expected 1.5x status XP gain multiplier.");
+            trainCore.CompDepartmentCore.TryUnassignPawn(tester);
+
+            Building_DepartmentCore safetyCore = SpawnCore("LC_DepartmentCore_SafetyTeam");
+            if (safetyCore.CompDepartmentCore.Props.healMentalAmount <= 0f)
+                throw new InvalidOperationException("SafetyTeam core missing positive healMentalAmount.");
+            safetyCore.CompDepartmentCore.TryAssignPawn(tester);
+            Hediff mental = tester.health.AddHediff(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage);
+            mental.Severity = 0.6f;
+            int safetyUsed = safetyCore.CompDepartmentCore.DoHeal(tester, 100f);
+            if (safetyUsed <= 0 || mental.Severity >= 0.59f)
+                throw new InvalidOperationException($"SafetyTeam DoHeal failed to restore LC_MentalDamage (used={safetyUsed}, sev={mental.Severity:F2}).");
+            safetyCore.CompDepartmentCore.TryUnassignPawn(tester);
+
+            if (DepartmentCoreUtility.GetEgoExtractionCapBonus(map) != 0)
+                throw new InvalidOperationException("EGO cap bonus should be 0 before DisciplinaryTeam core spawns.");
+            if (DepartmentCoreUtility.ApplyEgoExtractionCost(20, map) != 20)
+                throw new InvalidOperationException("EGO cost discount should be inactive before ExtractionTeam core spawns.");
+
+            SpawnCore("LC_DepartmentCore_DisciplinaryTeam");
+            SpawnCore("LC_DepartmentCore_ExtractionTeam");
+            if (DepartmentCoreUtility.GetEgoExtractionCapBonus(map) != 1)
+                throw new InvalidOperationException("Powered DisciplinaryTeam core failed to grant +1 EGO extraction cap.");
+            if (DepartmentCoreUtility.ApplyEgoExtractionCost(20, map) != 15)
+                throw new InvalidOperationException("Powered ExtractionTeam core failed to apply -25% EGO PE-Box cost (20 -> 15).");
+        }
+        finally
+        {
+            foreach (Building_DepartmentCore core in spawnedCores)
+            {
+                if (core != null && !core.Destroyed)
+                {
+                    core.DeSpawn();
+                    core.Destroy();
+                }
+            }
+            if (tester != null && !tester.Destroyed)
+            {
+                if (tester.Spawned) tester.DeSpawn();
+                tester.Destroy();
+            }
+        }
+
+        // 2. Validate 10 Departments + coreThingDef bindings + expanded Directives in LC-Anomaly-Story (if loaded)
+        Type deptDefType = GenTypes.GetTypeInAnyAssembly("LCAnomalyStory.Defs.CompanyDepartmentDef");
+        if (deptDefType != null)
+        {
+            Type dbDept = typeof(DefDatabase<>).MakeGenericType(deptDefType);
+            IList allDepts = (IList)dbDept.GetProperty("AllDefsListForReading", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            if (allDepts.Count < 10)
+                throw new InvalidOperationException($"Expected >= 10 CompanyDepartmentDefs, found {allDepts.Count}.");
+            FieldInfo coreField = deptDefType.GetField("coreThingDef", BindingFlags.Public | BindingFlags.Instance);
+            foreach (object dept in allDepts)
+            {
+                ThingDef boundCore = (ThingDef)coreField.GetValue(dept);
+                if (boundCore == null)
+                    throw new InvalidOperationException($"CompanyDepartmentDef {((Def)dept).defName} has null coreThingDef.");
+            }
+
+            Type dirDefType = GenTypes.GetTypeInAnyAssembly("LCAnomalyStory.Defs.CompanyDirectiveDef");
+            Type dbDir = typeof(DefDatabase<>).MakeGenericType(dirDefType);
+            IList allDirs = (IList)dbDir.GetProperty("AllDefsListForReading", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            if (allDirs.Count < 12)
+                throw new InvalidOperationException($"Expected >= 12 CompanyDirectiveDefs across 10 departments, found {allDirs.Count}.");
+        }
+
+        // 3. Validate Dawn (4) & Noon (4) Ordeals original textures, FourColorTargetExtension, and SoundDefs (if loaded)
+        string[] dawnNoonVariants =
+        {
+            "AmberDawn", "CrimsonDawn", "GreenDawn", "VioletDawn",
+            "CrimsonNoon", "GreenNoon", "VioletNoon", "IndigoNoon"
+        };
+        if (DefDatabase<PawnKindDef>.GetNamedSilentFail("LCOrdeal_AmberDawn") != null)
+        {
+            foreach (string variant in dawnNoonVariants)
+            {
+                PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + variant, true);
+                if (pk.race.GetModExtension<LCAnomalyCore.ModExtensions.FourColorTargetExtension>() == null)
+                    throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing FourColorTargetExtension.");
+                string texBase = "Things/Pawn/Ordeals/" + variant;
+                if (ContentFinder<Texture2D>.Get(texBase + "_east", reportFailure: false) == null
+                    || ContentFinder<Texture2D>.Get(texBase + "_south", reportFailure: false) == null)
+                {
+                    throw new InvalidOperationException($"Ordeal sprite textures missing for {texBase}.");
+                }
+            }
+
+            string[] requiredOrdealSounds =
+            {
+                "LCOrdeal_Sound_BugStart", "LCOrdeal_Sound_BugEnd",
+                "LCOrdeal_Sound_CircusStart", "LCOrdeal_Sound_CircusEnd",
+                "LCOrdeal_Sound_MachineStart", "LCOrdeal_Sound_MachineEnd",
+                "LCOrdeal_Sound_OutterGodStart", "LCOrdeal_Sound_OutterGodEnd",
+                "LCOrdeal_Sound_ScavengerStart", "LCOrdeal_Sound_ScavengerEnd",
+                "LCOrdeal_Sound_Bug1Dig", "LCOrdeal_Sound_OutterGodNoonDown",
+                "LCOrdeal_Sound_MachineNoonAtk", "LCOrdeal_Sound_ScavengerNoonSkill"
+            };
+            foreach (string sndName in requiredOrdealSounds)
+            {
+                SoundDef sd = DefDatabase<SoundDef>.GetNamed(sndName, true);
+                if (sd.subSounds == null || sd.subSounds.Count == 0)
+                    throw new InvalidOperationException($"Ordeal SoundDef {sndName} has no subSounds.");
+            }
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; ExpansionPhase1; 10_dept_cores/buffs/story_10depts_12directives/dawn_noon_8art_audio_fourcolor");
+        ValidateOrdealAndDepartmentExpansionPhase2(map);
+    }
+
+    private static void ValidateOrdealAndDepartmentExpansionPhase2(Map map)
+    {
+        // 1. Validate Manager Tactical Bullets icons, SoundDefs, unlock logic, shields, slow, and execution
+        string[] bulletIcons =
+        {
+            "UI/Commands/Bullets/Bullet_HP",
+            "UI/Commands/Bullets/Bullet_SP",
+            "UI/Commands/Bullets/Bullet_RedShield",
+            "UI/Commands/Bullets/Bullet_WhiteShield",
+            "UI/Commands/Bullets/Bullet_BlackShield",
+            "UI/Commands/Bullets/Bullet_PaleShield",
+            "UI/Commands/Bullets/Bullet_Slow",
+            "UI/Commands/Bullets/Bullet_Execution"
+        };
+        foreach (string iconPath in bulletIcons)
+        {
+            if (ContentFinder<Texture2D>.Get(iconPath, reportFailure: false) == null)
+                throw new InvalidOperationException($"Missing Manager Bullet icon: {iconPath}");
+        }
+
+        string[] bulletSounds =
+        {
+            "LC_Sound_BulletHeal", "LC_Sound_BulletShield", "LC_Sound_BulletSlow",
+            "LC_Sound_BulletExecution", "LC_Sound_BulletEmpty",
+            "LC_Sound_ShieldHit", "LC_Sound_ShieldBroken"
+        };
+        foreach (string snd in bulletSounds)
+        {
+            SoundDef sd = DefDatabase<SoundDef>.GetNamed(snd, true);
+            if (sd.subSounds == null || sd.subSounds.Count == 0)
+                throw new InvalidOperationException($"Manager Bullet SoundDef {snd} has no subSounds.");
+        }
+
+        if (ManagerBulletUtility.GetMaxBulletCharges(map) != 0)
+            throw new InvalidOperationException("Expected 0 bullet charges before Central/Welfare/Disciplinary cores exist.");
+
+        var cores = new List<Building_DepartmentCore>();
+        Pawn friendly = null;
+        Pawn slowTarget = null;
+        Pawn execTarget = null;
+        try
+        {
+            Building_DepartmentCore SpawnCore(string defName)
+            {
+                var core = (Building_DepartmentCore)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(defName, true));
+                core.SetFaction(Faction.OfPlayer);
+                GenSpawn.Spawn(core, FindSafePlatformCell(map), map);
+                if (core.CompPower != null) core.CompPower.PowerOn = true;
+                cores.Add(core);
+                return core;
+            }
+
+            Building_DepartmentCore central = SpawnCore("LC_DepartmentCore_CentralCommandTeam");
+            Building_DepartmentCore welfare = SpawnCore("LC_DepartmentCore_WelfareTeam");
+            Building_DepartmentCore disc = SpawnCore("LC_DepartmentCore_DisciplinaryTeam");
+
+            if (ManagerBulletUtility.GetMaxBulletCharges(map) != 10)
+                throw new InvalidOperationException($"Expected 10 max bullet charges with Central+Welfare+Disciplinary, got {ManagerBulletUtility.GetMaxBulletCharges(map)}.");
+
+            GameComponent_LC lc = GameComponent_LC.Instance ?? throw new InvalidOperationException("GameComponent_LC.Instance is null.");
+            lc.RefillManagerBullets(map);
+            if (lc.GetManagerBulletCharges(map) != 10)
+                throw new InvalidOperationException("RefillManagerBullets failed to restore charges to 10.");
+
+            if (central.GetGizmos().Count() < 6 || !welfare.GetGizmos().Any() || !disc.GetGizmos().Any())
+                throw new InvalidOperationException("Department cores failed to expose Manager Bullet gizmos.");
+
+            friendly = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+                PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+                canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
+            GenSpawn.Spawn(friendly, FindSafePawnCell(map, map.Center), map);
+
+            // HP Bullet
+            friendly.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Cut, 12f));
+            float injuredSummary = friendly.health.summaryHealth.SummaryHealthPercent;
+            if (!ManagerBulletUtility.FireBulletAt(map, friendly.Position, EManagerBulletType.HpHeal))
+                throw new InvalidOperationException("HP Bullet failed to fire.");
+            if (friendly.health.summaryHealth.SummaryHealthPercent <= injuredSummary)
+                throw new InvalidOperationException("HP Bullet did not heal friendly pawn injuries.");
+
+            // SP Bullet
+            Hediff mental = friendly.health.AddHediff(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage);
+            mental.Severity = 0.75f;
+            if (!ManagerBulletUtility.FireBulletAt(map, friendly.Position, EManagerBulletType.SpHeal))
+                throw new InvalidOperationException("SP Bullet failed to fire.");
+            if (mental.Severity >= 0.30f)
+                throw new InvalidOperationException($"SP Bullet failed to reduce LC_MentalDamage (remaining={mental.Severity:F2}).");
+
+            // Red Shield Bullet (absorbs matching LC_RedDamage, tracks remaining shield, shatters cleanly)
+            if (!ManagerBulletUtility.FireBulletAt(map, friendly.Position, EManagerBulletType.RedShield))
+                throw new InvalidOperationException("Red Shield Bullet failed to fire.");
+            Hediff redShield = friendly.health.hediffSet.GetFirstHediffOfDef(DefDatabase<HediffDef>.GetNamed("LC_BulletShield_Red", true))
+                ?? throw new InvalidOperationException("Red Shield Bullet did not apply LC_BulletShield_Red.");
+            var shieldComp = redShield.TryGetComp<LCAnomalyCore.Hediffs.HediffComp_BulletShield>()
+                ?? throw new InvalidOperationException("LC_BulletShield_Red missing HediffComp_BulletShield.");
+            float hpBeforeShieldHit = friendly.health.summaryHealth.SummaryHealthPercent;
+            friendly.TakeDamage(new DamageInfo(LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage, 25f));
+            if (Math.Abs(friendly.health.summaryHealth.SummaryHealthPercent - hpBeforeShieldHit) > 0.001f)
+                throw new InvalidOperationException("Red Shield failed to absorb 25 LC_RedDamage.");
+            if (Math.Abs(shieldComp.RemainingShield - 25f) > 0.5f)
+                throw new InvalidOperationException($"Red Shield expected 25 remaining after absorbing 25, got {shieldComp.RemainingShield:F1}.");
+            friendly.TakeDamage(new DamageInfo(LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage, 35f));
+            if (friendly.health.hediffSet.HasHediff(redShield.def))
+                throw new InvalidOperationException("Red Shield did not shatter after exceeding remaining shield capacity.");
+
+            // Slow Bullet
+            PawnKindDef slowKind = DefDatabase<PawnKindDef>.GetNamedSilentFail("LCOrdeal_AmberDusk") ?? PawnKindDefOf.Mech_Scyther;
+            slowTarget = PawnGenerator.GeneratePawn(slowKind, Faction.OfMechanoids);
+            GenSpawn.Spawn(slowTarget, FindSafePawnCell(map, FindFarthestSafeCell(map)), map);
+            float speedBeforeSlow = slowTarget.GetStatValue(RimWorld.StatDefOf.MoveSpeed);
+            if (!ManagerBulletUtility.FireBulletAt(map, slowTarget.Position, EManagerBulletType.Slow))
+                throw new InvalidOperationException("Slow Bullet failed to fire.");
+            if (!slowTarget.health.hediffSet.HasHediff(DefDatabase<HediffDef>.GetNamed("LC_BulletSlow", true))
+                || slowTarget.GetStatValue(RimWorld.StatDefOf.MoveSpeed) >= speedBeforeSlow * 0.65f)
+            {
+                throw new InvalidOperationException("Slow Bullet failed to halve hostile MoveSpeed.");
+            }
+
+            // Execution Bullet (despawn friendly first so execTarget is the sole humanlike target at execCell)
+            if (friendly.Spawned) friendly.DeSpawn();
+            execTarget = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+                PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+                canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
+            IntVec3 execCell = FindSafePawnCell(map, FindFarthestSafeCell(map));
+            GenSpawn.Spawn(execTarget, execCell, map);
+            if (!ManagerBulletUtility.FireBulletAt(map, execTarget.Position, EManagerBulletType.Execution))
+                throw new InvalidOperationException("Execution Bullet failed to fire.");
+            if (!execTarget.Destroyed || execCell.GetThingList(map).Any(t => t is Corpse))
+                throw new InvalidOperationException("Execution Bullet did not cleanly erase target without leaving a corpse.");
+
+            if (lc.GetManagerBulletCharges(map) != 5)
+                throw new InvalidOperationException($"Expected 5 remaining bullet charges after 5 shots, got {lc.GetManagerBulletCharges(map)}.");
+            lc.RefillManagerBullets(map);
+        }
+        finally
+        {
+            foreach (Building_DepartmentCore core in cores)
+            {
+                if (core != null && !core.Destroyed) { core.DeSpawn(); core.Destroy(); }
+            }
+            foreach (Pawn p in new[] { friendly, slowTarget, execTarget })
+            {
+                if (p != null && !p.Destroyed) { if (p.Spawned) p.DeSpawn(); p.Destroy(); }
+            }
+        }
+
+        // 2. Validate Dusk (3) & Midnight (6) Ordeals original textures, FourColorTargetExtension, and SoundDefs
+        string[] duskMidnightVariants =
+        {
+            "AmberDusk", "CrimsonDusk", "GreenDusk",
+            "AmberMidnight", "GreenMidnight",
+            "VioletMidnightRed", "VioletMidnightWhite", "VioletMidnightBlack", "VioletMidnightPale"
+        };
+        if (DefDatabase<PawnKindDef>.GetNamedSilentFail("LCOrdeal_AmberDusk") != null)
+        {
+            foreach (string variant in duskMidnightVariants)
+            {
+                PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + variant, true);
+                if (pk.race.GetModExtension<LCAnomalyCore.ModExtensions.FourColorTargetExtension>() == null)
+                    throw new InvalidOperationException($"Dusk/Midnight ordeal race {pk.race.defName} missing FourColorTargetExtension.");
+                string texBase = "Things/Pawn/Ordeals/" + variant;
+                if (ContentFinder<Texture2D>.Get(texBase + "_east", reportFailure: false) == null
+                    || ContentFinder<Texture2D>.Get(texBase + "_south", reportFailure: false) == null)
+                {
+                    throw new InvalidOperationException($"Dusk/Midnight ordeal sprite textures missing for {texBase}.");
+                }
+            }
+
+            string[] phase2OrdealSounds =
+            {
+                "LCOrdeal_Sound_BugDuskDig", "LCOrdeal_Sound_BugDuskSpawn", "LCOrdeal_Sound_BugDuskDead",
+                "LCOrdeal_Sound_CircusDuskMove", "LCOrdeal_Sound_CircusDuskDead",
+                "LCOrdeal_Sound_MachineDuskProduce", "LCOrdeal_Sound_MachineDuskDead",
+                "LCOrdeal_Sound_BugMidnightDig", "LCOrdeal_Sound_BugMidnightSpawn", "LCOrdeal_Sound_BugMidnightDead",
+                "LCOrdeal_Sound_MachineMidnightBeam", "LCOrdeal_Sound_MachineMidnightDead",
+                "LCOrdeal_Sound_VioletMidnightPortal", "LCOrdeal_Sound_VioletMidnightRed",
+                "LCOrdeal_Sound_VioletMidnightWhite", "LCOrdeal_Sound_VioletMidnightBlack",
+                "LCOrdeal_Sound_VioletMidnightPale", "LCOrdeal_Sound_VioletMidnightDead"
+            };
+            foreach (string sndName in phase2OrdealSounds)
+            {
+                SoundDef sd = DefDatabase<SoundDef>.GetNamed(sndName, true);
+                if (sd.subSounds == null || sd.subSounds.Count == 0)
+                    throw new InvalidOperationException($"Phase 2 Ordeal SoundDef {sndName} has no subSounds.");
+            }
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; ExpansionPhase2; manager_bullets_8types/shield_slow_exec/dusk_midnight_9art_18audio_fourcolor");
+        ValidateOrdealAndDepartmentExpansionPhase3(map);
+    }
+
+    private static void ValidateOrdealAndDepartmentExpansionPhase3(Map map)
+    {
+        // 1. Validate all 6 Core Suppression Examinations & Nodes in LC-Anomaly-Story (if loaded)
+        string[] examNames =
+        {
+            "LCStory_CoreSuppression_Malkuth",
+            "LCStory_CoreSuppression_Yesod",
+            "LCStory_CoreSuppression_Hod",
+            "LCStory_CoreSuppression_Netzach",
+            "LCStory_CoreSuppression_Gebura",
+            "LCStory_CoreSuppression_Binah"
+        };
+        string[] nodeNames =
+        {
+            "LCStory_Node_SuppressMalkuth",
+            "LCStory_Node_SuppressYesod",
+            "LCStory_Node_SuppressHod",
+            "LCStory_Node_SuppressNetzach",
+            "LCStory_Node_SuppressGebura",
+            "LCStory_Node_SuppressBinah"
+        };
+        Type examDefType = GenTypes.GetTypeInAnyAssembly("LCAnomalyStory.Defs.CompanyExaminationDef");
+        Type devDefType = GenTypes.GetTypeInAnyAssembly("LCAnomalyStory.Defs.CompanyDevelopmentDef");
+        if (examDefType != null && devDefType != null)
+        {
+            MethodInfo getExam = typeof(DefDatabase<>).MakeGenericType(examDefType).GetMethod("GetNamed", new[] { typeof(string), typeof(bool) });
+            MethodInfo getNode = typeof(DefDatabase<>).MakeGenericType(devDefType).GetMethod("GetNamed", new[] { typeof(string), typeof(bool) });
+            foreach (string en in examNames) getExam.Invoke(null, new object[] { en, true });
+            foreach (string nn in nodeNames) getNode.Invoke(null, new object[] { nn, true });
+        }
+
+        // 2. Validate Hod debuff HediffDef & all 6 Core Suppression permanent mastery hooks in GameComponent_LC
+        HediffDef hodDebuff = DefDatabase<HediffDef>.GetNamed("LC_CoreSuppression_HodDebuff", true);
+        if (hodDebuff.stages == null || hodDebuff.stages.Count == 0)
+            throw new InvalidOperationException("LC_CoreSuppression_HodDebuff missing stat stage.");
+
+        GameComponent_LC lc = GameComponent_LC.Instance ?? throw new InvalidOperationException("GameComponent_LC.Instance is null.");
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Malkuth);
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Yesod);
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Hod);
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Netzach);
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Gebura);
+        lc.CompleteCoreSuppression(GameComponent_LC.CoreSuppression_Binah);
+
+        if (DepartmentCoreUtility.GetBonusPeBoxChance(null) < 0.249f)
+            throw new InvalidOperationException("Yesod Core Suppression failed to grant +25% bonus PE-Box chance.");
+        if (DepartmentCoreUtility.GetExpGainMultiplier(null) < 1.499f)
+            throw new InvalidOperationException("Hod Core Suppression failed to grant +50% four-attribute XP gain.");
+        if (Math.Abs(DepartmentCoreUtility.GetEffectiveHealFuelCost(10f) - 7f) > 0.01f
+            || DepartmentCoreUtility.GetEffectiveHealMentalAmount(0f) < 0.149f)
+            throw new InvalidOperationException("Netzach Core Suppression failed to apply -30% fuel and built-in SP recovery.");
+        if (DepartmentCoreUtility.GetEgoExtractionCapBonus(map) < 1)
+            throw new InvalidOperationException("Gebura Core Suppression failed to grant permanent +1 EGO extraction cap.");
+        if (DepartmentCoreUtility.ApplyEgoExtractionCost(20, map) != 16)
+            throw new InvalidOperationException($"Binah Core Suppression expected 20 -> 16 EGO cost, got {DepartmentCoreUtility.ApplyEgoExtractionCost(20, map)}.");
+
+        // 3. Validate all 5 White Ordeal entities (4 Fixers + The Claw) art, FourColorTargetExtension, and SoundDefs
+        string[] whiteVariants =
+        {
+            "WhiteFixerRed", "WhiteFixerWhite", "WhiteFixerBlack", "WhiteFixerPale", "WhiteClaw"
+        };
+        if (DefDatabase<PawnKindDef>.GetNamedSilentFail("LCOrdeal_WhiteClaw") != null)
+        {
+            foreach (string variant in whiteVariants)
+            {
+                PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + variant, true);
+                var fc = pk.race.GetModExtension<LCAnomalyCore.ModExtensions.FourColorTargetExtension>()
+                    ?? throw new InvalidOperationException($"White Ordeal race {pk.race.defName} missing FourColorTargetExtension.");
+                if (variant == "WhiteClaw" && Math.Abs(fc.paleResistance - 0.4f) > 0.001f)
+                    throw new InvalidOperationException($"WhiteClaw expected 0.4 Pale resistance, got {fc.paleResistance}.");
+                string texBase = "Things/Pawn/Ordeals/" + variant;
+                if (ContentFinder<Texture2D>.Get(texBase + "_east", reportFailure: false) == null
+                    || ContentFinder<Texture2D>.Get(texBase + "_south", reportFailure: false) == null)
+                {
+                    throw new InvalidOperationException($"White Ordeal sprite textures missing for {texBase}.");
+                }
+            }
+
+            string[] whiteSounds =
+            {
+                "LCOrdeal_Sound_WhiteStart", "LCOrdeal_Sound_WhiteEnd",
+                "LCOrdeal_Sound_FixerRedAtk", "LCOrdeal_Sound_FixerRedDead",
+                "LCOrdeal_Sound_FixerWhiteAtk", "LCOrdeal_Sound_FixerWhiteReflect", "LCOrdeal_Sound_FixerWhiteDead",
+                "LCOrdeal_Sound_FixerBlackAtk", "LCOrdeal_Sound_FixerBlackDead",
+                "LCOrdeal_Sound_FixerPaleTeleport", "LCOrdeal_Sound_FixerPaleAtk", "LCOrdeal_Sound_FixerPaleDead",
+                "LCOrdeal_Sound_ClawNormal", "LCOrdeal_Sound_ClawOrange", "LCOrdeal_Sound_ClawBlue",
+                "LCOrdeal_Sound_ClawGreen", "LCOrdeal_Sound_ClawDead"
+            };
+            foreach (string sndName in whiteSounds)
+            {
+                SoundDef sd = DefDatabase<SoundDef>.GetNamed(sndName, true);
+                if (sd.subSounds == null || sd.subSounds.Count == 0)
+                    throw new InvalidOperationException($"White Ordeal SoundDef {sndName} has no subSounds.");
+            }
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; ExpansionPhase3; 6_core_suppressions/mastery_hooks/white_ordeals_5art_17audio_fourcolor");
+        ValidateOrdealAnimationsAndVfx(map);
+    }
+
+    private static void ValidateOrdealAnimationsAndVfx(Map map)
+    {
+        if (DefDatabase<PawnKindDef>.GetNamedSilentFail("LCOrdeal_WhiteClaw") == null)
+        {
+            return;
+        }
+
+        PawnRenderTreeDef treeDef = DefDatabase<PawnRenderTreeDef>.GetNamed("LCOrdeal_Animated", true);
+        Type compAnimType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Render.CompOrdealAnimator")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Render.CompOrdealAnimator type.");
+        Type vfxUtilType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Vfx.OrdealVfxUtility")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Vfx.OrdealVfxUtility type.");
+        Type vfxCompType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Vfx.MapComponent_OrdealVfx")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Vfx.MapComponent_OrdealVfx type.");
+
+        string[] all22Variants =
+        {
+            "AmberDawn", "CrimsonDawn", "GreenDawn", "VioletDawn",
+            "CrimsonNoon", "GreenNoon", "VioletNoon", "IndigoNoon",
+            "AmberDusk", "CrimsonDusk", "GreenDusk",
+            "AmberMidnight", "GreenMidnight",
+            "VioletMidnightRed", "VioletMidnightWhite", "VioletMidnightBlack", "VioletMidnightPale",
+            "WhiteFixerRed", "WhiteFixerWhite", "WhiteFixerBlack", "WhiteFixerPale", "WhiteClaw"
+        };
+        string[] poseSuffixes = { "_move1", "_move2", "_attack", "_special" };
+
+        foreach (string variant in all22Variants)
+        {
+            PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + variant, true);
+            if (pk.race.race.renderTree != treeDef)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} does not use renderTree LCOrdeal_Animated.");
+            if (pk.race.comps == null || !pk.race.comps.Any(c => c.compClass == compAnimType))
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing CompProperties_OrdealAnimator.");
+
+            foreach (string suffix in poseSuffixes)
+            {
+                string texBase = "Things/Pawn/Ordeals/" + variant + suffix;
+                if (ContentFinder<Texture2D>.Get(texBase + "_east", reportFailure: false) == null
+                    || ContentFinder<Texture2D>.Get(texBase + "_south", reportFailure: false) == null)
+                {
+                    throw new InvalidOperationException($"Missing ordeal animation frame texture for {texBase}.");
+                }
+            }
+        }
+
+        string[] vfxTextures =
+        {
+            "FX/Ordeals/LaserBeam", "FX/Ordeals/LaserCore", "FX/Ordeals/LaserHit", "FX/Ordeals/SparkMidnight",
+            "FX/Ordeals/BossPortal", "FX/Ordeals/HollowRing", "FX/Ordeals/SoftGlow", "FX/Ordeals/CraterDecal",
+            "FX/Ordeals/SlashArc", "FX/Ordeals/TargetMark",
+            "FX/Ordeals/TentacleRed", "FX/Ordeals/TentacleWhite", "FX/Ordeals/TentacleBlack", "FX/Ordeals/PaleEye"
+        };
+        foreach (string vfxTex in vfxTextures)
+        {
+            if (ContentFinder<Texture2D>.Get(vfxTex, reportFailure: false) == null)
+                throw new InvalidOperationException($"Missing ordeal VFX texture: {vfxTex}");
+        }
+
+        Pawn testClaw = null;
+        Pawn testTower = null;
+        try
+        {
+            IntVec3 cell1 = FindSafePawnCell(map, FindFarthestSafeCell(map));
+            IntVec3 cell2 = FindSafePawnCell(map, cell1);
+            testClaw = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_WhiteClaw", true), Faction.OfMechanoids);
+            testTower = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_GreenMidnight", true), Faction.OfMechanoids);
+            GenSpawn.Spawn(testClaw, cell1, map);
+            GenSpawn.Spawn(testTower, cell2, map);
+
+            MethodInfo mTrigAtk = compAnimType.GetMethod("TriggerAttackOn", BindingFlags.Public | BindingFlags.Static)
+                ?? throw new InvalidOperationException("Missing CompOrdealAnimator.TriggerAttackOn.");
+            MethodInfo mTrigSpec = compAnimType.GetMethod("TriggerSpecialOn", BindingFlags.Public | BindingFlags.Static)
+                ?? throw new InvalidOperationException("Missing CompOrdealAnimator.TriggerSpecialOn.");
+
+            mTrigAtk.Invoke(null, new object[] { testClaw, 40 });
+            mTrigSpec.Invoke(null, new object[] { testTower, 40, (Color?)Color.green, 0.9f });
+
+            testClaw.Drawer.renderer.EnsureGraphicsInitialized();
+            testClaw.Drawer.renderer.RenderPawnAt(testClaw.DrawPos);
+            testTower.Drawer.renderer.EnsureGraphicsInitialized();
+            testTower.Drawer.renderer.RenderPawnAt(testTower.DrawPos);
+
+            vfxUtilType.GetMethod("SpawnBeam", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testTower.DrawPos, 45f, 24f, 1.8f, Color.green, 30, true });
+            vfxUtilType.GetMethod("SpawnShockwave", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 0.5f, 4f, Color.cyan, 30, 90f });
+            vfxUtilType.GetMethod("SpawnPortal", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 3f, Color.magenta, 30, 160f });
+            vfxUtilType.GetMethod("SpawnStrikeSprite", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, "FX/Ordeals/PaleEye", 2f, 4f, Color.white, 30, 0.8f, 0f, 0f, false });
+            vfxUtilType.GetMethod("SpawnPawnAura", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw, "FX/Ordeals/TargetMark", 1.8f, Color.blue, 30, 90f, 0.25f, true });
+            vfxUtilType.GetMethod("SpawnFogLine", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, testTower.DrawPos, 2f, 30 });
+            vfxUtilType.GetMethod("SpawnFanSweep", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 0f, 240f, 6f, 2f, Color.red, 30 });
+
+            MapComponent vfxComp = map.GetComponent(vfxCompType)
+                ?? throw new InvalidOperationException("MapComponent_OrdealVfx not attached to map.");
+            vfxComp.MapComponentUpdate();
+            int activeCount = (int)vfxCompType.GetProperty("ActiveCount", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(vfxComp);
+            if (activeCount < 7)
+                throw new InvalidOperationException($"Expected >= 7 active ordeal VFX instances, got {activeCount}.");
+        }
+        finally
+        {
+            if (testClaw != null && !testClaw.Destroyed) { if (testClaw.Spawned) testClaw.DeSpawn(); testClaw.Destroy(); }
+            if (testTower != null && !testTower.Destroyed) { if (testTower.Spawned) testTower.DeSpawn(); testTower.Destroy(); }
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; OrdealAnimAndVfx; 22_ordeals_4poses/render_tree/14_vfx_textures/live_vfx_draw");
     }
 
     private static void ValidatePhase3AfterLoad(Map map)
@@ -2574,5 +3148,11 @@ public static class GameplayValidation
 
         if (!foundSavedBackwardClock)
             throw new InvalidOperationException("Saved BackwardClock holding platform missing after reload.");
+
+        if (GameComponent_LC.Instance?.HasCoreSuppression(GameComponent_LC.CoreSuppression_Malkuth) != true
+            || GameComponent_LC.Instance?.HasCoreSuppression(GameComponent_LC.CoreSuppression_Binah) != true)
+        {
+            throw new InvalidOperationException("Core Suppression mastery flags did not survive save/load.");
+        }
     }
 }

@@ -35,11 +35,8 @@ namespace LCAnomalyCore.Hediffs
             {
                 if (curStage == null)
                 {
-                    curStage = new HediffStage
-                    {
-                        statFactors = GetStatsFactorList(),
-                        statOffsets = GetStatsOffsetList()
-                    };
+                    curStage = new HediffStage();
+                    StatusUpdate();
                 }
 
                 return curStage;
@@ -57,17 +54,43 @@ namespace LCAnomalyCore.Hediffs
             }
         }
 
+        /// <summary>
+        /// 立即刷新员工属性与部门核心增益。
+        /// </summary>
+        public void RefreshStatus()
+        {
+            if (curStage == null)
+            {
+                curStage = new HediffStage();
+            }
+
+            StatusUpdate();
+        }
+
         private void StatusUpdate()
         {
-            if (CurStage == null)
+            if (curStage == null)
                 return;
 
-            CurStage.statFactors = GetStatsFactorList();
-            CurStage.statOffsets = GetStatsOffsetList();
+            List<StatModifier> offsets = GetStatsOffsetList();
+            List<StatModifier> factors = GetStatsFactorList();
+            Buildings.EDepartmentType? dept = DepartmentCoreUtility.GetPawnDepartmentType(pawn);
+            if (dept.HasValue)
+            {
+                DepartmentCoreUtility.ApplyDepartmentStatModifiers(dept.Value, offsets, factors);
+            }
+
+            curStage.statOffsets = offsets;
+            curStage.statFactors = factors;
         }
 
         private List<StatModifier> GetStatsOffsetList()
         {
+            if (PawnStatusComp == null)
+            {
+                return new List<StatModifier>();
+            }
+
             StatModifier smTemperance = new StatModifier()
             {
                 stat = StatDefOf.WorkSpeedGlobal,
@@ -80,11 +103,16 @@ namespace LCAnomalyCore.Hediffs
                 value = 0.01f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Justice).Status
             };
 
-            return [smTemperance, smJustice_Move];
+            return new List<StatModifier> { smTemperance, smJustice_Move };
         }
 
         private List<StatModifier> GetStatsFactorList()
         {
+            if (PawnStatusComp == null)
+            {
+                return new List<StatModifier>();
+            }
+
             StatModifier smFortitude = new StatModifier()
             {
                 stat = StatDefOf.IncomingDamageFactor,
@@ -109,7 +137,7 @@ namespace LCAnomalyCore.Hediffs
                 value = 1 - 0.005f * PawnStatusComp.GetPawnStatusLevel(EPawnStatus.Justice).Status
             };
 
-            return [smFortitude, smPrudence, smJustice_Melee, smJustice_Ranged];
+            return new List<StatModifier> { smFortitude, smPrudence, smJustice_Melee, smJustice_Ranged };
         }
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_Bullet_HpHeal_Label>生命恢复弹</LC_Bullet_HpHeal_Label>
+  <LC_Bullet_HpHeal_Desc>向目标区域（半径 3.5 格）发射生命恢复弹，为范围内友方殖民者治疗最多 20 点伤势。\n\n当前剩余充能：{0}/{1}</LC_Bullet_HpHeal_Desc>
+
+  <LC_Bullet_SpHeal_Label>精神恢复弹</LC_Bullet_SpHeal_Label>
+  <LC_Bullet_SpHeal_Desc>向目标区域（半径 3.5 格）发射精神恢复弹，清除范围内友方 50% 精神损伤（LC_MentalDamage）并安抚非暴力精神崩溃。\n\n当前剩余充能：{0}/{1}</LC_Bullet_SpHeal_Desc>
+
+  <LC_Bullet_RedShield_Label>物理护盾弹</LC_Bullet_RedShield_Label>
+  <LC_Bullet_RedShield_Desc>为目标区域（半径 3.5 格）友方殖民者展开红色护盾，最多吸收 50 点 RED / 物理伤害。\n\n当前剩余充能：{0}/{1}</LC_Bullet_RedShield_Desc>
+
+  <LC_Bullet_WhiteShield_Label>精神护盾弹</LC_Bullet_WhiteShield_Label>
+  <LC_Bullet_WhiteShield_Desc>为目标区域（半径 3.5 格）友方殖民者展开白色护盾，最多吸收 50 点 WHITE / 灵能伤害。\n\n当前剩余充能：{0}/{1}</LC_Bullet_WhiteShield_Desc>
+
+  <LC_Bullet_BlackShield_Label>侵蚀护盾弹</LC_Bullet_BlackShield_Label>
+  <LC_Bullet_BlackShield_Desc>为目标区域（半径 3.5 格）友方殖民者展开黑色护盾，最多吸收 50 点 BLACK 侵蚀伤害。\n\n当前剩余充能：{0}/{1}</LC_Bullet_BlackShield_Desc>
+
+  <LC_Bullet_PaleShield_Label>灵魂护盾弹</LC_Bullet_PaleShield_Label>
+  <LC_Bullet_PaleShield_Desc>为目标区域（半径 3.5 格）友方殖民者展开蓝色护盾，最多吸收 50 点 PALE 灵魂伤害。\n\n当前剩余充能：{0}/{1}</LC_Bullet_PaleShield_Desc>
+
+  <LC_Bullet_Slow_Label>减速弹</LC_Bullet_Slow_Label>
+  <LC_Bullet_Slow_Desc>向目标区域（半径 4.0 格）发射福利部减速弹，使范围内敌对目标、出逃异想体与考验实体移动速度减半。\n\n当前剩余充能：{0}/{1}</LC_Bullet_Slow_Desc>
+
+  <LC_Bullet_Execution_Label>处决弹</LC_Bullet_Execution_Label>
+  <LC_Bullet_Execution_Desc>发射惩戒部处决弹，直接抹除选定目标处的非异想体类人单位（不遗留尸体、不触发死亡士气惩罚）。\n\n当前剩余充能：{0}/{1}</LC_Bullet_Execution_Desc>
+
+  <LC_Bullet_NoCharges>主管战术子弹充能已耗尽，将随时间自动补充。</LC_Bullet_NoCharges>
+  <LC_Bullet_ExecutionInvalidTarget>目标位置附近没有可处决的非异想体类人目标。</LC_Bullet_ExecutionInvalidTarget>
+  <LC_Bullet_ExecutedTag>已处决</LC_Bullet_ExecutedTag>
+</LanguageData>

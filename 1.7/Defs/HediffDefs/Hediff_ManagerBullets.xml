@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <HediffDef Name="LC_BulletShieldBase" Abstract="True">
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>false</isBad>
+    <everCurableByItem>false</everCurableByItem>
+    <tendable>false</tendable>
+    <initialSeverity>1</initialSeverity>
+    <maxSeverity>1</maxSeverity>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>2500</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef ParentName="LC_BulletShieldBase">
+    <defName>LC_BulletShield_Red</defName>
+    <label>Red damage shield</label>
+    <description>A tactical manager barrier that absorbs up to 50 RED (physical) damage before shattering.</description>
+    <defaultLabelColor>(0.90, 0.28, 0.28)</defaultLabelColor>
+    <comps>
+      <li Class="LCAnomalyCore.Hediffs.HediffCompProperties_BulletShield">
+        <damageType>Red</damageType>
+        <maxShield>50</maxShield>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef ParentName="LC_BulletShieldBase">
+    <defName>LC_BulletShield_White</defName>
+    <label>White damage shield</label>
+    <description>A tactical manager barrier that absorbs up to 50 WHITE (mental/psychic) damage before shattering.</description>
+    <defaultLabelColor>(0.92, 0.94, 0.98)</defaultLabelColor>
+    <comps>
+      <li Class="LCAnomalyCore.Hediffs.HediffCompProperties_BulletShield">
+        <damageType>White</damageType>
+        <maxShield>50</maxShield>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef ParentName="LC_BulletShieldBase">
+    <defName>LC_BulletShield_Black</defName>
+    <label>Black damage shield</label>
+    <description>A tactical manager barrier that absorbs up to 50 BLACK (erosion) damage before shattering.</description>
+    <defaultLabelColor>(0.68, 0.42, 0.90)</defaultLabelColor>
+    <comps>
+      <li Class="LCAnomalyCore.Hediffs.HediffCompProperties_BulletShield">
+        <damageType>Black</damageType>
+        <maxShield>50</maxShield>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef ParentName="LC_BulletShieldBase">
+    <defName>LC_BulletShield_Pale</defName>
+    <label>Pale damage shield</label>
+    <description>A tactical manager barrier that absorbs up to 50 PALE (soul/death) damage before shattering.</description>
+    <defaultLabelColor>(0.42, 0.85, 0.96)</defaultLabelColor>
+    <comps>
+      <li Class="LCAnomalyCore.Hediffs.HediffCompProperties_BulletShield">
+        <damageType>Pale</damageType>
+        <maxShield>50</maxShield>
+      </li>
+    </comps>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>LC_BulletSlow</defName>
+    <label>Tactical slowness</label>
+    <description>Movement speed is halved by a Welfare Team slowing bullet.</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>true</isBad>
+    <defaultLabelColor>(0.45, 0.72, 0.94)</defaultLabelColor>
+    <comps>
+      <li Class="HediffCompProperties_Disappears">
+        <disappearsAfterTicks>1800</disappearsAfterTicks>
+        <showRemainingTime>true</showRemainingTime>
+      </li>
+    </comps>
+    <stages>
+      <li>
+        <statFactors>
+          <MoveSpeed>0.5</MoveSpeed>
+        </statFactors>
+      </li>
+    </stages>
+  </HediffDef>
+
+  <HediffDef>
+    <defName>LC_CoreSuppression_HodDebuff</defName>
+    <label>Training suppression strain</label>
+    <description>During the Training Team Core Suppression examination, employee movement and global work speeds are reduced by 25%.</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>true</isBad>
+    <everCurableByItem>false</everCurableByItem>
+    <defaultLabelColor>(0.90, 0.58, 0.22)</defaultLabelColor>
+    <stages>
+      <li>
+        <statFactors>
+          <MoveSpeed>0.75</MoveSpeed>
+          <WorkSpeedGlobal>0.75</WorkSpeedGlobal>
+        </statFactors>
+      </li>
+    </stages>
+  </HediffDef>
+</Defs>
