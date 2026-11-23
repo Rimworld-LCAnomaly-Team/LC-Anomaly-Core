@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using LCAnomalyCore.Settings;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -12,6 +13,9 @@ namespace LCAnomalyCore.Patch
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.Kill))]
     public class Patch_PawnKill
     {
+        /// <summary>任意单位死亡后触发（供大鸟死亡计数等跨实体规则监听）。</summary>
+        public static event Action<Pawn, DamageInfo?> OnAnyPawnKilled;
+
         /// <summary>
         /// Postfix
         /// </summary>
@@ -23,6 +27,7 @@ namespace LCAnomalyCore.Patch
             //Log.Warning("Patch_Pawn.Kill 注入成功");
 
             PatchPawnUtils.CalculateWarningPoints(__instance);
+            OnAnyPawnKilled?.Invoke(__instance, dinfo);
         }
     }
 

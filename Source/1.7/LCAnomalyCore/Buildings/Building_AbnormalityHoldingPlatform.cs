@@ -671,6 +671,13 @@ namespace LCAnomalyCore.Buildings
                     yield return toolOpt;
                 }
             }
+            else if (EntityCached)
+            {
+                foreach (FloatMenuOption entityOpt in cachedEntity.GetPlatformFloatMenuOptions(selPawn))
+                {
+                    yield return entityOpt;
+                }
+            }
         }
 
         /// <inheritdoc />

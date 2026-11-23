@@ -23,6 +23,9 @@ namespace LCAnomalyCore.Comp
         /// <summary>任意标准异想体完成一次工作/研究结算时触发（供狂徒笔记等跨异想体规则监听）。</summary>
         public static event Action<Pawn, CompAbnormality, LC_StudyResult> OnAnyAbnormalityStudyCompleted;
 
+        /// <summary>任意异想体突破收容时触发（供小红帽雇佣兵、黑森林三鸟联动等监听）。</summary>
+        public static event Action<CompAbnormality> OnAnyAbnormalityEscaped;
+
         #endregion 事件与平台扩展
 
         #region 变量
@@ -303,6 +306,8 @@ namespace LCAnomalyCore.Comp
                     }
                 }
             }
+
+            OnAnyAbnormalityEscaped?.Invoke(this);
         }
 
         /// <summary>
@@ -532,6 +537,12 @@ namespace LCAnomalyCore.Comp
 
         /// <summary>供收容平台转发展示的异想体专属 Gizmo（如魔弹射手请求射击、雪皇后决斗救援）。</summary>
         public virtual IEnumerable<Verse.Gizmo> GetPlatformGizmos()
+        {
+            yield break;
+        }
+
+        /// <summary>供收容平台转发的异想体专属右键交互菜单（如韦尔奇牌汽水机直接饮用汽水）。</summary>
+        public virtual IEnumerable<FloatMenuOption> GetPlatformFloatMenuOptions(Pawn selPawn)
         {
             yield break;
         }

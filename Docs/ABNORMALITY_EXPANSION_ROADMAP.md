@@ -24,9 +24,9 @@
 ## 二、Core 核心框架前置支撑清单
 
 - [x] `AbnormalityToolMode.Equippable` 完整生命周期（佩戴、持续 Tick、安全归还/违规反噬、宿主死亡/丢失清理、收容平台空置贴图切换）
-- [x] `CompAbnormality.GetPlatformGizmos()` 与 `GetPlatformInspectString()` 收容平台按钮/状态文本转发接口
-- [x] 全局轻量事件钩子：`CompAbnormality.OnAnyAbnormalityStudyStarted`、`CompAbnormality.OnAnyAbnormalityStudyCompleted`、`Patch_Thing_TakeDamage.OnPawnDealtDamage`
-- [x] `RuntimeValidation` 自动化集成测试覆盖（1、2 期全量测试 + 存档读档持久化校验）
+- [x] `CompAbnormality.GetPlatformGizmos()`、`GetPlatformFloatMenuOptions()` 与 `GetPlatformInspectString()` 收容平台按钮/右键菜单/状态文本转发接口
+- [x] 全局轻量事件钩子：`CompAbnormality.OnAnyAbnormalityStudyStarted`、`CompAbnormality.OnAnyAbnormalityStudyCompleted`、`CompAbnormality.OnAnyAbnormalityEscaped`、`Patch_Thing_TakeDamage.OnPawnDealtDamage`、`Patch_PawnKill.OnAnyPawnKilled`
+- [x] `RuntimeValidation` 自动化集成测试覆盖（1–3 期全量测试 + 存档读档持久化校验）
 
 ---
 
@@ -52,15 +52,16 @@
 | [x] | `SnowQueen` | 雪皇后 | `F-01-37` | HE | 标准 | 霜之碎片（H 纯白伤减速长矛）/ 极寒高白抗甲 / 冰之吻面饰 | 首次亲吻标记，二次亲吻冰封收容；派队友决斗营救成功则双人获赠「冰之吻」 |
 | [x] | `NotesFromCrazedResearcher` | 狂徒笔记 | `T-09-78` | HE | 佩戴型工具 | 无（大幅提升工作速度、研究速度与外交） | 佩戴期间累计受伤 ≥100、或未满 30 秒/未完成 1 次研究工作即归还时剧烈爆炸 |
 
-### 第 3 期：WAW 中后期核心 & 蓝伤破冰 & 集齐黑森林三鸟（规划中）
+### 第 3 期：WAW 中后期核心 & 蓝伤破冰 & 集齐黑森林三鸟（已实装）
 
 | 状态 | `defName` | 异想体名称 | 编号 | 危险等级 | 类型 | E.G.O 武器 / 护甲 / 饰品摘要 | 实现要点 |
 | :---: | :--- | :--- | :---: | :---: | :---: | :--- | :--- |
-| [ ] | `AllAroundHelper` | 小帮手 | `T-05-41` | HE | 标准 | 研磨机 Mk4（H 高频红伤锯）/ — | 非人型清洁机器人，高速直线冲撞连斩 |
-| [ ] | `JudgementBird` | 审判鸟 | `O-02-62` | WAW | 标准 | 正义裁决者（**ALEPH** 蓝伤长刃）/ 0.5 蓝抗核心甲 / 蒙眼饰品 | 全库首个蓝伤与高蓝抗来源；百分比灵魂审判；三鸟联动前置 ② |
-| [ ] | `BigBird` | 大鸟 | `O-02-40` | WAW | 标准 | 目灯（W 黑伤重锤）/ 0.4 顶级黑抗甲 / 提灯头饰 | 熄灯魅惑牵引与咬头处决；三鸟联动前置 ③ |
-| [ ] | `LittleRedRidingHoodedMercenary` | 小红帽雇佣兵 | `F-01-57` | WAW | 标准 | 赤红疤痕（W 红伤远近双修，低血增伤）/ 猎装护甲 / 狼皮饰品 | 消耗 PE-Box 雇佣出战追杀袭击者与出逃怪 |
-| [ ] | `BackwardClock` | 回溯之钟 | `D-09-104` | WAW | 充能工具 | 无（终局战略复位按钮） | 充能 4 次后献祭高阶员工瞬间镇压常规出逃并清空危机 |
+| [x] | `AllAroundHelper` | 小帮手 | `T-05-41` | HE | 标准 | 研磨机 Mk4（H 高频红伤锯）/ HE 0.6 红抗甲 / 眼部目镜饰品 | 非人型清洁机器人，良 50%/差 100% 降计数，突破后展开锯刃蓄力直线冲锋顺劈 |
+| [x] | `JudgementBird` | 审判鸟 | `O-02-62` | WAW | 标准 | 正义裁决者（**ALEPH** 蓝伤长刃）/ **ALEPH** 0.5 全抗护甲 / 眼部蒙眼饰品 | 全库首个蓝伤与 0.5 蓝抗来源；突破后周期性倾斜天平释放范围百分比灵魂蓝伤；三鸟联动前置 ② |
+| [x] | `BigBird` | 大鸟 | `O-02-40` | WAW | 标准 | 目灯（W 黑伤重锤，概率眩晕）/ W 0.4 顶级黑抗甲 / 头部金瞳饰品 | 全图每死亡 5 名人类降计数器；突破后目灯魅惑牵引并可由玩家手动“唤醒清醒”，靠近触发黑伤巨喙处决；三鸟联动前置 ③ |
+| [x] | `LittleRedRidingHoodedMercenary` | 小红帽雇佣兵 | `F-01-57` | WAW | 标准 | 赤红疤痕（W 红伤远近双修，低血最高 +50% 增伤）/ W 0.6 全抗猎装 / 嘴部红巾饰品 | 收容平台支付 15 PE-Box 雇佣为友军猎杀任意敌对目标并支持随时召回；其他异想体越狱时掉计数 |
+| [x] | `BackwardClock` | 逆流时钟 | `D-09-104` | WAW | 充能工具 | 无（终局战略复位按钮） | III 级以上员工充能 0→4（贴图随充能段位变化），满充能由 V 级员工献祭发动时光倒流，瞬间镇压全图非 ALEPH 越狱与考验并重置非 ALEPH 计数器 |
+| [x] | `Schadenfreude` | 幸灾乐祸 | `O-05-76` | HE | 标准 | 凝视（H 高频红伤锯刃长柄，叠加撕裂易伤）/ HE 0.8 白抗甲 / 右手猩红护手饰品 | 与穿刺乐园相反的反向注视机制：作业期间被摄像机注视即降计数；突破后视野内展开钻锯高速追杀（R 1.2 / P 1.5），移开镜头立即缩回铁盒静止并切换高防抗性（R 0.6 / W 0.2 / B 0.5 / P 0.7） |
 
 ### 第 4 期：顶流人气 & 四色 ALEPH 终局收官（规划中）
 
@@ -81,3 +82,9 @@
   - 英文运行时冒烟测试：`Tools/1.7/RuntimeSmokeTest.ps1 -DlcProfile WithoutAnomaly -Language English` 退出码 `0`（`English map passed` 与 `English load passed`，0 错误；覆盖全图鉴、仪式提取、第 1–2 期全部 10 项核心机制、佩戴型工具及雪皇后 `IThingHolder` 存读档校验）。
   - 简体中文运行时冒烟测试：`Tools/1.7/RuntimeSmokeTest.ps1 -DlcProfile WithoutAnomaly -Language ChineseSimplified` 退出码 `0`（`ChineseSimplified map passed` 与 `ChineseSimplified load passed`，仅命中基线已知的 28 条原版 1.7 中文提示，系列零翻译与运行时错误）。
   - 验证顺带修复的跨模组兼容性：`LC Anomaly Core` `Patch_ApparelProperties` 现已覆盖全部 14 个 `LC_Accessory*` E.G.O. 饰品层以统一无体型后缀贴图加载；`LC-Anomaly-Ordeals` 已消除 `WithoutAnomaly` 配置文件下对 `[MayRequireAnomaly]` `DamageDefOf.Psychic` 的未判空依赖（回退至 `DamageDefOf.LC_WhiteDamage`）。
+- **2026-11-23（第 3 期交付里程碑）**：
+  - 全系列构建验证：`Tools/1.7/BuildFamily.ps1` 退出码 `0`（`1.7 family validation passed: 7 mods, 5 assemblies, 479 XML files`，全部程序集 0 警告 0 错误）。
+  - 英文运行时冒烟测试：`Tools/1.7/RuntimeSmokeTest.ps1 -DlcProfile WithoutAnomaly -Language English` 退出码 `0`（`English map passed` 与 `English load passed`，0 错误；覆盖第 3 期 5 项全图鉴/仪式池/开关、ALEPH 蓝伤「正义裁决者」与 0.5 蓝抗甲、大鸟死亡掉计数与唤醒清醒按钮、小红帽雇佣/召回与越狱掉计数、逆流时钟 III 级充能/V 级献祭清场与 `chargeLevel=3` 存读档持久化校验）。
+  - 简体中文运行时冒烟测试：`Tools/1.7/RuntimeSmokeTest.ps1 -DlcProfile WithoutAnomaly -Language ChineseSimplified` 退出码 `0`（`ChineseSimplified map passed` 与 `ChineseSimplified load passed`，仅命中 28 条已验证原版 1.7 中文已知提示，系列零翻译与运行时错误）。
+  - Core 新增轻量钩子：`CompAbnormality.GetPlatformFloatMenuOptions`（驱动韦尔奇乐汽水平台右键直饮）、`CompAbnormality.OnAnyAbnormalityEscaped`（驱动小红帽雇佣兵越狱监听与黑森林三鸟同时突破预警）与 `Patch_PawnKill.OnAnyPawnKilled`（驱动大鸟全图人类死亡计数）。
+  - 额外扩展与全套骨骼动画升级：同步实装 **幸灾乐祸（`Schadenfreude`，`O-05-76`，HE）** 及其「凝视」E.G.O 套装与反向摄像机注视机制，并将第 1–3 期及幸灾乐祸共 12 个标准异想体全部升级为多部件骨骼动画与专属战斗/工作视觉特效。

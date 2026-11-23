@@ -286,7 +286,8 @@ public static class GameplayValidation
             "OneSin", "Laetitia", "MeatLanternContained", "BurrowingHeaven",
             "PortraitOfAnotherWorld", "FleshIdol", "WeCanChangeAnything", "OldBeliefAndPromise", "NothingThere",
             "FairyFestival", "WellCheers", "PunishingBird", "VoidDream", "HeartOfAspiration",
-            "ScorchedGirl", "DerFreischutz", "FuneralOfDeadButterflies", "SnowQueen", "NotesFromCrazedResearcher"
+            "ScorchedGirl", "DerFreischutz", "FuneralOfDeadButterflies", "SnowQueen", "NotesFromCrazedResearcher",
+            "AllAroundHelper", "JudgementBird", "BigBird", "LittleRedRidingHoodedMercenary", "BackwardClock", "Schadenfreude"
         })
         {
             if (GraphicUtil.EntityNamePlatformTopGraphic_Get(name) == null)
@@ -1600,6 +1601,7 @@ public static class GameplayValidation
         Log.Message("[LC17 Validation] GAMEPLAY PASS; NothingThere; aleph/work/ego/lifesteal/3forms/red_immune/egg_return");
 
         ValidatePhase1And2(map, abnSettings);
+        ValidatePhase3(map, abnSettings);
     }
 
     public static void CheckReload(Map map)
@@ -1741,6 +1743,7 @@ public static class GameplayValidation
         }
 
         ValidatePhase1And2AfterLoad(map);
+        ValidatePhase3AfterLoad(map);
     }
 
     private static IntVec3 FindFarthestSafeCell(Map map, int minColonistDist = 0)
@@ -1952,6 +1955,53 @@ public static class GameplayValidation
         if (!betrayer.Dead)
             throw new InvalidOperationException("LC_FairyCare failed to devour worker who started studying another Abnormality.");
         fairyPlat.Destroy();
+
+        // 3a2. WellCheers multi-part animations, work-type flavor mapping, direct right-click FloatMenu & wave/bubble VFX
+        Pawn wcHeld = otherPlat.HeldPawn;
+        CompAbnormality wcAbn = wcHeld.GetComp<CompAbnormality>();
+        Pawn wcDrinker = SpawnValidationColonist(map, otherPlat.Position);
+        otherPlat.CurWorkType = EAnomalyWorkType.Instinct;
+        otherPlat.Notify_StudyStart(wcDrinker);
+        if (wcAbn.GetType().GetProperty("CurrentFlavor").GetValue(wcAbn).ToString() != "Red")
+            throw new InvalidOperationException("WellCheers Instinct work did not switch flavor to Red.");
+        otherPlat.CurWorkType = EAnomalyWorkType.Insight;
+        otherPlat.Notify_StudyStart(wcDrinker);
+        if (wcAbn.GetType().GetProperty("CurrentFlavor").GetValue(wcAbn).ToString() != "Blue")
+            throw new InvalidOperationException("WellCheers Insight work did not switch flavor to Blue.");
+        if (wcHeld.Drawer.renderer.CurAnimation?.defName != "WellCheers_Work")
+            throw new InvalidOperationException($"WellCheers expected WellCheers_Work animation during work, got {wcHeld.Drawer.renderer.CurAnimation?.defName}.");
+        List<FloatMenuOption> wcOpts = otherPlat.GetFloatMenuOptions(wcDrinker).ToList();
+        if (wcOpts.Count < 3 || wcOpts.Count(o => o.action != null) < 3)
+            throw new InvalidOperationException($"WellCheers holding platform expected 3 enabled direct-drink right-click options, got {wcOpts.Count}.");
+        foreach (string animName in new[] { "WellCheers_Idle", "WellCheers_Work", "WellCheers_Dispense", "WellCheers_Abduct" })
+        {
+            AnimationDef animDef = DefDatabase<AnimationDef>.GetNamed(animName, true);
+            wcHeld.Drawer.renderer.SetAnimation(animDef);
+            otherPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, otherPlat.DrawPos);
+            otherPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, otherPlat.DrawPos);
+            otherPlat.DynamicDrawPhaseAt(DrawPhase.Draw, otherPlat.DrawPos);
+        }
+        wcAbn.GetType().GetMethod("CompleteDirectDrink").Invoke(wcAbn, new object[] { wcDrinker, Enum.Parse(wcAbn.GetType().GetProperty("CurrentFlavor").PropertyType, "Red") });
+        List<FloatMenuOption> wcCooldownOpts = otherPlat.GetFloatMenuOptions(wcDrinker).ToList();
+        if (wcCooldownOpts.Count == 0 || wcCooldownOpts.All(o => o.action != null))
+            throw new InvalidOperationException("WellCheers direct drink did not enter cooldown state on right-click menu.");
+        foreach (string wcSound in new[]
+        {
+            "LC_WellCheers_Drink", "LC_WellCheers_Drink_Male", "LC_WellCheers_Drink_Female",
+            "LC_WellCheers_Dispense", "LC_WellCheers_Sleep", "LC_WellCheers_Dance",
+            "LC_WellCheers_WorkLoop", "LC_WellCheers_EgoShot"
+        })
+        {
+            SoundDef sDef = DefDatabase<SoundDef>.GetNamed(wcSound, true);
+            bool expectSustain = wcSound == "LC_WellCheers_Dance" || wcSound == "LC_WellCheers_WorkLoop";
+            if (sDef.sustain != expectSustain)
+                throw new InvalidOperationException($"WellCheers SoundDef {wcSound} sustain mismatch (expected {expectSustain}, got {sDef.sustain}).");
+        }
+        Thing seaFx = GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("LC_FX_WellCheersSeaWave", true), otherPlat.Position, map);
+        Thing bubbleFx = GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("LC_FX_WellCheersBubble", true), otherPlat.Position, map);
+        Find.TickManager.DoSingleTick();
+        seaFx.Destroy();
+        bubbleFx.Destroy();
         otherPlat.Destroy();
 
         // 3b. PunishingBird breach -> damage triggers Enraged Maw & 0.1 dynamic four-color resistance -> return to egg
@@ -2162,5 +2212,367 @@ public static class GameplayValidation
             throw new InvalidOperationException("Saved HeartOfAspiration holding platform missing after reload.");
         if (!foundSavedSnowQueen)
             throw new InvalidOperationException("Saved SnowQueen holding platform missing after reload.");
+    }
+
+    private static void ValidatePhase3(Map map, object abnSettings)
+    {
+        (string name, string cat, bool isTool)[] phase3 =
+        {
+            ("AllAroundHelper", "HE", false),
+            ("JudgementBird", "WAW", false),
+            ("BigBird", "WAW", false),
+            ("LittleRedRidingHoodedMercenary", "WAW", false),
+            ("BackwardClock", "WAW", true),
+            ("Schadenfreude", "HE", false),
+        };
+
+        // 1. Codex, ritual extraction pool, E.G.O gear + ALEPH Pale Justitia profile, and settings toggles
+        foreach (var (name, cat, isTool) in phase3)
+        {
+            ThingDef raceDef = DefDatabase<ThingDef>.GetNamed(name, true);
+            ThingDef eggDef = DefDatabase<ThingDef>.GetNamed(name + "Egg", true);
+            if (AbnormalityUtility.ResolveCodexEntry(raceDef)?.defName != name
+                || AbnormalityUtility.ResolveCodexEntry(eggDef)?.defName != name)
+            {
+                throw new InvalidOperationException($"Phase3 Codex entry resolution failed for {name} / {name}Egg.");
+            }
+
+            if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+            {
+                throw new InvalidOperationException($"Phase3 {name}Egg missing from {cat} ritual extraction list.");
+            }
+
+            if (!isTool)
+            {
+                DefDatabase<ThingDef>.GetNamed("EgoWeapon_" + name, true);
+                DefDatabase<ThingDef>.GetNamed("Apparel_" + name + "Suit", true);
+                DefDatabase<ThingDef>.GetNamed("Accessory_" + name, true);
+            }
+
+            FieldInfo toggleField = abnSettings.GetType().GetField("Enable" + name)
+                ?? throw new InvalidOperationException($"Missing Phase3 setting toggle Enable{name}.");
+            bool prev = (bool)toggleField.GetValue(abnSettings);
+            try
+            {
+                toggleField.SetValue(abnSettings, false);
+                if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+                {
+                    throw new InvalidOperationException($"Enable{name}=false did not filter {name}Egg.");
+                }
+            }
+            finally
+            {
+                toggleField.SetValue(abnSettings, prev);
+            }
+        }
+
+        // Verify ALEPH Pale Justitia weapon & 0.5/0.5/0.5/0.5 suit + BigBird 0.4 Black suit
+        ThingDef justitiaWeaponDef = DefDatabase<ThingDef>.GetNamed("EgoWeapon_JudgementBird", true);
+        if (!FourColorOverrides.TryGetWeaponProfile(justitiaWeaponDef, out var justitiaWp)
+            || justitiaWp.damageType != FourColorDamageType.Pale
+            || justitiaWp.riskLevel != LCRiskLevel.ALEPH)
+        {
+            throw new InvalidOperationException($"EgoWeapon_JudgementBird expected ALEPH Pale profile, got {justitiaWp.riskLevel}/{justitiaWp.damageType}.");
+        }
+
+        ThingDef justitiaSuitDef = DefDatabase<ThingDef>.GetNamed("Apparel_JudgementBirdSuit", true);
+        if (!FourColorOverrides.TryGetApparelProfile(justitiaSuitDef, out var justitiaAp)
+            || justitiaAp.riskLevel != LCRiskLevel.ALEPH
+            || Math.Abs(justitiaAp.pale - 0.5f) > 0.001f)
+        {
+            throw new InvalidOperationException($"Apparel_JudgementBirdSuit expected ALEPH 0.5 Pale resistance, got {justitiaAp.riskLevel}/{justitiaAp.pale}.");
+        }
+
+        ThingDef lampSuitDef = DefDatabase<ThingDef>.GetNamed("Apparel_BigBirdSuit", true);
+        if (!FourColorOverrides.TryGetApparelProfile(lampSuitDef, out var lampAp)
+            || lampAp.riskLevel != LCRiskLevel.WAW
+            || Math.Abs(lampAp.black - 0.4f) > 0.001f)
+        {
+            throw new InvalidOperationException($"Apparel_BigBirdSuit expected WAW 0.4 Black resistance, got {lampAp.riskLevel}/{lampAp.black}.");
+        }
+
+        // 2. Standard containment, work, PeBox, E.G.O extraction, rendering, and egg-return across all 4 standard entities
+        int pIndex = 0;
+        foreach (var (name, _, isTool) in phase3)
+        {
+            if (isTool) continue;
+
+            Pawn worker = SpawnValidationColonist(map, map.Center);
+            worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
+            CompPawnStatus emp = worker.GetComp<CompPawnStatus>() ?? throw new InvalidOperationException("Phase3 validation worker missing CompPawnStatus.");
+            emp.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 100;
+            emp.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 100;
+            emp.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 100;
+            emp.GetPawnStatusLevel(EPawnStatus.Justice).Status = 100;
+
+            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+            plat.SetFaction(Faction.OfPlayer);
+            IntVec3 cell = FindSafePlatformCell(map);
+            GenSpawn.Spawn(plat, cell, map);
+            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+            Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
+            int sig = 0x4c430300 + pIndex++;
+            AbnormalityUtility.TransferSignature(egg, sig);
+            plat.innerContainer.TryAdd(egg);
+            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+
+            Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Phase3 egg failed to enter containment: {name}");
+            CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Phase3 missing CompAbnormality: {name}");
+            if (abn.biosignature != sig) throw new InvalidOperationException($"Phase3 identity mismatch: {name}");
+
+            AbnormalityUtility.Discover(held.def);
+            plat.GetGizmos().ToList();
+            held.Drawer.renderer.EnsureGraphicsInitialized();
+            plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+
+            plat.CurWorkType = Enum.GetValues(typeof(EAnomalyWorkType)).Cast<EAnomalyWorkType>()
+                .OrderByDescending(w => abn.CheckStudierSkillRequire(emp, w)).First();
+            float rate = abn.CheckStudierSkillRequire(emp, plat.CurWorkType);
+            if (rate <= 0f) throw new InvalidOperationException($"Phase3 worker cannot work on {name}: rate={rate}");
+
+            abn.PeBoxComp.CurAmountIndiPebox = 0;
+            Rand.PushState(sig);
+            try
+            {
+                for (int i = 0; i < 24; i++) plat.Notify_StudyInterval(emp);
+            }
+            finally { Rand.PopState(); }
+            abn.Notify_Studied(worker);
+            if (abn.PeBoxComp.CurAmountIndiPebox <= 0) throw new InvalidOperationException($"Phase3 no PeBox produced by {name}");
+
+            held.GetComp<CompAbnormalityStudiable>().Study(worker, 1000f);
+            CompEgoExtractable ego = held.GetComp<CompEgoExtractable>();
+            if (ego != null && ego.Props.weaponExtracted != null)
+            {
+                abn.PeBoxComp.CurAmountIndiPebox = 1000;
+                int before = ego.CurAmountWeapon;
+                typeof(CompEgoExtractable).GetMethod("ExtractEGO", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(ego, new object[] { EGO_TYPE.Weapon });
+                if (ego.CurAmountWeapon != before + 1) throw new InvalidOperationException($"Phase3 EGO extraction failed: {name}");
+            }
+
+            plat.EjectContents();
+            var fx = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("Dying" + name, true), cell, map);
+            fx.InitWith(held);
+            if (held.Spawned) held.DeSpawn();
+            Find.WorldPawns.PassToWorld(held, PawnDiscardDecideMode.Discard);
+            fx.Complete();
+            Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg", true))
+                .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
+            if (returnedEgg == null) throw new InvalidOperationException($"Phase3 identity did not survive egg return: {name}");
+            plat.Destroy();
+            if (worker.Spawned) worker.DeSpawn();
+            if (!worker.Destroyed) worker.Destroy();
+        }
+
+        // 3a. BigBird death-counter drop via Patch_PawnKill hook + Enchantment Snap-Out gizmo
+        var bbPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        bbPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(bbPlat, FindSafePlatformCell(map), map);
+        Thing bbEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("BigBirdEgg", true));
+        bbPlat.innerContainer.TryAdd(bbEgg);
+        bbEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(bbPlat.innerContainer);
+        CompAbnormality bbAbn = bbPlat.HeldPawn.GetComp<CompAbnormality>();
+        int bbStartQ = bbAbn.QliphothCountCurrent;
+        for (int i = 0; i < 5; i++)
+        {
+            Pawn sacrificial = SpawnValidationColonist(map, FindFarthestSafeCell(map));
+            sacrificial.Kill(null);
+            if (sacrificial.Corpse != null && !sacrificial.Corpse.Destroyed) sacrificial.Corpse.Destroy();
+        }
+        if (bbAbn.QliphothCountCurrent != bbStartQ - 1)
+            throw new InvalidOperationException($"BigBird Qliphoth counter did not drop after 5 humanlike deaths (start={bbStartQ}, cur={bbAbn.QliphothCountCurrent}).");
+        bbPlat.Destroy();
+
+        Pawn enchantedPawn = SpawnValidationColonist(map, map.Center);
+        HediffDef enchantDef = DefDatabase<HediffDef>.GetNamed("LC_BigBirdEnchanted", true);
+        Hediff enchantH = HediffMaker.MakeHediff(enchantDef, enchantedPawn);
+        enchantedPawn.health.AddHediff(enchantH);
+        string snapOutLabel = "LC_BigBird_SnapOutGizmoLabel".Translate();
+        Command_Action snapCmd = enchantedPawn.GetGizmos().OfType<Command_Action>().FirstOrDefault(g => g.defaultLabel == snapOutLabel)
+            ?? throw new InvalidOperationException("LC_BigBirdEnchanted missing Snap Out of Trance gizmo.");
+        snapCmd.action();
+        if (enchantedPawn.health.hediffSet.HasHediff(enchantDef))
+            throw new InvalidOperationException("BigBird Snap Out gizmo failed to remove LC_BigBirdEnchanted.");
+        if (enchantedPawn.Spawned) enchantedPawn.DeSpawn();
+        if (!enchantedPawn.Destroyed) enchantedPawn.Destroy();
+
+        // 3b. LittleRed mercenary hire -> allied faction + recall -> return to homePlatform + escape counter drop
+        var lrPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        lrPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(lrPlat, FindSafePlatformCell(map), map);
+        Thing lrEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LittleRedRidingHoodedMercenaryEgg", true));
+        lrPlat.innerContainer.TryAdd(lrEgg);
+        lrEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(lrPlat.innerContainer);
+        Pawn lrPawn = lrPlat.HeldPawn;
+        CompAbnormality lrAbn = lrPawn.GetComp<CompAbnormality>();
+        lrAbn.PeBoxComp.CurAmountIndiPebox = 30;
+
+        Pawn prey = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("AllAroundHelper", true), LCContainmentUtility.AbnormalityFaction);
+        GenSpawn.Spawn(prey, FindFarthestSafeCell(map), map);
+        bool hired = (bool)lrAbn.GetType().GetMethod("RequestMercenaryHunt", BindingFlags.Public | BindingFlags.Instance)
+            .Invoke(lrAbn, new object[] { prey });
+        bool isHiredNow = (bool)lrAbn.GetType().GetProperty("IsHired", BindingFlags.Public | BindingFlags.Instance).GetValue(lrAbn);
+        if (!hired || !isHiredNow || !lrPawn.Spawned || lrPawn.Faction != Faction.OfPlayer || lrAbn.PeBoxComp.CurAmountIndiPebox != 15)
+            throw new InvalidOperationException($"LittleRed mercenary hire failed: hired={hired}, isHired={isHiredNow}, spawned={lrPawn.Spawned}, pe={lrAbn.PeBoxComp.CurAmountIndiPebox}");
+        string recallLabel = "LC_LittleRed_RecallLabel".Translate();
+        if (!lrPawn.GetGizmos().OfType<Command_Action>().Any(g => g.defaultLabel == recallLabel))
+            throw new InvalidOperationException("Hired LittleRed missing Recall Mercenary gizmo.");
+        bool recalled = (bool)lrAbn.GetType().GetMethod("RecallFromHunt", BindingFlags.Public | BindingFlags.Instance).Invoke(lrAbn, null);
+        if (!recalled || lrPlat.HeldPawn != lrPawn || lrPawn.Faction != LCContainmentUtility.AbnormalityFaction)
+            throw new InvalidOperationException("LittleRed RecallFromHunt failed to return into homePlatform.");
+
+        int lrQBeforeEscape = lrAbn.QliphothCountCurrent;
+        prey.GetComp<CompAbnormality>().Notify_Escaped();
+        if (lrAbn.QliphothCountCurrent != lrQBeforeEscape - 1)
+            throw new InvalidOperationException($"LittleRed Qliphoth counter did not drop when another abnormality escaped (before={lrQBeforeEscape}, after={lrAbn.QliphothCountCurrent}).");
+        if (prey.Spawned) prey.DeSpawn();
+        if (!prey.Destroyed) prey.Destroy();
+        lrPlat.Destroy();
+
+        // 3c. BackwardClock Level III charge 0->4, Level V rejection/activation, Time Rewind suppression + activator erasure
+        Pawn tempWorker = SpawnValidationColonist(map, map.Center);
+        var (bcPlat, _, bcTool) = ContainToolOnPlatform(map, tempWorker, "BackwardClock", 0x4c430310);
+        PropertyInfo bcChargeProp = bcTool.GetType().GetProperty("ChargeLevel", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo bcRewindsProp = bcTool.GetType().GetProperty("TotalRewinds", BindingFlags.Public | BindingFlags.Instance);
+
+        Pawn lv1User = SpawnValidationColonist(map, bcPlat.Position);
+        CompPawnStatus lv1Stat = lv1User.GetComp<CompPawnStatus>();
+        lv1Stat.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 10;
+        lv1Stat.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 10;
+        lv1Stat.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 10;
+        lv1Stat.GetPawnStatusLevel(EPawnStatus.Justice).Status = 10;
+        if (bcTool.CanUseTool(lv1User).Accepted)
+            throw new InvalidOperationException("BackwardClock should reject Level I employee for charging.");
+
+        Pawn lv3User = SpawnValidationColonist(map, bcPlat.Position);
+        CompPawnStatus lv3Stat = lv3User.GetComp<CompPawnStatus>();
+        lv3Stat.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 60;
+        lv3Stat.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 60;
+        lv3Stat.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 60;
+        lv3Stat.GetPawnStatusLevel(EPawnStatus.Justice).Status = 60;
+        if (!bcTool.CanUseTool(lv3User).Accepted)
+            throw new InvalidOperationException("BackwardClock should accept Level III+ employee for charging.");
+
+        for (int i = 0; i < 4; i++) bcTool.OnToolUsed(lv3User);
+        if ((int)bcChargeProp.GetValue(bcTool) != 4)
+            throw new InvalidOperationException($"BackwardClock expected charge 4/4, got {bcChargeProp.GetValue(bcTool)}.");
+        // Bypass short cooldown from charging loop for direct level-gate verification
+        typeof(CompAbnormalityTool).GetField("lastUsedTick", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(bcTool, -999999);
+        if (bcTool.CanUseTool(lv3User).Accepted)
+            throw new InvalidOperationException("BackwardClock at 4/4 should reject Level III/IV employee for activation.");
+
+        Pawn lv5User = SpawnValidationColonist(map, bcPlat.Position);
+        CompPawnStatus lv5Stat = lv5User.GetComp<CompPawnStatus>();
+        lv5Stat.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 100;
+        lv5Stat.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 100;
+        lv5Stat.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 100;
+        lv5Stat.GetPawnStatusLevel(EPawnStatus.Justice).Status = 100;
+        if (!bcTool.CanUseTool(lv5User).Accepted)
+            throw new InvalidOperationException("BackwardClock at 4/4 should accept Level V employee for Time Rewind.");
+
+        Pawn breachedJb = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("JudgementBird", true), LCContainmentUtility.AbnormalityFaction);
+        int jbSig = breachedJb.GetComp<CompAbnormality>().biosignature;
+        GenSpawn.Spawn(breachedJb, FindFarthestSafeCell(map), map);
+        bcTool.OnToolUsed(lv5User);
+        bcTool.TickWhileHeld();
+        if (!lv5User.Destroyed || !breachedJb.Destroyed || (int)bcChargeProp.GetValue(bcTool) != 0 || (int)bcRewindsProp.GetValue(bcTool) != 1)
+            throw new InvalidOperationException($"BackwardClock Time Rewind failed: activatorDestroyed={lv5User.Destroyed}, jbDestroyed={breachedJb.Destroyed}, charge={bcChargeProp.GetValue(bcTool)}, rewinds={bcRewindsProp.GetValue(bcTool)}.");
+        if (!map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("JudgementBirdEgg", true)).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == jbSig))
+            throw new InvalidOperationException("BackwardClock Time Rewind did not return breached JudgementBird to its egg.");
+
+        // Cleanup temporary Phase 3 test pawns & platform
+        foreach (Pawn tmp in new[] { tempWorker, lv1User, lv3User })
+        {
+            if (tmp.Spawned) tmp.DeSpawn();
+            if (!tmp.Destroyed) tmp.Destroy();
+        }
+        bcPlat.Destroy();
+
+        // 3d. Leave one BackwardClock charged to 3/4 on a holding platform for Save/Reload persistence check
+        Pawn saver = SpawnValidationColonist(map, map.Center);
+        CompPawnStatus saverStat = saver.GetComp<CompPawnStatus>();
+        saverStat.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 60;
+        saverStat.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 60;
+        saverStat.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 60;
+        saverStat.GetPawnStatusLevel(EPawnStatus.Justice).Status = 60;
+        var (savedBcPlat, _, savedBcTool) = ContainToolOnPlatform(map, saver, "BackwardClock", 0x4c430311);
+        for (int i = 0; i < 3; i++) savedBcTool.OnToolUsed(saver);
+        savedBcPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, savedBcPlat.DrawPos);
+        savedBcPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, savedBcPlat.DrawPos);
+        savedBcPlat.DynamicDrawPhaseAt(DrawPhase.Draw, savedBcPlat.DrawPos);
+        if (saver.Spawned) saver.DeSpawn();
+        if (!saver.Destroyed) saver.Destroy();
+
+        // 3e. Schadenfreude reverse camera-gaze dynamic resistance & Gaze E.G.O rending debuff
+        Pawn sfPawn = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Schadenfreude", true), LCContainmentUtility.AbnormalityFaction);
+        GenSpawn.Spawn(sfPawn, FindFarthestSafeCell(map), map);
+        CompAbnormality sfAbn = sfPawn.GetComp<CompAbnormality>();
+        MethodInfo setWatch = sfAbn.GetType().GetMethod("SetTestWatchOverride", BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo tickBreached = sfAbn.GetType().GetMethod("TickBreached", BindingFlags.Public | BindingFlags.Instance);
+        PropertyInfo isWatchedProp = sfAbn.GetType().GetProperty("IsWatchedActive", BindingFlags.Public | BindingFlags.Instance);
+
+        setWatch.Invoke(sfAbn, new object[] { (bool?)false });
+        tickBreached.Invoke(sfAbn, null);
+        if ((bool)isWatchedProp.GetValue(sfAbn))
+            throw new InvalidOperationException("Schadenfreude should stay dormant (unwatched) when override=false.");
+        if (!(sfPawn is ILCFourColorDynamicResistance sfDyn)
+            || !sfDyn.TryGetDynamicFourColorResistance(FourColorDamageType.Red, out float sfUnwatchedRed)
+            || Math.Abs(sfUnwatchedRed - 0.6f) > 0.001f)
+        {
+            throw new InvalidOperationException("Unwatched Schadenfreude expected 0.6 dynamic Red resistance.");
+        }
+
+        setWatch.Invoke(sfAbn, new object[] { (bool?)true });
+        tickBreached.Invoke(sfAbn, null);
+        if (!(bool)isWatchedProp.GetValue(sfAbn))
+            throw new InvalidOperationException("Schadenfreude failed to activate when watched (override=true).");
+        if (!sfDyn.TryGetDynamicFourColorResistance(FourColorDamageType.Red, out float sfWatchedRed)
+            || Math.Abs(sfWatchedRed - 1.2f) > 0.001f
+            || !sfDyn.TryGetDynamicFourColorResistance(FourColorDamageType.Pale, out float sfWatchedPale)
+            || Math.Abs(sfWatchedPale - 1.5f) > 0.001f)
+        {
+            throw new InvalidOperationException("Watched Schadenfreude expected 1.2 Red / 1.5 Pale dynamic resistance.");
+        }
+
+        DamageDef gazeSawDef = DefDatabase<DamageDef>.GetNamed("LC_Gaze_SawDamage", true);
+        HediffDef gazeRendDef = DefDatabase<HediffDef>.GetNamed("LC_GazeRending", true);
+        sfPawn.TakeDamage(new DamageInfo(gazeSawDef, 6f));
+        if (!sfPawn.health.hediffSet.HasHediff(gazeRendDef))
+            throw new InvalidOperationException("DamageWorker_Gaze did not apply LC_GazeRending.");
+        if (sfPawn.Spawned) sfPawn.DeSpawn();
+        if (!sfPawn.Destroyed) sfPawn.Destroy();
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; Phase3; 6_abnormalities/pale_justitia/bigbird_deaths/littlered_hire/backward_clock/schadenfreude");
+    }
+
+    private static void ValidatePhase3AfterLoad(Map map)
+    {
+        bool foundSavedBackwardClock = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "BackwardClock"
+                && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430311)
+            {
+                CompAbnormalityTool tool = plat.HeldToolComp;
+                int charge = (int)(tool?.GetType().GetProperty("ChargeLevel", BindingFlags.Public | BindingFlags.Instance)?.GetValue(tool) ?? -1);
+                if (charge != 3)
+                {
+                    throw new InvalidOperationException($"Saved BackwardClock expected ChargeLevel=3 after reload, got {charge}.");
+                }
+
+                plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                foundSavedBackwardClock = true;
+                break;
+            }
+        }
+
+        if (!foundSavedBackwardClock)
+            throw new InvalidOperationException("Saved BackwardClock holding platform missing after reload.");
     }
 }
