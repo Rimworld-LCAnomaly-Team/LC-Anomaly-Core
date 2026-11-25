@@ -1,5 +1,6 @@
 ﻿using LCAnomalyCore.Comp;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.Interface;
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
@@ -37,26 +38,22 @@ namespace LCAnomalyCore.Jobs
         {
             this.FailOnDestroyedOrNull(TargetIndex.B);
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-            this.FailOn(() => DestHolder == null || !DestHolder.Available);
+            this.FailOn(() => DestHolder == null || !DestHolder.CanAcceptAbnormality(Takee, out _));
             bool isLCEntity = Takee.TryGetComp<CompAbnormality>() != null || Takee.def is ThingDef_AbnormalityEgg;
-            bool isLCPlatform = DestHolder?.parent?.def is LC_HoldingPlatformDef;
+            bool isLCHolder = DestHolder?.parent is IAbnormalityContainmentUnit;
 
             this.FailOn(() => !isLCEntity && Takee is Pawn pawn2 && ModsConfig.AnomalyActive && !(pawn2.GetComp<CompActivity>()?.IsDormant ?? true));
 
-            Log.Warning("CarryToEntityHolder：正在使用LCAnomalyLibrary.Jobs自定义的方法，而非原版方法");
-
             if (isLCEntity)
             {
-                //LC实体情况，平台必须匹配
-                this.FailOn(() => !(isLCEntity && isLCPlatform));
+                //LC实体情况，收容单元必须匹配
+                this.FailOn(() => !(isLCEntity && isLCHolder));
             }
             else
             {
-                //非LC实体情况，平台必须匹配
-                this.FailOn(() => !(!isLCEntity && !isLCPlatform));
+                //非LC实体情况，收容单元必须匹配
+                this.FailOn(() => !(!isLCEntity && !isLCHolder));
             }
-
-            Log.Message("CarryToEntityHolder：平台检测通过，符合专有平台规则");
 
             this.FailOn(() => Takee.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.EntityHolder != DestHolder);
             if (pawn.carryTracker.CarriedThing != Takee)
@@ -91,15 +88,15 @@ namespace LCAnomalyCore.Jobs
             yield return Toils_General.Do(delegate
             {
                 Thing thing = takee;
-                platform.Container.TryAddOrTransfer(thing, 1);
                 CompAbnormalityHoldingPlatformTarget compHoldingPlatformTarget = thing.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
-                if (compHoldingPlatformTarget != null)
+                string letterLabel = compHoldingPlatformTarget?.Props.capturedLetterLabel;
+                string letterText = compHoldingPlatformTarget?.Props.capturedLetterText;
+
+                bool captured = platform.ContainmentUnit != null && platform.ContainmentUnit.TryCaptureThing(thing);
+
+                if (captured && letterLabel != null)
                 {
-                    compHoldingPlatformTarget.Notify_HeldOnPlatform(platform.Container);
-                    if (compHoldingPlatformTarget.Props.capturedLetterLabel != null)
-                    {
-                        Find.LetterStack.ReceiveLetter(compHoldingPlatformTarget.Props.capturedLetterLabel, compHoldingPlatformTarget.Props.capturedLetterText.Formatted(taker.Named("PAWN")), LetterDefOf.NeutralEvent, platform.parent);
-                    }
+                    Find.LetterStack.ReceiveLetter(letterLabel, letterText.Formatted(taker.Named("PAWN")), LetterDefOf.NeutralEvent, platform.parent);
                 }
             });
         }

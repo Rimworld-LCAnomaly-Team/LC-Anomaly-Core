@@ -1,5 +1,5 @@
-﻿using LCAnomalyCore.Buildings;
-using LCAnomalyCore.Comp.Pawns;
+﻿using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.UI;
 using RimWorld;
 using System.Collections.Generic;
@@ -36,7 +36,7 @@ namespace LCAnomalyCore.Comp
         /// <inheritdoc />
         public override IEnumerable<Verse.Gizmo> CompGetGizmosExtra()
         {
-            if (parent is Building_AbnormalityHoldingPlatform holdingPlatform && holdingPlatform.IsHoldingTool)
+            if (parent is IAbnormalityContainmentUnit holdingUnit && holdingUnit.IsHoldingTool)
             {
                 yield break;
             }
@@ -53,10 +53,10 @@ namespace LCAnomalyCore.Comp
                     Find.WindowStack.Add(new Dialog_LC_AssignEntity(this));
                 };
 
-                //不存在可分配工作的单位，或平台上没有实体，就禁用按钮
+                //不存在可分配工作的单位，或收容单元上没有实体，就禁用按钮
                 if (!AssigningCandidates.Any<Pawn>())
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAssignablePawns_Desc".Translate());
-                else if (((Building_AbnormalityHoldingPlatform)parent).HeldPawn == null)
+                else if ((parent as IAbnormalityContainmentUnit)?.HeldPawn == null)
                     command_Action.Disable("LC_AssignmentGizmo_HoldingPlatform_NoAbnormalityOnPlatform_Desc".Translate());
 
                 yield return command_Action;
@@ -93,12 +93,12 @@ namespace LCAnomalyCore.Comp
         /// <returns></returns>
         public float CheckSkillRequire(Pawn pawn)
         {
-            var building = parent as Building_AbnormalityHoldingPlatform;
-            if (building != null && building.HeldPawn != null)
+            var unit = parent as IAbnormalityContainmentUnit;
+            if (unit != null && unit.HeldPawn != null)
             {
-                var comp = building.HeldPawn.GetComp<CompAbnormality>();
+                var comp = unit.HeldPawn.GetComp<CompAbnormality>();
                 if (comp != null)
-                    return comp.CheckStudierSkillRequire(pawn.GetComp<CompPawnStatus>(), building.CurWorkType);
+                    return comp.CheckStudierSkillRequire(pawn.GetComp<CompPawnStatus>(), unit.CurWorkType);
             }
 
             return 0;

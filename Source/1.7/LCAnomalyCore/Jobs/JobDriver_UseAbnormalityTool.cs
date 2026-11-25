@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp;
+using LCAnomalyCore.Interface;
 using Verse;
 using Verse.AI;
 using Verse.Sound;
@@ -12,7 +12,7 @@ namespace LCAnomalyCore.Jobs
     public class JobDriver_UseAbnormalityTool : JobDriver
     {
         private CompAbnormalityTool ToolComp =>
-            (TargetThingA as Building_AbnormalityHoldingPlatform)?.HeldPawn?.TryGetComp<CompAbnormalityTool>()
+            (TargetThingA as IAbnormalityContainmentUnit)?.HeldPawn?.TryGetComp<CompAbnormalityTool>()
             ?? TargetThingA?.TryGetComp<CompAbnormalityTool>();
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)

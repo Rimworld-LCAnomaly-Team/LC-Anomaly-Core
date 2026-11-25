@@ -1,12 +1,13 @@
-﻿using RimWorld;
+﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.GameComponent;
+using LCAnomalyCore.Interface;
+using LCAnomalyCore.Util;
+using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
-using Verse.AI.Group;
-using Verse.AI;
 using Verse;
-using LCAnomalyCore.GameComponent;
-using LCAnomalyCore.Buildings;
-using LCAnomalyCore.Util;
+using Verse.AI;
+using Verse.AI.Group;
 
 namespace LCAnomalyCore.Comp
 {
@@ -20,6 +21,9 @@ namespace LCAnomalyCore.Comp
 
         /// <summary>表示 <c>targetHolder</c>。</summary>
         public Thing targetHolder;
+
+        /// <summary>房间收容模式绑定的收容单元引用。</summary>
+        public Thing boundContainmentUnit;
 
         /// <summary>表示 <c>isEscaping</c>。</summary>
         public bool isEscaping;
@@ -122,22 +126,22 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        /// <summary>获取 <c>HeldPlatform</c>。</summary>
-        public Building_AbnormalityHoldingPlatform HeldPlatform => parent.ParentHolder as Building_AbnormalityHoldingPlatform;
+        /// <summary>获取绑定的房间收容控制终端（若当前处于房间收容）。</summary>
+        public Building_AbnormalityContainmentTerminal BoundTerminal => boundContainmentUnit as Building_AbnormalityContainmentTerminal;
 
-        /// <summary>表示 <c>CurrentlyHeldOnPlatform</c>。</summary>
-        public bool CurrentlyHeldOnPlatform
-        {
-            get
-            {
-                if (HeldPlatform != null)
-                {
-                    return parent.SpawnedOrAnyParentSpawned;
-                }
+        /// <summary>获取当前所在的统一收容单元。</summary>
+        public IAbnormalityContainmentUnit HeldUnit => boundContainmentUnit as IAbnormalityContainmentUnit;
 
-                return false;
-            }
-        }
+        /// <summary>指示当前是否正处于房间收容控制终端的有效收容中。</summary>
+        public bool CurrentlyContainedInRoom =>
+            boundContainmentUnit != null
+            && !boundContainmentUnit.Destroyed
+            && boundContainmentUnit.Spawned
+            && parent.Spawned
+            && !isEscaping;
+
+        /// <summary>指示当前是否正处于有效收容中。</summary>
+        public bool CurrentlyHeld => CurrentlyContainedInRoom;
 
         /// <summary>表示 <c>CanBeCaptured</c>。</summary>
         public bool CanBeCaptured
@@ -189,7 +193,12 @@ namespace LCAnomalyCore.Comp
                     return;
                 }
 
-                if (CurrentlyHeldOnPlatform)
+                if (boundContainmentUnit != null && (boundContainmentUnit.Destroyed || !boundContainmentUnit.Spawned))
+                {
+                    boundContainmentUnit = null;
+                }
+
+                if (CurrentlyHeld)
                 {
                     //CaptivityTick(pawn);
                 }
@@ -211,70 +220,74 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        /// <summary>执行 <c>Notify_HeldOnPlatform</c> 定义的操作。</summary>
-        public void Notify_HeldOnPlatform(ThingOwner newOwner)
+        /// <summary>根据蛋上的 heldPawnKind 生成对应异常实体并继承生物特征与研究进度。</summary>
+        internal Pawn CreateHeldPawnFromEgg()
         {
-            targetHolder = null;
-            Pawn pawn = null;
-            if (parent is Pawn pawn2)
+            if (Props.heldPawnKind == null)
             {
-                pawn2.mindState.lastAssignedInteractTime = Find.TickManager.TicksGame;
-                PawnComponentsUtility.AddAndRemoveDynamicComponents(pawn2);
-                pawn = pawn2;
+                return null;
             }
 
-            if (newOwner != null)
+            PawnKindDef heldPawnKind = Props.heldPawnKind;
+            Faction ofEntities = LCContainmentUtility.AbnormalityFaction;
+            float? fixedBiologicalAge = 0f;
+            Pawn pawn3 = PawnGenerator.GeneratePawn(new PawnGenerationRequest(heldPawnKind, ofEntities, PawnGenerationContext.NonPlayer, null, forceGenerateNewPawn: true, allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, fixedBiologicalAge));
+
+            LC_CompEgg egg = parent.GetComp<LC_CompEgg>();
+            if (egg != null)
             {
-                if (Props.heldPawnKind != null)
+                if (egg.Props.shouldTransferBioSignature)
                 {
-                    PawnKindDef heldPawnKind = Props.heldPawnKind;
-                    Faction ofEntities = LCContainmentUtility.AbnormalityFaction;
-                    float? fixedBiologicalAge = 0f;
-                    Pawn pawn3 = PawnGenerator.GeneratePawn(new PawnGenerationRequest(heldPawnKind, ofEntities, PawnGenerationContext.NonPlayer, null, forceGenerateNewPawn: true, allowDead: false, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, fixedBiologicalAge));
-                    newOwner.TryAdd(pawn3);
-                    pawn3.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.Notify_HeldOnPlatform(newOwner);
-                    pawn = pawn3;
+                    AbnormalityUtility.TransferSignature(pawn3, egg.biosignature);
 
-                    //传输蛋对象的生物特征和研究进度
-                    LC_CompEgg egg = parent.GetComp<LC_CompEgg>();
-                    if (egg != null)
+                    if (pawn3.TryGetComp<CompAbnormalityStudiable>(out var comp1))
                     {
-                        if (egg.Props.shouldTransferBioSignature)
-                        {
-                            AbnormalityUtility.TransferSignature(pawn3, egg.biosignature);
-
-                            if (pawn3.TryGetComp<CompAbnormalityStudiable>(out var comp1))
-                            {
-                                comp1.lastStudiedTick = Find.TickManager.TicksGame;
-                            }
-                        }
-
-                        var component = Components.LC;
-                        var comp2 = pawn3.TryGetComp<CompAbnormalityStudyUnlocks>();
-                        if (component != null)
-                        {
-                            component.TryGetAnomalyStatusSaved(pawn3.def, out AnomalyStatusSaved saved);
-                            comp2?.TransferStudyProgress(saved.StudyProgress);
-                        }
+                        comp1.lastStudiedTick = Find.TickManager.TicksGame;
                     }
+                }
 
-                    //绑上平台
-                    CompAbnormality tmpComp = pawn3.TryGetComp<CompAbnormality>();
-                    if (tmpComp != null)
-                        tmpComp.Notify_Holded();
-
-                    parent.Destroy();
+                var component = Components.LC;
+                var comp2 = pawn3.TryGetComp<CompAbnormalityStudyUnlocks>();
+                if (component != null)
+                {
+                    component.TryGetAnomalyStatusSaved(pawn3.def, out AnomalyStatusSaved saved);
+                    comp2?.TransferStudyProgress(saved.StudyProgress);
                 }
             }
 
-            if (pawn != null && HeldPlatform != null)
+            return pawn3;
+        }
+
+        /// <summary>绑定并进入指定收容室终端的房间活体收容状态。</summary>
+        public void Notify_ContainedInRoom(Building_AbnormalityContainmentTerminal terminal)
+        {
+            targetHolder = null;
+            boundContainmentUnit = terminal;
+            isEscaping = false;
+
+            if (parent is Pawn pawn)
             {
+                if (pawn.mindState != null)
+                {
+                    pawn.mindState.lastAssignedInteractTime = Find.TickManager.TicksGame;
+                    pawn.mindState.enemyTarget = null;
+                }
+
+                PawnComponentsUtility.AddAndRemoveDynamicComponents(pawn);
                 AbnormalityUtility.Discover(pawn.def);
                 pawn.GetLord()?.Notify_PawnLost(pawn, PawnLostCondition.MadePrisoner);
+                pawn.TryGetComp<CompAbnormality>()?.Notify_Holded();
+                pawn.jobs?.EndCurrentJob(JobCondition.InterruptForced);
+
                 if (ModsConfig.AnomalyActive)
+                {
                     pawn.TryGetComp<CompActivity>()?.Notify_HeldOnPlatform();
-                if (ModsConfig.AnomalyActive)
-                    Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
+                    if (terminal != null && terminal.Map != null)
+                    {
+                        Find.StudyManager.UpdateStudiableCache(terminal, terminal.Map);
+                    }
+                }
+
                 if (ConceptDefOf.CapturingEntities != null)
                     PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.CapturingEntities, KnowledgeAmount.Total);
                 if (ConceptDefOf.ContainingEntities != null)
@@ -282,12 +295,11 @@ namespace LCAnomalyCore.Comp
             }
         }
 
-        /// <summary>执行 <c>Notify_ReleasedFromPlatform</c> 定义的操作。</summary>
-        public void Notify_ReleasedFromPlatform()
+        /// <summary>从房间收容状态解除绑定时调用。</summary>
+        public void Notify_ReleasedFromContainment()
         {
+            boundContainmentUnit = null;
             parent.TryGetComp<CompAbnormalityTool>()?.OnLeftPlatform();
-            if (ModsConfig.AnomalyActive)
-                Find.StudyManager.UpdateStudiableCache(HeldPlatform, HeldPlatform.Map);
         }
 
         /// <summary>执行 <c>Escape</c> 定义的操作。</summary>
@@ -295,7 +307,7 @@ namespace LCAnomalyCore.Comp
         {
             if (parent.TryGetComp<CompAbnormalityTool>() != null)
             {
-                HeldPlatform?.EjectContents();
+                (boundContainmentUnit as IAbnormalityContainmentUnit)?.EjectContents();
                 return;
             }
 
@@ -303,8 +315,11 @@ namespace LCAnomalyCore.Comp
             if (entitiyBasePawn == null)
                 return;
 
-            //重置收容平台状态
-            HeldPlatform?.EjectContents();
+            //重置收容单元状态
+            if (boundContainmentUnit is IAbnormalityContainmentUnit unit)
+            {
+                unit.EjectContents();
+            }
 
             //Pawn不存在则退出
             Pawn pawn = (Pawn)parent;
@@ -330,7 +345,7 @@ namespace LCAnomalyCore.Comp
         /// <inheritdoc />
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            if (StudiedAtHoldingPlatform && !CurrentlyHeldOnPlatform && CanBeCaptured)
+            if (StudiedAtHoldingPlatform && !CurrentlyHeld && CanBeCaptured)
             {
                 if (targetHolder != null)
                 {
@@ -363,9 +378,9 @@ namespace LCAnomalyCore.Comp
                 }
             }
 
-            if (CurrentlyHeldOnPlatform)
+            if (CurrentlyHeld)
             {
-                if (targetHolder != null && targetHolder != HeldPlatform)
+                if (targetHolder != null && targetHolder != boundContainmentUnit)
                 {
                     yield return new Command_Action
                     {
@@ -380,7 +395,7 @@ namespace LCAnomalyCore.Comp
                 }
             }
 
-            if (DebugSettings.ShowDevGizmos && CurrentlyHeldOnPlatform)
+            if (DebugSettings.ShowDevGizmos && CurrentlyHeld)
             {
                 yield return new Command_Action
                 {
@@ -428,6 +443,7 @@ namespace LCAnomalyCore.Comp
         public override void PostExposeData()
         {
             Scribe_References.Look(ref targetHolder, "targetHolder");
+            Scribe_References.Look(ref boundContainmentUnit, "boundContainmentUnit");
             Scribe_Values.Look(ref isEscaping, "isEscaping", defaultValue: false);
         }
     }

@@ -243,8 +243,8 @@ namespace LCAnomalyCore.Comp
                 yield return gizmo;
             }
 
-            //在收容平台上才能提取
-            if (HoldingTargetComp != null && HoldingTargetComp.HeldPlatform != null)
+            //在收容单元（平台或房间终端）内才能提取
+            if (HoldingTargetComp != null && HoldingTargetComp.CurrentlyHeld)
             {
                 //科技研究完成后才能提取
                 if (CheckIfEGOExtractUnlocked())

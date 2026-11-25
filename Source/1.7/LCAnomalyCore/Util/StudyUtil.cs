@@ -1,7 +1,7 @@
-﻿using LCAnomalyCore.Buildings;
-using LCAnomalyCore.Comp;
+﻿using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.Interface;
 using RimWorld;
 using RimWorld.Planet;
 using System;
@@ -187,11 +187,11 @@ namespace LCAnomalyCore.Util
                 }
                 else
                 {
-                    foreach (Building_AbnormalityHoldingPlatform holdingPlatform in Find.CurrentMap.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+                    foreach (Building building in Find.CurrentMap.listerBuildings.allBuildingsColonist)
                     {
-                        if (abnormality != holdingPlatform.HeldPawn)
+                        if (building is IAbnormalityContainmentUnit unit && abnormality != unit.HeldPawn)
                         {
-                            var compHoldingPlatformTarget = holdingPlatform.HeldPawn?.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+                            var compHoldingPlatformTarget = unit.HeldPawn?.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                             if (compHoldingPlatformTarget != null && compHoldingPlatformTarget.targetHolder == t.Thing)
                             {
                                 Messages.Message("LC_MessageHolderReserved".Translate(t.Thing.Label), MessageTypeDefOf.RejectInput);
@@ -242,19 +242,13 @@ namespace LCAnomalyCore.Util
                     {
                         pawn = t.Thing.Map.reservationManager.FirstRespectedReserver(t.Thing, carrier);
                     }
-                    else if (t.Thing is Building_AbnormalityHoldingPlatform p)
+                    else if (t.Thing is IAbnormalityContainmentUnit unit)
                     {
-                        /* 新增方法开始 */
-
-                        bool isLCPlatform = p.def is LC_HoldingPlatformDef;
-
-                        if (StudyUtil.AlreadyReserved(p, out reserver))
+                        if (StudyUtil.AlreadyReserved(unit.UnitThing, out reserver))
                         {
-                            if ((isLCEntity && isLCPlatform) || (!isLCEntity && !isLCPlatform))
+                            if (isLCEntity)
                                 pawn = reserver;
                         }
-
-                        /* 新增方法结束 */
                     }
 
                     TaggedString label;
@@ -267,15 +261,19 @@ namespace LCAnomalyCore.Util
                         label = "LC_FloatMenuContainmentStrength".Translate() + ": " + Defs.StatDefOf.LC_ContainmentStrength.Worker.ValueToString(compAbnormalityHolder.ContainmentStrength, finalized: false);
                         float minimumStrength = LCContainmentUtility.GetMinimumContainmentStrength(abnormality);
                         label += "\n" + ("LC_FloatMenuContainmentRequires".Translate(abnormality).CapitalizeFirst() + ": " + Defs.StatDefOf.LC_MinimumContainmentStrength.Worker.ValueToString(minimumStrength, finalized: false)).Colorize(LCContainmentUtility.SafelyContains(t.Thing, abnormality) ? Color.white : Color.red);
+                        if (!compAbnormalityHolder.CanAcceptAbnormality(abnormality, out string failReason) && !failReason.NullOrEmpty())
+                        {
+                            label += "\n" + failReason.Colorize(Color.red);
+                        }
                     }
 
                     Widgets.MouseAttachedLabel(label);
                 }
             }, delegate
             {
-                foreach (Building item2 in abnormality.MapHeld.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+                foreach (Building item2 in abnormality.MapHeld.listerBuildings.allBuildingsColonist)
                 {
-                    if (ValidateTarget(item2) && (carrier == null || CanReserveForTransfer(item2)))
+                    if (item2 is IAbnormalityContainmentUnit && ValidateTarget(item2) && (carrier == null || CanReserveForTransfer(item2)))
                     {
                         GenDraw.DrawArrowPointingAt(item2.DrawPos);
                     }
@@ -300,16 +298,17 @@ namespace LCAnomalyCore.Util
             {
                 if (t.HasThing && t.Thing.TryGetComp(out CompAbnormalityHolder comp) && comp.HeldPawn == null)
                 {
-                    /* 新增方法开始 */
+                    bool isLCHolder = t.Thing is IAbnormalityContainmentUnit;
 
-                    bool isLCPlatform = t.Thing.def is LC_HoldingPlatformDef;
-
-                    if (!((isLCEntity && isLCPlatform) || (!isLCEntity && !isLCPlatform)))
+                    if (!((isLCEntity && isLCHolder) || (!isLCEntity && !isLCHolder)))
                     {
                         return false;
                     }
 
-                    /* 新增方法结束 */
+                    if (!comp.CanAcceptAbnormality(abnormality, out _))
+                    {
+                        return false;
+                    }
 
                     if (carrier != null)
                     {
@@ -326,31 +325,21 @@ namespace LCAnomalyCore.Util
         /// <summary>执行 <c>AlreadyReserved</c> 定义的操作。</summary>
         public static bool AlreadyReserved(Thing p, out Pawn reserver)
         {
-            Log.Warning("1");
             tmpReservers.Clear();
-            Log.Warning("2");
             p.Map.reservationManager.ReserversOf(p, tmpReservers);
-            Log.Warning("3");
             reserver = tmpReservers.FirstOrDefault();
-            Log.Warning("4");
             if (reserver != null)
             {
-                Log.Warning("5");
                 return true;
             }
-            Log.Warning("6");
             foreach (Thing item in p.Map.listerThings.AllThings.Where(m => m.HasComp<CompAbnormalityHoldingPlatformTarget>()))
             {
-                Log.Warning("7");
-                Log.Error($"item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null {item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == null}");
                 if (item.TryGetComp<CompAbnormalityHoldingPlatformTarget>().targetHolder == p)
                 {
-                    Log.Warning("8");
                     reserver = item as Pawn;
                     return true;
                 }
             }
-            Log.Warning("9");
             return false;
         }
 
@@ -363,7 +352,6 @@ namespace LCAnomalyCore.Util
                 return false;
             }
 
-            Log.Warning((currentMap.listerBuildings.allBuildingsColonist.Count).ToString());
             foreach (Building item in currentMap.listerBuildings.allBuildingsColonist)
             {
                 if (item.TryGetComp<CompAbnormalityHolder>(out var comp) && comp.Available && !AlreadyReserved(item, out var _))

@@ -9,7 +9,7 @@ namespace LCAnomalyCore.Util
     /// </summary>
     public static class GraphicUtil
     {
-        private static Vector2 drawSizeOfHoldingPlatform = Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize;
+        private static Vector2 drawSizeOfHoldingPlatform = new Vector2(3f, 3f);
         private static string baseLocOfHoldingPlatform = "Things/Building/LC_HoldingPlatform/";
 
         #region 逆卡巴拉计数器

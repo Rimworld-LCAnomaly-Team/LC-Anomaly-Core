@@ -9,11 +9,13 @@
     <Compile Include="Buildings\Building_CogitoBucket.cs" />
     <Compile Include="Buildings\Building_DepartmentCore.cs" />
     <Compile Include="Buildings\Building_EnkephalinGenerator.cs" />
-    <Compile Include="Buildings\Building_AbnormalityHoldingPlatform.cs" />
+    <Compile Include="Buildings\Building_AbnormalityContainmentTerminal.cs" />
+    <Compile Include="Buildings\Building_LCContainmentDoor.cs" />
+    <Compile Include="Buildings\PlaceWorker_AbnormalityContainmentTerminal.cs" />
     <Compile Include="Comp\Abstract\LC_CompProperties_RequireThingSpawner.cs" />
     <Compile Include="Comp\Abstract\LC_CompRequireThingSpawner.cs" />
     <Compile Include="Comp\CompAbnormalityHolder.cs" />
-    <Compile Include="Comp\CompAbnormalityHolderPlatform.cs" />
+    <Compile Include="Comp\CompAbnormalityHolderRoom.cs" />
     <Compile Include="Comp\CompAccessoryable.cs" />
     <Compile Include="Comp\CompAssignableDepartmentCore.cs" />
     <Compile Include="Comp\CompBrainSpinalNerve.cs" />
@@ -23,7 +25,6 @@
     <Compile Include="Comp\CompEgoWeapon.cs" />
     <Compile Include="Comp\CompHoldingPlatformTarget.cs" />
     <Compile Include="Comp\CompPoperties_EgoSuit.cs" />
-    <Compile Include="Comp\CompProperties_AbnormalityHolderPlatform.cs" />
     <Compile Include="Comp\CompProperties_Accessoryable.cs" />
     <Compile Include="Comp\CompProperties_AssignableDepartmentCore.cs" />
     <Compile Include="Comp\CompProperties_BrainSpinalNerve.cs" />
@@ -68,7 +69,6 @@
     <Compile Include="Defs\HistoryEventDefOf.cs" />
     <Compile Include="Defs\JobDefOf.cs" />
     <Compile Include="Defs\LCShaderTypeDef.cs" />
-    <Compile Include="Defs\LC_HoldingPlatformDef.cs" />
     <Compile Include="Defs\RecipeDefOf.cs" />
     <Compile Include="Defs\ResearchProjectDefOf.cs" />
     <Compile Include="Defs\ResearchTabDefOf.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
     <Compile Include="Interface\IHoldingPlatformWorkTypeSelectable.cs" />
+    <Compile Include="Interface\IAbnormalityContainmentUnit.cs" />
     <Compile Include="Interface\ILCFourColorDynamicResistance.cs" />
     <Compile Include="Interface\ILCPawnDamageInterceptor.cs" />
     <Compile Include="Jobs\JobDriver_CarryToEntityHolder.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
     <Compile Include="Patch\Patch_PawnRenderTree_HeldScale.cs" />
+    <Compile Include="Patch\Patch_RoomContainment.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAnimation.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAutoCast.cs" />
     <Compile Include="Patch\Patch_SpecialDisplayStats_FourColor.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="Util\SightUtil.cs" />
     <Compile Include="Util\StudyUtil.cs" />
     <Compile Include="Util\LCContainmentUtility.cs" />
+    <Compile Include="Util\RoomRoleWorker_LCContainmentRoom.cs" />
     <Compile Include="Util\StatWorker_LCContainmentStrength.cs" />
     <Compile Include="Util\Types.cs" />
     <Reference Include="0Harmony"><HintPath>$(HarmonyAssembliesDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>

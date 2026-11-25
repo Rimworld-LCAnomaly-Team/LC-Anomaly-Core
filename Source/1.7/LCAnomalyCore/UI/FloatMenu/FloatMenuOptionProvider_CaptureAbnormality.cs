@@ -1,14 +1,11 @@
-﻿using RimWorld;
-using System;
+﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Interface;
+using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Verse.AI;
-using Verse;
-using LCAnomalyCore.Comp;
-using LCAnomalyCore.Buildings;
 using UnityEngine;
+using Verse;
+using Verse.AI;
 
 namespace LCAnomalyCore.UI.FloatMenu
 {
@@ -47,9 +44,13 @@ namespace LCAnomalyCore.UI.FloatMenu
                 yield break;
             }
 
-            IEnumerable<Building_AbnormalityHoldingPlatform> buildings = from x in context.FirstSelectedPawn.Map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>()
-                                                              where !x.Occupied && context.FirstSelectedPawn.CanReserveAndReach(x, PathEndMode.Touch, Danger.Deadly)
-                                                              select x;
+            IEnumerable<Building> buildings = from x in context.FirstSelectedPawn.Map.listerBuildings.allBuildingsColonist
+                                              where x is IAbnormalityContainmentUnit unit
+                                                  && !unit.Occupied
+                                                  && unit.HolderComp != null
+                                                  && unit.HolderComp.CanAcceptAbnormality(clickedThing, out _)
+                                                  && context.FirstSelectedPawn.CanReserveAndReach(x, PathEndMode.Touch, Danger.Deadly)
+                                              select x;
             Thing building = GenClosest.ClosestThing_Global_Reachable(context.FirstSelectedPawn.Position, context.FirstSelectedPawn.Map, buildings, PathEndMode.ClosestTouch, TraverseParms.For(context.FirstSelectedPawn, Danger.Some), 9999f, null, delegate (Thing t)
             {
                 var compEntityHolder = t.TryGetComp<CompAbnormalityHolder>();
@@ -65,10 +66,15 @@ namespace LCAnomalyCore.UI.FloatMenu
             {
                 bool safeContainerExists = false;
                 float minStrength = Util.LCContainmentUtility.GetMinimumContainmentStrength(clickedThing);
-                foreach (Building_AbnormalityHoldingPlatform platform in context.FirstSelectedPawn.Map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+                foreach (Building holderBuilding in context.FirstSelectedPawn.Map.listerBuildings.allBuildingsColonist)
                 {
-                    var holderComp = platform.TryGetComp<CompAbnormalityHolder>();
-                    if (holderComp != null && !platform.Occupied && holderComp.ContainmentStrength >= minStrength)
+                    if (!(holderBuilding is IAbnormalityContainmentUnit unit) || unit.Occupied)
+                    {
+                        continue;
+                    }
+
+                    var holderComp = unit.HolderComp;
+                    if (holderComp != null && holderComp.CanAcceptAbnormality(clickedThing, out _) && holderComp.ContainmentStrength >= minStrength)
                     {
                         safeContainerExists = true;
                         break;

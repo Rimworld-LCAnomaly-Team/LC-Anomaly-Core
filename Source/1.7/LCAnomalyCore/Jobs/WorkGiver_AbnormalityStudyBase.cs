@@ -1,5 +1,5 @@
-﻿using LCAnomalyCore.Buildings;
-using LCAnomalyCore.Comp;
+﻿using LCAnomalyCore.Comp;
+using LCAnomalyCore.Interface;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +16,16 @@ namespace LCAnomalyCore.Jobs
         /// <inheritdoc />
         public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
         {
-            return pawn.Map.listerThings.AllThings.Where(m => m.def is Defs.LC_HoldingPlatformDef);
+            return pawn.Map.listerBuildings.allBuildingsColonist.Where(m => m is IAbnormalityContainmentUnit);
         }
 
         /// <inheritdoc />
         public override float GetPriority(Pawn pawn, TargetInfo t)
         {
             Thing thing = t.Thing;
-            if (thing is Building_AbnormalityHoldingPlatform building_HoldingPlatform)
+            if (thing is IAbnormalityContainmentUnit unit)
             {
-                thing = building_HoldingPlatform.HeldPawn;
+                thing = unit.HeldPawn;
             }
 
             if (thing == null)

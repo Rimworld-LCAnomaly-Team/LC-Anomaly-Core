@@ -1,5 +1,5 @@
-using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp;
+using LCAnomalyCore.Interface;
 using RimWorld;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,7 +31,7 @@ namespace LCAnomalyCore.UI
         private const float RowHeight = 30f;
 
         /// <summary>获取 <c>StudiableThing</c>。</summary>
-        protected Thing StudiableThing => (base.SelThing as Building_AbnormalityHoldingPlatform)?.HeldPawn ?? base.SelThing;
+        protected Thing StudiableThing => (base.SelThing as IAbnormalityContainmentUnit)?.HeldPawn ?? base.SelThing;
 
         /// <inheritdoc />
         public override bool IsVisible

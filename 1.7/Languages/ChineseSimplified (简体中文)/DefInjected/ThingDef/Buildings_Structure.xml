@@ -3,5 +3,7 @@
 
   <LC_ContainmentWall.label>收容单元墙</LC_ContainmentWall.label>
   <LC_ContainmentWall.description>.</LC_ContainmentWall.description>
+  <LC_ContainmentDoor.label>LC 收容室门</LC_ContainmentDoor.label>
+  <LC_ContainmentDoor.description>脑叶公司加厚收容隔离门。当其邻接已收容异想体的收容室时，会自动阻止非员工殖民者穿行并锁死内部异想体。</LC_ContainmentDoor.description>
 
 </LanguageData>

@@ -1,4 +1,5 @@
 using LCAnomalyCore.Buildings;
+using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Comp
@@ -28,7 +29,15 @@ namespace LCAnomalyCore.Comp
         /// <inheritdoc />
         protected override void Tick()
         {
-            // 工具型异想体严禁离开平台活动：落地且未被搬运时立即温和化蛋并销毁实体
+            CompAbnormalityHoldingPlatformTarget holdTarget = GetComp<CompAbnormalityHoldingPlatformTarget>();
+            if (holdTarget != null && holdTarget.CurrentlyContainedInRoom)
+            {
+                TickHolded();
+                base.Tick();
+                return;
+            }
+
+            // 工具型异想体严禁离开平台或房间收容范围活动：落地且未被搬运时立即温和化蛋并销毁实体
             if (Spawned && CarriedBy == null && !Dead && !Destroyed)
             {
                 ToolComp?.RevertToEgg(Map, Position);
@@ -59,10 +68,21 @@ namespace LCAnomalyCore.Comp
         }
 
         /// <inheritdoc />
+        public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
+        {
+            if (ToolComp != null && ToolComp.TryDrawHeldOverride(phase, drawLoc))
+            {
+                return;
+            }
+
+            base.DynamicDrawPhaseAt(phase, drawLoc, flip);
+        }
+
+        /// <inheritdoc />
         public override void DrawExtraSelectionOverlays()
         {
             base.DrawExtraSelectionOverlays();
-            ToolComp?.DrawExtraSelectionOverlaysForPlatform(ToolComp.HeldPlatform);
+            ToolComp?.DrawExtraSelectionOverlaysForUnit(ToolComp.HeldUnit);
         }
     }
 }

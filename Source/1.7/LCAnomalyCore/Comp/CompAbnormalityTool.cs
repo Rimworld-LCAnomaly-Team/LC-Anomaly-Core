@@ -4,6 +4,7 @@ using System.Text;
 using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.Util;
 using RimWorld;
 using UnityEngine;
@@ -55,24 +56,33 @@ namespace LCAnomalyCore.Comp
         /// <inheritdoc />
         public ThingOwner GetDirectlyHeldThings() => EnsureEnclosedContainer();
 
-        /// <summary>若该工具实体正收容于平台上，则返回所在收容平台。</summary>
-        public Building_AbnormalityHoldingPlatform HeldPlatform => parent?.ParentHolder as Building_AbnormalityHoldingPlatform;
+        /// <summary>获取当前所在的统一收容单元（房间控制终端）。</summary>
+        public IAbnormalityContainmentUnit HeldUnit =>
+            parent?.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.HeldUnit;
 
-        /// <summary>返回供殖民者寻路与保留的实际交互目标（优先为所在收容平台，其次为实体自身）。</summary>
-        public Thing InteractionTarget => (Thing)HeldPlatform ?? (parent != null && parent.Spawned ? parent : null);
+        /// <summary>返回供殖民者寻路与保留的实际交互目标（房间收容或落地时优先实体自身，回退为收容单元）。</summary>
+        public Thing InteractionTarget =>
+            (parent != null && parent.Spawned)
+                ? parent
+                : HeldUnit?.UnitThing;
 
         /// <summary>获取当前有效地图。</summary>
-        public Map ActiveMap => HeldPlatform?.Map ?? parent?.MapHeld;
+        public Map ActiveMap => HeldUnit?.UnitThing?.Map ?? parent?.MapHeld;
 
         /// <summary>获取当前有效格坐标。</summary>
         public IntVec3 ActivePosition
         {
             get
             {
-                Building_AbnormalityHoldingPlatform plat = HeldPlatform;
-                if (plat != null && plat.Spawned)
+                if (parent != null && parent.Spawned)
                 {
-                    return plat.Position;
+                    return parent.Position;
+                }
+
+                Thing unitThing = HeldUnit?.UnitThing;
+                if (unitThing != null && unitThing.Spawned)
+                {
+                    return unitThing.Position;
                 }
 
                 return parent != null ? parent.PositionHeld : IntVec3.Invalid;
@@ -80,11 +90,14 @@ namespace LCAnomalyCore.Comp
         }
 
         /// <summary>获取当前有效世界绘制坐标。</summary>
-        public Vector3 ActiveDrawPos => HeldPlatform != null ? HeldPlatform.DrawPos : (parent != null ? parent.DrawPos : Vector3.zero);
+        public Vector3 ActiveDrawPos =>
+            (parent != null && parent.Spawned)
+                ? parent.DrawPos
+                : (HeldUnit?.UnitThing != null ? HeldUnit.UnitThing.DrawPos : Vector3.zero);
 
-        /// <summary>指示该工具当前是否处于可交互状态（位于有效收容平台上或直接生成在地图上）。</summary>
+        /// <summary>指示该工具当前是否处于可交互状态（位于有效收容单元内或直接生成在地图上）。</summary>
         public bool IsOperational =>
-            (HeldPlatform != null && HeldPlatform.Spawned && HeldPlatform.Map != null)
+            (HeldUnit?.UnitThing != null && HeldUnit.UnitThing.Spawned && HeldUnit.UnitThing.Map != null)
             || (parent != null && parent.Spawned && parent.Map != null);
 
         public int UseCount => useCount;
@@ -718,15 +731,15 @@ namespace LCAnomalyCore.Comp
                 drawSize *= targetComp.Props.heldDrawScale;
             }
 
-            float y = HeldPlatform != null ? HeldPlatform.HeldPawnDrawPos_Y : drawLoc.y;
+            float y = drawLoc.y;
             Vector3 adjustedLoc = new Vector3(drawLoc.x, y, drawLoc.z);
             Graphic graphic = GraphicDatabase.Get<Graphic_Single>(texPath, ShaderDatabase.Cutout, drawSize, overrideColor);
-            graphic?.Draw(adjustedLoc, Rot4.North, (Thing)HeldPlatform ?? parent, 0f);
+            graphic?.Draw(adjustedLoc, Rot4.North, parent, 0f);
             return true;
         }
 
-        /// <summary>选中收容平台或工具实体时绘制额外连线等选中叠加层。</summary>
-        public virtual void DrawExtraSelectionOverlaysForPlatform(Building_AbnormalityHoldingPlatform platform)
+        /// <summary>选中收容单元或工具实体时绘制额外连线等选中叠加层。</summary>
+        public virtual void DrawExtraSelectionOverlaysForUnit(IAbnormalityContainmentUnit unit)
         {
         }
 
@@ -901,7 +914,7 @@ namespace LCAnomalyCore.Comp
             }
             yield return useCmd;
 
-            if (HeldPlatform != null && Props.eggDef != null)
+            if (HeldUnit != null && Props.eggDef != null)
             {
                 Texture2D eggIcon = Props.eggDef.uiIcon ?? icon;
                 Command_Action revertCmd = new Command_Action
@@ -911,10 +924,10 @@ namespace LCAnomalyCore.Comp
                     icon = eggIcon,
                     action = delegate
                     {
-                        Building_AbnormalityHoldingPlatform plat = HeldPlatform;
+                        IAbnormalityContainmentUnit unit = HeldUnit;
                         Map targetMap = ActiveMap;
                         IntVec3 targetPos = ActivePosition;
-                        plat?.EjectContents();
+                        unit?.EjectContents();
                         if (!revertedToEgg && targetMap != null && targetPos.IsValid)
                         {
                             RevertToEgg(targetMap, targetPos);
@@ -937,7 +950,7 @@ namespace LCAnomalyCore.Comp
         {
             yield return Util.Gizmos.Get_EntityCodex(parent);
 
-            if (HeldPlatform == null && IsOperational)
+            if (IsOperational)
             {
                 foreach (Gizmo g in GetPlatformGizmos())
                 {

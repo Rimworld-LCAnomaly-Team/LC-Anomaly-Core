@@ -39,6 +39,11 @@ namespace LCAnomalyCore.Comp
         /// </summary>
         public SoundDef soundWorking;
 
+        /// <summary>
+        /// XML：在房间内收容时是否允许自由踱步（生物型为 true，静物/工具型为 false）
+        /// </summary>
+        public bool canWanderInContainmentRoom = false;
+
         #endregion XML字段
 
         /// <summary>

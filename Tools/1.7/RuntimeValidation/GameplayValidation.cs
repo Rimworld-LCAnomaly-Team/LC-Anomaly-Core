@@ -26,13 +26,96 @@ namespace LC17Validation;
 
 public static class GameplayValidation
 {
-    private static IntVec3 FindSafePlatformCell(Map map)
+    private static readonly Dictionary<Building_AbnormalityContainmentTerminal, CellRect> TestContainmentRoomRects =
+        new Dictionary<Building_AbnormalityContainmentTerminal, CellRect>();
+
+    private static IntVec3 FindSafeBuildingCell(Map map)
     {
         return map.AllCells.First(c =>
             c.x >= 8 && c.z >= 8 && c.x < map.Size.x - 8 && c.z < map.Size.z - 8
             && CellRect.CenteredOn(c, 2).Cells.All(p =>
                 p.InBounds(map) && !p.Fogged(map) && p.Standable(map) && p.GetRegion(map) != null
                 && p.GetEdifice(map) == null && p.GetFirstPawn(map) == null));
+    }
+
+    private static Building_AbnormalityContainmentTerminal SpawnTestContainmentTerminal(Map map, bool restrictDoor = false)
+    {
+        BuildTestContainmentRoom(map, out CellRect roomRect, out Building_LCContainmentDoor door);
+        if (door != null)
+        {
+            door.restrictToEmployees = restrictDoor;
+        }
+
+        ThingDef terminalDef = DefDatabase<ThingDef>.GetNamed("LC_ContainmentTerminal", true);
+        IntVec3 termPos = new IntVec3(roomRect.minX + 1, 0, roomRect.maxZ - 1);
+        var terminal = (Building_AbnormalityContainmentTerminal)ThingMaker.MakeThing(terminalDef);
+        terminal.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(terminal, termPos, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        TestContainmentRoomRects[terminal] = roomRect;
+        return terminal;
+    }
+
+    private static void CleanupTestContainmentTerminal(Building_AbnormalityContainmentTerminal terminal)
+    {
+        if (terminal == null)
+        {
+            return;
+        }
+
+        Map map = terminal.Map;
+        Pawn leftover = terminal.HeldPawn;
+        if (!terminal.Destroyed && terminal.Spawned)
+        {
+            terminal.Destroy();
+        }
+        else if (!terminal.Destroyed)
+        {
+            terminal.Destroy();
+        }
+
+        if (leftover != null && !leftover.Destroyed)
+        {
+            if (leftover.Corpse != null && !leftover.Corpse.Destroyed)
+            {
+                leftover.Corpse.Destroy();
+            }
+            if (leftover.Spawned)
+            {
+                leftover.DeSpawn();
+            }
+            if (!leftover.Destroyed)
+            {
+                leftover.Destroy();
+            }
+        }
+
+        if (TestContainmentRoomRects.TryGetValue(terminal, out CellRect rect))
+        {
+            TestContainmentRoomRects.Remove(terminal);
+            if (map != null)
+            {
+                foreach (IntVec3 c in rect.EdgeCells)
+                {
+                    List<Thing> things = c.GetThingList(map);
+                    for (int i = things.Count - 1; i >= 0; i--)
+                    {
+                        Thing t = things[i];
+                        if ((t is Building_LCContainmentDoor || t.def?.defName == "LC_ContainmentWall") && !t.Destroyed)
+                        {
+                            t.Destroy();
+                        }
+                    }
+                }
+
+                foreach (IntVec3 c in rect.Cells)
+                {
+                    map.roofGrid?.SetRoof(c, null);
+                }
+
+                map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+            }
+        }
     }
 
     private static IntVec3 FindSafePawnCell(Map map, IntVec3 near)
@@ -49,21 +132,19 @@ public static class GameplayValidation
 
     public static void Run(Map map, CompPawnStatus employee)
     {
+        TestContainmentRoomRects.Clear();
         Pawn worker = (Pawn)employee.parent;
         worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
         int index = 0;
         foreach (string name in new[] { "OneSin", "Laetitia", "MeatLantern", "BurrowingHeaven" })
         {
-            var platform = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform"));
-            platform.SetFaction(Faction.OfPlayer);
-            IntVec3 cell = FindSafePlatformCell(map);
-            GenSpawn.Spawn(platform, cell, map);
-            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+            var platform = SpawnTestContainmentTerminal(map);
+            IntVec3 cell = platform.Position;
             Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg"));
             int signature = 0x4c430010 + index++;
             AbnormalityUtility.TransferSignature(egg, signature);
-            platform.innerContainer.TryAdd(egg);
-            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(platform.innerContainer);
+            if (!platform.TryCaptureThing(egg))
+                throw new InvalidOperationException("Egg failed to enter room containment: " + name);
             Pawn held = platform.HeldPawn ?? throw new InvalidOperationException("Egg failed to enter containment: " + name);
             var abnormality = held.GetComp<CompAbnormality>();
             if (abnormality.biosignature != signature) throw new InvalidOperationException("Identity did not survive containment: " + name);
@@ -72,15 +153,18 @@ public static class GameplayValidation
             if (entry != null && !entry.Discovered) throw new InvalidOperationException("Codex discovery failed: " + name);
             platform.GetGizmos().ToList();
             held.Drawer.renderer.EnsureGraphicsInitialized();
-            held.Drawer.renderer.RenderPawnAt(platform.DrawPos);
+            held.Drawer.renderer.RenderPawnAt(held.DrawPos);
             if (name == "BurrowingHeaven")
             {
                 CompAbnormalityHoldingPlatformTarget bhTarget = held.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
                 if (bhTarget == null || bhTarget.Props.heldDrawScale >= 1f || bhTarget.Props.heldDrawScale <= 0f)
-                    throw new InvalidOperationException("BurrowingHeaven expected heldDrawScale < 1 inside holding platform.");
+                    throw new InvalidOperationException("BurrowingHeaven expected heldDrawScale < 1 inside containment room.");
                 platform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, platform.DrawPos);
                 platform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, platform.DrawPos);
                 platform.DynamicDrawPhaseAt(DrawPhase.Draw, platform.DrawPos);
+                held.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, held.DrawPos);
+                held.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, held.DrawPos);
+                held.DynamicDrawPhaseAt(DrawPhase.Draw, held.DrawPos);
             }
             platform.CurWorkType = Enum.GetValues(typeof(EAnomalyWorkType)).Cast<EAnomalyWorkType>()
                 .OrderByDescending(w => abnormality.CheckStudierSkillRequire(employee, w)).First();
@@ -118,6 +202,7 @@ public static class GameplayValidation
             Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg"))
                 .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == signature);
             if (returnedEgg == null) throw new InvalidOperationException("Identity did not survive death and egg return: " + name);
+            CleanupTestContainmentTerminal(platform);
             Log.Message("[LC17 Validation] GAMEPLAY PASS; " + name + "; capture/work/PeBox/EGO/release/death/identity");
         }
         IntVec3 monsterCell = FindSafePawnCell(map, map.Center);
@@ -301,28 +386,23 @@ public static class GameplayValidation
         ValidateP2BatchA(map, monster);
     }
 
-    private static (Building_AbnormalityHoldingPlatform platform, Pawn held, CompAbnormalityTool tool) ContainToolOnPlatform(
+    private static (Building_AbnormalityContainmentTerminal platform, Pawn held, CompAbnormalityTool tool) ContainToolOnPlatform(
         Map map,
         Pawn testColonist,
         string toolName,
         int signature)
     {
-        Building_AbnormalityHoldingPlatform platform =
-            (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        platform.SetFaction(Faction.OfPlayer);
-        IntVec3 cell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(platform, cell, map);
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        Building_AbnormalityContainmentTerminal platform = SpawnTestContainmentTerminal(map);
 
         Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(toolName + "Egg", true));
         AbnormalityUtility.TransferSignature(egg, signature);
-        platform.innerContainer.TryAdd(egg);
-        egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(platform.innerContainer);
+        if (!platform.TryCaptureThing(egg))
+            throw new InvalidOperationException($"Tool egg failed to enter containment room: {toolName}");
 
         Pawn held = platform.HeldPawn
-            ?? throw new InvalidOperationException($"Tool egg failed to materialize on holding platform: {toolName}");
+            ?? throw new InvalidOperationException($"Tool egg failed to materialize in containment room: {toolName}");
         if (!platform.IsHoldingTool)
-            throw new InvalidOperationException($"Holding platform did not recognize held tool abnormality: {toolName}");
+            throw new InvalidOperationException($"Containment terminal did not recognize held tool abnormality: {toolName}");
 
         CompAbnormality abn = held.GetComp<CompAbnormality>()
             ?? throw new InvalidOperationException($"Tool entity missing CompAbnormality: {toolName}");
@@ -346,7 +426,7 @@ public static class GameplayValidation
         }
 
         held.Drawer.renderer.EnsureGraphicsInitialized();
-        held.Drawer.renderer.RenderPawnAt(platform.DrawPos);
+        held.Drawer.renderer.RenderPawnAt(held.DrawPos);
 
         return (platform, held, platform.HeldToolComp);
     }
@@ -434,7 +514,8 @@ public static class GameplayValidation
         Thing returnedPortraitEgg = map.listerThings.ThingsOfDef(portraitEggDef)
             .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ejectSig);
         if (returnedPortraitEgg == null)
-            throw new InvalidOperationException("PortraitOfAnotherWorld did not revert to matching biosignature egg after leaving platform.");
+            throw new InvalidOperationException("PortraitOfAnotherWorld did not revert to matching biosignature egg after leaving containment room.");
+        CleanupTestContainmentTerminal(portraitPlatform);
 
         // Contain a second bound Portrait on a holding platform to verify Scribe_References survival across save/reload
         const int savedPortraitSig = 0x4c430082;
@@ -577,13 +658,14 @@ public static class GameplayValidation
                 $"useCount={fleshTool.UseCount}, blackDef={blackDef?.defName ?? "NULL"}, hediffs=[{hediffsStr}], apparel=[{apparelStr}].");
         }
 
-        // Eject Flesh Idol from platform -> verifies peaceful reversion to Egg
+        // Eject Flesh Idol from containment -> verifies peaceful reversion to Egg
         fleshPlatform.EjectContents();
         for (int i = 0; i < 3; i++) Find.TickManager.DoSingleTick();
         if (!heldFlesh.Destroyed && heldFlesh.Spawned)
-            throw new InvalidOperationException("FleshIdol did not despawn after leaving platform.");
+            throw new InvalidOperationException("FleshIdol did not despawn after leaving containment.");
         if (!map.listerThings.ThingsOfDef(fleshEggDef).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == fleshSig))
             throw new InvalidOperationException("FleshIdol did not revert to egg with matching biosignature.");
+        CleanupTestContainmentTerminal(fleshPlatform);
 
         // 2. We Can Change Anything (T-09-85, ZAYIN Continuous Tool on Holding Platform)
         ThingDef ironDef = DefDatabase<ThingDef>.GetNamed("WeCanChangeAnything", true);
@@ -717,8 +799,9 @@ public static class GameplayValidation
         for (int i = 0; i < 3; i++) Find.TickManager.DoSingleTick();
         if (!map.listerThings.ThingsOfDef(ironEggDef).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ironSig))
             throw new InvalidOperationException("WeCanChangeAnything did not revert to matching biosignature egg after eject.");
+        CleanupTestContainmentTerminal(ironPlatform);
 
-        // 3. Old Belief and Promise (T-09-97, ZAYIN SingleUse Tool + Weapon Blessing on Holding Platform)
+        // 3. Old Belief and Promise (T-09-97, ZAYIN SingleUse Tool + Weapon Blessing in Containment Room)
         ThingDef promiseDef = DefDatabase<ThingDef>.GetNamed("OldBeliefAndPromise", true);
         ThingDef promiseEggDef = DefDatabase<ThingDef>.GetNamed("OldBeliefAndPromiseEgg", true);
         if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual("ZAYIN").Contains(promiseEggDef))
@@ -740,7 +823,7 @@ public static class GameplayValidation
         blessedWielder.equipment?.DestroyAllEquipment();
 
         const int promiseSig = 0x4c430085;
-        var (_, _, promiseTool) = ContainToolOnPlatform(map, blessedWielder, "OldBeliefAndPromise", promiseSig);
+        var (promisePlat, _, promiseTool) = ContainToolOnPlatform(map, blessedWielder, "OldBeliefAndPromise", promiseSig);
         if (promiseTool.CanUseTool(blessedWielder).Accepted)
             throw new InvalidOperationException("OldBeliefAndPromise should reject unarmed colonist.");
 
@@ -796,6 +879,7 @@ public static class GameplayValidation
         string blessingLabel = "LC_Stat_WeaponBlessing".Translate();
         if (!egoWeapon.def.SpecialDisplayStats(StatRequest.For(egoWeapon)).Any(s => s.LabelCap == blessingLabel.CapitalizeFirst()))
             throw new InvalidOperationException("InfoCard SpecialDisplayStats missing LC_Stat_WeaponBlessing entry for blessed weapon.");
+        CleanupTestContainmentTerminal(promisePlat);
 
         // 4. Verify extraction pool settings toggles for all 3 tool eggs
         FieldInfo fFlesh = abnSettings.GetType().GetField("EnableFleshIdol");
@@ -852,16 +936,13 @@ public static class GameplayValidation
     private static void ValidateBurrowingHeavenTrophyHeads(Map map)
     {
         const int bhTrophySig = 0x4c430089;
-        var bhPlatform = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform"));
-        bhPlatform.SetFaction(Faction.OfPlayer);
-        IntVec3 bhCell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(bhPlatform, bhCell, map);
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        var bhPlatform = SpawnTestContainmentTerminal(map);
+        IntVec3 bhCell = bhPlatform.Position;
 
         Thing bhEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("BurrowingHeavenEgg"));
         AbnormalityUtility.TransferSignature(bhEgg, bhTrophySig);
-        bhPlatform.innerContainer.TryAdd(bhEgg);
-        bhEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(bhPlatform.innerContainer);
+        if (!bhPlatform.TryCaptureThing(bhEgg))
+            throw new InvalidOperationException("BurrowingHeavenEgg failed to enter trophy test room containment.");
         Pawn heldBh = bhPlatform.HeldPawn ?? throw new InvalidOperationException("BurrowingHeavenEgg failed to enter trophy test containment.");
 
         Assembly lcAbnAsm = heldBh.GetType().Assembly;
@@ -1024,20 +1105,17 @@ public static class GameplayValidation
             || AbnormalityUtility.ResolveCodexEntry(ntEggDef)?.defName != "NothingThere")
             throw new InvalidOperationException("NothingThere or its egg failed Codex resolution.");
 
-        // 1. Contain NothingThereEgg and verify platform/render/biosignature
+        // 1. Contain NothingThereEgg and verify room/render/biosignature
         const int ntSig = 0x4c430090;
-        var ntPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        ntPlat.SetFaction(Faction.OfPlayer);
-        IntVec3 ntCell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(ntPlat, ntCell, map);
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        var ntPlat = SpawnTestContainmentTerminal(map);
+        IntVec3 ntCell = ntPlat.Position;
 
         Thing ntEgg = ThingMaker.MakeThing(ntEggDef);
         AbnormalityUtility.TransferSignature(ntEgg, ntSig);
-        ntPlat.innerContainer.TryAdd(ntEgg);
-        ntEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ntPlat.innerContainer);
+        if (!ntPlat.TryCaptureThing(ntEgg))
+            throw new InvalidOperationException("NothingThereEgg failed to enter room containment.");
 
-        Pawn heldNt = ntPlat.HeldPawn ?? throw new InvalidOperationException("NothingThereEgg failed to materialize in holding platform.");
+        Pawn heldNt = ntPlat.HeldPawn ?? throw new InvalidOperationException("NothingThereEgg failed to materialize in containment room.");
         CompAbnormality abnNt = heldNt.GetComp<CompAbnormality>()
             ?? throw new InvalidOperationException("NothingThere missing CompAbnormality.");
         if (abnNt.biosignature != ntSig)
@@ -1270,15 +1348,12 @@ public static class GameplayValidation
         MethodInfo mTickBreachCombat = ntCompType.GetMethod("TickBreachCombat", BindingFlags.Public | BindingFlags.Instance)
             ?? throw new InvalidOperationException("CompNothingThere missing TickBreachCombat.");
 
-        // 5a. Wiki Rule II test on temporary undisguised platform: Justice < IV breaches immediately WITHOUT killing worker (Dog form East & West)
+        // 5a. Wiki Rule II test in temporary undisguised room: Justice < IV breaches immediately WITHOUT killing worker (Dog form East & West)
         Thing rule2Egg = ThingMaker.MakeThing(ntEggDef);
-        var rule2Plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        rule2Plat.SetFaction(Faction.OfPlayer);
-        IntVec3 rule2Cell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(rule2Plat, rule2Cell, map);
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
-        rule2Plat.innerContainer.TryAdd(rule2Egg);
-        rule2Egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(rule2Plat.innerContainer);
+        var rule2Plat = SpawnTestContainmentTerminal(map);
+        IntVec3 rule2Cell = rule2Plat.Position;
+        if (!rule2Plat.TryCaptureThing(rule2Egg))
+            throw new InvalidOperationException("NothingThere rule2Egg failed to enter room containment.");
         Pawn rule2Nt = rule2Plat.HeldPawn;
         CompAbnormality abnRule2 = rule2Nt.GetComp<CompAbnormality>();
 
@@ -1307,9 +1382,8 @@ public static class GameplayValidation
         rule2Nt.Rotation = Rot4.West;
         rule2Nt.Drawer.renderer.RenderPawnAt(rule2Nt.DrawPos);
         if (!lowJustWorker.Destroyed && lowJustWorker.Spawned) { lowJustWorker.DeSpawn(); lowJustWorker.Destroy(); }
+        CleanupTestContainmentTerminal(rule2Plat);
         if (!rule2Nt.Destroyed && rule2Nt.Spawned) { rule2Nt.DeSpawn(); rule2Nt.Destroy(); }
-        if (!rule2Plat.Destroyed && rule2Plat.Spawned) { rule2Plat.DeSpawn(); rule2Plat.Destroy(); }
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
 
         // 5b. Wiki Rule IV: Bad result with Justice >= IV kills worker & enters Contained Disguised state (without breaching)
         Pawn victimWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
@@ -1625,20 +1699,15 @@ public static class GameplayValidation
             .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ntSig);
         if (returnedNtEgg == null)
             throw new InvalidOperationException("NothingThere biosignature did not survive suppression and egg return.");
+        CleanupTestContainmentTerminal(ntPlat);
 
-        // 6. Leave one contained NothingThere platform + healthy Mimicry veteran for Save/Reload validation
+        // 6. Leave one contained NothingThere room + healthy Mimicry veteran for Save/Reload validation
         const int ntSavedSig = 0x4c430091;
-        var ntSavedPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        ntSavedPlat.SetFaction(Faction.OfPlayer);
-        IntVec3 ntSavedCell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(ntSavedPlat, ntSavedCell, map);
-        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        var ntSavedPlat = SpawnTestContainmentTerminal(map);
         Thing ntSavedEgg = ThingMaker.MakeThing(ntEggDef);
         AbnormalityUtility.TransferSignature(ntSavedEgg, ntSavedSig);
-        ntSavedPlat.innerContainer.TryAdd(ntSavedEgg);
-        ntSavedEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ntSavedPlat.innerContainer);
-        if (ntSavedPlat.HeldPawn?.def?.defName != "NothingThere")
-            throw new InvalidOperationException("Saved NothingThere egg failed to enter containment.");
+        if (!ntSavedPlat.TryCaptureThing(ntSavedEgg) || ntSavedPlat.HeldPawn?.def?.defName != "NothingThere")
+            throw new InvalidOperationException("Saved NothingThere egg failed to enter room containment.");
 
         var leftoverInjuries = new List<Hediff_Injury>();
         veteran.health.hediffSet.GetHediffs(ref leftoverInjuries);
@@ -1650,6 +1719,7 @@ public static class GameplayValidation
         ValidatePhase1And2(map, abnSettings);
         ValidatePhase3(map, abnSettings);
         ValidatePhase4(map, abnSettings);
+        ValidateRoomContainment(map);
     }
 
     public static void CheckReload(Map map)
@@ -1670,7 +1740,7 @@ public static class GameplayValidation
             throw new InvalidOperationException("Ejected PortraitOfAnotherWorldEgg identity did not survive save/load.");
 
         bool foundSavedBoundPortrait = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "PortraitOfAnotherWorld" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430082)
             {
@@ -1681,16 +1751,19 @@ public static class GameplayValidation
                     plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
                     plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
                     plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                    plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.HeldPawn.DrawPos);
+                    plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.HeldPawn.DrawPos);
+                    plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.Draw, plat.HeldPawn.DrawPos);
                     foundSavedBoundPortrait = true;
                     break;
                 }
             }
         }
         if (!foundSavedBoundPortrait)
-            throw new InvalidOperationException("Bound PortraitOfAnotherWorld on HoldingPlatform did not survive save/load.");
+            throw new InvalidOperationException("Bound PortraitOfAnotherWorld on ContainmentTerminal did not survive save/load.");
 
         bool foundSavedEnclosedIron = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "WeCanChangeAnything" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430086)
             {
@@ -1703,10 +1776,10 @@ public static class GameplayValidation
             }
         }
         if (!foundSavedEnclosedIron)
-            throw new InvalidOperationException("Enclosed occupant inside WeCanChangeAnything on HoldingPlatform did not survive save/load.");
+            throw new InvalidOperationException("Enclosed occupant inside WeCanChangeAnything on ContainmentTerminal did not survive save/load.");
 
         bool foundSavedTrophyPlatform = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "BurrowingHeaven" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430089)
             {
@@ -1759,19 +1832,22 @@ public static class GameplayValidation
             throw new InvalidOperationException("Saved BurrowingHeaven trophy platform did not survive save/load.");
 
         bool foundSavedNtPlatform = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "NothingThere" && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430091)
             {
                 plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
                 plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
                 plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.HeldPawn.DrawPos);
+                plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.HeldPawn.DrawPos);
+                plat.HeldPawn?.DynamicDrawPhaseAt(DrawPhase.Draw, plat.HeldPawn.DrawPos);
                 foundSavedNtPlatform = true;
                 break;
             }
         }
         if (!foundSavedNtPlatform)
-            throw new InvalidOperationException("Saved NothingThere holding platform did not survive save/load.");
+            throw new InvalidOperationException("Saved NothingThere containment terminal did not survive save/load.");
 
         HediffDef regenDef = DefDatabase<HediffDef>.GetNamed("LC_MimicrySuitRegen", true);
         if (!map.mapPawns.FreeColonistsSpawned.Any(p =>
@@ -1800,6 +1876,7 @@ public static class GameplayValidation
         ValidatePhase1And2AfterLoad(map);
         ValidatePhase3AfterLoad(map);
         ValidatePhase4AfterLoad(map);
+        ValidateRoomContainmentAfterLoad(map);
     }
 
     private static IntVec3 FindFarthestSafeCell(Map map, int minColonistDist = 0)
@@ -1924,17 +2001,13 @@ public static class GameplayValidation
             worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
             CompPawnStatus emp = worker.GetComp<CompPawnStatus>() ?? throw new InvalidOperationException("Phase1And2 validation worker missing CompPawnStatus.");
 
-            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-            plat.SetFaction(Faction.OfPlayer);
-            IntVec3 cell = FindSafePlatformCell(map);
-            GenSpawn.Spawn(plat, cell, map);
-            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+            var plat = SpawnTestContainmentTerminal(map);
+            IntVec3 cell = plat.Position;
 
             Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
             int sig = 0x4c430100 + pIndex++;
             AbnormalityUtility.TransferSignature(egg, sig);
-            plat.innerContainer.TryAdd(egg);
-            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+            if (!plat.TryCaptureThing(egg)) throw new InvalidOperationException($"Egg failed to enter room containment: {name}");
 
             Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Egg failed to enter containment: {name}");
             CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Missing CompAbnormality: {name}");
@@ -1982,25 +2055,19 @@ public static class GameplayValidation
             Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg", true))
                 .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
             if (returnedEgg == null) throw new InvalidOperationException($"Identity did not survive egg return: {name}");
-            plat.Destroy();
+            CleanupTestContainmentTerminal(plat);
         }
 
         // 3. Unique Mechanics Verification
         worker = SpawnValidationColonist(map, map.Center);
         // 3a. FairyFestival care + jealousy devour on studying another abnormality
-        var fairyPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        fairyPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(fairyPlat, FindSafePlatformCell(map), map);
+        var fairyPlat = SpawnTestContainmentTerminal(map);
         Thing fEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("FairyFestivalEgg", true));
-        fairyPlat.innerContainer.TryAdd(fEgg);
-        fEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(fairyPlat.innerContainer);
+        if (!fairyPlat.TryCaptureThing(fEgg)) throw new InvalidOperationException("FairyFestivalEgg failed to enter room containment.");
 
-        var otherPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        otherPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(otherPlat, FindSafePlatformCell(map), map);
+        var otherPlat = SpawnTestContainmentTerminal(map);
         Thing wEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WellCheersEgg", true));
-        otherPlat.innerContainer.TryAdd(wEgg);
-        wEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(otherPlat.innerContainer);
+        if (!otherPlat.TryCaptureThing(wEgg)) throw new InvalidOperationException("WellCheersEgg failed to enter room containment.");
 
         Pawn betrayer = SpawnValidationColonist(map, fairyPlat.Position);
         fairyPlat.HeldPawn.GetComp<CompAbnormality>().Notify_Studied(betrayer);
@@ -2010,7 +2077,7 @@ public static class GameplayValidation
         otherPlat.Notify_StudyStart(betrayer);
         if (!betrayer.Dead)
             throw new InvalidOperationException("LC_FairyCare failed to devour worker who started studying another Abnormality.");
-        fairyPlat.Destroy();
+        CleanupTestContainmentTerminal(fairyPlat);
 
         // 3a2. WellCheers multi-part animations, work-type flavor mapping, direct right-click FloatMenu & wave/bubble VFX
         Pawn wcHeld = otherPlat.HeldPawn;
@@ -2099,13 +2166,10 @@ public static class GameplayValidation
         sleeper.health.RemoveHediff(sleepHediff);
 
         // 3d. DerFreischutz request shot & PeBox deduction / counter increment
-        var derPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        derPlat.SetFaction(Faction.OfPlayer);
-        IntVec3 cornerCell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(derPlat, cornerCell, map);
+        var derPlat = SpawnTestContainmentTerminal(map);
+        IntVec3 cornerCell = derPlat.Position;
         Thing dEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("DerFreischutzEgg", true));
-        derPlat.innerContainer.TryAdd(dEgg);
-        dEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(derPlat.innerContainer);
+        if (!derPlat.TryCaptureThing(dEgg)) throw new InvalidOperationException("DerFreischutzEgg failed to enter room containment.");
         CompAbnormality derAbn = derPlat.HeldPawn.GetComp<CompAbnormality>();
         derAbn.PeBoxComp.CurAmountIndiPebox = 20;
         IntVec3 safeAim = new IntVec3(cornerCell.x + 2 <= map.Size.x - 2 ? cornerCell.x + 2 : cornerCell.x - 2, 0, cornerCell.z);
@@ -2118,10 +2182,11 @@ public static class GameplayValidation
         {
             if (!p.Destroyed) p.Destroy();
         }
-        derPlat.Destroy();
+        CleanupTestContainmentTerminal(otherPlat);
+        CleanupTestContainmentTerminal(derPlat);
 
         // 3e. HeartOfAspiration equip -> combat -> safe return AND second active equipper saved across save/load
-        var (_, _, heartTool1) = ContainToolOnPlatform(map, worker, "HeartOfAspiration", 0x4c430201);
+        var (heartPlat1, _, heartTool1) = ContainToolOnPlatform(map, worker, "HeartOfAspiration", 0x4c430201);
         Pawn heartTester = SpawnValidationColonist(map, map.Center);
         heartTool1.OnEquipped(heartTester);
         HediffDef heartBuffDef = DefDatabase<HediffDef>.GetNamed("LC_HeartOfAspirationBuff", true);
@@ -2132,6 +2197,7 @@ public static class GameplayValidation
         heartTool1.OnUnequipped(heartTester, 900, returnedNormally: true);
         if (heartTool1.IsEquipped || heartTester.InMentalState)
             throw new InvalidOperationException("HeartOfAspiration safe return after combat damage failed.");
+        CleanupTestContainmentTerminal(heartPlat1);
 
         Pawn savedHeartBearer = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 10));
         if (savedHeartBearer.drafter != null) savedHeartBearer.drafter.Drafted = true;
@@ -2159,13 +2225,10 @@ public static class GameplayValidation
         }
 
         Pawn savedCaptive = SpawnValidationColonist(map, map.Center);
-        var sqPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        sqPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(sqPlat, FindSafePlatformCell(map), map);
+        var sqPlat = SpawnTestContainmentTerminal(map);
         Thing sqEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("SnowQueenEgg", true));
         AbnormalityUtility.TransferSignature(sqEgg, 0x4c430203);
-        sqPlat.innerContainer.TryAdd(sqEgg);
-        sqEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(sqPlat.innerContainer);
+        if (!sqPlat.TryCaptureThing(sqEgg)) throw new InvalidOperationException("SnowQueenEgg failed to enter room containment.");
         if (sqPlat.HeldPawn?.def?.race?.renderTree?.defName != "SnowQueen")
             throw new InvalidOperationException("SnowQueen race missing SnowQueen RenderTreeDef.");
 
@@ -2218,20 +2281,22 @@ public static class GameplayValidation
         noteTool.OnUnequipped(noteScholar, 1800, returnedNormally: true);
         if (noteScholar.Dead || noteTool.IsEquipped)
             throw new InvalidOperationException("NotesFromCrazedResearcher safe return failed.");
+        CleanupTestContainmentTerminal(notePlat);
 
         Pawn noteVictim = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 16));
-        var (_, _, noteToolBoom) = ContainToolOnPlatform(map, noteVictim, "NotesFromCrazedResearcher", 0x4c430205);
+        var (noteBoomPlat, _, noteToolBoom) = ContainToolOnPlatform(map, noteVictim, "NotesFromCrazedResearcher", 0x4c430205);
         noteToolBoom.OnEquipped(noteVictim);
         noteVictim.TakeDamage(new DamageInfo(redDef, 65f, instigator: worker));
         if (!noteVictim.Dead)
             throw new InvalidOperationException("NotesFromCrazedResearcher >=60 damage threshold did not detonate wearer.");
+        CleanupTestContainmentTerminal(noteBoomPlat);
 
         // Portrait of Another World (ILCPawnDamageInterceptor) must intercept/redirect before NotesFromCrazedResearcher (ILCPawnPostInterceptDamageHandler)
         Pawn synergyWard = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 18));
         var (synergyPortraitPlat, _, synergyPortraitTool) = ContainToolOnPlatform(map, synergyWard, "PortraitOfAnotherWorld", 0x4c430206);
         synergyPortraitTool.OnToolUsed(synergyWard);
         Pawn synergySub = synergyPortraitTool.GetType().GetProperty("SubstitutePawn")?.GetValue(synergyPortraitTool) as Pawn;
-        var (_, _, synergyNoteTool) = ContainToolOnPlatform(map, synergyWard, "NotesFromCrazedResearcher", 0x4c430207);
+        var (synergyNotePlat, _, synergyNoteTool) = ContainToolOnPlatform(map, synergyWard, "NotesFromCrazedResearcher", 0x4c430207);
         synergyNoteTool.OnEquipped(synergyWard);
         if (synergySub != null)
         {
@@ -2250,6 +2315,8 @@ public static class GameplayValidation
         }
         synergyPortraitPlat.EjectContents();
         if (synergyNoteTool.IsEquipped) synergyNoteTool.OnUnequipped(synergyWard, 1800, returnedNormally: false);
+        CleanupTestContainmentTerminal(synergyPortraitPlat);
+        CleanupTestContainmentTerminal(synergyNotePlat);
 
         // Ensure save/reload fixture colonists start healthy and away from roaming test hostiles
         GameComponent_LC gcNow = GameComponent_LC.Instance;
@@ -2274,7 +2341,7 @@ public static class GameplayValidation
         bool foundSavedSnowQueen = false;
         HediffDef heartBuffDef = DefDatabase<HediffDef>.GetNamed("LC_HeartOfAspirationBuff", true);
 
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "HeartOfAspiration"
                 && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430202)
@@ -2350,9 +2417,9 @@ public static class GameplayValidation
         }
 
         if (!foundSavedHeart)
-            throw new InvalidOperationException("Saved HeartOfAspiration holding platform missing after reload.");
+            throw new InvalidOperationException("Saved HeartOfAspiration containment terminal missing after reload.");
         if (!foundSavedSnowQueen)
-            throw new InvalidOperationException("Saved SnowQueen holding platform missing after reload.");
+            throw new InvalidOperationException("Saved SnowQueen containment terminal missing after reload.");
     }
 
     private static void ValidatePhase3(Map map, object abnSettings)
@@ -2446,17 +2513,13 @@ public static class GameplayValidation
             emp.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 100;
             emp.GetPawnStatusLevel(EPawnStatus.Justice).Status = 100;
 
-            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-            plat.SetFaction(Faction.OfPlayer);
-            IntVec3 cell = FindSafePlatformCell(map);
-            GenSpawn.Spawn(plat, cell, map);
-            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+            var plat = SpawnTestContainmentTerminal(map);
+            IntVec3 cell = plat.Position;
 
             Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
             int sig = 0x4c430300 + pIndex++;
             AbnormalityUtility.TransferSignature(egg, sig);
-            plat.innerContainer.TryAdd(egg);
-            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+            if (!plat.TryCaptureThing(egg)) throw new InvalidOperationException($"Phase3 egg failed to enter room containment: {name}");
 
             Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Phase3 egg failed to enter containment: {name}");
             CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Phase3 missing CompAbnormality: {name}");
@@ -2504,18 +2567,15 @@ public static class GameplayValidation
             Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg", true))
                 .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
             if (returnedEgg == null) throw new InvalidOperationException($"Phase3 identity did not survive egg return: {name}");
-            plat.Destroy();
+            CleanupTestContainmentTerminal(plat);
             if (worker.Spawned) worker.DeSpawn();
             if (!worker.Destroyed) worker.Destroy();
         }
 
         // 3a. BigBird death-counter drop via Patch_PawnKill hook + Enchantment Snap-Out gizmo
-        var bbPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        bbPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(bbPlat, FindSafePlatformCell(map), map);
+        var bbPlat = SpawnTestContainmentTerminal(map);
         Thing bbEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("BigBirdEgg", true));
-        bbPlat.innerContainer.TryAdd(bbEgg);
-        bbEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(bbPlat.innerContainer);
+        if (!bbPlat.TryCaptureThing(bbEgg)) throw new InvalidOperationException("BigBirdEgg failed to enter room containment.");
         CompAbnormality bbAbn = bbPlat.HeldPawn.GetComp<CompAbnormality>();
         int bbStartQ = bbAbn.QliphothCountCurrent;
         for (int i = 0; i < 5; i++)
@@ -2526,7 +2586,7 @@ public static class GameplayValidation
         }
         if (bbAbn.QliphothCountCurrent != bbStartQ - 1)
             throw new InvalidOperationException($"BigBird Qliphoth counter did not drop after 5 humanlike deaths (start={bbStartQ}, cur={bbAbn.QliphothCountCurrent}).");
-        bbPlat.Destroy();
+        CleanupTestContainmentTerminal(bbPlat);
 
         Pawn enchantedPawn = SpawnValidationColonist(map, map.Center);
         HediffDef enchantDef = DefDatabase<HediffDef>.GetNamed("LC_BigBirdEnchanted", true);
@@ -2541,13 +2601,10 @@ public static class GameplayValidation
         if (enchantedPawn.Spawned) enchantedPawn.DeSpawn();
         if (!enchantedPawn.Destroyed) enchantedPawn.Destroy();
 
-        // 3b. LittleRed mercenary hire -> allied faction + recall -> return to homePlatform + escape counter drop
-        var lrPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        lrPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(lrPlat, FindSafePlatformCell(map), map);
+        // 3b. LittleRed mercenary hire -> allied faction + recall -> return to containment room + escape counter drop
+        var lrPlat = SpawnTestContainmentTerminal(map);
         Thing lrEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LittleRedRidingHoodedMercenaryEgg", true));
-        lrPlat.innerContainer.TryAdd(lrEgg);
-        lrEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(lrPlat.innerContainer);
+        if (!lrPlat.TryCaptureThing(lrEgg)) throw new InvalidOperationException("LittleRedEgg failed to enter room containment.");
         Pawn lrPawn = lrPlat.HeldPawn;
         CompAbnormality lrAbn = lrPawn.GetComp<CompAbnormality>();
         lrAbn.PeBoxComp.CurAmountIndiPebox = 30;
@@ -2572,7 +2629,7 @@ public static class GameplayValidation
             throw new InvalidOperationException($"LittleRed Qliphoth counter did not drop when another abnormality escaped (before={lrQBeforeEscape}, after={lrAbn.QliphothCountCurrent}).");
         if (prey.Spawned) prey.DeSpawn();
         if (!prey.Destroyed) prey.Destroy();
-        lrPlat.Destroy();
+        CleanupTestContainmentTerminal(lrPlat);
 
         // 3c. BackwardClock Level III charge 0->4, Level V rejection/activation, Time Rewind suppression + activator erasure
         Pawn tempWorker = SpawnValidationColonist(map, map.Center);
@@ -2625,15 +2682,15 @@ public static class GameplayValidation
         if (!map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("JudgementBirdEgg", true)).Any(t => t.TryGetComp<LC_CompEgg>()?.biosignature == jbSig))
             throw new InvalidOperationException("BackwardClock Time Rewind did not return breached JudgementBird to its egg.");
 
-        // Cleanup temporary Phase 3 test pawns & platform
+        // Cleanup temporary Phase 3 test pawns & terminal room
         foreach (Pawn tmp in new[] { tempWorker, lv1User, lv3User })
         {
             if (tmp.Spawned) tmp.DeSpawn();
             if (!tmp.Destroyed) tmp.Destroy();
         }
-        bcPlat.Destroy();
+        CleanupTestContainmentTerminal(bcPlat);
 
-        // 3d. Leave one BackwardClock charged to 3/4 on a holding platform for Save/Reload persistence check
+        // 3d. Leave one BackwardClock charged to 3/4 in a containment room for Save/Reload persistence check
         Pawn saver = SpawnValidationColonist(map, map.Center);
         CompPawnStatus saverStat = saver.GetComp<CompPawnStatus>();
         saverStat.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 60;
@@ -3794,7 +3851,7 @@ public static class GameplayValidation
             {
                 var core = (Building_DepartmentCore)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(defName, true));
                 core.SetFaction(Faction.OfPlayer);
-                GenSpawn.Spawn(core, FindSafePlatformCell(map), map);
+                GenSpawn.Spawn(core, FindSafeBuildingCell(map), map);
                 if (core.CompPower != null) core.CompPower.PowerOn = true;
                 spawnedCores.Add(core);
                 return core;
@@ -3971,7 +4028,7 @@ public static class GameplayValidation
             {
                 var core = (Building_DepartmentCore)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(defName, true));
                 core.SetFaction(Faction.OfPlayer);
-                GenSpawn.Spawn(core, FindSafePlatformCell(map), map);
+                GenSpawn.Spawn(core, FindSafeBuildingCell(map), map);
                 if (core.CompPower != null) core.CompPower.PowerOn = true;
                 cores.Add(core);
                 return core;
@@ -4528,7 +4585,7 @@ public static class GameplayValidation
     private static void ValidatePhase3AfterLoad(Map map)
     {
         bool foundSavedBackwardClock = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "BackwardClock"
                 && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430311)
@@ -4549,7 +4606,7 @@ public static class GameplayValidation
         }
 
         if (!foundSavedBackwardClock)
-            throw new InvalidOperationException("Saved BackwardClock holding platform missing after reload.");
+            throw new InvalidOperationException("Saved BackwardClock containment terminal missing after reload.");
 
         if (GameComponent_LC.Instance?.HasCoreSuppression(GameComponent_LC.CoreSuppression_Malkuth) != true
             || GameComponent_LC.Instance?.HasCoreSuppression(GameComponent_LC.CoreSuppression_Binah) != true)
@@ -4686,17 +4743,13 @@ public static class GameplayValidation
             emp.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 40;
             emp.GetPawnStatusLevel(EPawnStatus.Justice).Status = 40;
 
-            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-            plat.SetFaction(Faction.OfPlayer);
-            IntVec3 cell = FindSafePlatformCell(map);
-            GenSpawn.Spawn(plat, cell, map);
-            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+            var plat = SpawnTestContainmentTerminal(map);
+            IntVec3 cell = plat.Position;
 
             Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
             int sig = 0x4c430400 + pIndex++;
             AbnormalityUtility.TransferSignature(egg, sig);
-            plat.innerContainer.TryAdd(egg);
-            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+            if (!plat.TryCaptureThing(egg)) throw new InvalidOperationException($"Phase4 egg failed to enter room containment: {name}");
 
             Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Phase4 egg failed to enter containment: {name}");
             CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Phase4 missing CompAbnormality: {name}");
@@ -4750,19 +4803,16 @@ public static class GameplayValidation
                 .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
             if (returnedEgg == null) throw new InvalidOperationException($"Phase4 identity did not survive egg return: {name}");
             returnedEgg.Destroy();
-            plat.Destroy();
+            CleanupTestContainmentTerminal(plat);
             if (worker.Spawned) worker.DeSpawn();
             if (!worker.Destroyed) worker.Destroy();
         }
 
         // 3a. Ppodae: non-Instinct entry drop (60% roll), Good result doesn't raise Qliphoth, and breach kill self-returns to PpodaeEgg
         Pawn ppWorker = SpawnValidationColonist(map, map.Center);
-        var ppPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        ppPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(ppPlat, FindSafePlatformCell(map), map);
+        var ppPlat = SpawnTestContainmentTerminal(map);
         Thing ppEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("PpodaeEgg", true));
-        ppPlat.innerContainer.TryAdd(ppEgg);
-        ppEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ppPlat.innerContainer);
+        if (!ppPlat.TryCaptureThing(ppEgg)) throw new InvalidOperationException("PpodaeEgg failed to enter room containment.");
         CompAbnormality ppAbn = ppPlat.HeldPawn.GetComp<CompAbnormality>();
         ppPlat.CurWorkType = EAnomalyWorkType.Insight;
         ppAbn.QliphothCountCurrent = 2;
@@ -4791,7 +4841,7 @@ public static class GameplayValidation
         {
             throw new InvalidOperationException($"Ppodae Good work should not raise Qliphoth counter (expected 1, got {ppAbn.QliphothCountCurrent}).");
         }
-        ppPlat.Destroy();
+        CleanupTestContainmentTerminal(ppPlat);
 
         int ppBreachSig = 0x4c43040A;
         Pawn breachedPpodae = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Ppodae", true), LCContainmentUtility.AbnormalityFaction);
@@ -4818,14 +4868,11 @@ public static class GameplayValidation
         // 3b. Warm-Hearted Woodsman: Temperance III+ arms trap without escaping -> next worker executed -> breach corpse heal -> save/load trap fixture
         Pawn wdWorker = SpawnValidationColonist(map, map.Center);
         wdWorker.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status = 60;
-        var wdPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        wdPlat.SetFaction(Faction.OfPlayer);
-        IntVec3 wdCell = FindSafePlatformCell(map);
-        GenSpawn.Spawn(wdPlat, wdCell, map);
+        var wdPlat = SpawnTestContainmentTerminal(map);
+        IntVec3 wdCell = wdPlat.Position;
         Thing wdEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WarmHeartedWoodsmanEgg", true));
         AbnormalityUtility.TransferSignature(wdEgg, 0x4c430410);
-        wdPlat.innerContainer.TryAdd(wdEgg);
-        wdEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(wdPlat.innerContainer);
+        if (!wdPlat.TryCaptureThing(wdEgg)) throw new InvalidOperationException("WarmHeartedWoodsmanEgg failed to enter room containment.");
         Pawn wdPawn = wdPlat.HeldPawn;
         CompAbnormality wdAbn = wdPawn.GetComp<CompAbnormality>();
         PropertyInfo trapArmedProp = wdAbn.GetType().GetProperty("IsHeartTrapArmed", BindingFlags.Public | BindingFlags.Instance);
@@ -4893,18 +4940,15 @@ public static class GameplayValidation
         }
         if (wdPawn.Spawned) wdPawn.DeSpawn();
         if (!wdPawn.Destroyed) wdPawn.Destroy();
-        wdPlat.Destroy();
+        CleanupTestContainmentTerminal(wdPlat);
         if (wdWorker.Spawned) wdWorker.DeSpawn();
         if (!wdWorker.Destroyed) wdWorker.Destroy();
 
-        // Save/Reload fixture (0x4c430411): leave armed WarmHeartedWoodsman holding platform on map for CheckReload
-        var savedWdPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        savedWdPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(savedWdPlat, FindSafePlatformCell(map), map);
+        // Save/Reload fixture (0x4c430411): leave armed WarmHeartedWoodsman containment room on map for CheckReload
+        var savedWdPlat = SpawnTestContainmentTerminal(map);
         Thing savedWdEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WarmHeartedWoodsmanEgg", true));
         AbnormalityUtility.TransferSignature(savedWdEgg, 0x4c430411);
-        savedWdPlat.innerContainer.TryAdd(savedWdEgg);
-        savedWdEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(savedWdPlat.innerContainer);
+        if (!savedWdPlat.TryCaptureThing(savedWdEgg)) throw new InvalidOperationException("Saved WarmHeartedWoodsmanEgg failed to enter room containment.");
         savedWdPlat.HeldPawn.GetComp<CompAbnormality>().QliphothCountCurrent = 0;
         if (!(bool)trapArmedProp.GetValue(savedWdPlat.HeldPawn.GetComp<CompAbnormality>()))
         {
@@ -4916,12 +4960,9 @@ public static class GameplayValidation
 
         // 3c. Fragment of the Universe: 70% Bad no-drop guard at Qliphoth=1, worker panic drop, AoE White song, Cosmic Enlightenment shield
         Pawn cosWorker = SpawnValidationColonist(map, map.Center);
-        var cosPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        cosPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(cosPlat, FindSafePlatformCell(map), map);
+        var cosPlat = SpawnTestContainmentTerminal(map);
         Thing cosEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("FragmentOfTheUniverseEgg", true));
-        cosPlat.innerContainer.TryAdd(cosEgg);
-        cosEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(cosPlat.innerContainer);
+        if (!cosPlat.TryCaptureThing(cosEgg)) throw new InvalidOperationException("FragmentOfTheUniverseEgg failed to enter room containment.");
         CompAbnormality cosPlatAbn = cosPlat.HeldPawn.GetComp<CompAbnormality>();
         cosPlatAbn.QliphothCountCurrent = 1;
 
@@ -4953,7 +4994,7 @@ public static class GameplayValidation
         {
             throw new InvalidOperationException($"FragmentOfTheUniverse panic drop failed (expected 1, got {cosPlatAbn.QliphothCountCurrent}).");
         }
-        cosPlat.Destroy();
+        CleanupTestContainmentTerminal(cosPlat);
         if (cosWorker.Spawned) cosWorker.DeSpawn();
         if (!cosWorker.Destroyed) cosWorker.Destroy();
 
@@ -5009,12 +5050,9 @@ public static class GameplayValidation
         // 3d. Scarecrow Searching for Wisdom: Prudence III+ immediate breach, Brain Drain full invulnerability + healing
         Pawn scWorker = SpawnValidationColonist(map, map.Center);
         scWorker.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Prudence).Status = 60;
-        var scPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
-        scPlat.SetFaction(Faction.OfPlayer);
-        GenSpawn.Spawn(scPlat, FindSafePlatformCell(map), map);
+        var scPlat = SpawnTestContainmentTerminal(map);
         Thing scEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("ScarecrowSearchingForWisdomEgg", true));
-        scPlat.innerContainer.TryAdd(scEgg);
-        scEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(scPlat.innerContainer);
+        if (!scPlat.TryCaptureThing(scEgg)) throw new InvalidOperationException("ScarecrowEgg failed to enter room containment.");
         Pawn scPawn = scPlat.HeldPawn;
         CompAbnormality scAbn = scPawn.GetComp<CompAbnormality>();
 
@@ -5060,7 +5098,7 @@ public static class GameplayValidation
 
         if (scPawn.Spawned) scPawn.DeSpawn();
         if (!scPawn.Destroyed) scPawn.Destroy();
-        scPlat.Destroy();
+        CleanupTestContainmentTerminal(scPlat);
         if (scWorker.Spawned) scWorker.DeSpawn();
         if (!scWorker.Destroyed) scWorker.Destroy();
 
@@ -5070,7 +5108,7 @@ public static class GameplayValidation
     private static void ValidatePhase4AfterLoad(Map map)
     {
         bool foundSavedWoodsmanTrap = false;
-        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        foreach (Building_AbnormalityContainmentTerminal plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>())
         {
             if (plat.HeldPawn?.def?.defName == "WarmHeartedWoodsman"
                 && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430411)
@@ -5092,7 +5130,362 @@ public static class GameplayValidation
 
         if (!foundSavedWoodsmanTrap)
         {
-            throw new InvalidOperationException("Saved WarmHeartedWoodsman holding platform (0x4c430411) missing after reload.");
+            throw new InvalidOperationException("Saved WarmHeartedWoodsman containment terminal (0x4c430411) missing after reload.");
         }
+    }
+
+    private static CellRect FindClearRoomRect(Map map, int size)
+    {
+        for (int x = 12; x < map.Size.x - 12 - size; x += 2)
+        {
+            for (int z = 12; z < map.Size.z - 12 - size; z += 2)
+            {
+                CellRect rect = new CellRect(x, z, size, size);
+                bool ok = true;
+                foreach (IntVec3 c in rect.ExpandedBy(1).Cells)
+                {
+                    if (!c.InBounds(map) || c.Fogged(map) || !c.Standable(map) || c.GetRegion(map) == null
+                        || c.GetEdifice(map) != null || c.GetFirstBuilding(map) != null || c.GetFirstPawn(map) != null
+                        || !c.SupportsStructureType(map, TerrainAffordanceDefOf.Heavy))
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok)
+                {
+                    return rect;
+                }
+            }
+        }
+        throw new InvalidOperationException($"Could not find a clear {size}x{size} area for room containment test.");
+    }
+
+    private static Room BuildTestContainmentRoom(Map map, out CellRect roomRect, out Building_LCContainmentDoor door)
+    {
+        roomRect = FindClearRoomRect(map, 5);
+        ThingDef wallDef = DefDatabase<ThingDef>.GetNamed("LC_ContainmentWall", true);
+        ThingDef doorDef = DefDatabase<ThingDef>.GetNamed("LC_ContainmentDoor", true);
+        IntVec3 doorCell = new IntVec3(roomRect.CenterCell.x, 0, roomRect.minZ);
+        door = null;
+
+        foreach (IntVec3 c in roomRect.EdgeCells)
+        {
+            Thing building = c == doorCell
+                ? ThingMaker.MakeThing(doorDef, RimWorld.ThingDefOf.Steel)
+                : ThingMaker.MakeThing(wallDef, RimWorld.ThingDefOf.Steel);
+            building.SetFaction(Faction.OfPlayer);
+            GenSpawn.Spawn(building, c, map);
+            if (building is Building_LCContainmentDoor lcDoor)
+            {
+                door = lcDoor;
+            }
+        }
+
+        foreach (IntVec3 c in roomRect.Cells)
+        {
+            map.roofGrid.SetRoof(c, RoofDefOf.RoofConstructed);
+        }
+
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        return roomRect.CenterCell.GetRoom(map)
+            ?? throw new InvalidOperationException("Failed to form enclosed containment room.");
+    }
+
+    private static void ValidateRoomContainment(Map map)
+    {
+        Pawn worker = SpawnValidationColonist(map, map.Center);
+        CompPawnStatus employee = worker.GetComp<CompPawnStatus>()
+            ?? throw new InvalidOperationException("SpawnValidationColonist missing CompPawnStatus.");
+        employee.SetPawnStatusEnabled(true);
+        Pawn nonEmployee = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f));
+        GenSpawn.Spawn(nonEmployee, FindSafePawnCell(map, map.Center), map);
+        CompPawnStatus nonEmpStatus = nonEmployee.GetComp<CompPawnStatus>();
+        if (nonEmpStatus != null && nonEmpStatus.Enabled)
+        {
+            throw new InvalidOperationException("Freshly generated colonist unexpectedly had CompPawnStatus.Enabled=true.");
+        }
+
+        ThingDef terminalDef = DefDatabase<ThingDef>.GetNamed("LC_ContainmentTerminal", true);
+
+        // 1) Enclosed room + LC_ContainmentDoor + RoomRoleDef + duplicate terminal guard + static abnormality (OneSin)
+        Room room1 = BuildTestContainmentRoom(map, out CellRect rect1, out Building_LCContainmentDoor door1);
+        IntVec3 term1Pos = new IntVec3(rect1.minX + 1, 0, rect1.maxZ - 1);
+        var terminal1 = (Building_AbnormalityContainmentTerminal)ThingMaker.MakeThing(terminalDef);
+        terminal1.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(terminal1, term1Pos, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        room1 = rect1.CenterCell.GetRoom(map);
+
+        if (room1.Role?.defName != "LC_ContainmentRoom")
+        {
+            throw new InvalidOperationException($"Expected room1.Role == LC_ContainmentRoom, got {room1.Role?.defName ?? "<null>"}.");
+        }
+
+        if (!door1.PawnCanOpen(nonEmployee))
+        {
+            throw new InvalidOperationException("Empty containment room door should allow non-employee colonist passage.");
+        }
+
+        if (!terminal1.IsRoomValidForContainment(out string invalidReason))
+        {
+            throw new InvalidOperationException($"Terminal1 room expected valid, got: {invalidReason}");
+        }
+
+        var placeWorker = new PlaceWorker_AbnormalityContainmentTerminal();
+        IntVec3 dupPos = new IntVec3(rect1.maxX - 1, 0, rect1.maxZ - 1);
+        AcceptanceReport dupReport = placeWorker.AllowsPlacing(terminalDef, dupPos, Rot4.North, map);
+        if (dupReport.Accepted)
+        {
+            throw new InvalidOperationException("PlaceWorker_AbnormalityContainmentTerminal failed to reject duplicate terminal in the same room.");
+        }
+
+        Thing oneSinEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("OneSinEgg", true));
+        AbnormalityUtility.TransferSignature(oneSinEgg, 0x4c430901);
+        if (!terminal1.TryCaptureThing(oneSinEgg))
+        {
+            throw new InvalidOperationException("terminal1.TryCaptureThing(OneSinEgg) returned false.");
+        }
+
+        Pawn oneSinHeld = terminal1.HeldPawn ?? throw new InvalidOperationException("terminal1.HeldPawn is null after capturing OneSinEgg.");
+        CompAbnormalityHoldingPlatformTarget oneSinTarget = oneSinHeld.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+        if (!oneSinHeld.Spawned || oneSinHeld.GetRoom() != room1 || oneSinTarget == null || !oneSinTarget.CurrentlyContainedInRoom)
+        {
+            throw new InvalidOperationException("OneSin is not properly spawned and contained inside room1.");
+        }
+        if (GenHostility.HostileTo(worker, oneSinHeld) || GenHostility.HostileTo(oneSinHeld, worker) || !oneSinHeld.ThreatDisabled(worker))
+        {
+            throw new InvalidOperationException("Room-contained OneSin must be non-hostile and ThreatDisabled for employees.");
+        }
+
+        if (!door1.PawnCanOpen(worker) || door1.PawnCanOpen(nonEmployee) || door1.PawnCanOpen(oneSinHeld))
+        {
+            throw new InvalidOperationException(
+                $"LC_ContainmentDoor access check failed: worker={door1.PawnCanOpen(worker)}, nonEmp={door1.PawnCanOpen(nonEmployee)}, oneSin={door1.PawnCanOpen(oneSinHeld)}");
+        }
+        door1.restrictToEmployees = false;
+        if (!door1.PawnCanOpen(nonEmployee))
+        {
+            throw new InvalidOperationException("LC_ContainmentDoor failed to allow non-employee when restrictToEmployees=false.");
+        }
+        door1.restrictToEmployees = true;
+        door1.GetGizmos().ToList();
+        door1.GetInspectString();
+
+        CompAbnormalityStudiable oneSinStudy = oneSinHeld.GetComp<CompAbnormalityStudiable>()
+            ?? throw new InvalidOperationException("OneSin missing CompAbnormalityStudiable.");
+        oneSinStudy.lastStudiedTick = Find.TickManager.TicksGame - oneSinStudy.Props.frequencyTicks;
+
+        var workGiver = new LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract();
+        if (!workGiver.HasJobOnThing(worker, terminal1, forced: true))
+        {
+            throw new InvalidOperationException($"WorkGiver_AbnormalityStudyInteract.HasJobOnThing returned false for room-contained OneSin. failReason={JobFailReason.Reason ?? "<none>"}");
+        }
+        Job studyJob = workGiver.JobOnThing(worker, terminal1, forced: true);
+        if (studyJob == null || studyJob.targetA.Thing != terminal1 || studyJob.targetC.Thing != oneSinHeld)
+        {
+            throw new InvalidOperationException("Study job targets mismatch for room terminal.");
+        }
+
+        terminal1.CurWorkType = EAnomalyWorkType.Attachment;
+        terminal1.Notify_StudyStart(worker);
+        terminal1.Notify_Studying(worker);
+        Rand.PushState(0x4c430901);
+        try
+        {
+            for (int i = 0; i < 12; i++) terminal1.Notify_StudyInterval(employee);
+        }
+        finally { Rand.PopState(); }
+        CompAbnormality oneSinAbn = oneSinHeld.GetComp<CompAbnormality>();
+        oneSinAbn.Notify_Studied(worker);
+        if (oneSinAbn.PeBoxComp.CurAmountIndiPebox <= 0)
+        {
+            throw new InvalidOperationException("Room-contained OneSin produced 0 PE-Boxes.");
+        }
+
+        terminal1.GetGizmos().ToList();
+        terminal1.GetInspectString();
+        terminal1.DrawGUIOverlay();
+
+        // 2) Wandering biological abnormality (PunishingBird): Three-Birds count guard + wander + escape restores hostility
+        Room room2 = BuildTestContainmentRoom(map, out CellRect rect2, out Building_LCContainmentDoor door2);
+        IntVec3 term2Pos = new IntVec3(rect2.minX + 1, 0, rect2.maxZ - 1);
+        var terminal2 = (Building_AbnormalityContainmentTerminal)ThingMaker.MakeThing(terminalDef);
+        terminal2.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(terminal2, term2Pos, map);
+        map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+        room2 = rect2.CenterCell.GetRoom(map);
+
+        Assembly abnAsm = oneSinAbn.GetType().Assembly;
+        MethodInfo countForestBirds = abnAsm.GetType("LCAbnormalities.Shared.LCAbnormalitiesEvents", throwOnError: true)
+            .GetMethod("CountBreachedForestBirds", BindingFlags.Public | BindingFlags.Static);
+        int breachedBeforeBird = (int)countForestBirds.Invoke(null, new object[] { map });
+
+        Thing birdEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("PunishingBirdEgg", true));
+        AbnormalityUtility.TransferSignature(birdEgg, 0x4c430902);
+        if (!terminal2.TryCaptureThing(birdEgg))
+        {
+            throw new InvalidOperationException("terminal2.TryCaptureThing(PunishingBirdEgg) returned false.");
+        }
+
+        Pawn bird = terminal2.HeldPawn ?? throw new InvalidOperationException("terminal2.HeldPawn is null after capturing PunishingBirdEgg.");
+        CompAbnormalityHoldingPlatformTarget birdTarget = bird.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+        CompAbnormality birdAbn = bird.GetComp<CompAbnormality>();
+        if (!bird.Spawned || bird.GetRoom() != room2 || !birdTarget.CurrentlyContainedInRoom || birdAbn.Escaped)
+        {
+            throw new InvalidOperationException("PunishingBird is not properly contained inside room2.");
+        }
+        if (GenHostility.HostileTo(worker, bird) || GenHostility.HostileTo(bird, worker) || !bird.ThreatDisabled(worker))
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird must be non-hostile and ThreatDisabled.");
+        }
+        if (door2.PawnCanOpen(bird))
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird must not be able to open LC_ContainmentDoor.");
+        }
+        if ((int)countForestBirds.Invoke(null, new object[] { map }) != breachedBeforeBird)
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird was falsely counted as breached by CountBreachedForestBirds.");
+        }
+
+        bird.jobs.CheckForJobOverride();
+        for (int i = 0; i < 30; i++) Find.TickManager.DoSingleTick();
+        if (!birdTarget.CurrentlyContainedInRoom || birdAbn.Escaped || bird.GetRoom() != room2)
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird unexpectedly escaped or left room2 during ticks.");
+        }
+        if (bird.CurJob != null && bird.CurJob.canBashDoors)
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird job must not allow bashing doors.");
+        }
+
+        birdTarget.Escape();
+        if (birdTarget.CurrentlyContainedInRoom || terminal2.HeldPawn != null || !birdAbn.Escaped)
+        {
+            throw new InvalidOperationException("PunishingBird Escape() did not release from terminal2.");
+        }
+        if (!GenHostility.HostileTo(worker, bird) || bird.ThreatDisabled(worker))
+        {
+            throw new InvalidOperationException("Escaped PunishingBird did not restore hostility / ThreatDisabled=false.");
+        }
+        if ((int)countForestBirds.Invoke(null, new object[] { map }) != breachedBeforeBird + 1)
+        {
+            throw new InvalidOperationException("Escaped PunishingBird was not counted by CountBreachedForestBirds.");
+        }
+
+        if (bird.Spawned) bird.DeSpawn();
+        if (!bird.Destroyed) bird.Destroy();
+
+        // 3) Reuse terminal2 to test special migrated abnormalities: WellCheers, LittleRed hire/recall, and Portrait tool
+        Thing wcEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WellCheersEgg", true));
+        if (!terminal2.TryCaptureThing(wcEgg))
+        {
+            throw new InvalidOperationException("terminal2.TryCaptureThing(WellCheersEgg) returned false.");
+        }
+        Pawn wcPawn = terminal2.HeldPawn ?? throw new InvalidOperationException("WellCheers failed to enter room containment.");
+        CompAbnormality wcComp = wcPawn.GetComp<CompAbnormality>();
+        AcceptanceReport canDrink = (AcceptanceReport)wcComp.GetType().GetMethod("CanDirectDrink").Invoke(wcComp, new object[] { worker });
+        if (!canDrink.Accepted)
+        {
+            throw new InvalidOperationException($"Room-contained WellCheers CanDirectDrink failed: {canDrink.Reason}");
+        }
+        wcComp.GetPlatformGizmos().ToList();
+        wcComp.GetPlatformFloatMenuOptions(worker).ToList();
+        terminal2.EjectContents();
+        if (wcPawn.Spawned) wcPawn.DeSpawn();
+        if (!wcPawn.Destroyed) wcPawn.Destroy();
+
+        Thing lrEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LittleRedRidingHoodedMercenaryEgg", true));
+        if (!terminal2.TryCaptureThing(lrEgg))
+        {
+            throw new InvalidOperationException("terminal2.TryCaptureThing(LittleRedEgg) returned false.");
+        }
+        Pawn lrPawn = terminal2.HeldPawn ?? throw new InvalidOperationException("LittleRed failed to enter room containment.");
+        CompAbnormality lrComp = lrPawn.GetComp<CompAbnormality>();
+        lrComp.PeBoxComp.CurAmountIndiPebox = 50;
+        Pawn lrTarget = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+            PawnKindDefOf.Colonist, Faction.OfAncientsHostile, forceGenerateNewPawn: true,
+            canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f));
+        GenSpawn.Spawn(lrTarget, FindSafePawnCell(map, map.Center), map);
+        bool hired = (bool)lrComp.GetType().GetMethod("RequestMercenaryHunt", BindingFlags.Public | BindingFlags.Instance).Invoke(lrComp, new object[] { lrTarget });
+        if (!hired || terminal2.Occupied || lrPawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>().CurrentlyContainedInRoom)
+        {
+            throw new InvalidOperationException("LittleRed RequestMercenaryHunt failed from room containment.");
+        }
+        bool recalled = (bool)lrComp.GetType().GetMethod("RecallFromHunt").Invoke(lrComp, null);
+        if (!recalled || terminal2.HeldPawn != lrPawn || !lrPawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>().CurrentlyContainedInRoom)
+        {
+            throw new InvalidOperationException("LittleRed RecallFromHunt failed to return into room terminal.");
+        }
+        terminal2.EjectContents();
+        if (lrTarget.Spawned) lrTarget.DeSpawn();
+        if (!lrTarget.Destroyed) lrTarget.Destroy();
+        if (lrPawn.Spawned) lrPawn.DeSpawn();
+        if (!lrPawn.Destroyed) lrPawn.Destroy();
+
+        Thing portraitEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("PortraitOfAnotherWorldEgg", true));
+        if (!terminal2.TryCaptureThing(portraitEgg))
+        {
+            throw new InvalidOperationException("terminal2.TryCaptureThing(PortraitEgg) returned false.");
+        }
+        Pawn portraitPawn = terminal2.HeldPawn ?? throw new InvalidOperationException("Portrait failed to enter room containment.");
+        CompAbnormalityTool portraitTool = terminal2.HeldToolComp ?? throw new InvalidOperationException("Portrait HeldToolComp is null.");
+        if (!portraitTool.IsOperational || !portraitPawn.Spawned)
+        {
+            throw new InvalidOperationException("Room-contained Portrait tool is not operational/spawned.");
+        }
+        portraitPawn.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, portraitPawn.DrawPos);
+        portraitPawn.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, portraitPawn.DrawPos);
+        portraitPawn.DynamicDrawPhaseAt(DrawPhase.Draw, portraitPawn.DrawPos);
+        terminal2.DrawExtraSelectionOverlays();
+        terminal2.EjectContents();
+        portraitTool.RevertToEgg(map, terminal2.Position);
+
+        if (terminal2.Spawned) terminal2.Destroy();
+        if (nonEmployee.Spawned) nonEmployee.DeSpawn();
+        if (!nonEmployee.Destroyed) nonEmployee.Destroy();
+        if (worker.Spawned) worker.DeSpawn();
+        if (!worker.Destroyed) worker.Destroy();
+        Find.TickManager.DoSingleTick();
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; RoomContainment; door/role/static_OneSin/study_PeBox/wandering_PunishingBird/WellCheers/LittleRed_recall/Portrait_tool");
+    }
+
+    private static void ValidateRoomContainmentAfterLoad(Map map)
+    {
+        Building_AbnormalityContainmentTerminal savedTerminal = map.listerBuildings
+            .AllBuildingsColonistOfClass<Building_AbnormalityContainmentTerminal>()
+            .FirstOrDefault(t => t.HeldPawn?.def?.defName == "OneSin"
+                && t.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430901);
+
+        if (savedTerminal == null)
+        {
+            throw new InvalidOperationException("Saved LC_ContainmentTerminal holding OneSin (0x4c430901) missing after reload.");
+        }
+
+        Pawn held = savedTerminal.HeldPawn;
+        CompAbnormalityHoldingPlatformTarget target = held.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
+        if (!held.Spawned || target == null || !target.CurrentlyContainedInRoom || !savedTerminal.IsRoomValidForContainment(out _) || held.GetRoom() != savedTerminal.ContainmentRoom)
+        {
+            throw new InvalidOperationException("Reloaded room-contained OneSin state or room binding is invalid.");
+        }
+
+        if (savedTerminal.ContainmentRoom?.Role?.defName != "LC_ContainmentRoom")
+        {
+            throw new InvalidOperationException($"Reloaded containment room role mismatch: {savedTerminal.ContainmentRoom?.Role?.defName ?? "<null>"}.");
+        }
+
+        if (GenHostility.HostileTo(held, Faction.OfPlayer))
+        {
+            throw new InvalidOperationException("Reloaded room-contained OneSin became hostile to player after load.");
+        }
+
+        savedTerminal.GetGizmos().ToList();
+        savedTerminal.GetInspectString();
+        savedTerminal.DrawGUIOverlay();
+        savedTerminal.DrawExtraSelectionOverlays();
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; RoomContainmentReload; terminal_and_OneSin_persisted");
     }
 }

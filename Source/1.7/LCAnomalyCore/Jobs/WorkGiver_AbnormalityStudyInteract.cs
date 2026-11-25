@@ -1,6 +1,6 @@
-﻿using LCAnomalyCore.Buildings;
-using LCAnomalyCore.Comp;
+﻿using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.Util;
 using RimWorld;
 using System.Linq;
@@ -34,41 +34,45 @@ namespace LCAnomalyCore.Jobs
         /// <inheritdoc />
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered!");
+            if (t == null)
+            {
+                return false;
+            }
 
             if (!pawn.CanReserve(t, 1, -1, null, forced))
             {
-                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Can not reserved!");
                 return false;
             }
 
-            if (t == null)
+            if (t is IAbnormalityContainmentUnit unit)
             {
-                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Target is null!");
-                return false;
-            }
-
-            //如果是LC平台
-            if (t.def is Defs.LC_HoldingPlatformDef && t is Building_AbnormalityHoldingPlatform building)
-            {
-                LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the platform compare!");
-
-                if (building.IsHoldingTool)
+                if (unit.IsHoldingTool)
                 {
                     JobFailReason.IsSilent();
                     return false;
                 }
 
-                var compAbnormalityStudiable = building.CompAbnormalityStudiable;
+                if (unit.IsRoomContainment)
+                {
+                    Pawn roomPawn = unit.HeldPawn;
+                    if (roomPawn == null || !roomPawn.Spawned || roomPawn.Dead || roomPawn.Downed)
+                    {
+                        JobFailReason.IsSilent();
+                        return false;
+                    }
+
+                    if (!pawn.CanReserveAndReach(roomPawn, PathEndMode.Touch, Danger.Deadly, 1, -1, null, forced))
+                    {
+                        return false;
+                    }
+                }
+
+                var compAbnormalityStudiable = unit.CompAbnormalityStudiable;
                 if (compAbnormalityStudiable != null)
                 {
-                    LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable compare!");
-
                     if (!compAbnormalityStudiable.CurrentlyStudiable())
                     {
-                        LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable.LC_CurrentlyStudiable()!");
-
-                        CompAbnormality heldAbn = building.HeldPawn?.TryGetComp<CompAbnormality>();
+                        CompAbnormality heldAbn = unit.HeldPawn?.TryGetComp<CompAbnormality>();
                         if (heldAbn != null && !heldAbn.CanBeStudiedNow(out string blockReason))
                         {
                             if (!blockReason.NullOrEmpty())
@@ -91,37 +95,16 @@ namespace LCAnomalyCore.Jobs
 
                         return false;
                     }
-                    else
-                    {
-                        LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable.LC_CurrentlyStudiable() failed!");
-                    }
 
                     //如果是非右键强制状态
                     if (!forced)
                     {
                         //如果分配列表里有该小人，那就允许自动研究
-                        if (building.CompAssignable.AssignedPawns.Contains(pawn))
-                        {
-                            return true;
-                        }
-                        //列表里没有该小人，那就不允许自动研究
-                        else
-                        {
-                            return false;
-                        }
+                        return unit.CompAssignable != null && unit.CompAssignable.AssignedPawns.Contains(pawn);
                     }
 
                     return true;
                 }
-                else
-                {
-                    LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable failed!");
-                }
-            }
-            else
-            {
-                LogUtil.Warning("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Failed at platform compare!\n" +
-                    $"T's DefName: {t.def.defName}, T's type is: {t.GetType()}");
             }
 
             return false;
@@ -130,7 +113,7 @@ namespace LCAnomalyCore.Jobs
         /// <inheritdoc />
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            return JobMaker.MakeJob(Defs.JobDefOf.LC_AbnormalityStudyInteract, t, null, (t as Building_AbnormalityHoldingPlatform)?.HeldPawn);
+            return JobMaker.MakeJob(Defs.JobDefOf.LC_AbnormalityStudyInteract, t, null, (t as IAbnormalityContainmentUnit)?.HeldPawn);
         }
     }
 }

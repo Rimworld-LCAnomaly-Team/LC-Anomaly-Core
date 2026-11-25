@@ -3,16 +3,16 @@
   <LC_Capture>Capture {0}</LC_Capture>
   <LC_CaptureLower>capture {0}</LC_CaptureLower>
   <LC_CaptureEntity>Capture abnormality</LC_CaptureEntity>
-  <LC_CaptureEntityDesc>Order {0} to be captured and carried to an LC holding platform.</LC_CaptureEntityDesc>
+  <LC_CaptureEntityDesc>Order {0} to be captured and carried to an LC containment room terminal.</LC_CaptureEntityDesc>
   <LC_CancelCapture>Cancel capture</LC_CancelCapture>
   <LC_CancelCaptureDesc>Cancel the order to capture {0}.</LC_CancelCaptureDesc>
   <LC_CancelTransfer>Cancel transfer</LC_CancelTransfer>
-  <LC_CancelTransferDesc>Cancel the transfer to another LC holding platform.</LC_CancelTransferDesc>
-  <LC_NoHoldingPlatformsAvailable>No LC holding platforms available</LC_NoHoldingPlatformsAvailable>
-  <LC_ChooseEntityHolder>Choose LC holding platform</LC_ChooseEntityHolder>
+  <LC_CancelTransferDesc>Cancel the transfer to another LC containment room terminal.</LC_CancelTransferDesc>
+  <LC_NoHoldingPlatformsAvailable>No LC containment terminals available</LC_NoHoldingPlatformsAvailable>
+  <LC_ChooseEntityHolder>Choose LC containment room terminal</LC_ChooseEntityHolder>
   <LC_MessageHolderReserved>{0} is already reserved.</LC_MessageHolderReserved>
   <LC_MessageTargetBelowMinimumContainmentStrength>{0} does not have enough containment strength to safely hold {1}.</LC_MessageTargetBelowMinimumContainmentStrength>
-  <LC_MessageNoPlatformWithMinimumContainmentStrength>No available LC holding platform can safely contain {0}.</LC_MessageNoPlatformWithMinimumContainmentStrength>
+  <LC_MessageNoPlatformWithMinimumContainmentStrength>No available LC containment room can safely contain {0}.</LC_MessageNoPlatformWithMinimumContainmentStrength>
   <LC_EntityHolderReservedBy>Reserved by</LC_EntityHolderReservedBy>
   <LC_FloatMenuContainmentStrength>LC containment strength</LC_FloatMenuContainmentStrength>
   <LC_FloatMenuContainmentRequires>{0} requires</LC_FloatMenuContainmentRequires>
@@ -21,4 +21,14 @@
   <LC_CommandToggleStudyDesc>Allow assigned employees to perform work on this abnormality.</LC_CommandToggleStudyDesc>
   <LC_CanBeStudiedInDuration>Can be worked with again in {0}</LC_CanBeStudiedInDuration>
   <LC_Capturable>Capturable</LC_Capturable>
+  <LC_ContainmentRoom_NotEnclosed>Room is not enclosed or roofed.</LC_ContainmentRoom_NotEnclosed>
+  <LC_ContainmentRoom_DuplicateTerminal>This room already has another containment terminal.</LC_ContainmentRoom_DuplicateTerminal>
+  <LC_ContainmentRoom_StatusValid>Containment room sealed and ready.</LC_ContainmentRoom_StatusValid>
+  <LC_ContainmentRoom_StatusInvalid>Containment room invalid: {0}</LC_ContainmentRoom_StatusInvalid>
+  <LC_ContainmentRoom_Occupied>Containment room is already occupied.</LC_ContainmentRoom_Occupied>
+  <LC_ContainmentRoom_BreachWarning>Containment room integrity lost!</LC_ContainmentRoom_BreachWarning>
+  <LC_ContainmentDoor_RestrictLabel>Employee access only</LC_ContainmentDoor_RestrictLabel>
+  <LC_ContainmentDoor_RestrictDesc>When enabled and bordering an occupied containment room, only activated Lobotomy Corporation employees (or drafted/emergency pawns) may open this door.</LC_ContainmentDoor_RestrictDesc>
+  <LC_ContainmentDoor_InspectRestricted>Access mode: LC employees only (when occupied)</LC_ContainmentDoor_InspectRestricted>
+  <LC_ContainmentDoor_InspectOpen>Access mode: Unrestricted</LC_ContainmentDoor_InspectOpen>
 </LanguageData>

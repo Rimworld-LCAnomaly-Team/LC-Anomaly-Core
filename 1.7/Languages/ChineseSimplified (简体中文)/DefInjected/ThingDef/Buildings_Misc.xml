@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
 
-  <LC_HoldingPlatform.label>异想体收容平台</LC_HoldingPlatform.label>
-  <LC_HoldingPlatform.description>LC专用</LC_HoldingPlatform.description>
+  <LC_ContainmentTerminal.label>收容室控制终端</LC_ContainmentTerminal.label>
+  <LC_ContainmentTerminal.description>可安装在封闭室内的脑叶公司收容控制终端，将整间房间转化为异想体收容室。被收容的异想体将直接驻留或漫步于房间内部，员工需推门进入房间执行工作。每间收容室仅限启用一台终端。</LC_ContainmentTerminal.description>
 
 </LanguageData>

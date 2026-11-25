@@ -605,7 +605,7 @@ namespace LCAnomalyCore.Comp
                 yield return gizmo;
             }
 
-            if (HoldingPlaformTargetComp == null || !HoldingPlaformTargetComp.CurrentlyHeldOnPlatform)
+            if (HoldingPlaformTargetComp == null || !HoldingPlaformTargetComp.CurrentlyHeld)
             {
                 yield return Util.Gizmos.Get_EntityCodex(parent);
             }

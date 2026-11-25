@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Buildings;
+﻿using LCAnomalyCore.Interface;
 using RimWorld;
 using Verse;
 
@@ -13,8 +13,11 @@ namespace LCAnomalyCore.Comp
         /// <summary>获取 <c>Props</c>。</summary>
         public CompProperties_AbnormalityHolder Props => (CompProperties_AbnormalityHolder)props;
 
-        /// <summary>获取 <c>HoldingPlatform</c>。</summary>
-        protected Building_AbnormalityHoldingPlatform HoldingPlatform => (Building_AbnormalityHoldingPlatform)parent;
+        /// <summary>获取统一的收容单元接口。</summary>
+        public virtual IAbnormalityContainmentUnit ContainmentUnit => parent as IAbnormalityContainmentUnit;
+
+        /// <summary>指示该宿主是否使用内部 ThingOwner 容器隐藏收容实体。</summary>
+        public virtual bool UsesContainer => true;
 
         /// <summary>获取或设置 <c>Available</c>。</summary>
         public abstract bool Available { get; }
@@ -24,6 +27,18 @@ namespace LCAnomalyCore.Comp
 
         /// <summary>获取或设置 <c>Container</c>。</summary>
         public abstract ThingOwner Container { get; }
+
+        /// <summary>校验当前宿主是否可接收指定待收容目标。</summary>
+        public virtual bool CanAcceptAbnormality(Thing candidate, out string failReason)
+        {
+            if (ContainmentUnit != null)
+            {
+                return ContainmentUnit.CanAcceptCapture(candidate, out failReason);
+            }
+
+            failReason = null;
+            return Available;
+        }
 
         /// <summary>执行 <c>EjectContents</c> 定义的操作。</summary>
         public abstract void EjectContents();

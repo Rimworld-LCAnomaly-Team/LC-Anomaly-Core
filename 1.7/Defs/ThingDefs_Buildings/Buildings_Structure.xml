@@ -80,6 +80,7 @@
         <texPath>Things/Building/Linked/Wall_Blueprint_Atlas</texPath>
       </blueprintGraphicData>
       <relatedBuildCommands>
+        <li>LC_ContainmentDoor</li>
         <li>Door</li>
         <li>Autodoor</li>
         <li>OrnateDoor</li>
@@ -97,6 +98,48 @@
       </li>
     </damageMultipliers>
     <designationHotKey>Misc3</designationHotKey>
+  </ThingDef>
+
+  <!-- LC Containment Door -->
+  <ThingDef ParentName="DoorBase">
+    <defName>LC_ContainmentDoor</defName>
+    <label>LC containment door</label>
+    <description>A reinforced Lobotomy Corporation containment door. When bordering an occupied containment room, it automatically blocks non-employee colonists and contained abnormalities from passing through.</description>
+    <thingClass>LCAnomalyCore.Buildings.Building_LCContainmentDoor</thingClass>
+    <statBases>
+      <MaxHitPoints>750</MaxHitPoints>
+      <WorkToBuild>1600</WorkToBuild>
+    </statBases>
+    <graphicData>
+      <texPath>Things/Building/Door/Autodoor_Mover</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <color>(85, 95, 112)</color>
+      <damageData>
+        <enabled>false</enabled>
+      </damageData>
+    </graphicData>
+    <uiIconPath>Things/Building/Door/Autodoor_MenuIcon</uiIconPath>
+    <costList>
+      <Steel>60</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <costStuffCount>35</costStuffCount>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>30</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable" />
+    </comps>
+    <designationCategory>Buildings_LC</designationCategory>
+    <uiOrder>2010</uiOrder>
+    <researchPrerequisites>
+      <li>LC_EntityContainment</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+    <building>
+      <isStuffableAirtight>true</isStuffableAirtight>
+    </building>
   </ThingDef>
 
 </Defs>

@@ -30,9 +30,14 @@ namespace LCAnomalyCore.Defs
         public static ThingDef BrainSpinalNerve;
 
         /// <summary>
-        /// LC收容单元
+        /// LC房间收容控制终端
         /// </summary>
-        public static LC_HoldingPlatformDef LC_HoldingPlatform;
+        public static ThingDef LC_ContainmentTerminal;
+
+        /// <summary>
+        /// LC收容室专用门
+        /// </summary>
+        public static ThingDef LC_ContainmentDoor;
 
         /// <summary>
         /// Cogito水桶（建筑）

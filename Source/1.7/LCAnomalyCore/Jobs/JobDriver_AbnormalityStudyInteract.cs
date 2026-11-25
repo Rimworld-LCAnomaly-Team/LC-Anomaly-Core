@@ -1,6 +1,6 @@
-using LCAnomalyCore.Buildings;
 using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.Util;
 using RimWorld;
 using System.Collections.Generic;
@@ -16,6 +16,8 @@ namespace LCAnomalyCore.Jobs
 
         private const TargetIndex AdjacentCellIndex = TargetIndex.B;
 
+        private const TargetIndex RoomPawnIndex = TargetIndex.C;
+
         private const int BaseDurationTicks = 600;
 
         private const int PawnTargetStudyDurationFactor = 2;
@@ -30,21 +32,21 @@ namespace LCAnomalyCore.Jobs
         /// <summary>表示 <c>playerInterruptable</c>。</summary>
         protected bool playerInterruptable = true;
 
-        private Building_AbnormalityHoldingPlatform Platform => base.TargetThingA as Building_AbnormalityHoldingPlatform;
+        private IAbnormalityContainmentUnit Unit => base.TargetThingA as IAbnormalityContainmentUnit;
 
         /// <summary>获取 <c>ThingToStudy</c>。</summary>
-        public Thing ThingToStudy => Platform?.HeldPawn ?? base.TargetThingA;
+        public Thing ThingToStudy => Unit?.HeldPawn ?? base.TargetThingA;
 
         private CompAbnormalityStudiable StudyComp => ThingToStudy?.TryGetComp<CompAbnormalityStudiable>();
 
         /// <inheritdoc />
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if (Platform != null)
+            if (Unit != null)
             {
-                if (pawn.Reserve(Platform, job, 1, -1, null, errorOnFailed))
+                if (pawn.Reserve(Unit.UnitThing, job, 1, -1, null, errorOnFailed))
                 {
-                    return pawn.Reserve(ThingToStudy, job, 1, -1, null, errorOnFailed);
+                    return ThingToStudy == null || ThingToStudy == Unit.UnitThing || pawn.Reserve(ThingToStudy, job, 1, -1, null, errorOnFailed);
                 }
                 return false;
             }
@@ -56,8 +58,19 @@ namespace LCAnomalyCore.Jobs
         protected override IEnumerable<Toil> MakeNewToils()
         {
             bool targetIsPawn = base.TargetThingA is Pawn;
+            bool isRoomContainment = Unit != null && Unit.IsRoomContainment && ThingToStudy is Pawn roomPawn && roomPawn.Spawned;
+            if (isRoomContainment && job.targetC.Thing == null)
+            {
+                job.SetTarget(RoomPawnIndex, ThingToStudy);
+            }
+
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
             this.FailOn(() => (StudyComp == null || !StudyComp.CurrentlyStudiable()) ? true : false);
+            if (isRoomContainment)
+            {
+                this.FailOn(() => !(ThingToStudy is Pawn rp) || !rp.Spawned || rp.Dead || rp.Downed || rp.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.CurrentlyContainedInRoom != true);
+            }
+
             AddFinishAction(delegate
             {
                 if (StudyComp != null)
@@ -83,7 +96,7 @@ namespace LCAnomalyCore.Jobs
                     numModified = duration * comp.Props.amountProdueMax + duration;
                     LogUtil.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
 
-                    Platform.Notify_StudyStart(pawn);
+                    Unit?.Notify_StudyStart(pawn);
                 }
             }
 
@@ -101,6 +114,10 @@ namespace LCAnomalyCore.Jobs
             {
                 studyToil = StudyPawn(TargetIndex.A, numModified);
             }
+            else if (isRoomContainment)
+            {
+                studyToil = StudyPawn(RoomPawnIndex, numModified);
+            }
             else
             {
                 studyToil = Toils_General.WaitWith(TargetIndex.A, numModified, useProgressBar: true, maintainPosture: false, maintainSleep: false, TargetIndex.A);
@@ -114,14 +131,14 @@ namespace LCAnomalyCore.Jobs
             {
                 //Log.Warning($"正在进行对 [{ThingToStudy.def.label.Translate()}] 的研究工作");
                 playerInterruptable = false;
-                Platform?.Notify_Studying(pawn);
+                Unit?.Notify_Studying(pawn);
                 if (duration != 0)
                 {
                     durationTicks++;
                     if (durationTicks % duration == 0)
                     {
                         //Log.Warning("触发一次成功率判断");
-                        Platform?.Notify_StudyInterval(compPawnStatus);
+                        Unit?.Notify_StudyInterval(compPawnStatus);
                     }
                 }
                 //pawn.skills.Learn(SkillDefOf.Intellectual, 0.1f);
@@ -136,18 +153,25 @@ namespace LCAnomalyCore.Jobs
             });
 
             if (ModsConfig.AnomalyActive && EffecterDefOf.StudyHoraxian != null)
-                studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, base.TargetThingA);
+                studyToil.WithEffect(() => EffecterDefOf.StudyHoraxian, isRoomContainment ? ThingToStudy : base.TargetThingA);
 
             Toil finishInteraction = ToilMaker.MakeToil("Interaction finish");
             finishInteraction.initAction = DoStudyInteraction;
-            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
+            yield return Toils_Goto.GotoThing(isRoomContainment ? RoomPawnIndex : TargetIndex.A, PathEndMode.Touch);
             int interactions = StudyComp.StudyTimesPeriod - StudyComp.studyInteractions;
             for (int i = 0; i < interactions; i++)
             {
-                if (!targetIsPawn && i > 0)
+                if (i > 0)
                 {
-                    yield return findAdjacentCell;
-                    yield return goToAdjacentCell;
+                    if (isRoomContainment)
+                    {
+                        yield return Toils_Goto.GotoThing(RoomPawnIndex, PathEndMode.Touch);
+                    }
+                    else if (!targetIsPawn)
+                    {
+                        yield return findAdjacentCell;
+                        yield return goToAdjacentCell;
+                    }
                 }
 
                 yield return studyToil;
@@ -178,7 +202,7 @@ namespace LCAnomalyCore.Jobs
                 actor.pather.StopDead();
                 if (actor.CurJob.GetTarget(pawnIndex).Thing is Pawn recipient)
                 {
-                    PawnUtility.ForceWait(recipient, duration, study.actor);
+                    PawnUtility.ForceWait(recipient, duration + 30, study.actor);
                     if (InteractionDefOf.PrisonerStudyAnomaly != null)
                         actor.interactions.TryInteractWith(recipient, InteractionDefOf.PrisonerStudyAnomaly);
                 }
@@ -186,6 +210,11 @@ namespace LCAnomalyCore.Jobs
             study.tickAction = delegate
             {
                 study.actor.rotationTracker.FaceTarget(study.actor.CurJob.GetTarget(pawnIndex));
+                if (study.actor.CurJob.GetTarget(pawnIndex).Thing is Pawn recipient && recipient.Spawned)
+                {
+                    recipient.pather?.StopDead();
+                    recipient.rotationTracker?.FaceCell(study.actor.Position);
+                }
             };
             study.handlingFacing = true;
             study.defaultCompleteMode = ToilCompleteMode.Delay;

@@ -37,6 +37,12 @@ namespace LCAnomalyCore.Comp
         /// <summary>表示 <c>entityComp</c>。</summary>
         protected CompAbnormality entityComp;
 
+        /// <summary>指示当前实体是否正处于房间收容控制终端的有效收容中。</summary>
+        public bool IsContainedInRoom => GetComp<CompAbnormalityHoldingPlatformTarget>()?.CurrentlyContainedInRoom == true;
+
+        /// <summary>指示当前实体是否正处于收容单元有效收容内。</summary>
+        public bool IsHeldInContainment => IsContainedInRoom;
+
         /// <summary>初始化 <c>LC_EntityBasePawn</c> 类的新实例。</summary>
         public LC_EntityBasePawn()
         {

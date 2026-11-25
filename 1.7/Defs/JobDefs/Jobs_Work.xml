@@ -6,6 +6,7 @@
     <driverClass>LCAnomalyCore.Jobs.JobDriver_AbnormalityStudyInteract</driverClass>
     <reportString>Studying TargetA.</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <checkOverrideOnDamage>OnlyIfInstigatorNotJobTarget</checkOverrideOnDamage>
   </JobDef>
 
 </Defs>

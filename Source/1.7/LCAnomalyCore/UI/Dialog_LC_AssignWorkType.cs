@@ -1,4 +1,4 @@
-﻿using LCAnomalyCore.Buildings;
+﻿using LCAnomalyCore.Interface;
 using LCAnomalyCore.Util;
 using UnityEngine;
 using Verse;
@@ -8,7 +8,7 @@ namespace LCAnomalyCore.UI
     /// <summary>表示 <c>Dialog_LC_AssignWorkType</c> 类型。</summary>
     public class Dialog_LC_AssignWorkType : Window
     {
-        private Building_AbnormalityHoldingPlatform platform;
+        private IHoldingPlatformWorkTypeSelectable platform;
         private float buttonSize = 100f;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace LCAnomalyCore.UI
         public override Vector2 InitialSize => new Vector2(260f, 260f);
 
         /// <summary>初始化 <c>Dialog_LC_AssignWorkType</c> 类的新实例。</summary>
-        public Dialog_LC_AssignWorkType(Building_AbnormalityHoldingPlatform platform)
+        public Dialog_LC_AssignWorkType(IHoldingPlatformWorkTypeSelectable platform)
         {
             this.platform = platform;
             closeOnClickedOutside = true;

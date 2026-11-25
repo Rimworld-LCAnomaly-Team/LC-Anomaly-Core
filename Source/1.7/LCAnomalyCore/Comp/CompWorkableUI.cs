@@ -16,24 +16,26 @@ namespace LCAnomalyCore.Comp
 
         private string path = "Things/Building/LC_HoldingPlatform/Workable/";
 
+        private static readonly Vector2 DefaultWorkableDrawSize = new Vector2(3f, 3f);
+
         /// <summary>获取 <c>AllowWorkGraphic</c>。</summary>
         public Graphic AllowWorkGraphic => allowWorkGraphic ??
             (allowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
-            (path + "Allow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+            (path + "Allow", ShaderDatabase.Transparent, DefaultWorkableDrawSize, Color.white));
 
         private Graphic allowWorkGraphic;
 
         /// <summary>获取 <c>NotAllowWorkGraphic</c>。</summary>
         public Graphic NotAllowWorkGraphic => notAllowWorkGraphic ??
             (notAllowWorkGraphic = GraphicDatabase.Get<Graphic_Single>
-            (path + "NotAllow", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+            (path + "NotAllow", ShaderDatabase.Transparent, DefaultWorkableDrawSize, Color.white));
 
         private Graphic notAllowWorkGraphic;
 
         /// <summary>获取 <c>AutoWorkGraphic</c>。</summary>
         public Graphic AutoWorkGraphic => autoWorkGraphic ??
             (autoWorkGraphic = GraphicDatabase.Get<Graphic_Single>
-            (path + "Auto", ShaderDatabase.Transparent, Defs.ThingDefOf.LC_HoldingPlatform.graphicData.drawSize, Color.white));
+            (path + "Auto", ShaderDatabase.Transparent, DefaultWorkableDrawSize, Color.white));
 
         private Graphic autoWorkGraphic;
 

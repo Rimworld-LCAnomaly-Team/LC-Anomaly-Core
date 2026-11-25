@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <RoomRoleDef>
+    <defName>LC_ContainmentRoom</defName>
+    <label>abnormality containment room</label>
+    <workerClass>LCAnomalyCore.Util.RoomRoleWorker_LCContainmentRoom</workerClass>
+  </RoomRoleDef>
+
+</Defs>
