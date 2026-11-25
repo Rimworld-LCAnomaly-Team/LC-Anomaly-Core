@@ -60,6 +60,8 @@ namespace LCAnomalyCore.GameComponent
 
         private Dictionary<int, float> blessedWeaponBonusDict = new Dictionary<int, float>();
 
+        private HashSet<int> autoCastEgoWeaponIds = new HashSet<int>();
+
         private HashSet<string> completedCoreSuppressions = new HashSet<string>();
         private bool suppressionHealLocked;
 
@@ -196,6 +198,43 @@ namespace LCAnomalyCore.GameComponent
             blessedWeaponBonusDict.Remove(weapon.thingIDNumber);
         }
 
+        public bool IsEgoWeaponAutoCastEnabled(Thing weapon)
+        {
+            return weapon != null
+                && autoCastEgoWeaponIds != null
+                && autoCastEgoWeaponIds.Contains(weapon.thingIDNumber);
+        }
+
+        public void SetEgoWeaponAutoCast(Thing weapon, bool enabled)
+        {
+            if (weapon == null)
+            {
+                return;
+            }
+
+            autoCastEgoWeaponIds ??= new HashSet<int>();
+            if (enabled)
+            {
+                autoCastEgoWeaponIds.Add(weapon.thingIDNumber);
+            }
+            else
+            {
+                autoCastEgoWeaponIds.Remove(weapon.thingIDNumber);
+            }
+        }
+
+        public bool ToggleEgoWeaponAutoCast(Thing weapon)
+        {
+            if (weapon == null)
+            {
+                return false;
+            }
+
+            bool nextState = !IsEgoWeaponAutoCastEnabled(weapon);
+            SetEgoWeaponAutoCast(weapon, nextState);
+            return nextState;
+        }
+
         public void DiscoverAbnormality(ThingDef thingDef)
         {
             if (thingDef == null) return;
@@ -240,9 +279,17 @@ namespace LCAnomalyCore.GameComponent
         }
 
         /// <inheritdoc />
+        public override void StartedNewGame()
+        {
+            base.StartedNewGame();
+            Render.Weapon.EgoWeaponAnimationManager.ClearAll();
+        }
+
+        /// <inheritdoc />
         public override void LoadedGame()
         {
             base.LoadedGame();
+            Render.Weapon.EgoWeaponAnimationManager.ClearAll();
         }
 
         /// <summary>
@@ -250,6 +297,7 @@ namespace LCAnomalyCore.GameComponent
         /// </summary>
         public override void GameComponentTick()
         {
+            Render.Weapon.EgoWeaponAnimationManager.TickAll();
             WarningOverlay.Tick();
             LCGameComponentTickEvent?.Invoke();
 
@@ -285,6 +333,7 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
             Scribe_Collections.Look(ref discoveredAbnormalities, "lcDiscoveredAbnormalities", LookMode.Value);
             Scribe_Collections.Look(ref blessedWeaponBonusDict, "lcBlessedWeaponBonusDict", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref autoCastEgoWeaponIds, "lcAutoCastEgoWeaponIds", LookMode.Value);
             Scribe_Collections.Look(ref completedCoreSuppressions, "lcCompletedCoreSuppressions", LookMode.Value);
             Scribe_Values.Look(ref suppressionHealLocked, "lcSuppressionHealLocked", false);
             Scribe_Values.Look(ref managerBulletCharges, "lcManagerBulletCharges", 0);
@@ -292,6 +341,7 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Values.Look(ref managerBulletsInitialized, "lcManagerBulletsInitialized", false);
             discoveredAbnormalities ??= new HashSet<string>();
             blessedWeaponBonusDict ??= new Dictionary<int, float>();
+            autoCastEgoWeaponIds ??= new HashSet<int>();
             completedCoreSuppressions ??= new HashSet<string>();
         }
 

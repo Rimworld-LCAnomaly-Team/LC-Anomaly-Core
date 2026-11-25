@@ -1,4 +1,5 @@
 ﻿using LCAnomalyCore.Buildings;
+using LCAnomalyCore.Comp;
 using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Util;
 using RimWorld;
@@ -67,7 +68,19 @@ namespace LCAnomalyCore.Jobs
                     {
                         LogUtil.Message("WorkGiver_AbnormalityStudyInteract.HasJobOnThing:::Entered the compAbnormalityStudiable.LC_CurrentlyStudiable()!");
 
-                        if (compAbnormalityStudiable.Props.frequencyTicks > 0 && compAbnormalityStudiable.TicksTilNextStudy > 0)
+                        CompAbnormality heldAbn = building.HeldPawn?.TryGetComp<CompAbnormality>();
+                        if (heldAbn != null && !heldAbn.CanBeStudiedNow(out string blockReason))
+                        {
+                            if (!blockReason.NullOrEmpty())
+                            {
+                                JobFailReason.Is(blockReason);
+                            }
+                            else
+                            {
+                                JobFailReason.IsSilent();
+                            }
+                        }
+                        else if (compAbnormalityStudiable.Props.frequencyTicks > 0 && compAbnormalityStudiable.TicksTilNextStudy > 0)
                         {
                             JobFailReason.Is("LC_CanBeStudiedInDuration".Translate(compAbnormalityStudiable.TicksTilNextStudy.ToStringTicksToPeriod()).CapitalizeFirst());
                         }

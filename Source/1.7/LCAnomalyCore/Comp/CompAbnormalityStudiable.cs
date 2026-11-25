@@ -152,6 +152,12 @@ namespace LCAnomalyCore.Comp
                 }
             }
 
+            CompAbnormality abn = parent.TryGetComp<CompAbnormality>();
+            if (abn != null && !abn.CanBeStudiedNow(out _))
+            {
+                return false;
+            }
+
             return true;
         }
 

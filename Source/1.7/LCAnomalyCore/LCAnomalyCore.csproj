@@ -103,6 +103,8 @@
     <Compile Include="Patch\Patch_MentalBreak.cs" />
     <Compile Include="Patch\Patch_Pawn.cs" />
     <Compile Include="Patch\Patch_PawnRenderTree_HeldScale.cs" />
+    <Compile Include="Patch\Patch_EgoWeaponAnimation.cs" />
+    <Compile Include="Patch\Patch_EgoWeaponAutoCast.cs" />
     <Compile Include="Patch\Patch_SpecialDisplayStats_FourColor.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
     <Compile Include="Patch\Patch_Thing_TakeDamage.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="Render\Normal\PawnRenderNodeProperties_StillState.cs" />
     <Compile Include="Render\Normal\PawnRenderNodeWorker_StillState.cs" />
     <Compile Include="Render\Normal\PawnRenderNode_StillState.cs" />
+    <Compile Include="Render\Weapon\EgoWeaponAnimationSystem.cs" />
     <Compile Include="Settings\FourColorSettingsPages.cs" />
     <Compile Include="Settings\Setting_LCAnomalyLibrary.cs" />
     <Compile Include="Settings\Setting_LCAnomalyLibrary_Main.cs" />

@@ -6,5 +6,10 @@
   <ExtractEGONeedPeboxAmountCommandText>需求数量：</ExtractEGONeedPeboxAmountCommandText>
   <ExtractEGOWeaponCommandText>提取E.G.O武器</ExtractEGOWeaponCommandText>
   <ExtractEGOArmorCommandText>提取E.G.O装备</ExtractEGOArmorCommandText>
+  <LC_EgoAutoCast_TooltipTitle>自动施放技能</LC_EgoAutoCast_TooltipTitle>
+  <LC_EgoAutoCast_StateOn>已开启</LC_EgoAutoCast_StateOn>
+  <LC_EgoAutoCast_StateOff>已关闭</LC_EgoAutoCast_StateOff>
+  <LC_EgoAutoCast_StatePartial>部分开启</LC_EgoAutoCast_StatePartial>
+  <LC_EgoAutoCast_TooltipDesc>点击切换持握者在战斗中冷却完毕时是否自动施放该 E.G.O. 主动技能。</LC_EgoAutoCast_TooltipDesc>
 
 </LanguageData>

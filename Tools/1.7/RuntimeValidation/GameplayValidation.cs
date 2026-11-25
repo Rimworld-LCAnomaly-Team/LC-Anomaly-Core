@@ -11,6 +11,8 @@ using LCAnomalyCore.Defs;
 using LCAnomalyCore.GameComponent;
 using LCAnomalyCore.Interface;
 using LCAnomalyCore.Misc;
+using LCAnomalyCore.Patch;
+using LCAnomalyCore.Render.Weapon;
 using LCAnomalyCore.Settings;
 using LCAnomalyCore.UI;
 using LCAnomalyCore.Util;
@@ -436,7 +438,8 @@ public static class GameplayValidation
 
         // Contain a second bound Portrait on a holding platform to verify Scribe_References survival across save/reload
         const int savedPortraitSig = 0x4c430082;
-        Pawn savedWard = map.mapPawns.FreeColonistsSpawned.First(p => !p.Dead && !p.Destroyed);
+        Pawn savedWard = SpawnValidationColonist(map, FindFarthestSafeCell(map));
+        if (savedWard.drafter != null) savedWard.drafter.Drafted = true;
         var (_, _, savedTool) = ContainToolOnPlatform(map, savedWard, "PortraitOfAnotherWorld", savedPortraitSig);
         savedTool.OnToolUsed(savedWard);
         if (!(bool)propIsBound.GetValue(savedTool))
@@ -619,14 +622,50 @@ public static class GameplayValidation
             throw new InvalidOperationException("WeCanChangeAnything failed to enclose colonist inside its chamber.");
         if (ironSubject.Spawned || !ironTool.HasEnclosedOccupant || ironTool.EnclosedOccupant != ironSubject || !ironTool.IsActiveContinuous)
             throw new InvalidOperationException("Enclosed WeCanChangeAnything occupant should be hidden from map and held internally.");
-        if (!ironTool.TryDrawHeldOverride(DrawPhase.Draw, ironPlatform.DrawPos))
-            throw new InvalidOperationException("WeCanChangeAnything failed to activate bloody override graphic draw while in use.");
+
+        foreach (string ironAnimName in new[]
+        {
+            "WeCanChangeAnything_Default_First",
+            "WeCanChangeAnything_Default_After",
+            "WeCanChangeAnything_Start_First",
+            "WeCanChangeAnything_Start_After",
+            "WeCanChangeAnything_Generate_01",
+            "WeCanChangeAnything_Generate_02",
+            "WeCanChangeAnything_Generate_03",
+            "WeCanChangeAnything_End"
+        })
+        {
+            if (DefDatabase<AnimationDef>.GetNamed(ironAnimName, true) == null)
+                throw new InvalidOperationException($"Missing AnimationDef {ironAnimName}.");
+        }
+
+        if (heldIron.RaceProps.renderTree?.defName != "WeCanChangeAnything")
+            throw new InvalidOperationException($"WeCanChangeAnything expected renderTree WeCanChangeAnything, got {heldIron.RaceProps.renderTree?.defName}.");
+        if (heldIron.Drawer.renderer.CurAnimation?.defName != "WeCanChangeAnything_Start_First")
+            throw new InvalidOperationException($"WeCanChangeAnything expected Start_First animation on enclosure, got {heldIron.Drawer.renderer.CurAnimation?.defName}.");
+
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ironPlatform.DrawPos);
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ironPlatform.DrawPos);
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.Draw, ironPlatform.DrawPos);
 
         LC_EntityBasePawn heldIronEntity = (LC_EntityBasePawn)heldIron;
-        for (int t = 0; t < 720; t++)
+        for (int t = 0; t < 65; t++)
         {
             heldIronEntity.TickHolded();
         }
+        if (heldIron.Drawer.renderer.CurAnimation?.defName != "WeCanChangeAnything_Generate_01")
+            throw new InvalidOperationException($"WeCanChangeAnything expected Generate_01 shaking animation after closing, got {heldIron.Drawer.renderer.CurAnimation?.defName}.");
+
+        for (int t = 0; t < 655; t++)
+        {
+            heldIronEntity.TickHolded();
+        }
+        if (ironTool.IsActiveContinuous && heldIron.Drawer.renderer.CurAnimation?.defName != "WeCanChangeAnything_Generate_02")
+            throw new InvalidOperationException($"WeCanChangeAnything expected Generate_02 shaking animation after 10s, got {heldIron.Drawer.renderer.CurAnimation?.defName}.");
+
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ironPlatform.DrawPos);
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ironPlatform.DrawPos);
+        ironPlatform.DynamicDrawPhaseAt(DrawPhase.Draw, ironPlatform.DrawPos);
 
         int boxesAfter = map.listerThings.ThingsOfDef(boxDef).Sum(t => t.stackCount);
         int boxesRecorded = (int)ironTool.GetType().GetProperty("TotalBoxesProduced").GetValue(ironTool);
@@ -642,6 +681,14 @@ public static class GameplayValidation
         }
         if (!ironSubject.Dead || ironTool.HasEnclosedOccupant || ironTool.IsActiveContinuous)
             throw new InvalidOperationException("WeCanChangeAnything did not fatally finish enclosed occupant or release container.");
+        if (heldIron.Drawer.renderer.CurAnimation?.defName != "WeCanChangeAnything_End")
+            throw new InvalidOperationException($"WeCanChangeAnything expected End opening animation upon victim death, got {heldIron.Drawer.renderer.CurAnimation?.defName}.");
+        for (int t = 0; t < 75; t++)
+        {
+            heldIronEntity.TickHolded();
+        }
+        if (heldIron.Drawer.renderer.CurAnimation?.defName != "WeCanChangeAnything_Default_After")
+            throw new InvalidOperationException($"WeCanChangeAnything expected Default_After bloody idle animation after opening, got {heldIron.Drawer.renderer.CurAnimation?.defName}.");
         if (ironSubject.Corpse == null || !ironSubject.Corpse.Spawned)
             throw new InvalidOperationException("WeCanChangeAnything did not eject occupant corpse onto map upon death.");
         int victimsRecorded = (int)ironTool.GetType().GetProperty("TotalVictims").GetValue(ironTool);
@@ -1602,6 +1649,7 @@ public static class GameplayValidation
 
         ValidatePhase1And2(map, abnSettings);
         ValidatePhase3(map, abnSettings);
+        ValidatePhase4(map, abnSettings);
     }
 
     public static void CheckReload(Map map)
@@ -1742,8 +1790,16 @@ public static class GameplayValidation
             throw new InvalidOperationException($"Blessed weapon state in GameComponent_LC did not survive save/load. gcNull={gc == null}, colonists=[{colDiag}]");
         }
 
+        Pawn reloadedMimicryPawn = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(p =>
+            p.equipment?.Primary?.def?.defName == "EgoWeapon_NothingThere");
+        if (reloadedMimicryPawn == null || !gc.IsEgoWeaponAutoCastEnabled(reloadedMimicryPawn.equipment.Primary))
+        {
+            throw new InvalidOperationException("E.G.O. weapon auto-cast toggle state in GameComponent_LC did not survive save/load.");
+        }
+
         ValidatePhase1And2AfterLoad(map);
         ValidatePhase3AfterLoad(map);
+        ValidatePhase4AfterLoad(map);
     }
 
     private static IntVec3 FindFarthestSafeCell(Map map, int minColonistDist = 0)
@@ -2084,7 +2140,24 @@ public static class GameplayValidation
         savedHeartTool.GetType().GetMethod("NotifyCombatDamageDealt", BindingFlags.Public | BindingFlags.Instance)
             .Invoke(savedHeartTool, new object[] { savedHeartBearer, worker, 10f });
 
-        // 3f. SnowQueen freeze captive into IThingHolder across save/load
+        // 3f. SnowQueen render tree / animations / freeze captive / duel float menu & fortitude scaling
+        foreach (string shaderName in new[] { "LC_SnowQueenFrostAura", "LC_SnowQueenIceCrystal", "LC_ResearcherNoteCore", "LC_ResearcherNoteAura" })
+        {
+            ShaderDef sDef = DefDatabase<ShaderDef>.GetNamedSilentFail(shaderName);
+            if (sDef == null || sDef.Shader == null)
+                throw new InvalidOperationException($"ShaderDef '{shaderName}' failed to resolve or compile.");
+        }
+
+        foreach (string animName in new[]
+        {
+            "SnowQueen_Idle", "SnowQueen_Work", "SnowQueen_KissFirst", "SnowQueen_KissSecond",
+            "SnowQueen_KissThird", "SnowQueen_Duel", "SnowQueen_DuelWin"
+        })
+        {
+            if (DefDatabase<AnimationDef>.GetNamedSilentFail(animName) == null)
+                throw new InvalidOperationException($"SnowQueen AnimationDef '{animName}' missing.");
+        }
+
         Pawn savedCaptive = SpawnValidationColonist(map, map.Center);
         var sqPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
         sqPlat.SetFaction(Faction.OfPlayer);
@@ -2093,7 +2166,21 @@ public static class GameplayValidation
         AbnormalityUtility.TransferSignature(sqEgg, 0x4c430203);
         sqPlat.innerContainer.TryAdd(sqEgg);
         sqEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(sqPlat.innerContainer);
+        if (sqPlat.HeldPawn?.def?.race?.renderTree?.defName != "SnowQueen")
+            throw new InvalidOperationException("SnowQueen race missing SnowQueen RenderTreeDef.");
+
         CompAbnormality sqAbn = sqPlat.HeldPawn.GetComp<CompAbnormality>();
+        MethodInfo mGetWinChance = sqAbn.GetType().GetMethod("GetFortitudeWinChance", BindingFlags.Public | BindingFlags.Static)
+            ?? throw new InvalidOperationException("SnowQueen missing public static GetFortitudeWinChance.");
+        Pawn fortTester = SpawnValidationColonist(map, map.Center);
+        CompPawnStatus fortStatus = fortTester.GetComp<CompPawnStatus>();
+        fortStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 10;
+        float chanceI = (float)mGetWinChance.Invoke(null, new object[] { fortTester });
+        fortStatus.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 100;
+        float chanceEX = (float)mGetWinChance.Invoke(null, new object[] { fortTester });
+        if (Math.Abs(chanceI - 0.10f) > 0.001f || Math.Abs(chanceEX - 1.00f) > 0.001f)
+            throw new InvalidOperationException($"SnowQueen Fortitude win chances unexpected: I={chanceI}, EX={chanceEX}");
+
         sqAbn.GetType().GetMethod("FreezeCaptive", BindingFlags.Public | BindingFlags.Instance)
             .Invoke(sqAbn, new object[] { savedCaptive });
         if (!(bool)sqAbn.GetType().GetProperty("HasFrozenCaptive", BindingFlags.Public | BindingFlags.Instance).GetValue(sqAbn)
@@ -2102,10 +2189,28 @@ public static class GameplayValidation
             throw new InvalidOperationException("SnowQueen FreezeCaptive did not seal colonist into frozenContainer.");
         }
 
-        // 3g. NotesFromCrazedResearcher study tracking, safe return, AND damage explosion
-        var (_, _, noteTool) = ContainToolOnPlatform(map, worker, "NotesFromCrazedResearcher", 0x4c430204);
+        if (sqAbn.CanBeStudiedNow(out string sqBlockReason) || string.IsNullOrEmpty(sqBlockReason) || sqAbn.StudiableComp.CurrentlyStudiable())
+            throw new InvalidOperationException("SnowQueen failed to block normal study while a captive is frozen.");
+        if (!sqAbn.GetPlatformFloatMenuOptions(worker).Any(opt => !opt.Disabled && opt.action != null))
+            throw new InvalidOperationException("SnowQueen missing right-click Rescue Duel float menu option while captive is frozen.");
+
+        sqPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, sqPlat.DrawPos);
+        sqPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, sqPlat.DrawPos);
+        sqPlat.DynamicDrawPhaseAt(DrawPhase.Draw, sqPlat.DrawPos);
+
+        // 3g. NotesFromCrazedResearcher study modifier (+10%), safe return, 60-damage explosion, and Portrait post-intercept order
+        var (notePlat, _, noteTool) = ContainToolOnPlatform(map, worker, "NotesFromCrazedResearcher", 0x4c430204);
+        notePlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, notePlat.DrawPos);
+        notePlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, notePlat.DrawPos);
+        notePlat.DynamicDrawPhaseAt(DrawPhase.Draw, notePlat.DrawPos);
+
         Pawn noteScholar = SpawnValidationColonist(map, map.Center);
+        float rateBeforeNote = sqAbn.CheckStudierSkillRequire(noteScholar.GetComp<CompPawnStatus>(), EAnomalyWorkType.Insight);
         noteTool.OnEquipped(noteScholar);
+        float rateWithNote = sqAbn.CheckStudierSkillRequire(noteScholar.GetComp<CompPawnStatus>(), EAnomalyWorkType.Insight);
+        if (rateWithNote < rateBeforeNote + 0.095f)
+            throw new InvalidOperationException($"NotesFromCrazedResearcher study rate bonus missing: before={rateBeforeNote}, after={rateWithNote}");
+
         HediffDef noteBuffDef = DefDatabase<HediffDef>.GetNamed("LC_ResearcherNoteBuff", true);
         if (!noteScholar.health.hediffSet.HasHediff(noteBuffDef))
             throw new InvalidOperationException("NotesFromCrazedResearcher did not grant LC_ResearcherNoteBuff.");
@@ -2117,9 +2222,34 @@ public static class GameplayValidation
         Pawn noteVictim = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 16));
         var (_, _, noteToolBoom) = ContainToolOnPlatform(map, noteVictim, "NotesFromCrazedResearcher", 0x4c430205);
         noteToolBoom.OnEquipped(noteVictim);
-        noteVictim.TakeDamage(new DamageInfo(redDef, 105f, instigator: worker));
+        noteVictim.TakeDamage(new DamageInfo(redDef, 65f, instigator: worker));
         if (!noteVictim.Dead)
-            throw new InvalidOperationException("NotesFromCrazedResearcher >=100 damage threshold did not detonate wearer.");
+            throw new InvalidOperationException("NotesFromCrazedResearcher >=60 damage threshold did not detonate wearer.");
+
+        // Portrait of Another World (ILCPawnDamageInterceptor) must intercept/redirect before NotesFromCrazedResearcher (ILCPawnPostInterceptDamageHandler)
+        Pawn synergyWard = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 18));
+        var (synergyPortraitPlat, _, synergyPortraitTool) = ContainToolOnPlatform(map, synergyWard, "PortraitOfAnotherWorld", 0x4c430206);
+        synergyPortraitTool.OnToolUsed(synergyWard);
+        Pawn synergySub = synergyPortraitTool.GetType().GetProperty("SubstitutePawn")?.GetValue(synergyPortraitTool) as Pawn;
+        var (_, _, synergyNoteTool) = ContainToolOnPlatform(map, synergyWard, "NotesFromCrazedResearcher", 0x4c430207);
+        synergyNoteTool.OnEquipped(synergyWard);
+        if (synergySub != null)
+        {
+            for (int hit = 0; hit < 9; hit++)
+            {
+                synergyWard.TakeDamage(new DamageInfo(redDef, 8f, armorPenetration: 1f, instigator: worker));
+                var subInjuries = new List<Hediff_Injury>();
+                synergySub.health.hediffSet.GetHediffs(ref subInjuries);
+                foreach (Hediff_Injury inj in subInjuries) inj.Heal(1000f);
+            }
+            Hediff noteH = synergyWard.health.hediffSet.GetFirstHediffOfDef(noteBuffDef);
+            object noteHc = (noteH as HediffWithComps)?.comps?.FirstOrDefault(c => c.GetType().Name == "HediffComp_ResearcherNote");
+            float trackedDmg = (float)(noteHc?.GetType().GetProperty("CumulativeDamageTaken")?.GetValue(noteHc) ?? -1f);
+            if (synergyWard.Dead || Math.Abs(trackedDmg) > 0.001f)
+                throw new InvalidOperationException($"NotesFromCrazedResearcher counted Portrait-redirected damage! dead={synergyWard.Dead}, tracked={trackedDmg}");
+        }
+        synergyPortraitPlat.EjectContents();
+        if (synergyNoteTool.IsEquipped) synergyNoteTool.OnUnequipped(synergyWard, 1800, returnedNormally: false);
 
         // Ensure save/reload fixture colonists start healthy and away from roaming test hostiles
         GameComponent_LC gcNow = GameComponent_LC.Instance;
@@ -2202,6 +2332,17 @@ public static class GameplayValidation
                 if (stillFrozen || !captive.Spawned || captive.Dead)
                 {
                     throw new InvalidOperationException("SnowQueen ResolveDuel post-load failed to rescue frozen captive.");
+                }
+
+                ThingDef sqGiftDef = DefDatabase<ThingDef>.GetNamed("Accessory_SnowQueen", true);
+                HediffDef sqKissDef = DefDatabase<HediffDef>.GetNamed("LC_SnowQueenKiss", true);
+                bool rescuerGotGift = rescuer.apparel?.WornApparel?.Any(a => a.def == sqGiftDef) == true;
+                bool captiveGotGift = captive.apparel?.WornApparel?.Any(a => a.def == sqGiftDef) == true;
+                if (!rescuerGotGift || !captiveGotGift
+                    || rescuer.health.hediffSet.HasHediff(sqKissDef)
+                    || captive.health.hediffSet.HasHediff(sqKissDef))
+                {
+                    throw new InvalidOperationException($"SnowQueen duel victory gift/kiss cleanup failed: rescuerGift={rescuerGotGift}, captiveGift={captiveGotGift}");
                 }
 
                 foundSavedSnowQueen = true;
@@ -2546,8 +2687,1066 @@ public static class GameplayValidation
         if (sfPawn.Spawned) sfPawn.DeSpawn();
         if (!sfPawn.Destroyed) sfPawn.Destroy();
 
+        // 3f. JudgementBird execution gallows animation, corpse holder & cleanup
+        AnimationDef hangStartAnim = DefDatabase<AnimationDef>.GetNamed("JudgementBird_VictimHangStart", true);
+        AnimationDef hangLoopAnim = DefDatabase<AnimationDef>.GetNamed("JudgementBird_VictimHangLoop", true);
+        if (!hangStartAnim.playWhenDowned || !hangLoopAnim.playWhenDowned)
+            throw new InvalidOperationException("JudgementBird victim execution animations must set playWhenDowned=true.");
+
+        Pawn jbTester = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("JudgementBird", true), LCContainmentUtility.AbnormalityFaction);
+        IntVec3 jbCell = FindFarthestSafeCell(map);
+        GenSpawn.Spawn(jbTester, jbCell, map);
+
+        Pawn jbVictim = SpawnValidationColonist(map, FindSafePawnCell(map, jbCell));
+        jbVictim.apparel?.DestroyAll();
+        DamageDef paleDef = DefDatabase<DamageDef>.GetNamed("LC_PaleDamage", true);
+        jbVictim.TakeDamage(new DamageInfo(paleDef, 200f, 1f, instigator: jbTester));
+        if (!jbVictim.Dead || jbVictim.Corpse == null)
+            throw new InvalidOperationException("JudgementBird validation lethal Pale strike failed to kill sacrificial colonist.");
+
+        ThingDef gallowsDef = DefDatabase<ThingDef>.GetNamed("LC_JudgementGallowsFX", true);
+        List<Thing> activeGallows = map.listerThings.ThingsOfDef(gallowsDef).Where(t => !t.Destroyed).ToList();
+        if (activeGallows.Count != 1)
+            throw new InvalidOperationException($"Expected 1 Thing_JudgementGallows after kill, found {activeGallows.Count}.");
+
+        Thing gallows = activeGallows[0];
+        if (!(gallows is IThingHolderWithDrawnPawn))
+            throw new InvalidOperationException("Thing_JudgementGallows must implement IThingHolderWithDrawnPawn.");
+        PropertyInfo heldCorpseProp = gallows.GetType().GetProperty("HeldCorpse", BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException("Thing_JudgementGallows missing HeldCorpse property.");
+        if (!ReferenceEquals(heldCorpseProp.GetValue(gallows), jbVictim.Corpse) || jbVictim.Corpse.Spawned)
+            throw new InvalidOperationException("Thing_JudgementGallows did not capture victim corpse cleanly.");
+        if (jbVictim.Drawer?.renderer?.CurAnimation != hangStartAnim)
+            throw new InvalidOperationException($"Expected JudgementBird_VictimHangStart on hoisted corpse, got {jbVictim.Drawer?.renderer?.CurAnimation?.defName}.");
+
+        // Second kill + early Destroy() test (verifies safe corpse drop on premature gallows destruction)
+        Pawn jbVictim2 = SpawnValidationColonist(map, FindSafePawnCell(map, jbCell));
+        jbVictim2.apparel?.DestroyAll();
+        jbVictim2.TakeDamage(new DamageInfo(paleDef, 200f, 1f, instigator: jbTester));
+        if (!jbVictim2.Dead || jbVictim2.Corpse == null)
+            throw new InvalidOperationException("Second sacrificial colonist failed to die to JudgementBird Pale strike.");
+        Thing gallows2 = map.listerThings.ThingsOfDef(gallowsDef).FirstOrDefault(t => !t.Destroyed && t != gallows)
+            ?? throw new InvalidOperationException("Missing second Thing_JudgementGallows for early destroy test.");
+        gallows2.Destroy();
+        if (jbVictim2.Corpse.Destroyed || !jbVictim2.Corpse.Spawned)
+            throw new InvalidOperationException("Early Thing_JudgementGallows.Destroy() failed to eject corpse safely onto map.");
+        jbVictim2.Corpse.Destroy();
+
+        // Remove jbTester before advancing 600 ticks so it doesn't cast extra AoE judgements during the animation timeline check
+        if (jbTester.Spawned) jbTester.DeSpawn();
+        if (!jbTester.Destroyed) jbTester.Destroy();
+
+        MethodInfo gallowsTick = gallows.GetType().GetMethod("Tick", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Thing_JudgementGallows missing Tick method.");
+
+        for (int t = 1; t <= 595; t++)
+        {
+            if (t == 1)
+            {
+                Find.TickManager.DoSingleTick();
+            }
+            else if (!gallows.Destroyed)
+            {
+                gallowsTick.Invoke(gallows, null);
+                if (t != 160 && jbVictim.Drawer?.renderer?.renderTree != null && jbVictim.Drawer.renderer.CurAnimation != null)
+                {
+                    jbVictim.Drawer.renderer.renderTree.animationStartTick--;
+                }
+            }
+
+            if (t == 105 || t == 135 || t == 220 || t == 548)
+            {
+                if (t == 220 && jbVictim.Drawer?.renderer?.CurAnimation != hangLoopAnim)
+                    throw new InvalidOperationException($"Expected JudgementBird_VictimHangLoop at tick 220, got {jbVictim.Drawer?.renderer?.CurAnimation?.defName}.");
+                gallows.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, gallows.DrawPos);
+                gallows.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, gallows.DrawPos);
+                gallows.DynamicDrawPhaseAt(DrawPhase.Draw, gallows.DrawPos);
+            }
+            if (t == 560)
+            {
+                if (jbVictim.Corpse.Destroyed || !jbVictim.Corpse.Spawned)
+                    throw new InvalidOperationException("Thing_JudgementGallows did not release corpse back onto map by tick 560.");
+                if (jbVictim.Drawer?.renderer?.CurAnimation != null)
+                    throw new InvalidOperationException("Released corpse still had active hanging animation.");
+            }
+        }
+        if (!gallows.Destroyed)
+            throw new InvalidOperationException("Thing_JudgementGallows did not self-destroy after finishing execution animation.");
+        if (!jbVictim.Corpse.Destroyed) jbVictim.Corpse.Destroy();
+
         Log.Message("[LC17 Validation] GAMEPLAY PASS; Phase3; 6_abnormalities/pale_justitia/bigbird_deaths/littlered_hire/backward_clock/schadenfreude");
+        ValidateEgoWeaponSkillsAndAnimations(map);
         ValidateOrdealAndDepartmentExpansionPhase1(map);
+    }
+
+    private static void ValidateEgoWeaponSkillsAndAnimations(Map map)
+    {
+        foreach (string wDefName in new[]
+        {
+            "EgoWeapon_LittleRedRidingHoodedMercenary",
+            "EgoWeapon_NothingThere",
+            "EgoWeapon_JudgementBird",
+            "EgoWeapon_BigBird",
+            "EgoWeapon_BurrowingHeaven",
+            "EgoWeapon_Schadenfreude",
+            "EgoWeapon_PunishingBird",
+            "EgoWeapon_DerFreischutz",
+            "EgoWeapon_Laetitia",
+            "EgoWeapon_FuneralOfDeadButterflies",
+            "EgoWeapon_AllAroundHelper",
+            "EgoWeapon_SnowQueen",
+            "EgoWeapon_WarmHeartedWoodsman",
+            "EgoWeapon_ScarecrowSearchingForWisdom",
+            "EgoWeapon_ScorchedGirl",
+            "EgoWeapon_VoidDream",
+            "EgoWeapon_Ppodae",
+            "EgoWeapon_FragmentOfTheUniverse",
+            "EgoWeapon_MeatLantern",
+            "EgoWeapon_OneSin",
+            "EgoWeapon_FairyFestival",
+            "EgoWeapon_WellCheers"
+        })
+        {
+            if (!EgoWeaponAnimationManager.TryGetHandler(wDefName, out _))
+                throw new InvalidOperationException($"Missing registered IEgoWeaponAnimationHandler for {wDefName}.");
+        }
+
+        // Red-X regression check: any Ethereal FX/Runner without graphicData and with drawerType != None MUST override DrawAt(Vector3, bool)
+        foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
+        {
+            if (def.category == ThingCategory.Ethereal
+                && def.graphicData == null
+                && def.drawerType != DrawerType.None
+                && (def.defName.StartsWith("LC_") || def.defName.Contains("SkillRunner")))
+            {
+                MethodInfo drawAt = def.thingClass?.GetMethod("DrawAt", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                if (drawAt == null || drawAt.DeclaringType == typeof(Thing))
+                {
+                    throw new InvalidOperationException(
+                        $"Red-X risk on Ethereal '{def.defName}': graphicData is null, drawerType={def.drawerType}, and {def.thingClass?.FullName} does not override DrawAt.");
+                }
+            }
+        }
+
+        Pawn wielder = SpawnValidationColonist(map, FindFarthestSafeCell(map, minColonistDist: 20));
+        wielder.drafter.Drafted = true;
+        wielder.drafter.FireAtWill = false;
+        wielder.skills.GetSkill(SkillDefOf.Melee).Level = 15;
+        wielder.skills.GetSkill(SkillDefOf.Shooting).Level = 15;
+
+        void SuppressNearbyExternalHostiles()
+        {
+            foreach (Pawn other in map.mapPawns.AllPawnsSpawned)
+            {
+                if (other != null && other != wielder && !other.Dead && other.Faction != Faction.OfPlayer &&
+                    other.HostileTo(wielder))
+                {
+                    other.stances?.stunner?.StunFor(1000, wielder, addBattleLog: false);
+                }
+            }
+        }
+        SuppressNearbyExternalHostiles();
+
+        PawnKindDef dummyKind = DefDatabase<PawnKindDef>.AllDefsListForReading
+            .FirstOrDefault(k => k.RaceProps?.Animal == true && !k.RaceProps.IsMechanoid && k.RaceProps.baseBodySize >= 1.5f)
+            ?? DefDatabase<PawnKindDef>.AllDefsListForReading.First(k => k.RaceProps?.Animal == true && !k.RaceProps.IsMechanoid);
+
+        IntVec3 FindAdjacentDummyCell(IntVec3 origin)
+        {
+            foreach (IntVec3 c in GenAdjFast.AdjacentCells8Way(origin))
+            {
+                if (c.InBounds(map) && !c.Fogged(map) && c.Standable(map) &&
+                    c.GetRegion(map) != null && c.GetEdifice(map) == null &&
+                    GenSight.LineOfSight(origin, c, map, skipFirstCell: true))
+                {
+                    return c;
+                }
+            }
+            return FindSafePawnCell(map, origin);
+        }
+
+        IntVec3 FindMidRangeTargetCell(IntVec3 origin)
+        {
+            foreach (IntVec3 c in GenRadial.RadialCellsAround(origin, 8f, false))
+            {
+                int distSq = (c - origin).LengthHorizontalSquared;
+                if (distSq >= 25 && distSq <= 64 &&
+                    c.InBounds(map) && !c.Fogged(map) && c.Standable(map) &&
+                    c.GetRegion(map) != null && c.GetEdifice(map) == null &&
+                    GenSight.LineOfSight(origin, c, map, skipFirstCell: true))
+                {
+                    return c;
+                }
+            }
+            return FindSafePawnCell(map, origin + new IntVec3(6, 0, 0));
+        }
+
+        Pawn SpawnHostileDummy(IntVec3 cell)
+        {
+            Pawn p = PawnGenerator.GeneratePawn(dummyKind, null);
+            GenSpawn.Spawn(p, cell, map);
+            p.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.ManhunterPermanent, forced: true);
+            p.stances?.stunner?.StunFor(350, wielder, addBattleLog: false);
+            return p;
+        }
+
+        void CleanupPawn(Pawn p)
+        {
+            if (p == null) return;
+            if (p.Corpse != null && !p.Corpse.Destroyed) p.Corpse.Destroy();
+            if (p.Spawned) p.DeSpawn();
+            if (!p.Destroyed) p.Destroy();
+        }
+
+        string[] fxDefNames =
+        {
+            "LC_LittleRedSlashFX", "LC_LittleRedShotgunConeFX", "LC_LittleRedThrownSickleFX", "LC_LittleRedImpactFX", "LC_CrimsonScarSkillRunnerFX",
+            "LC_MimicrySlashFX", "LC_MimicryGroundRuptureFX", "LC_MimicryChargeAuraFX",
+            "LC_JustitiaSlashFX", "LC_JudgementPaleWaveFX", "LC_JustitiaChargeSigilFX", "LC_JustitiaVerdictRunnerFX",
+            "LC_BigBirdEnchantWaveFX", "LC_BigBirdEyeMarkFX", "LC_BigBirdBiteBurstFX", "LC_LampImpactFX", "LC_LampSkillBeaconFX", "LC_LampSkillRunnerFX",
+            "LC_HeavenThrustFX", "LC_HeavenChargeAuraFX", "LC_HeavenSkillRunnerFX",
+            "LC_SchadenfreudeKeyholePulseFX", "LC_SchadenfreudeBloodBurstFX", "LC_GazeSawSlashFX", "LC_GazeFlurryFX", "LC_GazeSkillRunnerFX",
+            "LC_BeakTracerFX", "LC_BeakImpactFX", "LC_BeakSkillRunnerFX",
+            "LC_MagicBulletBeamFX", "LC_MagicBulletPortalFX", "LC_MagicBulletHitFX", "LC_MagicBulletSkillRunnerFX",
+            "LC_LaetitiaHeartBurstFX", "LC_LaetitiaGiftChargeFX", "LC_LaetitiaRibbonTracerFX", "LC_LaetitiaSkillRunnerFX",
+            "LC_SolemnLamentSkillRunnerFX", "LC_GrinderMk4SkillRunnerFX", "LC_FrostSplinterSkillRunnerFX",
+            "LC_LoggingSkillRunnerFX", "LC_HarvestSkillRunnerFX", "LC_FourthMatchSkillRunnerFX",
+            "LC_VoidDreamCrowWaveFX", "LC_VoidDreamNightmareBurstFX", "LC_VoidDreamSkillRunnerFX",
+            "LC_PpodaeSlamFX", "LC_SoCuteSkillRunnerFX",
+            "LC_CosmosSongWaveFX", "LC_CosmosSpearSkillRunnerFX",
+            "LC_MeatLanternChompFX",
+            "LC_PenitenceHaloFX", "LC_PenitenceChargeAuraFX", "LC_PenitenceSkillRunnerFX",
+            "LC_WingbeatSlashFX", "LC_WingbeatLifestealFX", "LC_WingbeatSkillRunnerFX",
+            "LC_WellCheersMuzzleFizzFX", "LC_WellCheersSodaSplashFX", "LC_SodaSkillRunnerFX"
+        };
+
+        string[] runnerDefNames =
+        {
+            "LC_CrimsonScarSkillRunnerFX",
+            "LC_JustitiaVerdictRunnerFX",
+            "LC_LampSkillRunnerFX",
+            "LC_HeavenSkillRunnerFX",
+            "LC_GazeSkillRunnerFX",
+            "LC_BeakSkillRunnerFX",
+            "LC_MagicBulletSkillRunnerFX",
+            "LC_LaetitiaSkillRunnerFX",
+            "LC_SolemnLamentSkillRunnerFX",
+            "LC_GrinderMk4SkillRunnerFX",
+            "LC_FrostSplinterSkillRunnerFX",
+            "LC_LoggingSkillRunnerFX",
+            "LC_HarvestSkillRunnerFX",
+            "LC_FourthMatchSkillRunnerFX",
+            "LC_VoidDreamSkillRunnerFX",
+            "LC_SoCuteSkillRunnerFX",
+            "LC_CosmosSpearSkillRunnerFX",
+            "LC_PenitenceSkillRunnerFX",
+            "LC_WingbeatSkillRunnerFX",
+            "LC_SodaSkillRunnerFX"
+        };
+
+        bool HasActiveSkillRunners()
+        {
+            foreach (string runnerDefName in runnerDefNames)
+            {
+                ThingDef runnerDef = DefDatabase<ThingDef>.GetNamedSilentFail(runnerDefName);
+                if (runnerDef != null && map.listerThings.ThingsOfDef(runnerDef).Count > 0)
+                    return true;
+            }
+            return false;
+        }
+
+        void PrepareWielderForCast()
+        {
+            if (wielder.Dead || wielder.Destroyed || !wielder.Spawned || wielder.mindState == null)
+            {
+                throw new InvalidOperationException("Validation wielder was killed or despawned by an external map hazard during ValidateEgoWeaponSkillsAndAnimations.");
+            }
+            wielder.pather?.StopDead();
+            wielder.jobs?.StopAll(false);
+            wielder.stances?.CancelBusyStanceHard();
+            EgoWeaponAnimationManager.Stop(wielder);
+        }
+
+        void RenderAndWaitForSkill(Pawn target, string expectedWarmupClip, string expectedExecClip, int maxTicks = 260)
+        {
+            bool sawWarmup = string.IsNullOrEmpty(expectedWarmupClip);
+            bool sawExec = false;
+            bool animClearedAfterExec = false;
+            int hediffsBefore = target.health?.hediffSet?.hediffs?.Count ?? 0;
+            int missingBefore = target.health?.hediffSet?.hediffs?.Count(h => h is Hediff_MissingPart) ?? 0;
+
+            for (int tick = 0; tick < maxTicks; tick++)
+            {
+                Find.TickManager.DoSingleTick();
+
+                if (!sawWarmup && EgoWeaponAnimationManager.IsPlaying(wielder, expectedWarmupClip))
+                    sawWarmup = true;
+                if (!sawExec && EgoWeaponAnimationManager.IsPlaying(wielder, expectedExecClip))
+                    sawExec = true;
+
+                // Keep Wait_Combat from triggering normal melee/ranged attacks mid-skill combo
+                if (sawExec && !(wielder.stances?.curStance is Stance_Warmup) &&
+                    wielder.stances?.curStance is Stance_Mobile &&
+                    EgoWeaponAnimationManager.IsPlaying(wielder))
+                {
+                    wielder.stances.SetStance(new Stance_Cooldown(2, new LocalTargetInfo(target.PositionHeld), null));
+                }
+
+                if (tick == 1 || tick % 10 == 0 || (sawExec && tick % 5 == 0))
+                {
+                    wielder.Drawer.renderer.EnsureGraphicsInitialized();
+                    foreach (Rot4 facing in new[] { Rot4.East, Rot4.West })
+                    {
+                        wielder.Rotation = facing;
+                        wielder.Drawer.renderer.RenderPawnAt(wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.Draw, wielder.DrawPos);
+                    }
+
+                    foreach (string fxDefName in fxDefNames)
+                    {
+                        ThingDef fxDef = DefDatabase<ThingDef>.GetNamedSilentFail(fxDefName);
+                        if (fxDef == null) continue;
+                        List<Thing> spawnedFx = map.listerThings.ThingsOfDef(fxDef);
+                        for (int k = 0; k < spawnedFx.Count; k++)
+                        {
+                            Thing fx = spawnedFx[k];
+                            if (fx == null || fx.Destroyed || !fx.Spawned) continue;
+                            fx.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, fx.DrawPos);
+                            fx.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, fx.DrawPos);
+                            fx.DynamicDrawPhaseAt(DrawPhase.Draw, fx.DrawPos);
+                        }
+                    }
+                }
+
+                if (sawExec && !EgoWeaponAnimationManager.IsPlaying(wielder) && !HasActiveSkillRunners())
+                {
+                    animClearedAfterExec = true;
+                    break;
+                }
+            }
+
+            if (!sawWarmup)
+                throw new InvalidOperationException($"Expected warmup animation '{expectedWarmupClip}' did not start on {wielder.equipment?.Primary?.def?.defName}.");
+            if (!sawExec)
+                throw new InvalidOperationException($"Expected execution animation '{expectedExecClip}' did not start on {wielder.equipment?.Primary?.def?.defName}.");
+            if (!animClearedAfterExec || EgoWeaponAnimationManager.IsPlaying(wielder) || HasActiveSkillRunners())
+                throw new InvalidOperationException($"Execution animation '{expectedExecClip}' or skill runner did not expire cleanly within {maxTicks} ticks.");
+            int hediffsAfter = target.health?.hediffSet?.hediffs?.Count ?? 0;
+            int missingAfter = target.health?.hediffSet?.hediffs?.Count(h => h is Hediff_MissingPart) ?? 0;
+            float hpPctAfter = target.health?.summaryHealth?.SummaryHealthPercent ?? 1f;
+            bool targetAffected = target.Dead || hpPctAfter < 0.999f || missingAfter > missingBefore || hediffsAfter > hediffsBefore;
+            if (!targetAffected)
+                throw new InvalidOperationException($"Expected target '{target.LabelShort}' to take damage from '{expectedExecClip}' (hpPct={hpPctAfter:F3}, hediffs={hediffsBefore}->{hediffsAfter}, missing={missingBefore}->{missingAfter}).");
+        }
+
+        void ValidateNormalMeleeGuarantee(ThingWithComps weapon, string expectedClipPrefix, ref Pawn targetDummy, bool staggerTargetBetweenSwings = true)
+        {
+            FieldInfo curMeleeVerbField = typeof(Pawn_MeleeVerbs).GetField("curMeleeVerb", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?? throw new InvalidOperationException("Pawn_MeleeVerbs.curMeleeVerb field not found.");
+
+            // 1. Ensure terrain tools (4% dirt/sand kicks) are completely suppressed while holding an E.G.O. weapon
+            List<VerbEntry> terrainVerbs = wielder.meleeVerbs.GetUpdatedAvailableVerbsList(terrainTools: true);
+            if (terrainVerbs.Count != 0)
+                throw new InvalidOperationException($"Expected 0 terrain melee verbs while wielding {weapon.def.defName}, got {terrainVerbs.Count}.");
+
+            // 2. Ensure unarmed body verbs (fist/head/teeth) are filtered out and only primary E.G.O. weapon verbs remain
+            List<VerbEntry> availableVerbs = wielder.meleeVerbs.GetUpdatedAvailableVerbsList(terrainTools: false);
+            if (availableVerbs.Count == 0 || availableVerbs.Any(ve => ve.verb == null || ve.verb.EquipmentSource != weapon))
+                throw new InvalidOperationException($"Non-weapon melee verb leaked into available list for {weapon.def.defName}.");
+
+            // 3. Re-roll verb selection 40 times across cache invalidations to confirm 100% weapon selection
+            for (int roll = 0; roll < 40; roll++)
+            {
+                curMeleeVerbField.SetValue(wielder.meleeVerbs, null);
+                Verb chosen = wielder.meleeVerbs.TryGetMeleeVerb(targetDummy);
+                if (chosen == null || chosen.EquipmentSource != weapon)
+                    throw new InvalidOperationException($"Roll {roll}: TryGetMeleeVerb returned non-weapon verb '{chosen}' for {weapon.def.defName}.");
+            }
+
+            // 4. Execute 6 consecutive normal melee swings (covering hit/miss/dodge/lethal paths) and verify every swing plays custom animation
+            for (int swing = 0; swing < 6; swing++)
+            {
+                if (targetDummy == null || targetDummy.Dead || !targetDummy.Spawned || targetDummy.Destroyed)
+                {
+                    CleanupPawn(targetDummy);
+                    targetDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                }
+
+                PrepareWielderForCast();
+                EgoWeaponAnimationManager.Stop(wielder);
+                if (!wielder.meleeVerbs.TryMeleeAttack(targetDummy))
+                    throw new InvalidOperationException($"Normal TryMeleeAttack failed on swing {swing} for {weapon.def.defName}.");
+
+                if (!EgoWeaponAnimationManager.IsPlaying(wielder, expectedClipPrefix))
+                {
+                    string activeClipId = EgoWeaponAnimationManager.TryGetActive(wielder, out var act) ? (act?.ClipId ?? "<none>") : "<none>";
+                    throw new InvalidOperationException($"Normal melee swing {swing} on {weapon.def.defName} failed to trigger animation prefix '{expectedClipPrefix}' (active={activeClipId}).");
+                }
+
+                if (staggerTargetBetweenSwings)
+                {
+                    for (int t = 0; t < 2; t++)
+                    {
+                        Find.TickManager.DoSingleTick();
+                    }
+                }
+
+                wielder.Drawer.renderer.EnsureGraphicsInitialized();
+                foreach (Rot4 facing in new[] { Rot4.East, Rot4.West })
+                {
+                    wielder.Rotation = facing;
+                    wielder.Drawer.renderer.RenderPawnAt(wielder.DrawPos);
+                    wielder.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, wielder.DrawPos);
+                    wielder.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, wielder.DrawPos);
+                    wielder.DynamicDrawPhaseAt(DrawPhase.Draw, wielder.DrawPos);
+                }
+            }
+
+            PrepareWielderForCast();
+            EgoWeaponAnimationManager.Stop(wielder);
+        }
+
+        void ValidateRangedShotAnim(ThingWithComps weapon, string expectedShotClip, ref Pawn targetDummy, int maxTicks = 220, string expectedWarmupClip = null)
+        {
+            if (targetDummy == null || targetDummy.Dead || !targetDummy.Spawned || targetDummy.Destroyed)
+            {
+                CleanupPawn(targetDummy);
+                targetDummy = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            }
+
+            PrepareWielderForCast();
+            EgoWeaponAnimationManager.Stop(wielder);
+            Verb shotVerb = wielder.CurrentEffectiveVerb
+                ?? throw new InvalidOperationException($"{weapon.def.defName} missing CurrentEffectiveVerb.");
+            if (!shotVerb.TryStartCastOn(new LocalTargetInfo(targetDummy), false))
+                throw new InvalidOperationException($"{weapon.def.defName} normal ranged TryStartCastOn failed.");
+
+            bool sawWarmup = string.IsNullOrEmpty(expectedWarmupClip);
+            bool sawShot = false;
+            for (int tick = 0; tick < maxTicks; tick++)
+            {
+                Find.TickManager.DoSingleTick();
+                if (!sawWarmup && EgoWeaponAnimationManager.IsPlaying(wielder, expectedWarmupClip))
+                    sawWarmup = true;
+                if (!sawShot && EgoWeaponAnimationManager.IsPlaying(wielder, expectedShotClip))
+                    sawShot = true;
+
+                if (tick == 1 || tick % 10 == 0 || (sawShot && tick % 5 == 0))
+                {
+                    wielder.Drawer.renderer.EnsureGraphicsInitialized();
+                    foreach (Rot4 facing in new[] { Rot4.East, Rot4.West })
+                    {
+                        wielder.Rotation = facing;
+                        wielder.Drawer.renderer.RenderPawnAt(wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.Draw, wielder.DrawPos);
+                    }
+                }
+
+                if (sawShot && !EgoWeaponAnimationManager.IsPlaying(wielder))
+                    break;
+            }
+
+            if (!sawWarmup)
+                throw new InvalidOperationException($"{weapon.def.defName} normal ranged warmup did not trigger '{expectedWarmupClip}'.");
+            if (!sawShot)
+            {
+                string activeClip = EgoWeaponAnimationManager.TryGetActive(wielder, out var act) ? (act?.ClipId ?? "<none>") : "<none>";
+                string stanceName = wielder.stances?.curStance?.GetType().Name ?? "<null>";
+                bool canHit = shotVerb.CanHitTarget(new LocalTargetInfo(targetDummy));
+                throw new InvalidOperationException(
+                    $"{weapon.def.defName} normal ranged shot did not trigger '{expectedShotClip}' " +
+                    $"(verb={shotVerb.GetType().Name}, stance={stanceName}, clip={activeClip}, canHit={canHit}, " +
+                    $"casterDown={wielder.Downed}, targetDead={targetDummy?.Dead}, targetDown={targetDummy?.Downed}, " +
+                    $"dist={(targetDummy != null ? wielder.Position.DistanceTo(targetDummy.Position) : -1f):F1}).");
+            }
+        }
+
+        Pawn csCloseTarget = null;
+        Pawn csMidTarget = null;
+        Pawn csNormalMeleeTarget = null;
+        Pawn csNormalRangedTarget = null;
+        Pawn ntNormalTarget = null;
+        Pawn ntTarget = null;
+        Pawn jbNormalTarget = null;
+        Pawn jbTarget = null;
+        Pawn lampNormalTarget = null;
+        Pawn lampTarget = null;
+        Pawn hvNormalTarget = null;
+        Pawn hvTarget = null;
+        Pawn gzNormalTarget = null;
+        Pawn gzTarget = null;
+        Pawn bkMeleeTarget = null;
+        Pawn bkRangedTarget = null;
+        Pawn bkSkillTarget = null;
+        Pawn mbMeleeTarget = null;
+        Pawn mbRangedTarget = null;
+        Pawn mbSkillTarget = null;
+        Pawn laMeleeTarget = null;
+        Pawn laRangedTarget = null;
+        Pawn laSkillTarget = null;
+        Pawn currentDummy = null;
+        try
+        {
+            // 1. Crimson Scar: normal melee & ranged shots + close-range combo + mid-range combo
+            ThingWithComps crimsonWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_LittleRedRidingHoodedMercenary", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(crimsonWeapon);
+            Ability csAbility = crimsonWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_LittleRedRidingHoodedMercenary missing CrimsonScar_HuntBarrage ability.");
+            if (csAbility.def.defName != "CrimsonScar_HuntBarrage")
+                throw new InvalidOperationException($"Unexpected Crimson Scar ability: {csAbility.def.defName}.");
+
+            csNormalMeleeTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(crimsonWeapon, "CrimsonScar_MeleeSlash", ref csNormalMeleeTarget);
+            CleanupPawn(csNormalMeleeTarget);
+            csNormalMeleeTarget = null;
+
+            csNormalRangedTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            PrepareWielderForCast();
+            Verb csShotVerb = wielder.CurrentEffectiveVerb
+                ?? throw new InvalidOperationException("EgoWeapon_LittleRedRidingHoodedMercenary missing CurrentEffectiveVerb.");
+            if (!csShotVerb.TryStartCastOn(new LocalTargetInfo(csNormalRangedTarget), false))
+                throw new InvalidOperationException("Crimson Scar normal ranged TryStartCastOn failed.");
+            bool sawNormalRangeShot = false;
+            for (int tick = 0; tick < 120; tick++)
+            {
+                Find.TickManager.DoSingleTick();
+                if (!sawNormalRangeShot && EgoWeaponAnimationManager.IsPlaying(wielder, "CrimsonScar_RangeShot"))
+                {
+                    sawNormalRangeShot = true;
+                }
+                if (tick == 1 || tick % 10 == 0)
+                {
+                    wielder.Drawer.renderer.EnsureGraphicsInitialized();
+                    foreach (Rot4 facing in new[] { Rot4.East, Rot4.West })
+                    {
+                        wielder.Rotation = facing;
+                        wielder.Drawer.renderer.RenderPawnAt(wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, wielder.DrawPos);
+                        wielder.DynamicDrawPhaseAt(DrawPhase.Draw, wielder.DrawPos);
+                    }
+                }
+                if (sawNormalRangeShot && !EgoWeaponAnimationManager.IsPlaying(wielder))
+                {
+                    break;
+                }
+            }
+            if (!sawNormalRangeShot)
+                throw new InvalidOperationException("Crimson Scar normal ranged shot did not trigger CrimsonScar_RangeShot animation.");
+            CleanupPawn(csNormalRangedTarget);
+            csNormalRangedTarget = null;
+
+            csCloseTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!csAbility.verb.TryStartCastOn(new LocalTargetInfo(csCloseTarget), false))
+                throw new InvalidOperationException("CrimsonScar_HuntBarrage (close) TryStartCastOn failed.");
+            RenderAndWaitForSkill(csCloseTarget, "CrimsonScar_SkillWarmup", "CrimsonScar_SkillClose", 260);
+            CleanupPawn(csCloseTarget);
+            csCloseTarget = null;
+
+            // Mid-range barrage test
+            csAbility.ResetCooldown();
+            csMidTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!csAbility.verb.TryStartCastOn(new LocalTargetInfo(csMidTarget), false))
+                throw new InvalidOperationException("CrimsonScar_HuntBarrage (ranged) TryStartCastOn failed.");
+            RenderAndWaitForSkill(csMidTarget, "CrimsonScar_SkillWarmup", "CrimsonScar_SkillRanged", 260);
+            CleanupPawn(csMidTarget);
+            csMidTarget = null;
+
+            // 2. Mimicry: normal cleave guarantee + warmup hoist -> slam + ground rupture
+            PrepareWielderForCast();
+            ThingWithComps mimicryWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_NothingThere", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(mimicryWeapon);
+            ntNormalTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(mimicryWeapon, "Mimicry_", ref ntNormalTarget);
+            CleanupPawn(ntNormalTarget);
+            ntNormalTarget = null;
+
+            Ability ntAbility = mimicryWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_NothingThere missing Mimicry_Goodbye ability.");
+            ntTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!ntAbility.verb.TryStartCastOn(new LocalTargetInfo(ntTarget), false))
+                throw new InvalidOperationException("Mimicry_Goodbye TryStartCastOn failed.");
+            RenderAndWaitForSkill(ntTarget, "Mimicry_GoodbyeWindup", "Mimicry_GoodbyeSlam", 260);
+            CleanupPawn(ntTarget);
+            ntTarget = null;
+
+            // 3. Justitia: normal slash guarantee + warmup golden scale charge -> 10-beat Pale Judgement flurry
+            PrepareWielderForCast();
+            ThingWithComps justitiaWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_JudgementBird", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(justitiaWeapon);
+            jbNormalTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(justitiaWeapon, "Justitia_NormalSlash", ref jbNormalTarget);
+            CleanupPawn(jbNormalTarget);
+            jbNormalTarget = null;
+
+            Ability jbAbility = justitiaWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_JudgementBird missing Justitia_PaleJudgement ability.");
+            if (jbAbility.def.defName != "Justitia_PaleJudgement")
+                throw new InvalidOperationException($"Unexpected Justitia ability: {jbAbility.def.defName}.");
+            jbTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!jbAbility.verb.TryStartCastOn(new LocalTargetInfo(jbTarget), false))
+                throw new InvalidOperationException("Justitia_PaleJudgement TryStartCastOn failed.");
+            RenderAndWaitForSkill(jbTarget, "Justitia_VerdictCharge", "Justitia_VerdictFlurry", 260);
+            CleanupPawn(jbTarget);
+            jbTarget = null;
+
+            // 4. Big Bird (Lamp): normal smash + Lantern of Salvation skill
+            PrepareWielderForCast();
+            ThingWithComps lampWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_BigBird", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(lampWeapon);
+            lampNormalTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(lampWeapon, "Lamp_NormalSmash", ref lampNormalTarget);
+            CleanupPawn(lampNormalTarget);
+            lampNormalTarget = null;
+
+            Ability lampAbility = lampWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_BigBird missing Lamp_LanternSalvation ability.");
+            if (lampAbility.def.defName != "Lamp_LanternSalvation")
+                throw new InvalidOperationException($"Unexpected BigBird ability: {lampAbility.def.defName}.");
+            lampTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!lampAbility.verb.TryStartCastOn(new LocalTargetInfo(lampTarget), false))
+                throw new InvalidOperationException("Lamp_LanternSalvation TryStartCastOn failed.");
+            RenderAndWaitForSkill(lampTarget, "Lamp_SkillWarmup", "Lamp_SkillSlam", 260);
+            CleanupPawn(lampTarget);
+            lampTarget = null;
+
+            // 5. Burrowing Heaven (Heaven): normal thrust + Erupting Root Impale skill
+            PrepareWielderForCast();
+            ThingWithComps heavenWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_BurrowingHeaven", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(heavenWeapon);
+            hvNormalTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(heavenWeapon, "Heaven_NormalThrust", ref hvNormalTarget);
+            CleanupPawn(hvNormalTarget);
+            hvNormalTarget = null;
+
+            Ability hvAbility = heavenWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_BurrowingHeaven missing Heaven_RootImpale ability.");
+            if (hvAbility.def.defName != "Heaven_RootImpale")
+                throw new InvalidOperationException($"Unexpected Heaven ability: {hvAbility.def.defName}.");
+            hvTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!hvAbility.verb.TryStartCastOn(new LocalTargetInfo(hvTarget), false))
+                throw new InvalidOperationException("Heaven_RootImpale TryStartCastOn failed.");
+            RenderAndWaitForSkill(hvTarget, "Heaven_SkillWarmup", "Heaven_SkillSkewer", 260);
+            CleanupPawn(hvTarget);
+            hvTarget = null;
+
+            // 6. Schadenfreude (Gaze): normal grind + Keyhole Sawstorm skill
+            PrepareWielderForCast();
+            ThingWithComps gazeWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_Schadenfreude", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(gazeWeapon);
+            gzNormalTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(gazeWeapon, "Gaze_NormalGrind", ref gzNormalTarget);
+            CleanupPawn(gzNormalTarget);
+            gzNormalTarget = null;
+
+            Ability gzAbility = gazeWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_Schadenfreude missing Gaze_KeyholeSawstorm ability.");
+            if (gzAbility.def.defName != "Gaze_KeyholeSawstorm")
+                throw new InvalidOperationException($"Unexpected Gaze ability: {gzAbility.def.defName}.");
+            gzTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!gzAbility.verb.TryStartCastOn(new LocalTargetInfo(gzTarget), false))
+                throw new InvalidOperationException("Gaze_KeyholeSawstorm TryStartCastOn failed.");
+            RenderAndWaitForSkill(gzTarget, "Gaze_SkillWarmup", "Gaze_SkillStorm", 260);
+            CleanupPawn(gzTarget);
+            gzTarget = null;
+
+            // 7. Punishing Bird (Beak): melee whip + ranged shot + Punishing Barrage skill
+            PrepareWielderForCast();
+            ThingWithComps beakWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_PunishingBird", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(beakWeapon);
+            bkMeleeTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(beakWeapon, "Beak_MeleeWhip", ref bkMeleeTarget);
+            CleanupPawn(bkMeleeTarget);
+            bkMeleeTarget = null;
+
+            bkRangedTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            ValidateRangedShotAnim(beakWeapon, "Beak_RangeShot", ref bkRangedTarget, 140);
+            CleanupPawn(bkRangedTarget);
+            bkRangedTarget = null;
+
+            Ability bkAbility = beakWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_PunishingBird missing Beak_PunishingBarrage ability.");
+            if (bkAbility.def.defName != "Beak_PunishingBarrage")
+                throw new InvalidOperationException($"Unexpected Beak ability: {bkAbility.def.defName}.");
+            bkSkillTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!bkAbility.verb.TryStartCastOn(new LocalTargetInfo(bkSkillTarget), false))
+                throw new InvalidOperationException("Beak_PunishingBarrage TryStartCastOn failed.");
+            RenderAndWaitForSkill(bkSkillTarget, "Beak_SkillWarmup", "Beak_SkillBarrage", 260);
+            CleanupPawn(bkSkillTarget);
+            bkSkillTarget = null;
+
+            // 8. Der Freischutz (Magic Bullet): melee bash + ranged warmup/shot + Magic Bullet Salvo skill
+            PrepareWielderForCast();
+            ThingWithComps mbWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_DerFreischutz", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(mbWeapon);
+            mbMeleeTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(mbWeapon, "MagicBullet_MeleeBash", ref mbMeleeTarget);
+            CleanupPawn(mbMeleeTarget);
+            mbMeleeTarget = null;
+
+            mbRangedTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            ValidateRangedShotAnim(mbWeapon, "MagicBullet_RangeShot", ref mbRangedTarget, 220, "MagicBullet_RangeWarmup");
+            CleanupPawn(mbRangedTarget);
+            mbRangedTarget = null;
+
+            Ability mbAbility = mbWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_DerFreischutz missing MagicBullet_DimensionalBarrage ability.");
+            if (mbAbility.def.defName != "MagicBullet_DimensionalBarrage")
+                throw new InvalidOperationException($"Unexpected MagicBullet ability: {mbAbility.def.defName}.");
+            mbSkillTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!mbAbility.verb.TryStartCastOn(new LocalTargetInfo(mbSkillTarget), false))
+                throw new InvalidOperationException("MagicBullet_DimensionalBarrage TryStartCastOn failed.");
+            RenderAndWaitForSkill(mbSkillTarget, "MagicBullet_SkillWarmup", "MagicBullet_SkillSalvo", 260);
+            CleanupPawn(mbSkillTarget);
+            mbSkillTarget = null;
+
+            // 9. Laetitia: melee bash + ranged shot + redesigned SendTheGift on non-humanlike dummy + Heartbreak without spiders
+            SuppressNearbyExternalHostiles();
+            PrepareWielderForCast();
+            ThingWithComps laWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_Laetitia", true));
+            wielder.equipment.DestroyAllEquipment();
+            wielder.equipment.AddEquipment(laWeapon);
+            laMeleeTarget = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+            ValidateNormalMeleeGuarantee(laWeapon, "Laetitia_MeleeBash", ref laMeleeTarget);
+            CleanupPawn(laMeleeTarget);
+            laMeleeTarget = null;
+
+            laRangedTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            ValidateRangedShotAnim(laWeapon, "Laetitia_RangeShot", ref laRangedTarget, 180);
+            CleanupPawn(laRangedTarget);
+            laRangedTarget = null;
+
+            Ability laAbility = laWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                ?? throw new InvalidOperationException("EgoWeapon_Laetitia missing LaetitiaEGO_SendTheGift ability.");
+            if (laAbility.def.defName != "LaetitiaEGO_SendTheGift")
+                throw new InvalidOperationException($"Unexpected Laetitia ability: {laAbility.def.defName}.");
+            ThingDef spiderSpawnerDef = DefDatabase<ThingDef>.GetNamed("SpawningLaetitiaMonster", true);
+            int spidersBefore = map.listerThings.ThingsOfDef(spiderSpawnerDef).Count;
+            laSkillTarget = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+            PrepareWielderForCast();
+            if (!laAbility.verb.TryStartCastOn(new LocalTargetInfo(laSkillTarget), false))
+                throw new InvalidOperationException("LaetitiaEGO_SendTheGift TryStartCastOn failed on non-humanlike hostile dummy.");
+            RenderAndWaitForSkill(laSkillTarget, "Laetitia_SkillWarmup", "Laetitia_SkillGift", 260);
+
+            HediffDef aggressiveGiftDef = DefDatabase<HediffDef>.GetNamed("LaetitiaGiftAggresive", true);
+            if (!laSkillTarget.Dead && laSkillTarget.health?.hediffSet?.HasHediff(aggressiveGiftDef) != true)
+                throw new InvalidOperationException("Expected living target to carry LaetitiaGiftAggresive after SendTheGift skill.");
+
+            for (int followShot = 0; followShot < 6 && !laSkillTarget.Dead && laSkillTarget.health.hediffSet.HasHediff(aggressiveGiftDef); followShot++)
+            {
+                ValidateRangedShotAnim(laWeapon, "Laetitia_RangeShot", ref laSkillTarget, 180);
+            }
+
+            if (!laSkillTarget.Dead && laSkillTarget.health?.hediffSet?.HasHediff(aggressiveGiftDef) == true)
+                throw new InvalidOperationException("Expected Laetitia rifle follow-up shots to crack and detonate LaetitiaGiftAggresive.");
+
+            int spidersAfter = map.listerThings.ThingsOfDef(spiderSpawnerDef).Count;
+            if (spidersAfter > spidersBefore)
+                throw new InvalidOperationException($"Expected 0 SpawningLaetitiaMonster spawns from redesigned E.G.O. SendTheGift, found {spidersAfter - spidersBefore}.");
+
+            CleanupPawn(laSkillTarget);
+            laSkillTarget = null;
+
+            void ValidateMeleeOnlyEgoWeapon(string weaponDefName, string meleeClipPrefix, string expectedAbilityDefName, string warmupClip, string execClip)
+            {
+                PrepareWielderForCast();
+                ThingWithComps weapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(weaponDefName, true));
+                wielder.equipment.DestroyAllEquipment();
+                wielder.equipment.AddEquipment(weapon);
+
+                currentDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                ValidateNormalMeleeGuarantee(weapon, meleeClipPrefix, ref currentDummy);
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                Ability ability = weapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                    ?? throw new InvalidOperationException($"{weaponDefName} missing {expectedAbilityDefName} ability.");
+                if (ability.def.defName != expectedAbilityDefName)
+                    throw new InvalidOperationException($"Unexpected {weaponDefName} ability: {ability.def.defName}.");
+
+                currentDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                PrepareWielderForCast();
+                if (!ability.verb.TryStartCastOn(new LocalTargetInfo(currentDummy), false))
+                    throw new InvalidOperationException($"{expectedAbilityDefName} TryStartCastOn failed.");
+                RenderAndWaitForSkill(currentDummy, warmupClip, execClip, 260);
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+            }
+
+            void ValidateRangedEgoWeapon(string weaponDefName, string meleeClipPrefix, string shotClip, int shotMaxTicks, string expectedAbilityDefName, string warmupClip, string execClip)
+            {
+                PrepareWielderForCast();
+                ThingWithComps weapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(weaponDefName, true));
+                wielder.equipment.DestroyAllEquipment();
+                wielder.equipment.AddEquipment(weapon);
+
+                currentDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                ValidateNormalMeleeGuarantee(weapon, meleeClipPrefix, ref currentDummy);
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                currentDummy = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+                ValidateRangedShotAnim(weapon, shotClip, ref currentDummy, shotMaxTicks);
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                Ability ability = weapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                    ?? throw new InvalidOperationException($"{weaponDefName} missing {expectedAbilityDefName} ability.");
+                if (ability.def.defName != expectedAbilityDefName)
+                    throw new InvalidOperationException($"Unexpected {weaponDefName} ability: {ability.def.defName}.");
+
+                currentDummy = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+                PrepareWielderForCast();
+                if (!ability.verb.TryStartCastOn(new LocalTargetInfo(currentDummy), false))
+                    throw new InvalidOperationException($"{expectedAbilityDefName} TryStartCastOn failed.");
+                RenderAndWaitForSkill(currentDummy, warmupClip, execClip, 260);
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+            }
+
+            // 10-13: Solemn Lament, Grinder Mk4, Frost Splinter, Logging
+            SuppressNearbyExternalHostiles();
+            ValidateRangedEgoWeapon("EgoWeapon_FuneralOfDeadButterflies", "SolemnLament_MeleeWhip", "SolemnLament_RangeShot", 200, "SolemnLament_ButterflyRequiem", "SolemnLament_SkillWarmup", "SolemnLament_SkillRequiem");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_AllAroundHelper", "GrinderMk4_NormalSaw", "GrinderMk4_OverdriveRush", "GrinderMk4_SkillWarmup", "GrinderMk4_SkillRush");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_SnowQueen", "FrostSplinter_NormalThrust", "FrostSplinter_GlacialDuel", "FrostSplinter_SkillWarmup", "FrostSplinter_SkillPierce");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_WarmHeartedWoodsman", "Logging_NormalChop", "Logging_HeartCleave", "Logging_SkillWarmup", "Logging_SkillCleave");
+
+            // 14-17: Harvest, Fourth Match Flame, Void Dream, So Cute!!!
+            SuppressNearbyExternalHostiles();
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_ScarecrowSearchingForWisdom", "Harvest_NormalRake", "Harvest_WisdomDrain", "Harvest_SkillWarmup", "Harvest_SkillDrain");
+            ValidateRangedEgoWeapon("EgoWeapon_ScorchedGirl", "FourthMatch_MeleeBash", "FourthMatch_RangeShot", 220, "FourthMatchFlame_MatchIgnition", "FourthMatch_SkillWarmup", "FourthMatch_SkillIgnition");
+            ValidateRangedEgoWeapon("EgoWeapon_VoidDream", "VoidDream_MeleeTap", "VoidDream_RangeShot", 200, "EngulfingDream_LullabyBurst", "VoidDream_SkillWarmup", "VoidDream_SkillLullaby");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_Ppodae", "SoCute_NormalClaw", "SoCute_FrenzyMaul", "SoCute_SkillWarmup", "SoCute_SkillMaul");
+
+            // 18-22: Cosmos Spear, Meat Lantern, Penitence, Wingbeat, Soda
+            SuppressNearbyExternalHostiles();
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_FragmentOfTheUniverse", "CosmosSpear_NormalThrust", "CosmosSpear_StarlightEcho", "CosmosSpear_SkillWarmup", "CosmosSpear_SkillEcho");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_MeatLantern", "MeatLantern_NormalChomp", "Whirlwind_OmNomNom", "MeatLantern_SkillWarmup", "MeatLantern_SkillChomp");
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_OneSin", "Penitence_NormalSwing", "Penitence_Absolution", "Penitence_SkillWarmup", "Penitence_SkillAbsolution");
+            SuppressNearbyExternalHostiles();
+            ValidateMeleeOnlyEgoWeapon("EgoWeapon_FairyFestival", "Wingbeat_NormalSlash", "Wingbeat_FairyFeast", "Wingbeat_SkillWarmup", "Wingbeat_SkillFeast");
+            ValidateRangedEgoWeapon("EgoWeapon_WellCheers", "Soda_MeleeBash", "Soda_RangeShot", 200, "Soda_RefreshingSplash", "Soda_SkillWarmup", "Soda_SkillSplash");
+
+            // 23. Auto-cast toggle UI eligibility, combat execution (touch, mid-range melee, ranged) & persistence fixture
+            {
+                GameComponent_LC gcAuto = GameComponent_LC.Instance
+                    ?? throw new InvalidOperationException("GameComponent_LC.Instance unavailable during E.G.O. auto-cast validation.");
+
+                IntVec3 FindShortMidRangeCell(IntVec3 origin)
+                {
+                    foreach (IntVec3 c in GenRadial.RadialCellsAround(origin, 4f, false))
+                    {
+                        int distSq = (c - origin).LengthHorizontalSquared;
+                        if (distSq >= 4 && distSq <= 16
+                            && c.InBounds(map) && !c.Fogged(map) && c.Standable(map)
+                            && c.GetRegion(map) != null && c.GetEdifice(map) == null
+                            && GenSight.LineOfSight(origin, c, map, skipFirstCell: true))
+                        {
+                            return c;
+                        }
+                    }
+
+                    return FindSafePawnCell(map, origin + new IntVec3(3, 0, 0));
+                }
+
+                void HealPawnToFull(Pawn targetPawn)
+                {
+                    if (targetPawn?.health?.hediffSet == null) return;
+                    var list = targetPawn.health.hediffSet.hediffs.ToList();
+                    foreach (var h in list)
+                    {
+                        if (h is Hediff_Injury || h is Hediff_MissingPart || h.def.isBad)
+                        {
+                            targetPawn.health.RemoveHediff(h);
+                        }
+                    }
+                }
+
+                // 23a. Default OFF state & Gizmo bottom-right checkbox eligibility
+                ThingWithComps autoNtWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_NothingThere", true));
+                wielder.equipment.DestroyAllEquipment();
+                wielder.equipment.AddEquipment(autoNtWeapon);
+                Ability autoNtAbility = autoNtWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                    ?? throw new InvalidOperationException("Auto-cast validation: EgoWeapon_NothingThere missing Mimicry_Goodbye.");
+
+                if (gcAuto.IsEgoWeaponAutoCastEnabled(autoNtWeapon))
+                    throw new InvalidOperationException("Auto-cast state on a fresh E.G.O. weapon should default to false.");
+
+                Command_Ability ntCmd = autoNtAbility.GetGizmos().OfType<Command_Ability>().FirstOrDefault()
+                    ?? throw new InvalidOperationException("Auto-cast validation: Mimicry_Goodbye did not yield Command_Ability gizmo.");
+                if (!EgoWeaponAutoCastUtility.IsEligibleCommand(ntCmd))
+                    throw new InvalidOperationException("Auto-cast validation: Mimicry_Goodbye Command_Ability was not recognized as eligible.");
+
+                Rect stdCheckbox = EgoWeaponAutoCastUtility.GetCheckboxRect(new Rect(0f, 0f, 75f, 75f), shrunk: false);
+                if (stdCheckbox.x < 50f || stdCheckbox.y < 50f || stdCheckbox.xMax > 75f || stdCheckbox.yMax > 75f)
+                    throw new InvalidOperationException($"Auto-cast checkbox rect out of bottom-right corner bounds: {stdCheckbox}");
+
+                // Verify auto-cast OFF does not fire Mimicry_Goodbye during Wait_Combat
+                SuppressNearbyExternalHostiles();
+                currentDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                PrepareWielderForCast();
+                wielder.drafter.Drafted = true;
+                wielder.drafter.FireAtWill = true;
+                for (int tick = 0; tick < 35; tick++)
+                {
+                    Find.TickManager.DoSingleTick();
+                    if (autoNtAbility.Casting || autoNtAbility.CooldownTicksRemaining > 0)
+                        throw new InvalidOperationException("Mimicry_Goodbye auto-cast fired while auto-cast toggle was OFF.");
+                }
+
+                // Toggle ON -> touch E.G.O. skill (Mimicry_Goodbye) auto-casts in combat
+                if (!gcAuto.ToggleEgoWeaponAutoCast(autoNtWeapon) || !gcAuto.IsEgoWeaponAutoCastEnabled(autoNtWeapon))
+                    throw new InvalidOperationException("ToggleEgoWeaponAutoCast failed to enable auto-cast.");
+
+                HealPawnToFull(wielder);
+                CleanupPawn(currentDummy);
+                currentDummy = SpawnHostileDummy(FindAdjacentDummyCell(wielder.Position));
+                PrepareWielderForCast();
+                wielder.drafter.Drafted = true;
+                wielder.drafter.FireAtWill = true;
+
+                bool sawTouchAutoCast = false;
+                for (int tick = 0; tick < 260; tick++)
+                {
+                    Find.TickManager.DoSingleTick();
+                    if (autoNtAbility.Casting || autoNtAbility.CooldownTicksRemaining > 0 || EgoWeaponAnimationManager.IsPlaying(wielder, "Mimicry_Goodbye"))
+                    {
+                        sawTouchAutoCast = true;
+                    }
+                    if (sawTouchAutoCast && autoNtAbility.CooldownTicksRemaining > 0 && !autoNtAbility.Casting && !EgoWeaponAnimationManager.IsPlaying(wielder) && !HasActiveSkillRunners())
+                    {
+                        break;
+                    }
+                }
+                if (!sawTouchAutoCast)
+                    throw new InvalidOperationException("Mimicry_Goodbye (touch E.G.O. weapon) did not auto-cast when toggled ON in combat.");
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                // 23b. Mid-range melee E.G.O. skill auto-cast (BigBird / Lamp_LanternSalvation, range 5.5) from 2..4 cells away
+                SuppressNearbyExternalHostiles();
+                ThingWithComps autoLampWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_BigBird", true));
+                wielder.equipment.DestroyAllEquipment();
+                wielder.equipment.AddEquipment(autoLampWeapon);
+                gcAuto.SetEgoWeaponAutoCast(autoLampWeapon, true);
+                Ability autoLampAbility = autoLampWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                    ?? throw new InvalidOperationException("Auto-cast validation: EgoWeapon_BigBird missing Lamp_LanternSalvation.");
+
+                HealPawnToFull(wielder);
+                currentDummy = SpawnHostileDummy(FindShortMidRangeCell(wielder.Position));
+                PrepareWielderForCast();
+                wielder.drafter.Drafted = true;
+                wielder.drafter.FireAtWill = true;
+
+                bool sawMidMeleeAutoCast = false;
+                for (int tick = 0; tick < 260; tick++)
+                {
+                    Find.TickManager.DoSingleTick();
+                    if (autoLampAbility.Casting || autoLampAbility.CooldownTicksRemaining > 0 || EgoWeaponAnimationManager.IsPlaying(wielder, "Lamp_Skill"))
+                    {
+                        sawMidMeleeAutoCast = true;
+                    }
+                    if (sawMidMeleeAutoCast && autoLampAbility.CooldownTicksRemaining > 0 && !autoLampAbility.Casting && !EgoWeaponAnimationManager.IsPlaying(wielder) && !HasActiveSkillRunners())
+                    {
+                        break;
+                    }
+                }
+                if (!sawMidMeleeAutoCast)
+                    throw new InvalidOperationException("Lamp_LanternSalvation (mid-range melee E.G.O. weapon) did not auto-cast when toggled ON in Wait_Combat.");
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                // 23c. Ranged E.G.O. skill auto-cast (PunishingBird / Beak_PunishingBarrage, range 22)
+                SuppressNearbyExternalHostiles();
+                ThingWithComps autoBeakWeapon = (ThingWithComps)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("EgoWeapon_PunishingBird", true));
+                wielder.equipment.DestroyAllEquipment();
+                wielder.equipment.AddEquipment(autoBeakWeapon);
+                gcAuto.SetEgoWeaponAutoCast(autoBeakWeapon, true);
+                Ability autoBeakAbility = autoBeakWeapon.GetComp<CompEquippableAbility>()?.AbilityForReading
+                    ?? throw new InvalidOperationException("Auto-cast validation: EgoWeapon_PunishingBird missing Beak_PunishingBarrage.");
+
+                HealPawnToFull(wielder);
+                currentDummy = SpawnHostileDummy(FindMidRangeTargetCell(wielder.Position));
+                PrepareWielderForCast();
+                wielder.drafter.Drafted = true;
+                wielder.drafter.FireAtWill = true;
+
+                bool sawRangedAutoCast = false;
+                for (int tick = 0; tick < 260; tick++)
+                {
+                    Find.TickManager.DoSingleTick();
+                    if (autoBeakAbility.Casting || autoBeakAbility.CooldownTicksRemaining > 0 || EgoWeaponAnimationManager.IsPlaying(wielder, "Beak_Skill"))
+                    {
+                        sawRangedAutoCast = true;
+                    }
+                    if (sawRangedAutoCast && autoBeakAbility.CooldownTicksRemaining > 0 && !autoBeakAbility.Casting && !EgoWeaponAnimationManager.IsPlaying(wielder) && !HasActiveSkillRunners())
+                    {
+                        break;
+                    }
+                }
+                if (!sawRangedAutoCast)
+                    throw new InvalidOperationException("Beak_PunishingBarrage (ranged E.G.O. weapon) did not auto-cast when toggled ON in combat.");
+                CleanupPawn(currentDummy);
+                currentDummy = null;
+
+                // 23d. Enable auto-cast on persistent NothingThere fixture colonist to verify Save/Reload persistence in CheckReload
+                Pawn savedMimicryPawn = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(p =>
+                    p != wielder && p.equipment?.Primary?.def?.defName == "EgoWeapon_NothingThere")
+                    ?? throw new InvalidOperationException("Could not find persistent EgoWeapon_NothingThere colonist for auto-cast save/reload validation.");
+                gcAuto.SetEgoWeaponAutoCast(savedMimicryPawn.equipment.Primary, true);
+            }
+        }
+        finally
+        {
+            CleanupPawn(wielder);
+            CleanupPawn(csNormalMeleeTarget);
+            CleanupPawn(csNormalRangedTarget);
+            CleanupPawn(csCloseTarget);
+            CleanupPawn(csMidTarget);
+            CleanupPawn(ntNormalTarget);
+            CleanupPawn(ntTarget);
+            CleanupPawn(jbNormalTarget);
+            CleanupPawn(jbTarget);
+            CleanupPawn(lampNormalTarget);
+            CleanupPawn(lampTarget);
+            CleanupPawn(hvNormalTarget);
+            CleanupPawn(hvTarget);
+            CleanupPawn(gzNormalTarget);
+            CleanupPawn(gzTarget);
+            CleanupPawn(bkMeleeTarget);
+            CleanupPawn(bkRangedTarget);
+            CleanupPawn(bkSkillTarget);
+            CleanupPawn(mbMeleeTarget);
+            CleanupPawn(mbRangedTarget);
+            CleanupPawn(mbSkillTarget);
+            CleanupPawn(laMeleeTarget);
+            CleanupPawn(laRangedTarget);
+            CleanupPawn(laSkillTarget);
+            CleanupPawn(currentDummy);
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; EgoWeaponSkillsAndAnimations; All 22 E.G.O. Weapons");
     }
 
     private static void ValidateOrdealAndDepartmentExpansionPhase1(Map map)
@@ -2798,8 +3997,9 @@ public static class GameplayValidation
                 canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
             GenSpawn.Spawn(friendly, FindSafePawnCell(map, map.Center), map);
 
-            // HP Bullet
-            friendly.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Cut, 12f));
+            // HP Bullet (target Torso with AP=2 so random armor deflection or severed finger cannot flake the test)
+            BodyPartRecord torsoPart = friendly.health.hediffSet.GetNotMissingParts().FirstOrDefault(p => p.def == BodyPartDefOf.Torso);
+            friendly.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Cut, 12f, 2f, -1f, null, torsoPart));
             float injuredSummary = friendly.health.summaryHealth.SummaryHealthPercent;
             if (!ManagerBulletUtility.FireBulletAt(map, friendly.Position, EManagerBulletType.HpHeal))
                 throw new InvalidOperationException("HP Bullet failed to fire.");
@@ -2849,7 +4049,7 @@ public static class GameplayValidation
             execTarget = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
                 PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
                 canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
-            IntVec3 execCell = FindSafePawnCell(map, FindFarthestSafeCell(map));
+            IntVec3 execCell = FindFarthestSafeCell(map, minColonistDist: 8);
             GenSpawn.Spawn(execTarget, execCell, map);
             if (!ManagerBulletUtility.FireBulletAt(map, execTarget.Position, EManagerBulletType.Execution))
                 throw new InvalidOperationException("Execution Bullet failed to fire.");
@@ -3027,47 +4227,136 @@ public static class GameplayValidation
         PawnRenderTreeDef treeDef = DefDatabase<PawnRenderTreeDef>.GetNamed("LCOrdeal_Animated", true);
         Type compAnimType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Render.CompOrdealAnimator")
             ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Render.CompOrdealAnimator type.");
+        Type compDawnType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompDawnOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompDawnOrdeal type.");
+        Type compCrimsonType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompCrimsonOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompCrimsonOrdeal type.");
+        Type compAmberType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompAmberOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompAmberOrdeal type.");
+        Type compGreenType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompGreenOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompGreenOrdeal type.");
+        Type compVioletType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompVioletOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompVioletOrdeal type.");
+        Type compWiType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Comps.CompWhiteAndIndigoOrdeal")
+            ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Comps.CompWhiteAndIndigoOrdeal type.");
         Type vfxUtilType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Vfx.OrdealVfxUtility")
             ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Vfx.OrdealVfxUtility type.");
         Type vfxCompType = GenTypes.GetTypeInAnyAssembly("LCAnomalyOrdeals.Vfx.MapComponent_OrdealVfx")
             ?? throw new InvalidOperationException("Missing LCAnomalyOrdeals.Vfx.MapComponent_OrdealVfx type.");
 
-        string[] all22Variants =
+        // 1. Validate ALL 22/22 Ordeals: articulated Spine RenderTrees, part PNGs, Comps, Categories, and FourColorWeapon/Target
+        var articulatedSpecs = new[]
         {
-            "AmberDawn", "CrimsonDawn", "GreenDawn", "VioletDawn",
-            "CrimsonNoon", "GreenNoon", "VioletNoon", "IndigoNoon",
-            "AmberDusk", "CrimsonDusk", "GreenDusk",
-            "AmberMidnight", "GreenMidnight",
-            "VioletMidnightRed", "VioletMidnightWhite", "VioletMidnightBlack", "VioletMidnightPale",
-            "WhiteFixerRed", "WhiteFixerWhite", "WhiteFixerBlack", "WhiteFixerPale", "WhiteClaw"
+            // 4 Dawn (TETH)
+            new { Variant = "AmberDawn",   Tree = "LCOrdeal_Tree_AmberDawn",   Comp = compDawnType,    Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.TETH,  Cat = "TETH",  Parts = new[] { "Body", "UpperJaw", "LowerJaw", "LegFront", "LegMid", "LegBack", "PlatesFront", "PlatesBack" } },
+            new { Variant = "CrimsonDawn", Tree = "LCOrdeal_Tree_CrimsonDawn", Comp = compDawnType,    Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.TETH,  Cat = "TETH",  Parts = new[] { "Body", "Head", "Tongue", "HatCheckered", "HatBlack", "LeftArm", "RightArm", "LeftLeg", "RightLeg" } },
+            new { Variant = "GreenDawn",   Tree = "LCOrdeal_Tree_GreenDawn",   Comp = compDawnType,    Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.TETH,  Cat = "TETH",  Parts = new[] { "Pelvis", "Torso", "ClothBack", "ClothFront", "BackLegUpper", "BackLegLower", "FrontLegUpper", "FrontLegLower", "Head_Green", "Head_Red", "WeaponArm", "WeaponSpear" } },
+            new { Variant = "VioletDawn",  Tree = "LCOrdeal_Tree_VioletDawn",  Comp = compDawnType,    Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.TETH,  Cat = "TETH",  Parts = new[] { "Body", "Tail", "CrawlLeg", "LightCore", "Tendril1", "Tendril2", "Tendril3" } },
+            // 2 Crimson High (HE / WAW)
+            new { Variant = "CrimsonNoon", Tree = "LCOrdeal_Tree_CrimsonNoon", Comp = compCrimsonType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.HE,    Cat = "HE",    Parts = new[] { "Body", "BackLeg1", "BackLeg2", "FrontLeg1", "FrontLeg2", "BackPincerArm", "BackPincerHead", "FrontPincerArm", "FrontPincerHead", "TailBase", "TailHead" } },
+            new { Variant = "CrimsonDusk", Tree = "LCOrdeal_Tree_CrimsonDusk", Comp = compCrimsonType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "BackLeg", "FrontLeg", "ClownHead", "WeaponRight", "WeaponBack", "WeaponTop", "HammerArm", "HammerHead" } },
+            // 2 Amber High (WAW / ALEPH)
+            new { Variant = "AmberDusk",     Tree = "LCOrdeal_Tree_AmberDusk",     Comp = compAmberType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red, Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "UpperJaw", "LowerJaw", "PlatesBack", "PlatesMid", "PlatesFront", "LegFront", "LegMid", "LegBack" } },
+            new { Variant = "AmberMidnight", Tree = "LCOrdeal_Tree_AmberMidnight", Comp = compAmberType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red, Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "Body", "InnerJawLeft", "InnerJawRight", "LeftWing", "RightWing" } },
+            // 3 Green High (HE / WAW / ALEPH)
+            new { Variant = "GreenNoon",     Tree = "LCOrdeal_Tree_GreenNoon",     Comp = compGreenType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.HE,    Cat = "HE",    Parts = new[] { "Body", "BackLeg", "FrontLeg", "Head", "SawArm", "SawBlade", "GunArm" } },
+            new { Variant = "GreenDusk",     Tree = "LCOrdeal_Tree_GreenDusk",     Comp = compGreenType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "FurnaceBack", "Gears", "ExhaustPipes", "ChargeGauge", "BlastGate" } },
+            new { Variant = "GreenMidnight", Tree = "LCOrdeal_Tree_GreenMidnight", Comp = compGreenType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "BaseCore", "LeftShell", "RightShell", "Emitter", "EmitterGlow" } },
+            // 5 Violet High (HE / 4x ALEPH Shrines)
+            new { Variant = "VioletNoon",          Tree = "LCOrdeal_Tree_VioletNoon",          Comp = compVioletType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.HE,    Cat = "HE",    Parts = new[] { "Monolith", "RunesGlow", "Tentacle1", "Tentacle2", "Tentacle3", "Tentacle4", "Tentacle5", "Tentacle6" } },
+            new { Variant = "VioletMidnightRed",   Tree = "LCOrdeal_Tree_VioletMidnightRed",   Comp = compVioletType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "ShrineBase", "RuneAura" } },
+            new { Variant = "VioletMidnightWhite", Tree = "LCOrdeal_Tree_VioletMidnightWhite", Comp = compVioletType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.White, Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "ShrineBase", "RuneAura" } },
+            new { Variant = "VioletMidnightBlack", Tree = "LCOrdeal_Tree_VioletMidnightBlack", Comp = compVioletType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "ShrineBase", "RuneAura" } },
+            new { Variant = "VioletMidnightPale",  Tree = "LCOrdeal_Tree_VioletMidnightPale",  Comp = compVioletType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Pale,  Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "ShrineBase", "RuneAura" } },
+            // 6 Indigo Sweeper (HE), 4 Color Fixers (WAW), and The Claw (ALEPH)
+            new { Variant = "IndigoNoon",      Tree = "LCOrdeal_Tree_IndigoNoon",      Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.HE,    Cat = "HE",    Parts = new[] { "Body", "Head", "BackLeg", "FrontLeg", "BackArm", "FrontArm" } },
+            new { Variant = "WhiteFixerRed",   Tree = "LCOrdeal_Tree_WhiteFixerRed",   Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "Head", "BackLeg", "FrontLeg", "BackArm", "FrontArm", "Weapon" } },
+            new { Variant = "WhiteFixerWhite", Tree = "LCOrdeal_Tree_WhiteFixerWhite", Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.White, Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "Head", "Halo", "BackLeg", "FrontLeg", "BackArm", "FrontArm", "Cannon" } },
+            new { Variant = "WhiteFixerBlack", Tree = "LCOrdeal_Tree_WhiteFixerBlack", Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Black, Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "Head", "BackLeg", "FrontLeg", "BackArm", "FrontArm", "Hammer" } },
+            new { Variant = "WhiteFixerPale",  Tree = "LCOrdeal_Tree_WhiteFixerPale",  Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Pale,  Risk = LCAnomalyCore.Damage.LCRiskLevel.WAW,   Cat = "WAW",   Parts = new[] { "Body", "Head", "BackLeg", "FrontLeg", "BackArm", "Pistol", "FrontArm", "Briefcase" } },
+            new { Variant = "WhiteClaw",       Tree = "LCOrdeal_Tree_WhiteClaw",       Comp = compWiType, Dmg = LCAnomalyCore.Damage.FourColorDamageType.Red,   Risk = LCAnomalyCore.Damage.LCRiskLevel.ALEPH, Cat = "ALEPH", Parts = new[] { "Torso", "Head", "SerumGreen", "BackLeg", "FrontLeg", "BackArm", "ClawUpperArm", "ClawForearm", "ClawHand" } }
         };
-        string[] poseSuffixes = { "_move1", "_move2", "_attack", "_special" };
-
-        foreach (string variant in all22Variants)
+        foreach (var sp in articulatedSpecs)
         {
-            PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + variant, true);
-            if (pk.race.race.renderTree != treeDef)
-                throw new InvalidOperationException($"Ordeal race {pk.race.defName} does not use renderTree LCOrdeal_Animated.");
-            if (pk.race.comps == null || !pk.race.comps.Any(c => c.compClass == compAnimType))
-                throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing CompProperties_OrdealAnimator.");
+            PawnKindDef pk = DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_" + sp.Variant, true);
+            PawnRenderTreeDef expectedTree = DefDatabase<PawnRenderTreeDef>.GetNamed(sp.Tree, true);
+            if (pk.race.race.renderTree != expectedTree)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} expected articulated renderTree {sp.Tree}, got {pk.race.race.renderTree?.defName ?? "<null>"}.");
+            if (pk.race.comps == null || !pk.race.comps.Any(c => c.compClass == sp.Comp))
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing {sp.Comp.Name}.");
 
-            foreach (string suffix in poseSuffixes)
+            var fcTarget = pk.race.GetModExtension<LCAnomalyCore.ModExtensions.FourColorTargetExtension>()
+                ?? throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing FourColorTargetExtension.");
+            if (fcTarget.targetKind != LCAnomalyCore.Damage.FourColorTargetKind.Abnormality)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} expected targetKind=Abnormality.");
+
+            var fcWeapon = pk.race.GetModExtension<LCAnomalyCore.ModExtensions.FourColorWeaponExtension>()
+                ?? throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing FourColorWeaponExtension.");
+            if (fcWeapon.damageType != sp.Dmg || fcWeapon.riskLevel != sp.Risk)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} expected FourColorWeaponExtension {sp.Dmg}/{sp.Risk}.");
+
+            var catExt = pk.race.GetModExtension<LCAnomalyCore.ModExtensions.ModExtension_AbnormalityCategory>()
+                ?? throw new InvalidOperationException($"Ordeal race {pk.race.defName} missing ModExtension_AbnormalityCategory.");
+            if (catExt.abnormalityCategoryDef?.defName != sp.Cat)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} expected {sp.Cat} category.");
+
+            DamageInfo probe = new DamageInfo(RimWorld.DamageDefOf.Cut, 15f, 0f, -1f, null, null, pk.race);
+            LCAnomalyCore.Util.DamageUtils.ConvertWeaponDamage(ref probe);
+            DamageDef expectedDef = sp.Dmg == LCAnomalyCore.Damage.FourColorDamageType.Black ? LCAnomalyCore.Defs.DamageDefOf.LC_BlackDamage
+                : sp.Dmg == LCAnomalyCore.Damage.FourColorDamageType.White ? LCAnomalyCore.Defs.DamageDefOf.LC_WhiteDamage
+                : sp.Dmg == LCAnomalyCore.Damage.FourColorDamageType.Pale ? LCAnomalyCore.Defs.DamageDefOf.LC_PaleDamage
+                : LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage;
+            if (probe.Def != expectedDef)
+                throw new InvalidOperationException($"Ordeal race {pk.race.defName} melee conversion expected {expectedDef.defName}, got {probe.Def?.defName ?? "<null>"}.");
+
+            foreach (string part in sp.Parts)
             {
-                string texBase = "Things/Pawn/Ordeals/" + variant + suffix;
-                if (ContentFinder<Texture2D>.Get(texBase + "_east", reportFailure: false) == null
-                    || ContentFinder<Texture2D>.Get(texBase + "_south", reportFailure: false) == null)
+                string pPath = $"Things/Pawn/Ordeals/{sp.Variant}/Parts/{part}";
+                if (ContentFinder<Texture2D>.Get(pPath, reportFailure: false) == null
+                    || ContentFinder<Texture2D>.Get(pPath + "_L", reportFailure: false) == null)
                 {
-                    throw new InvalidOperationException($"Missing ordeal animation frame texture for {texBase}.");
+                    throw new InvalidOperationException($"Missing articulated Ordeal part texture: {pPath}(_L)");
                 }
             }
         }
+
+        string[] articulatedAnims =
+        {
+            "LCOrdeal_AmberDawn_Idle", "LCOrdeal_AmberDawn_Walk", "LCOrdeal_AmberDawn_Attack", "LCOrdeal_AmberDawn_DigIn", "LCOrdeal_AmberDawn_DigOut",
+            "LCOrdeal_CrimsonDawn_Idle", "LCOrdeal_CrimsonDawn_Walk", "LCOrdeal_CrimsonDawn_Attack", "LCOrdeal_CrimsonDawn_Tamper", "LCOrdeal_CrimsonDawn_Teleport",
+            "LCOrdeal_GreenDawn_Idle", "LCOrdeal_GreenDawn_Walk", "LCOrdeal_GreenDawn_Attack1", "LCOrdeal_GreenDawn_Attack2", "LCOrdeal_GreenDawn_Execution",
+            "LCOrdeal_VioletDawn_Idle", "LCOrdeal_VioletDawn_Walk", "LCOrdeal_VioletDawn_Attack", "LCOrdeal_VioletDawn_Charge",
+            "LCOrdeal_CrimsonNoon_Idle", "LCOrdeal_CrimsonNoon_Walk", "LCOrdeal_CrimsonNoon_Attack1", "LCOrdeal_CrimsonNoon_Attack2", "LCOrdeal_CrimsonNoon_Attack3",
+            "LCOrdeal_CrimsonDusk_Idle", "LCOrdeal_CrimsonDusk_Walk", "LCOrdeal_CrimsonDusk_Roll", "LCOrdeal_CrimsonDusk_Attack1", "LCOrdeal_CrimsonDusk_Attack2",
+            "LCOrdeal_AmberDusk_Idle", "LCOrdeal_AmberDusk_Walk", "LCOrdeal_AmberDusk_Attack", "LCOrdeal_AmberDusk_Spawn", "LCOrdeal_AmberDusk_DigIn", "LCOrdeal_AmberDusk_DigOut",
+            "LCOrdeal_AmberMidnight_Idle", "LCOrdeal_AmberMidnight_Roar", "LCOrdeal_AmberMidnight_DigIn", "LCOrdeal_AmberMidnight_DigOut",
+            "LCOrdeal_GreenNoon_Idle", "LCOrdeal_GreenNoon_Walk", "LCOrdeal_GreenNoon_Attack", "LCOrdeal_GreenNoon_Cooldown",
+            "LCOrdeal_GreenDusk_Idle", "LCOrdeal_GreenDusk_Create",
+            "LCOrdeal_GreenMidnight_Idle", "LCOrdeal_GreenMidnight_Charge", "LCOrdeal_GreenMidnight_Fire",
+            "LCOrdeal_VioletNoon_Idle", "LCOrdeal_VioletNoon_Impact", "LCOrdeal_VioletNoon_Cast",
+            "LCOrdeal_VioletShrine_Idle", "LCOrdeal_VioletShrine_Cast",
+            "LCOrdeal_IndigoNoon_Idle", "LCOrdeal_IndigoNoon_Walk", "LCOrdeal_IndigoNoon_Attack", "LCOrdeal_IndigoNoon_Eat",
+            "LCOrdeal_FixerRed_Idle", "LCOrdeal_FixerRed_Walk", "LCOrdeal_FixerRed_Attack", "LCOrdeal_FixerRed_Special",
+            "LCOrdeal_FixerWhite_Idle", "LCOrdeal_FixerWhite_Walk", "LCOrdeal_FixerWhite_Attack", "LCOrdeal_FixerWhite_Special",
+            "LCOrdeal_FixerBlack_Idle", "LCOrdeal_FixerBlack_Walk", "LCOrdeal_FixerBlack_Attack",
+            "LCOrdeal_FixerPale_Idle", "LCOrdeal_FixerPale_Walk", "LCOrdeal_FixerPale_Attack",
+            "LCOrdeal_WhiteClaw_Idle", "LCOrdeal_WhiteClaw_Walk", "LCOrdeal_WhiteClaw_Attack", "LCOrdeal_WhiteClaw_Serum", "LCOrdeal_WhiteClaw_Groggy"
+        };
+        foreach (string animName in articulatedAnims)
+        {
+            if (DefDatabase<AnimationDef>.GetNamed(animName, true) == null)
+                throw new InvalidOperationException($"Missing articulated Ordeal AnimationDef {animName}.");
+        }
+        if (treeDef == null || compAnimType == null)
+            throw new InvalidOperationException("Fallback ordeal render tree or animator comp missing.");
 
         string[] vfxTextures =
         {
             "FX/Ordeals/LaserBeam", "FX/Ordeals/LaserCore", "FX/Ordeals/LaserHit", "FX/Ordeals/SparkMidnight",
             "FX/Ordeals/BossPortal", "FX/Ordeals/HollowRing", "FX/Ordeals/SoftGlow", "FX/Ordeals/CraterDecal",
             "FX/Ordeals/SlashArc", "FX/Ordeals/TargetMark",
-            "FX/Ordeals/TentacleRed", "FX/Ordeals/TentacleWhite", "FX/Ordeals/TentacleBlack", "FX/Ordeals/PaleEye"
+            "FX/Ordeals/TentacleRed", "FX/Ordeals/TentacleWhite", "FX/Ordeals/TentacleBlack", "FX/Ordeals/PaleEye",
+            "FX/Ordeals/CircusTent"
         };
         foreach (string vfxTex in vfxTextures)
         {
@@ -3077,6 +4366,7 @@ public static class GameplayValidation
 
         Pawn testClaw = null;
         Pawn testTower = null;
+        var testDawns = new List<Pawn>();
         try
         {
             IntVec3 cell1 = FindSafePawnCell(map, FindFarthestSafeCell(map));
@@ -3086,18 +4376,128 @@ public static class GameplayValidation
             GenSpawn.Spawn(testClaw, cell1, map);
             GenSpawn.Spawn(testTower, cell2, map);
 
-            MethodInfo mTrigAtk = compAnimType.GetMethod("TriggerAttackOn", BindingFlags.Public | BindingFlags.Static)
-                ?? throw new InvalidOperationException("Missing CompOrdealAnimator.TriggerAttackOn.");
-            MethodInfo mTrigSpec = compAnimType.GetMethod("TriggerSpecialOn", BindingFlags.Public | BindingFlags.Static)
-                ?? throw new InvalidOperationException("Missing CompOrdealAnimator.TriggerSpecialOn.");
+            // Live articulated render + animation state verification for all 4 Dawn Ordeals
+            foreach (string dKind in new[] { "LCOrdeal_AmberDawn", "LCOrdeal_CrimsonDawn", "LCOrdeal_GreenDawn", "LCOrdeal_VioletDawn" })
+            {
+                Pawn dp = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed(dKind, true), Faction.OfMechanoids);
+                GenSpawn.Spawn(dp, FindSafePawnCell(map, cell2), map);
+                testDawns.Add(dp);
+                ThingComp dc = dp.AllComps.FirstOrDefault(c => c.GetType() == compDawnType)
+                    ?? throw new InvalidOperationException($"Spawned {dKind} missing CompDawnOrdeal.");
+                if (dKind == "LCOrdeal_GreenDawn")
+                    compDawnType.GetMethod("BeginGreenExecution").Invoke(dc, new object[] { dp.Position });
+                else if (dKind == "LCOrdeal_VioletDawn")
+                    compDawnType.GetMethod("SetVioletChargeProgress").Invoke(dc, new object[] { 0.85f });
+                else
+                    compDawnType.GetMethod("NotifyMeleeAttack").Invoke(dc, new object[] { null });
+                dc.CompTick();
+                dp.Drawer.renderer.EnsureGraphicsInitialized();
+                dp.Drawer.renderer.RenderPawnAt(dp.DrawPos);
+                if (dKind == "LCOrdeal_GreenDawn" && dp.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_GreenDawn_Execution")
+                    throw new InvalidOperationException($"GreenDawn expected LCOrdeal_GreenDawn_Execution, got {dp.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+                if (dKind == "LCOrdeal_VioletDawn" && dp.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_VioletDawn_Charge")
+                    throw new InvalidOperationException($"VioletDawn expected LCOrdeal_VioletDawn_Charge, got {dp.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+            }
 
-            mTrigAtk.Invoke(null, new object[] { testClaw, 40 });
-            mTrigSpec.Invoke(null, new object[] { testTower, 40, (Color?)Color.green, 0.9f });
+            // Live articulated render + state verification across Crimson, Amber, Green, and Violet high-tier Ordeals
+            foreach (string cKind in new[] { "LCOrdeal_CrimsonNoon", "LCOrdeal_CrimsonDusk" })
+            {
+                Pawn cp = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed(cKind, true), Faction.OfMechanoids);
+                GenSpawn.Spawn(cp, FindSafePawnCell(map, cell2), map);
+                testDawns.Add(cp);
+                ThingComp cc = cp.AllComps.FirstOrDefault(c => c.GetType() == compCrimsonType)
+                    ?? throw new InvalidOperationException($"Spawned {cKind} missing CompCrimsonOrdeal.");
+                if (cKind == "LCOrdeal_CrimsonNoon")
+                {
+                    compCrimsonType.GetMethod("NotifyMeleeAttack").Invoke(cc, new object[] { null });
+                    cc.CompTick();
+                    cp.Drawer.renderer.EnsureGraphicsInitialized();
+                    cp.Drawer.renderer.RenderPawnAt(cp.DrawPos);
+                    if (cp.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_CrimsonNoon_Attack1")
+                        throw new InvalidOperationException($"CrimsonNoon expected LCOrdeal_CrimsonNoon_Attack1, got {cp.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+                }
+                else
+                {
+                    compCrimsonType.GetMethod("BeginRollCharge").Invoke(cc, new object[] { FindSafePawnCell(map, cell1) });
+                    cc.CompTick();
+                    cp.Drawer.renderer.EnsureGraphicsInitialized();
+                    cp.Drawer.renderer.RenderPawnAt(cp.DrawPos);
+                    if (cp.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_CrimsonDusk_Roll")
+                        throw new InvalidOperationException($"CrimsonDusk expected LCOrdeal_CrimsonDusk_Roll, got {cp.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+                }
+            }
 
-            testClaw.Drawer.renderer.EnsureGraphicsInitialized();
-            testClaw.Drawer.renderer.RenderPawnAt(testClaw.DrawPos);
+            // Live verification: Amber Midnight (split-jaw Roar), Green Dusk (Create), Green Midnight (360 Fire), Violet Noon (Cast), Violet Midnight Red (Cast)
+            Pawn testAmberMid = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_AmberMidnight", true), Faction.OfMechanoids);
+            GenSpawn.Spawn(testAmberMid, FindSafePawnCell(map, cell2), map);
+            testDawns.Add(testAmberMid);
+            ThingComp amc = testAmberMid.AllComps.FirstOrDefault(c => c.GetType() == compAmberType) ?? throw new InvalidOperationException("Missing CompAmberOrdeal.");
+            compAmberType.GetMethod("TriggerSpawnRoar").Invoke(amc, null);
+            amc.CompTick();
+            testAmberMid.Drawer.renderer.EnsureGraphicsInitialized();
+            testAmberMid.Drawer.renderer.RenderPawnAt(testAmberMid.DrawPos);
+
+            Pawn testGreenDusk = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_GreenDusk", true), Faction.OfMechanoids);
+            GenSpawn.Spawn(testGreenDusk, FindSafePawnCell(map, cell2), map);
+            testDawns.Add(testGreenDusk);
+            ThingComp gdc = testGreenDusk.AllComps.FirstOrDefault(c => c.GetType() == compGreenType) ?? throw new InvalidOperationException("Missing CompGreenOrdeal on GreenDusk.");
+            compGreenType.GetMethod("TriggerFactoryCreate").Invoke(gdc, null);
+            gdc.CompTick();
+            testGreenDusk.Drawer.renderer.EnsureGraphicsInitialized();
+            testGreenDusk.Drawer.renderer.RenderPawnAt(testGreenDusk.DrawPos);
+            if (testGreenDusk.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_GreenDusk_Create")
+                throw new InvalidOperationException($"GreenDusk expected LCOrdeal_GreenDusk_Create, got {testGreenDusk.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+
+            ThingComp gmc = testTower.AllComps.FirstOrDefault(c => c.GetType() == compGreenType) ?? throw new InvalidOperationException("Missing CompGreenOrdeal on GreenMidnight.");
+            compGreenType.GetMethod("NotifyMidnightFire").Invoke(gmc, new object[] { 135f, 30 });
+            gmc.CompTick();
             testTower.Drawer.renderer.EnsureGraphicsInitialized();
             testTower.Drawer.renderer.RenderPawnAt(testTower.DrawPos);
+            if (testTower.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_GreenMidnight_Fire")
+                throw new InvalidOperationException($"GreenMidnight expected LCOrdeal_GreenMidnight_Fire, got {testTower.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+
+            foreach (string vKind in new[] { "LCOrdeal_VioletNoon", "LCOrdeal_VioletMidnightRed" })
+            {
+                Pawn vp = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed(vKind, true), Faction.OfMechanoids);
+                GenSpawn.Spawn(vp, FindSafePawnCell(map, cell2), map);
+                testDawns.Add(vp);
+                ThingComp vc = vp.AllComps.FirstOrDefault(c => c.GetType() == compVioletType) ?? throw new InvalidOperationException($"Missing CompVioletOrdeal on {vKind}.");
+                compVioletType.GetMethod("TriggerCast").Invoke(vc, new object[] { 50 });
+                vc.CompTick();
+                vp.Drawer.renderer.EnsureGraphicsInitialized();
+                vp.Drawer.renderer.RenderPawnAt(vp.DrawPos);
+            }
+
+            // Live verification for Indigo Sweeper (Eat), White Fixer Red (Special), and The Claw (Serum -> Attack)
+            Pawn testSweeper = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_IndigoNoon", true), Faction.OfMechanoids);
+            GenSpawn.Spawn(testSweeper, FindSafePawnCell(map, cell2), map);
+            testDawns.Add(testSweeper);
+            ThingComp swc = testSweeper.AllComps.FirstOrDefault(c => c.GetType() == compWiType) ?? throw new InvalidOperationException("Missing CompWhiteAndIndigoOrdeal on IndigoNoon.");
+            compWiType.GetMethod("TriggerEat").Invoke(swc, new object[] { 48 });
+            swc.CompTick();
+            testSweeper.Drawer.renderer.EnsureGraphicsInitialized();
+            testSweeper.Drawer.renderer.RenderPawnAt(testSweeper.DrawPos);
+            if (testSweeper.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_IndigoNoon_Eat")
+                throw new InvalidOperationException($"IndigoNoon expected LCOrdeal_IndigoNoon_Eat, got {testSweeper.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+
+            Pawn testRedFixer = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("LCOrdeal_WhiteFixerRed", true), Faction.OfMechanoids);
+            GenSpawn.Spawn(testRedFixer, FindSafePawnCell(map, cell2), map);
+            testDawns.Add(testRedFixer);
+            ThingComp rfc = testRedFixer.AllComps.FirstOrDefault(c => c.GetType() == compWiType) ?? throw new InvalidOperationException("Missing CompWhiteAndIndigoOrdeal on WhiteFixerRed.");
+            compWiType.GetMethod("TriggerSpecial").Invoke(rfc, new object[] { 46, (IntVec3?)cell1 });
+            rfc.CompTick();
+            testRedFixer.Drawer.renderer.EnsureGraphicsInitialized();
+            testRedFixer.Drawer.renderer.RenderPawnAt(testRedFixer.DrawPos);
+            if (testRedFixer.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_FixerRed_Special")
+                throw new InvalidOperationException($"WhiteFixerRed expected LCOrdeal_FixerRed_Special, got {testRedFixer.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
+
+            ThingComp clawComp = testClaw.AllComps.FirstOrDefault(c => c.GetType() == compWiType) ?? throw new InvalidOperationException("Missing CompWhiteAndIndigoOrdeal on WhiteClaw.");
+            compWiType.GetMethod("TriggerSpecial").Invoke(clawComp, new object[] { 54, (IntVec3?)cell2 });
+            clawComp.CompTick();
+            testClaw.Drawer.renderer.EnsureGraphicsInitialized();
+            testClaw.Drawer.renderer.RenderPawnAt(testClaw.DrawPos);
+            if (testClaw.Drawer.renderer.CurAnimation?.defName != "LCOrdeal_WhiteClaw_Serum")
+                throw new InvalidOperationException($"WhiteClaw expected LCOrdeal_WhiteClaw_Serum, got {testClaw.Drawer.renderer.CurAnimation?.defName ?? "<null>"}.");
 
             vfxUtilType.GetMethod("SpawnBeam", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testTower.DrawPos, 45f, 24f, 1.8f, Color.green, 30, true });
             vfxUtilType.GetMethod("SpawnShockwave", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 0.5f, 4f, Color.cyan, 30, 90f });
@@ -3106,21 +4506,23 @@ public static class GameplayValidation
             vfxUtilType.GetMethod("SpawnPawnAura", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw, "FX/Ordeals/TargetMark", 1.8f, Color.blue, 30, 90f, 0.25f, true });
             vfxUtilType.GetMethod("SpawnFogLine", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, testTower.DrawPos, 2f, 30 });
             vfxUtilType.GetMethod("SpawnFanSweep", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 0f, 240f, 6f, 2f, Color.red, 30 });
+            vfxUtilType.GetMethod("SpawnCircusTent", BindingFlags.Public | BindingFlags.Static).Invoke(null, new object[] { map, testClaw.DrawPos, 2.8f, 40 });
 
             MapComponent vfxComp = map.GetComponent(vfxCompType)
                 ?? throw new InvalidOperationException("MapComponent_OrdealVfx not attached to map.");
             vfxComp.MapComponentUpdate();
             int activeCount = (int)vfxCompType.GetProperty("ActiveCount", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(vfxComp);
-            if (activeCount < 7)
-                throw new InvalidOperationException($"Expected >= 7 active ordeal VFX instances, got {activeCount}.");
+            if (activeCount < 8)
+                throw new InvalidOperationException($"Expected >= 8 active ordeal VFX instances, got {activeCount}.");
         }
         finally
         {
+            foreach (Pawn dp in testDawns) { if (dp != null && !dp.Destroyed) { if (dp.Spawned) dp.DeSpawn(); dp.Destroy(); } }
             if (testClaw != null && !testClaw.Destroyed) { if (testClaw.Spawned) testClaw.DeSpawn(); testClaw.Destroy(); }
             if (testTower != null && !testTower.Destroyed) { if (testTower.Spawned) testTower.DeSpawn(); testTower.Destroy(); }
         }
 
-        Log.Message("[LC17 Validation] GAMEPLAY PASS; OrdealAnimAndVfx; 22_ordeals_4poses/render_tree/14_vfx_textures/live_vfx_draw");
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; OrdealAnimAndVfx; all_22_articulated_ordeals_76anims_4color_melee/15_vfx_textures/live_vfx_draw");
     }
 
     private static void ValidatePhase3AfterLoad(Map map)
@@ -3153,6 +4555,544 @@ public static class GameplayValidation
             || GameComponent_LC.Instance?.HasCoreSuppression(GameComponent_LC.CoreSuppression_Binah) != true)
         {
             throw new InvalidOperationException("Core Suppression mastery flags did not survive save/load.");
+        }
+    }
+
+    private static void ValidatePhase4(Map map, object abnSettings)
+    {
+        (string name, string cat, FourColorDamageType dmgType, LCRiskLevel risk, float rRed, float rWhite, float rBlack, float rPale)[] phase4 =
+        {
+            ("Ppodae", "TETH", FourColorDamageType.Red, LCRiskLevel.TETH, 0.8f, 1.5f, 0.8f, 2.0f),
+            ("WarmHeartedWoodsman", "HE", FourColorDamageType.Red, LCRiskLevel.HE, 0.8f, 1.2f, 0.8f, 1.5f),
+            ("FragmentOfTheUniverse", "TETH", FourColorDamageType.Black, LCRiskLevel.TETH, 1.0f, 1.2f, 0.6f, 2.0f),
+            ("ScarecrowSearchingForWisdom", "HE", FourColorDamageType.Black, LCRiskLevel.HE, 0.6f, 0.8f, 1.3f, 1.5f),
+        };
+
+        // 1. Codex, ritual extraction pool, E.G.O gear profiles, RenderTree, HoldingPlatform plaques, and settings toggles
+        foreach (var (name, cat, dmgType, risk, rRed, rWhite, rBlack, rPale) in phase4)
+        {
+            ThingDef raceDef = DefDatabase<ThingDef>.GetNamed(name, true);
+            ThingDef eggDef = DefDatabase<ThingDef>.GetNamed(name + "Egg", true);
+            if (AbnormalityUtility.ResolveCodexEntry(raceDef)?.defName != name
+                || AbnormalityUtility.ResolveCodexEntry(eggDef)?.defName != name)
+            {
+                throw new InvalidOperationException($"Phase4 Codex entry resolution failed for {name} / {name}Egg.");
+            }
+
+            if (!ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+            {
+                throw new InvalidOperationException($"Phase4 {name}Egg missing from {cat} ritual extraction list.");
+            }
+
+            if (raceDef.race?.renderTree?.defName != name)
+            {
+                throw new InvalidOperationException($"Phase4 {name} expected renderTree '{name}', got '{raceDef.race?.renderTree?.defName ?? "<null>"}'.");
+            }
+
+            if (ContentFinder<Texture2D>.Get($"UI/HoldingPlatform/{name}_English", reportFailure: false) == null
+                || ContentFinder<Texture2D>.Get($"UI/HoldingPlatform/{name}_Simplified Chinese", reportFailure: false) == null)
+            {
+                throw new InvalidOperationException($"Phase4 HoldingPlatform plaque textures missing for {name}.");
+            }
+
+            ThingDef weaponDef = DefDatabase<ThingDef>.GetNamed("EgoWeapon_" + name, true);
+            ThingDef suitDef = DefDatabase<ThingDef>.GetNamed("Apparel_" + name + "Suit", true);
+            DefDatabase<ThingDef>.GetNamed("Accessory_" + name, true);
+
+            if (!FourColorOverrides.TryGetWeaponProfile(weaponDef, out var wp)
+                || wp.damageType != dmgType || wp.riskLevel != risk)
+            {
+                throw new InvalidOperationException($"EgoWeapon_{name} expected {risk}/{dmgType} profile, got {wp.riskLevel}/{wp.damageType}.");
+            }
+
+            if (!FourColorOverrides.TryGetApparelProfile(suitDef, out var ap)
+                || ap.riskLevel != risk
+                || Math.Abs(ap.red - rRed) > 0.001f
+                || Math.Abs(ap.white - rWhite) > 0.001f
+                || Math.Abs(ap.black - rBlack) > 0.001f
+                || Math.Abs(ap.pale - rPale) > 0.001f)
+            {
+                throw new InvalidOperationException($"Apparel_{name}Suit expected {risk} {rRed}/{rWhite}/{rBlack}/{rPale}, got {ap.riskLevel} {ap.red}/{ap.white}/{ap.black}/{ap.pale}.");
+            }
+
+            FieldInfo toggleField = abnSettings.GetType().GetField("Enable" + name)
+                ?? throw new InvalidOperationException($"Missing Phase4 setting toggle Enable{name}.");
+            bool prev = (bool)toggleField.GetValue(abnSettings);
+            try
+            {
+                toggleField.SetValue(abnSettings, false);
+                if (ExtractUtil.Get_AnomlayLvl2DefList_Ritual(cat).Contains(eggDef))
+                {
+                    throw new InvalidOperationException($"Enable{name}=false did not filter {name}Egg.");
+                }
+            }
+            finally
+            {
+                toggleField.SetValue(abnSettings, prev);
+            }
+        }
+
+        // Verify all 4 ShaderDefs compile, all 28 AnimationDefs exist, and all 20 SoundDefs resolve
+        foreach (string shaderName in new[] { "LC_PpodaeSlam", "LC_WoodsmanFurnace", "LC_CosmosSongWave", "LC_ScarecrowDrainBeam" })
+        {
+            ShaderDef sDef = DefDatabase<ShaderDef>.GetNamedSilentFail(shaderName);
+            if (sDef == null || sDef.Shader == null)
+            {
+                throw new InvalidOperationException($"Phase4 ShaderDef '{shaderName}' failed to resolve or compile.");
+            }
+        }
+
+        foreach (string animName in new[]
+        {
+            "Ppodae_Puppy_Idle", "Ppodae_Puppy_Bark", "Ppodae_Puppy_Eat", "Ppodae_Frenzy_Idle", "Ppodae_Frenzy_Walk", "Ppodae_Frenzy_Attack",
+            "Woodsman_Room_Idle", "Woodsman_Room_Awaken", "Woodsman_Escape_Idle", "Woodsman_Escape_Walk", "Woodsman_Attack_Chop", "Woodsman_Attack_Frenzy", "Woodsman_EatHeart", "Woodsman_Dead",
+            "Cosmos_Contained_Idle", "Cosmos_Transform", "Cosmos_Breached_Idle", "Cosmos_Walk", "Cosmos_Attack", "Cosmos_Sing_Start", "Cosmos_Sing",
+            "Scarecrow_Contained_Idle", "Scarecrow_Breached_Idle", "Scarecrow_Walk", "Scarecrow_Attack1", "Scarecrow_Attack2", "Scarecrow_Drink", "Scarecrow_Dead"
+        })
+        {
+            if (DefDatabase<AnimationDef>.GetNamedSilentFail(animName) == null)
+            {
+                throw new InvalidOperationException($"Phase4 AnimationDef '{animName}' missing.");
+            }
+        }
+
+        foreach (string sndName in new[]
+        {
+            "LC_Ppodae_Bark", "LC_Ppodae_Transform", "LC_Ppodae_Atk", "LC_Ppodae_Dead", "LC_Ppodae_Fist",
+            "LC_Woodsman_Default", "LC_Woodsman_Escape", "LC_Woodsman_Atk", "LC_Woodsman_Special", "LC_Woodsman_Dead", "LC_Woodsman_AxeHit",
+            "LC_Cosmos_Default", "LC_Cosmos_Hit", "LC_Cosmos_Sing", "LC_Cosmos_SpearHit",
+            "LC_Scarecrow_Start", "LC_Scarecrow_Atk", "LC_Scarecrow_Drink", "LC_Scarecrow_Dead", "LC_Scarecrow_SpearHit"
+        })
+        {
+            SoundDef sd = DefDatabase<SoundDef>.GetNamed(sndName, true);
+            if (sd.subSounds == null || sd.subSounds.Count == 0)
+            {
+                throw new InvalidOperationException($"Phase4 SoundDef '{sndName}' has no subSounds.");
+            }
+        }
+
+        FieldInfo peTempField = typeof(CompAbnormality).GetField("PeBoxProducedTemp", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Missing CompAbnormality.PeBoxProducedTemp field.");
+
+        // 2. Standard containment, PE-Box production, E.G.O extraction, multi-part Spine rendering, and egg-return across all 4 entities
+        int pIndex = 0;
+        foreach (var (name, _, _, _, _, _, _, _) in phase4)
+        {
+            Pawn worker = SpawnValidationColonist(map, map.Center);
+            worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
+            CompPawnStatus emp = worker.GetComp<CompPawnStatus>() ?? throw new InvalidOperationException("Phase4 validation worker missing CompPawnStatus.");
+            emp.GetPawnStatusLevel(EPawnStatus.Fortitude).Status = 40;
+            emp.GetPawnStatusLevel(EPawnStatus.Prudence).Status = 40;
+            emp.GetPawnStatusLevel(EPawnStatus.Temperance).Status = 40;
+            emp.GetPawnStatusLevel(EPawnStatus.Justice).Status = 40;
+
+            var plat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+            plat.SetFaction(Faction.OfPlayer);
+            IntVec3 cell = FindSafePlatformCell(map);
+            GenSpawn.Spawn(plat, cell, map);
+            map.regionAndRoomUpdater.TryRebuildDirtyRegionsAndRooms();
+
+            Thing egg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(name + "Egg", true));
+            int sig = 0x4c430400 + pIndex++;
+            AbnormalityUtility.TransferSignature(egg, sig);
+            plat.innerContainer.TryAdd(egg);
+            egg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(plat.innerContainer);
+
+            Pawn held = plat.HeldPawn ?? throw new InvalidOperationException($"Phase4 egg failed to enter containment: {name}");
+            CompAbnormality abn = held.GetComp<CompAbnormality>() ?? throw new InvalidOperationException($"Phase4 missing CompAbnormality: {name}");
+            if (abn.biosignature != sig) throw new InvalidOperationException($"Phase4 identity mismatch: {name}");
+
+            AbnormalityUtility.Discover(held.def);
+            plat.GetGizmos().ToList();
+            held.Drawer.renderer.EnsureGraphicsInitialized();
+            plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+            plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+
+            plat.CurWorkType = Enum.GetValues(typeof(EAnomalyWorkType)).Cast<EAnomalyWorkType>()
+                .OrderByDescending(w => abn.CheckStudierSkillRequire(emp, w)).First();
+            float rate = abn.CheckStudierSkillRequire(emp, plat.CurWorkType);
+            if (rate <= 0f) throw new InvalidOperationException($"Phase4 worker cannot work on {name}: rate={rate}");
+
+            abn.PeBoxComp.CurAmountIndiPebox = 0;
+            peTempField.SetValue(abn, 0);
+            Rand.PushState(sig);
+            try
+            {
+                for (int i = 0; i < 24; i++) plat.Notify_StudyInterval(emp);
+            }
+            finally { Rand.PopState(); }
+            if ((int)peTempField.GetValue(abn) <= 0) throw new InvalidOperationException($"Phase4 no interval PeBox produced by {name}");
+
+            // Force Good work tier before Notify_Studied so Qliphoth-1 entities don't breach randomly before EGO/egg-return verification
+            peTempField.SetValue(abn, abn.PeBoxComp.Props.amountProdueRangeNormal.max + 1);
+            abn.Notify_Studied(worker);
+            if (abn.PeBoxComp.CurAmountIndiPebox <= 0) throw new InvalidOperationException($"Phase4 no PeBox spawned by {name}");
+
+            held.GetComp<CompAbnormalityStudiable>().Study(worker, 1000f);
+            CompEgoExtractable ego = held.GetComp<CompEgoExtractable>();
+            if (ego != null && ego.Props.weaponExtracted != null)
+            {
+                abn.PeBoxComp.CurAmountIndiPebox = 1000;
+                int before = ego.CurAmountWeapon;
+                typeof(CompEgoExtractable).GetMethod("ExtractEGO", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(ego, new object[] { EGO_TYPE.Weapon });
+                if (ego.CurAmountWeapon != before + 1) throw new InvalidOperationException($"Phase4 EGO extraction failed: {name}");
+            }
+
+            plat.EjectContents();
+            var fx = (LC_FX_Standard)GenSpawn.Spawn(DefDatabase<ThingDef>.GetNamed("Dying" + name, true), cell, map);
+            fx.InitWith(held);
+            if (held.Spawned) held.DeSpawn();
+            Find.WorldPawns.PassToWorld(held, PawnDiscardDecideMode.Discard);
+            fx.Complete();
+            Thing returnedEgg = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed(name + "Egg", true))
+                .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == sig);
+            if (returnedEgg == null) throw new InvalidOperationException($"Phase4 identity did not survive egg return: {name}");
+            returnedEgg.Destroy();
+            plat.Destroy();
+            if (worker.Spawned) worker.DeSpawn();
+            if (!worker.Destroyed) worker.Destroy();
+        }
+
+        // 3a. Ppodae: non-Instinct entry drop (60% roll), Good result doesn't raise Qliphoth, and breach kill self-returns to PpodaeEgg
+        Pawn ppWorker = SpawnValidationColonist(map, map.Center);
+        var ppPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        ppPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(ppPlat, FindSafePlatformCell(map), map);
+        Thing ppEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("PpodaeEgg", true));
+        ppPlat.innerContainer.TryAdd(ppEgg);
+        ppEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(ppPlat.innerContainer);
+        CompAbnormality ppAbn = ppPlat.HeldPawn.GetComp<CompAbnormality>();
+        ppPlat.CurWorkType = EAnomalyWorkType.Insight;
+        ppAbn.QliphothCountCurrent = 2;
+
+        int ppDropSeed = 1;
+        for (int s = 1; s <= 100; s++)
+        {
+            Rand.PushState(s);
+            bool hit = Rand.Chance(0.60f);
+            Rand.PopState();
+            if (hit) { ppDropSeed = s; break; }
+        }
+        Rand.PushState(ppDropSeed);
+        try
+        {
+            ppAbn.Notify_StudyStart(ppWorker);
+            ppAbn.Notify_Studying(ppWorker);
+        }
+        finally { Rand.PopState(); }
+        if (ppAbn.QliphothCountCurrent != 1)
+        {
+            throw new InvalidOperationException($"Ppodae non-Instinct entry check expected Qliphoth=1, got {ppAbn.QliphothCountCurrent}.");
+        }
+        ppAbn.GetType().GetMethod("StudyEvent_Good", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(ppAbn, new object[] { ppWorker });
+        if (ppAbn.QliphothCountCurrent != 1)
+        {
+            throw new InvalidOperationException($"Ppodae Good work should not raise Qliphoth counter (expected 1, got {ppAbn.QliphothCountCurrent}).");
+        }
+        ppPlat.Destroy();
+
+        int ppBreachSig = 0x4c43040A;
+        Pawn breachedPpodae = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Ppodae", true), LCContainmentUtility.AbnormalityFaction);
+        GenSpawn.Spawn(breachedPpodae, FindFarthestSafeCell(map), map);
+        CompAbnormality breachedPpAbn = breachedPpodae.GetComp<CompAbnormality>();
+        breachedPpAbn.biosignature = ppBreachSig;
+        breachedPpAbn.Notify_Escaped();
+        breachedPpAbn.GetType().GetMethod("Notify_SlainHumanlike", BindingFlags.Public | BindingFlags.Instance).Invoke(breachedPpAbn, new object[] { ppWorker });
+        MethodInfo ppTickBreached = breachedPpAbn.GetType().GetMethod("TickBreached", BindingFlags.Public | BindingFlags.Instance);
+        for (int i = 0; i < 50 && !breachedPpodae.Destroyed; i++)
+        {
+            ppTickBreached.Invoke(breachedPpAbn, null);
+        }
+        Thing ppReturned = map.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("PpodaeEgg", true))
+            .FirstOrDefault(t => t.TryGetComp<LC_CompEgg>()?.biosignature == ppBreachSig);
+        if (!breachedPpodae.Destroyed || ppReturned == null)
+        {
+            throw new InvalidOperationException($"Ppodae failed to self-return to PpodaeEgg after humanlike kill: destroyed={breachedPpodae.Destroyed}, eggFound={ppReturned != null}");
+        }
+        ppReturned.Destroy();
+        if (ppWorker.Spawned) ppWorker.DeSpawn();
+        if (!ppWorker.Destroyed) ppWorker.Destroy();
+
+        // 3b. Warm-Hearted Woodsman: Temperance III+ arms trap without escaping -> next worker executed -> breach corpse heal -> save/load trap fixture
+        Pawn wdWorker = SpawnValidationColonist(map, map.Center);
+        wdWorker.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Temperance).Status = 60;
+        var wdPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        wdPlat.SetFaction(Faction.OfPlayer);
+        IntVec3 wdCell = FindSafePlatformCell(map);
+        GenSpawn.Spawn(wdPlat, wdCell, map);
+        Thing wdEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WarmHeartedWoodsmanEgg", true));
+        AbnormalityUtility.TransferSignature(wdEgg, 0x4c430410);
+        wdPlat.innerContainer.TryAdd(wdEgg);
+        wdEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(wdPlat.innerContainer);
+        Pawn wdPawn = wdPlat.HeldPawn;
+        CompAbnormality wdAbn = wdPawn.GetComp<CompAbnormality>();
+        PropertyInfo trapArmedProp = wdAbn.GetType().GetProperty("IsHeartTrapArmed", BindingFlags.Public | BindingFlags.Instance);
+
+        if (wdAbn.QliphothCountCurrent != 1 || (bool)trapArmedProp.GetValue(wdAbn))
+        {
+            throw new InvalidOperationException("WarmHeartedWoodsman initial Qliphoth/trap state unexpected.");
+        }
+
+        wdAbn.Notify_StudyStart(wdWorker);
+        peTempField.SetValue(wdAbn, wdAbn.PeBoxComp.Props.amountProdueRangeNormal.max + 1);
+        wdAbn.Notify_Studied(wdWorker);
+        if (wdAbn.QliphothCountCurrent != 0 || !(bool)trapArmedProp.GetValue(wdAbn) || wdAbn.Escaped)
+        {
+            throw new InvalidOperationException($"WarmHeartedWoodsman Temperance III+ failed to arm silent heart trap: q={wdAbn.QliphothCountCurrent}, armed={trapArmedProp.GetValue(wdAbn)}, escaped={wdAbn.Escaped}");
+        }
+
+        Pawn wdVictim = SpawnValidationColonist(map, wdCell);
+        wdVictim.apparel?.DestroyAll();
+        wdAbn.Notify_StudyStart(wdVictim);
+        wdAbn.Notify_Studying(wdVictim);
+        if (!wdVictim.Dead || wdVictim.Corpse == null || !wdAbn.Escaped || !wdPawn.Spawned || (bool)trapArmedProp.GetValue(wdAbn))
+        {
+            throw new InvalidOperationException($"WarmHeartedWoodsman heart trap execution failed: victimDead={wdVictim.Dead}, escaped={wdAbn.Escaped}, spawned={wdPawn.Spawned}, stillArmed={trapArmedProp.GetValue(wdAbn)}");
+        }
+
+        BodyPartRecord wdCore = wdPawn.RaceProps.body.corePart;
+        float wdTorsoHit = Mathf.Min(35f, wdCore.def.GetMaxHealth(wdPawn) * 0.14f);
+        for (int pass = 0; pass < 3 && !wdPawn.Dead && wdPawn.health.summaryHealth.SummaryHealthPercent >= 0.82f; pass++)
+        {
+            wdPawn.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Blunt, wdTorsoHit, 2f, -1f, null, wdCore));
+            foreach (BodyPartRecord limb in wdCore.parts.Where(p => p.depth == BodyPartDepth.Outside && p.def.defName != "Neck" && p.def.defName != "Head" && p.def.GetMaxHealth(wdPawn) > 40f).Take(4))
+            {
+                if (wdPawn.Dead || wdPawn.health.summaryHealth.SummaryHealthPercent < 0.82f) break;
+                wdPawn.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Blunt, Mathf.Min(25f, limb.def.GetMaxHealth(wdPawn) * 0.20f), 2f, -1f, null, limb));
+            }
+        }
+        if (wdPawn.Dead)
+        {
+            throw new InvalidOperationException("Injuring breached WarmHeartedWoodsman for heal check unexpectedly killed it.");
+        }
+        float wdHpBefore = wdPawn.health.summaryHealth.SummaryHealthPercent;
+        if (wdHpBefore >= 0.85f)
+        {
+            throw new InvalidOperationException($"Failed to injure breached WarmHeartedWoodsman below 85% HP (got {wdHpBefore:F2}).");
+        }
+        Corpse wdCorpse = wdVictim.Corpse;
+        foreach (Thing strayCorpse in map.listerThings.ThingsInGroup(ThingRequestGroup.Corpse).ToList())
+        {
+            if (strayCorpse != wdCorpse && !strayCorpse.Destroyed)
+            {
+                strayCorpse.Destroy();
+            }
+        }
+        object[] seekArgs = { null };
+        bool seeksCorpse = (bool)wdAbn.GetType().GetMethod("ShouldSeekCorpseToEat", BindingFlags.Public | BindingFlags.Instance).Invoke(wdAbn, seekArgs);
+        if (!seeksCorpse || seekArgs[0] != wdCorpse)
+        {
+            throw new InvalidOperationException($"WarmHeartedWoodsman ShouldSeekCorpseToEat failed: seeks={seeksCorpse}, found={seekArgs[0]}");
+        }
+        wdAbn.GetType().GetMethod("ConsumeCorpseHeart", BindingFlags.Public | BindingFlags.Instance).Invoke(wdAbn, new object[] { wdCorpse });
+        if (!wdCorpse.Destroyed || wdPawn.health.summaryHealth.SummaryHealthPercent <= wdHpBefore)
+        {
+            throw new InvalidOperationException($"WarmHeartedWoodsman ConsumeCorpseHeart failed: corpseDestroyed={wdCorpse.Destroyed}, hpBefore={wdHpBefore:F2}, hpAfter={wdPawn.health.summaryHealth.SummaryHealthPercent:F2}");
+        }
+        if (wdPawn.Spawned) wdPawn.DeSpawn();
+        if (!wdPawn.Destroyed) wdPawn.Destroy();
+        wdPlat.Destroy();
+        if (wdWorker.Spawned) wdWorker.DeSpawn();
+        if (!wdWorker.Destroyed) wdWorker.Destroy();
+
+        // Save/Reload fixture (0x4c430411): leave armed WarmHeartedWoodsman holding platform on map for CheckReload
+        var savedWdPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        savedWdPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(savedWdPlat, FindSafePlatformCell(map), map);
+        Thing savedWdEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WarmHeartedWoodsmanEgg", true));
+        AbnormalityUtility.TransferSignature(savedWdEgg, 0x4c430411);
+        savedWdPlat.innerContainer.TryAdd(savedWdEgg);
+        savedWdEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(savedWdPlat.innerContainer);
+        savedWdPlat.HeldPawn.GetComp<CompAbnormality>().QliphothCountCurrent = 0;
+        if (!(bool)trapArmedProp.GetValue(savedWdPlat.HeldPawn.GetComp<CompAbnormality>()))
+        {
+            throw new InvalidOperationException("Saved WarmHeartedWoodsman fixture failed to arm heart trap.");
+        }
+        savedWdPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, savedWdPlat.DrawPos);
+        savedWdPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, savedWdPlat.DrawPos);
+        savedWdPlat.DynamicDrawPhaseAt(DrawPhase.Draw, savedWdPlat.DrawPos);
+
+        // 3c. Fragment of the Universe: 70% Bad no-drop guard at Qliphoth=1, worker panic drop, AoE White song, Cosmic Enlightenment shield
+        Pawn cosWorker = SpawnValidationColonist(map, map.Center);
+        var cosPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        cosPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(cosPlat, FindSafePlatformCell(map), map);
+        Thing cosEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("FragmentOfTheUniverseEgg", true));
+        cosPlat.innerContainer.TryAdd(cosEgg);
+        cosEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(cosPlat.innerContainer);
+        CompAbnormality cosPlatAbn = cosPlat.HeldPawn.GetComp<CompAbnormality>();
+        cosPlatAbn.QliphothCountCurrent = 1;
+
+        int cosNoDropSeed = 1;
+        for (int s = 1; s <= 150; s++)
+        {
+            Rand.PushState(s);
+            bool drop = Rand.Chance(0.70f);
+            Rand.PopState();
+            if (!drop) { cosNoDropSeed = s; break; }
+        }
+        Rand.PushState(cosNoDropSeed);
+        try
+        {
+            cosPlatAbn.GetType().GetMethod("StudyEvent_Bad", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cosPlatAbn, new object[] { cosWorker });
+        }
+        finally { Rand.PopState(); }
+        if (cosPlatAbn.QliphothCountCurrent != 1 || cosPlatAbn.Escaped)
+        {
+            throw new InvalidOperationException($"FragmentOfTheUniverse 30% Bad no-drop roll unexpectedly melted down: q={cosPlatAbn.QliphothCountCurrent}, escaped={cosPlatAbn.Escaped}");
+        }
+
+        cosPlatAbn.QliphothCountCurrent = 2;
+        Hediff cosPanicMental = cosWorker.health.AddHediff(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage);
+        cosPanicMental.Severity = 0.99f;
+        cosPlatAbn.Notify_StudyStart(cosWorker);
+        cosPlatAbn.Notify_Studying(cosWorker);
+        if (cosPlatAbn.QliphothCountCurrent != 1)
+        {
+            throw new InvalidOperationException($"FragmentOfTheUniverse panic drop failed (expected 1, got {cosPlatAbn.QliphothCountCurrent}).");
+        }
+        cosPlat.Destroy();
+        if (cosWorker.Spawned) cosWorker.DeSpawn();
+        if (!cosWorker.Destroyed) cosWorker.Destroy();
+
+        Pawn cosBreached = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("FragmentOfTheUniverse", true), LCContainmentUtility.AbnormalityFaction);
+        IntVec3 cosCell = FindFarthestSafeCell(map, minColonistDist: 16);
+        GenSpawn.Spawn(cosBreached, cosCell, map);
+        CompAbnormality cosAbn = cosBreached.GetComp<CompAbnormality>();
+        cosAbn.Notify_Escaped();
+        MethodInfo cosTickBreached = cosAbn.GetType().GetMethod("TickBreached", BindingFlags.Public | BindingFlags.Instance);
+        for (int i = 0; i < 150; i++) cosTickBreached.Invoke(cosAbn, null);
+
+        Pawn songVictim = SpawnValidationColonist(map, FindSafePawnCell(map, cosCell));
+        songVictim.apparel?.DestroyAll();
+        object[] singArgs = { 0 };
+        bool singStarted = (bool)cosAbn.GetType().GetMethod("TryStartSing", BindingFlags.Public | BindingFlags.Instance).Invoke(cosAbn, singArgs);
+        if (!singStarted)
+        {
+            throw new InvalidOperationException("FragmentOfTheUniverse TryStartSing failed after cooldown.");
+        }
+        for (int i = 0; i < 50; i++) cosTickBreached.Invoke(cosAbn, null);
+        Hediff songMental = songVictim.health.hediffSet.GetFirstHediffOfDef(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage);
+        if (songMental == null || songMental.Severity <= 0f)
+        {
+            throw new InvalidOperationException("FragmentOfTheUniverse cosmic song failed to deal AoE White mental damage.");
+        }
+        if (songVictim.Spawned) songVictim.DeSpawn();
+        if (!songVictim.Destroyed) songVictim.Destroy();
+        if (cosBreached.Spawned) cosBreached.DeSpawn();
+        if (!cosBreached.Destroyed) cosBreached.Destroy();
+
+        Pawn shieldColonist = SpawnValidationColonist(map, FindFarthestSafeCell(map));
+        shieldColonist.apparel?.DestroyAll();
+        Type spearWorkerType = GenTypes.GetTypeInAnyAssembly("LCAbnormalities.FragmentOfTheUniverse.DamageWorker_CosmosSpear")
+            ?? throw new InvalidOperationException("Missing LCAbnormalities.FragmentOfTheUniverse.DamageWorker_CosmosSpear.");
+        spearWorkerType.GetMethod("GrantOrRefreshEnlightenment", BindingFlags.Public | BindingFlags.Static)
+            .Invoke(null, new object[] { shieldColonist });
+        HediffDef enlDef = DefDatabase<HediffDef>.GetNamed("LC_CosmicEnlightenment", true);
+        Hediff enlHediff = shieldColonist.health.hediffSet.GetFirstHediffOfDef(enlDef)
+            ?? throw new InvalidOperationException("GrantOrRefreshEnlightenment did not add LC_CosmicEnlightenment.");
+        object enlComp = (enlHediff as HediffWithComps)?.comps?.FirstOrDefault(c => c.GetType().Name == "HediffComp_CosmicEnlightenment")
+            ?? throw new InvalidOperationException("Missing HediffComp_CosmicEnlightenment comp.");
+        PropertyInfo enlRemainProp = enlComp.GetType().GetProperty("RemainingShield", BindingFlags.Public | BindingFlags.Instance);
+        float beforeShield = (float)enlRemainProp.GetValue(enlComp);
+        shieldColonist.TakeDamage(new DamageInfo(LCAnomalyCore.Defs.DamageDefOf.LC_WhiteDamage, 20f));
+        float afterShield = (float)enlRemainProp.GetValue(enlComp);
+        if (Math.Abs(beforeShield - 50f) > 0.1f || afterShield > 31f || shieldColonist.health.hediffSet.HasHediff(LCAnomalyCore.Defs.HediffDefOf.LC_MentalDamage))
+        {
+            throw new InvalidOperationException($"Cosmic Enlightenment shield absorption failed: before={beforeShield:F1}, after={afterShield:F1}.");
+        }
+        if (shieldColonist.Spawned) shieldColonist.DeSpawn();
+        if (!shieldColonist.Destroyed) shieldColonist.Destroy();
+
+        // 3d. Scarecrow Searching for Wisdom: Prudence III+ immediate breach, Brain Drain full invulnerability + healing
+        Pawn scWorker = SpawnValidationColonist(map, map.Center);
+        scWorker.GetComp<CompPawnStatus>().GetPawnStatusLevel(EPawnStatus.Prudence).Status = 60;
+        var scPlat = (Building_AbnormalityHoldingPlatform)ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("LC_HoldingPlatform", true));
+        scPlat.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(scPlat, FindSafePlatformCell(map), map);
+        Thing scEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("ScarecrowSearchingForWisdomEgg", true));
+        scPlat.innerContainer.TryAdd(scEgg);
+        scEgg.TryGetComp<CompAbnormalityHoldingPlatformTarget>().Notify_HeldOnPlatform(scPlat.innerContainer);
+        Pawn scPawn = scPlat.HeldPawn;
+        CompAbnormality scAbn = scPawn.GetComp<CompAbnormality>();
+
+        scAbn.Notify_StudyStart(scWorker);
+        peTempField.SetValue(scAbn, scAbn.PeBoxComp.Props.amountProdueRangeNormal.max + 1);
+        scAbn.Notify_Studied(scWorker);
+        if (!scAbn.Escaped || !scPawn.Spawned)
+        {
+            throw new InvalidOperationException($"Scarecrow Prudence III+ study failed to breach: escaped={scAbn.Escaped}, spawned={scPawn.Spawned}");
+        }
+
+        BodyPartRecord scCore = scPawn.RaceProps.body.corePart;
+        scPawn.TakeDamage(new DamageInfo(RimWorld.DamageDefOf.Blunt, Mathf.Min(35f, scCore.def.GetMaxHealth(scPawn) * 0.15f), 2f, -1f, null, scCore));
+        if (scPawn.Dead)
+        {
+            throw new InvalidOperationException("Injuring breached Scarecrow for Brain Drain check unexpectedly killed it.");
+        }
+        float scHpBeforeDrain = scPawn.health.summaryHealth.SummaryHealthPercent;
+        if (scHpBeforeDrain >= 0.999f)
+        {
+            throw new InvalidOperationException($"Failed to injure breached Scarecrow before Brain Drain check (hp={scHpBeforeDrain:F2}).");
+        }
+
+        scAbn.GetType().GetMethod("StartBrainDrain", BindingFlags.Public | BindingFlags.Instance).Invoke(scAbn, new object[] { scWorker });
+        bool isDraining = (bool)scAbn.GetType().GetProperty("IsDrainingBrain", BindingFlags.Public | BindingFlags.Instance).GetValue(scAbn);
+        if (!isDraining || scPawn.Drawer?.renderer?.CurAnimation?.defName != "Scarecrow_Drink")
+        {
+            throw new InvalidOperationException($"Scarecrow StartBrainDrain animation/state check failed: draining={isDraining}, anim={scPawn.Drawer?.renderer?.CurAnimation?.defName ?? "<null>"}");
+        }
+
+        scPawn.TakeDamage(new DamageInfo(LCAnomalyCore.Defs.DamageDefOf.LC_RedDamage, 50f, 2f, -1f, scWorker));
+        if (Math.Abs(scPawn.health.summaryHealth.SummaryHealthPercent - scHpBeforeDrain) > 0.0001f)
+        {
+            throw new InvalidOperationException($"Scarecrow was not invulnerable during Brain Drain: before={scHpBeforeDrain:F4}, after={scPawn.health.summaryHealth.SummaryHealthPercent:F4}");
+        }
+
+        MethodInfo scTickBreached = scAbn.GetType().GetMethod("TickBreached", BindingFlags.Public | BindingFlags.Instance);
+        for (int i = 0; i < 35; i++) scTickBreached.Invoke(scAbn, null);
+        if (scPawn.health.summaryHealth.SummaryHealthPercent <= scHpBeforeDrain)
+        {
+            throw new InvalidOperationException($"Scarecrow Brain Drain failed to heal HP: before={scHpBeforeDrain:F4}, after={scPawn.health.summaryHealth.SummaryHealthPercent:F4}");
+        }
+
+        if (scPawn.Spawned) scPawn.DeSpawn();
+        if (!scPawn.Destroyed) scPawn.Destroy();
+        scPlat.Destroy();
+        if (scWorker.Spawned) scWorker.DeSpawn();
+        if (!scWorker.Destroyed) scWorker.Destroy();
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; Phase4; 4_abnormalities/ppodae_return/woodsman_hearttrap/cosmos_song_enlightenment/scarecrow_braindrain");
+    }
+
+    private static void ValidatePhase4AfterLoad(Map map)
+    {
+        bool foundSavedWoodsmanTrap = false;
+        foreach (Building_AbnormalityHoldingPlatform plat in map.listerBuildings.AllBuildingsColonistOfClass<Building_AbnormalityHoldingPlatform>())
+        {
+            if (plat.HeldPawn?.def?.defName == "WarmHeartedWoodsman"
+                && plat.HeldPawn.GetComp<CompAbnormality>()?.biosignature == 0x4c430411)
+            {
+                CompAbnormality wdAbn = plat.HeldPawn.GetComp<CompAbnormality>();
+                bool armed = (bool)(wdAbn?.GetType().GetProperty("IsHeartTrapArmed", BindingFlags.Public | BindingFlags.Instance)?.GetValue(wdAbn) ?? false);
+                if (!armed || wdAbn.Escaped)
+                {
+                    throw new InvalidOperationException($"Saved WarmHeartedWoodsman heartTrapArmed state lost across reload: armed={armed}, escaped={wdAbn?.Escaped}");
+                }
+
+                plat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, plat.DrawPos);
+                plat.DynamicDrawPhaseAt(DrawPhase.Draw, plat.DrawPos);
+                foundSavedWoodsmanTrap = true;
+                break;
+            }
+        }
+
+        if (!foundSavedWoodsmanTrap)
+        {
+            throw new InvalidOperationException("Saved WarmHeartedWoodsman holding platform (0x4c430411) missing after reload.");
         }
     }
 }

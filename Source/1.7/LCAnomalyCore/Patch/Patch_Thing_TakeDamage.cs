@@ -101,6 +101,25 @@ namespace LCAnomalyCore.Patch
                 }
             }
 
+            for (int i = 0; i < hediffs.Count; i++)
+            {
+                if (!(hediffs[i] is HediffWithComps hwc) || hwc.comps == null)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < hwc.comps.Count; j++)
+                {
+                    if (hwc.comps[j] is ILCPawnPostInterceptDamageHandler postHandler
+                        && postHandler.TryHandleDamageAfterIntercept(__instance, ref dinfo, out bool postAbsorb)
+                        && postAbsorb)
+                    {
+                        absorbed = true;
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
     }

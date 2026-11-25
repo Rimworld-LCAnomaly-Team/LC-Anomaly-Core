@@ -1,5 +1,6 @@
 ﻿using LCAnomalyCore.Comp.Pawns;
 using LCAnomalyCore.Defs;
+using LCAnomalyCore.Interface;
 using LCAnomalyCore.ModExtensions;
 using LCAnomalyCore.Settings;
 using LCAnomalyCore.Util;
@@ -471,6 +472,13 @@ namespace LCAnomalyCore.Comp
 
         #region 工具功能
 
+        /// <summary>指示该异想体当前是否允许常规研究作业（例如冰雪女皇封冻员工期间禁止常规研究并提示决斗救援）。</summary>
+        public virtual bool CanBeStudiedNow(out string blockReason)
+        {
+            blockReason = null;
+            return true;
+        }
+
         /// <summary>
         /// 获取研究成功率
         /// </summary>
@@ -480,13 +488,35 @@ namespace LCAnomalyCore.Comp
         protected virtual float StudySuccessRateCalculate(CompPawnStatus studier, EAnomalyWorkType workType)
         {
             //默认基本成功率为 每点正义值x0.2%
-            float baseRate = studier.GetPawnStatusLevel(EPawnStatus.Justice).Status * 0.002f;
+            float baseRate = studier != null ? studier.GetPawnStatusLevel(EPawnStatus.Justice).Status * 0.002f : 0f;
             //观察等级解锁的成功率
-            float unlockRate = StudiableComp.GetWorkSuccessRateOffset();
+            float unlockRate = StudiableComp?.GetWorkSuccessRateOffset() ?? 0f;
             //情报部员工额外成功率加成
-            float deptBonus = DepartmentCoreUtility.GetStudySuccessRateBonus(studier?.parent as Pawn);
+            Pawn studierPawn = studier?.parent as Pawn;
+            float deptBonus = DepartmentCoreUtility.GetStudySuccessRateBonus(studierPawn);
+            //状态 Hediff 研究工作成功率修正（如癫狂研究员的笔记）
+            float modifierBonus = 0f;
+            List<Hediff> hediffs = studierPawn?.health?.hediffSet?.hediffs;
+            if (hediffs != null)
+            {
+                for (int i = 0; i < hediffs.Count; i++)
+                {
+                    if (!(hediffs[i] is HediffWithComps hwc) || hwc.comps == null)
+                    {
+                        continue;
+                    }
 
-            return baseRate + unlockRate + deptBonus;
+                    for (int j = 0; j < hwc.comps.Count; j++)
+                    {
+                        if (hwc.comps[j] is ILCPawnStudyModifier modifier)
+                        {
+                            modifierBonus += modifier.GetStudySuccessRateBonus(studierPawn, this, workType);
+                        }
+                    }
+                }
+            }
+
+            return baseRate + unlockRate + deptBonus + modifierBonus;
         }
 
         /// <summary>

@@ -5,6 +5,11 @@
   <IndiPeBoxAmountCommandText>Indi-PeBox Amount: </IndiPeBoxAmountCommandText>
   <ExtractEGONeedPeboxAmountCommandText>Need Amount: </ExtractEGONeedPeboxAmountCommandText>
   <ExtractEGOWeaponCommandText>Extract E.G.O Weapon: </ExtractEGOWeaponCommandText>
-  <ExtractEGOArmorCommandText>Extract E.G.O Apparel: </ExtractEGOArmorCommandText>
+  <ExtractEGOArmorCommandText>Extract E.G.O. Apparel: </ExtractEGOArmorCommandText>
+  <LC_EgoAutoCast_TooltipTitle>Auto-cast skill</LC_EgoAutoCast_TooltipTitle>
+  <LC_EgoAutoCast_StateOn>Enabled</LC_EgoAutoCast_StateOn>
+  <LC_EgoAutoCast_StateOff>Disabled</LC_EgoAutoCast_StateOff>
+  <LC_EgoAutoCast_StatePartial>Mixed</LC_EgoAutoCast_StatePartial>
+  <LC_EgoAutoCast_TooltipDesc>Click to toggle whether the wielder automatically casts this E.G.O. active skill during combat when off cooldown.</LC_EgoAutoCast_TooltipDesc>
 
 </LanguageData>
