@@ -5,7 +5,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>CogitoBucket</defName>
     <label>"The Bucket"</label>
-    <description>.</description>
+    <description>A deep-well containment vessel used to house and draw raw Cogito—the foundational origin of Abnormality extraction and Lobotomy Corporation operations.\n\n- Converts harvested human brain-spinal nerves into raw Cogito while powered.\n- Can also launch the 3-Choice Abnormality Extraction terminal.</description>
     <thingClass>LCAnomalyCore.Buildings.Building_CogitoBucket</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>

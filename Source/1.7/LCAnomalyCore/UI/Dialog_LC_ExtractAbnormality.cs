@@ -25,6 +25,8 @@ namespace LCAnomalyCore.UI
         private static readonly Texture2D TexDonorChassis = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_Unit_DonorChassis", false);
         private static readonly Texture2D TexUnitRedLamp = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_Unit_RedLamp", false);
         private static readonly Texture2D TexUnitEkg = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_Unit_EkgLine", false);
+        private static readonly Texture2D TexUnitToolLamp = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_Unit_ToolLamp", false);
+        private static readonly Texture2D TexUnitToolEkg = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_Unit_ToolEkgLine", false);
         private static readonly Texture2D TexQuoteBanner = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_QuoteBanner", false);
         private static readonly Texture2D TexReExtractBtn = ContentFinder<Texture2D>.Get("UI/Extraction/Extract_ReExtractBtn", false);
 
@@ -487,7 +489,7 @@ namespace LCAnomalyCore.UI
                 Widgets.DrawBoxSolid(inRect, new Color(0f, 0f, 0f, 0.50f * focusAlpha));
             }
 
-            // 4. 在压暗遮罩之上绘制聚焦箱体（最前层，完整轮廓高亮 + 摇晃/震动动画 + 亮红灯）
+            // 4. 在压暗遮罩之上绘制聚焦箱体（最前层，完整轮廓高亮 + 摇晃/震动动画 + 亮灯）
             if (focusedIndex >= 0 && focusedIndex < candidateCount)
             {
                 DrawExtractionUnit(
@@ -501,6 +503,17 @@ namespace LCAnomalyCore.UI
                     isHovered: hoveredIndex == focusedIndex,
                     now: now,
                     slotIndex: focusedIndex);
+            }
+
+            // 4b. 确认提取收束瞬间叠加金白爆闪过场
+            if (isConfirming)
+            {
+                float cp = Mathf.Clamp01((now - confirmStartTime) / 0.34f);
+                if (cp > 0.55f)
+                {
+                    float flashAlpha = Mathf.InverseLerp(0.55f, 1.0f, cp) * 0.55f;
+                    Widgets.DrawBoxSolid(inRect, new Color(1.0f, 0.94f, 0.72f, flashAlpha));
+                }
             }
 
             // 5. 工业机械黑边框叠于箱体边缘外围
@@ -760,18 +773,23 @@ namespace LCAnomalyCore.UI
                 GUI.DrawTexture(btnRect, TexReExtractBtn, ScaleMode.ScaleToFit);
             }
 
+            bool freeReroll = mgr.IsFreeRerollAvailable;
             Rect textRect = new Rect(btnRect.x + 114f, btnRect.y + 18f, 160f, 36f);
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
             GUI.color = !canReroll
                 ? new Color(0.55f, 0.28f, 0.26f)
-                : (over ? new Color(1f, 0.45f, 0.35f) : ReExtractRed);
+                : (freeReroll
+                    ? (over ? new Color(1f, 0.88f, 0.45f) : GoldAccent)
+                    : (over ? new Color(1f, 0.45f, 0.35f) : ReExtractRed));
             Widgets.Label(textRect, "LC_Extract_ReExtractShort".Translate());
             GUI.color = Color.white;
 
-            string tip = canReroll
-                ? "LC_Extract_RerollBtn".Translate(MapComponent_LCExtraction.RerollCogitoCost, MapComponent_LCExtraction.RerollEnkephalinCost).ToString()
-                : rerollFail;
+            string tip = !canReroll
+                ? rerollFail
+                : (freeReroll
+                    ? "LC_Extract_RerollFreeTip".Translate().ToString()
+                    : "LC_Extract_RerollBtn".Translate(MapComponent_LCExtraction.RerollCogitoCost, MapComponent_LCExtraction.RerollEnkephalinCost).ToString());
             TooltipHandler.TipRegion(btnRect, tip);
 
             if (!isRerolling && !isConfirming && Widgets.ButtonInvisible(btnRect))
@@ -810,9 +828,13 @@ namespace LCAnomalyCore.UI
             AbnormalityCodexEntryDef codex = candidateDef != null ? AbnormalityUtility.ResolveCodexEntry(candidateDef) : null;
             string codeText = ResolveClassificationCode(codex, candidateDef);
             bool isDonorBox = codeText.StartsWith("D-", StringComparison.OrdinalIgnoreCase);
+            bool isToolUnit = candidateDef is ThingDef_AbnormalityTool
+                              || codeText.IndexOf("-09-", StringComparison.Ordinal) >= 0;
 
             Texture2D texHighlight = isDonorBox ? (TexDonorHighlight ?? TexUnitHighlight) : TexUnitHighlight;
             Texture2D texChassis = isDonorBox ? (TexDonorChassis ?? TexUnitChassis) : TexUnitChassis;
+            Texture2D texLamp = isToolUnit ? (TexUnitToolLamp ?? TexUnitRedLamp) : TexUnitRedLamp;
+            Texture2D texEkg = isToolUnit ? (TexUnitToolEkg ?? TexUnitEkg) : TexUnitEkg;
 
             // 计算脑叶风格摇晃动画（悬停轻微晃动 + 选中后持续机械摇摆与间歇挣扎震动 + 确认剧烈震颤）
             float angleDeg = 0f;
@@ -880,22 +902,31 @@ namespace LCAnomalyCore.UI
                     GUI.color = Color.white;
                 }
 
-                // 3. 心电波纹红线
-                if (TexUnitEkg != null)
+                // 3. 心电波纹指示线（工具型为青蓝，常规异想体为猩红）
+                if (texEkg != null)
                 {
                     float ekgAlpha = isFocused ? (0.85f + 0.15f * Mathf.Sin(now * (isLockedSelection ? 14f : 7f))) : 0.45f;
                     GUI.color = new Color(1f, 1f, 1f, ekgAlpha);
-                    GUI.DrawTexture(boxRect, TexUnitEkg, ScaleMode.StretchToFill);
+                    GUI.DrawTexture(boxRect, texEkg, ScaleMode.StretchToFill);
                     GUI.color = Color.white;
                 }
 
-                // 4. 圆形红灯指示镜
-                if (TexUnitRedLamp != null)
+                // 4. 圆形状态指示灯（工具型为青蓝，常规异想体为猩红）
+                if (texLamp != null)
                 {
                     GUI.color = isFocused
                         ? new Color(1f, 0.96f, 0.96f, 1f)
-                        : new Color(0.62f, 0.52f, 0.52f, 0.92f);
-                    GUI.DrawTexture(boxRect, TexUnitRedLamp, ScaleMode.StretchToFill);
+                        : new Color(0.62f, 0.56f, 0.58f, 0.92f);
+                    GUI.DrawTexture(boxRect, texLamp, ScaleMode.StretchToFill);
+                    GUI.color = Color.white;
+                }
+
+                // 4b. 确认提取收束时围绕机匣叠加强烈共鸣金红光晕
+                if (isConfirming && isLockedSelection && texHighlight != null)
+                {
+                    float cp = Mathf.Clamp01((now - confirmStartTime) / 0.34f);
+                    GUI.color = new Color(1f, 0.92f, 0.65f, 0.35f + 0.55f * cp);
+                    GUI.DrawTexture(boxRect, texHighlight, ScaleMode.StretchToFill);
                     GUI.color = Color.white;
                 }
 

@@ -48,6 +48,7 @@
   <LC_Extract_ActiveTierHeader>Active Protocol: {0}</LC_Extract_ActiveTierHeader>
   <LC_Extract_UndiscoveredTag>[ ??? UNDISCOVERED ??? ]</LC_Extract_UndiscoveredTag>
   <LC_Extract_RerollBtn>Re-Extract ({0} Cog / {1} Enk)</LC_Extract_RerollBtn>
+  <LC_Extract_RerollFreeTip>Re-Extract Free (Extraction Team Core / Binah Suppression active)</LC_Extract_RerollFreeTip>
   <LC_Extract_RerollUsedBtn>Re-Extract Used</LC_Extract_RerollUsedBtn>
   <LC_Extract_ReExtractShort>RE-EXTRACT</LC_Extract_ReExtractShort>
   <LC_Extract_ClickAgainConfirm>Click box again or press Confirm to manifest</LC_Extract_ClickAgainConfirm>

@@ -29,7 +29,7 @@
   <LC_DepartmentCore_RecordTeam.description>记录部的档案记忆核心。以制度与历史沉淀稳固员工心智并强化长期训练。\n\n部门加成（已分配员工）：\n- 全局学习速率 ×112%，四维属性工作经验获取 +20%\n- 崩溃临界值 -15%</LC_DepartmentCore_RecordTeam.description>
 
   <LC_DepartmentCore_ExtractionTeam.label>部门核心（研发部）</LC_DepartmentCore_ExtractionTeam.label>
-  <LC_DepartmentCore_ExtractionTeam.description>研发部的深层 Cogito 与 E.G.O 锻造核心。在通电时显著降低全设施的 E.G.O 制造消耗。\n\n部门加成：\n- 全设施生效（通电时）：E.G.O 提取所需 PE-Box 消耗降低 25%\n- 已分配员工：异想体研究速率 +15%</LC_DepartmentCore_ExtractionTeam.description>
+  <LC_DepartmentCore_ExtractionTeam.description>研发部的深层 Cogito 与 E.G.O 锻造核心。在通电时全面优化 E.G.O 制造与异想体提取流程。\n\n部门加成：\n- 全设施生效（通电时）：E.G.O 提取所需 PE-Box 消耗降低 25%，每轮异想体提取“二次提取”重抽免费，异想体提取冷却缩短 33%（6 小时 → 4 小时）\n- 已分配员工：异想体研究速率 +15%</LC_DepartmentCore_ExtractionTeam.description>
 
   <LC_DepartmentCore_ArchitectureTeam.label>部门核心（构筑部）</LC_DepartmentCore_ArchitectureTeam.label>
   <LC_DepartmentCore_ArchitectureTeam.description>构筑部的最深层整合核心。汇集公司各部门的综合优势，为已分配员工提供全面强化。\n\n部门加成（已分配员工）：\n- 移动速度 ×110%，全局工作速度 ×110%\n- 异想体研究速率 +10%，承伤系数 ×92%</LC_DepartmentCore_ArchitectureTeam.description>

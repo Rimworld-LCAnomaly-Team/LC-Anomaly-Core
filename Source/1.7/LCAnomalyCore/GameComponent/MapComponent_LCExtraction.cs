@@ -84,6 +84,15 @@ namespace LCAnomalyCore.GameComponent
             set => selectedIndex = value;
         }
 
+        /// <summary>任一异想体提取确认完成事件（地图、提取档位、选定定义、具现化收容匣）。</summary>
+        public static event Action<Map, LCExtractionTier, ThingDef, Thing> OnAnyAbnormalityExtracted;
+
+        /// <summary>当前地图是否因研发部核心通电或 Binah 核心抑制而享受每轮免费“二次提取”。</summary>
+        public bool IsFreeRerollAvailable => DepartmentCoreUtility.HasFreeAbnormalityReExtract(map);
+
+        /// <summary>当前地图生效的异想体提取冷却总时长（Tick）。</summary>
+        public int EffectiveCooldownTicks => DepartmentCoreUtility.GetAbnormalityExtractionCooldownTicks(map);
+
         /// <summary>剩余提取冷却 Tick（GodMode 下始终为 0）。</summary>
         public int CooldownTicksRemaining
         {
@@ -95,7 +104,7 @@ namespace LCAnomalyCore.GameComponent
                 }
 
                 int elapsed = Find.TickManager.TicksGame - lastConfirmTick;
-                return Mathf.Max(0, ExtractionCooldownTicks - elapsed);
+                return Mathf.Max(0, EffectiveCooldownTicks - elapsed);
             }
         }
 
@@ -391,7 +400,7 @@ namespace LCAnomalyCore.GameComponent
                 return false;
             }
 
-            if (!DebugSettings.godMode)
+            if (!DebugSettings.godMode && !IsFreeRerollAvailable)
             {
                 int curCogito = CountAvailableResource(Defs.ThingDefOf.Cogito);
                 int curEnk = CountAvailableResource(Defs.ThingDefOf.EnkephalinBox);
@@ -424,7 +433,9 @@ namespace LCAnomalyCore.GameComponent
                 return false;
             }
 
-            if (!DebugSettings.godMode && !TryConsumeResourceOption(RerollCogitoCost, RerollEnkephalinCost))
+            if (!DebugSettings.godMode
+                && !IsFreeRerollAvailable
+                && !TryConsumeResourceOption(RerollCogitoCost, RerollEnkephalinCost))
             {
                 int curCogito = CountAvailableResource(Defs.ThingDefOf.Cogito);
                 int curEnk = CountAvailableResource(Defs.ThingDefOf.EnkephalinBox);
@@ -493,12 +504,15 @@ namespace LCAnomalyCore.GameComponent
                 Defs.SoundDefOf.LC_Sound_Extraction_Manifest?.PlayOneShot(new TargetInfo(spawnedEgg.Position, map));
             }
 
+            LCExtractionTier completedTier = activeTier;
             totalExtractions++;
             lastConfirmTick = Find.TickManager?.TicksGame ?? 0;
             hasPendingDraw = false;
             usedReroll = false;
             selectedIndex = -1;
             pendingCandidates.Clear();
+
+            OnAnyAbnormalityExtracted?.Invoke(map, completedTier, chosenDef, spawnedEgg);
 
             string entityLabel = chosenDef.label ?? chosenDef.defName;
             AbnormalityCodexEntryDef codex = AbnormalityUtility.ResolveCodexEntry(chosenDef);

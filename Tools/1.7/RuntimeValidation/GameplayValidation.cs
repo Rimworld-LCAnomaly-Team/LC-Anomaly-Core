@@ -6155,10 +6155,11 @@ public static class GameplayValidation
             {
                 throw new InvalidOperationException($"TryRerollCandidates failed: {err}");
             }
+            int expectedAfterReroll = cogBefore + (mgr.IsFreeRerollAvailable ? 5 : 4);
             int cogAfterReroll = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
-            if (cogAfterReroll != cogBefore + 4)
+            if (cogAfterReroll != expectedAfterReroll)
             {
-                throw new InvalidOperationException($"Expected {cogBefore + 4} Cogito remaining after Reroll, got {cogAfterReroll}.");
+                throw new InvalidOperationException($"Expected {expectedAfterReroll} Cogito remaining after Reroll (free={mgr.IsFreeRerollAvailable}), got {cogAfterReroll}.");
             }
             if (mgr.TryRerollCandidates(out _))
             {
@@ -6176,6 +6177,64 @@ public static class GameplayValidation
             }
             if (abyssEgg.Spawned) abyssEgg.DeSpawn();
             if (!abyssEgg.Destroyed) abyssEgg.Destroy();
+
+            // 4) Extraction Team Department Core perk: free Re-Extract + 33% cooldown reduction, and Story statistic tracking
+            mgr.DebugResetCooldown();
+            int cdBeforeCore = mgr.EffectiveCooldownTicks;
+            ThingDef extractionCoreDef = DefDatabase<ThingDef>.GetNamed("LC_DepartmentCore_ExtractionTeam", true);
+            var extractionCore = (Building_DepartmentCore)ThingMaker.MakeThing(extractionCoreDef);
+            extractionCore.SetFaction(Faction.OfPlayer);
+            GenSpawn.Spawn(extractionCore, FindSafePawnCell(map, wellCell), map);
+            if (extractionCore.CompPower != null) extractionCore.CompPower.PowerOn = true;
+            try
+            {
+                if (!mgr.IsFreeRerollAvailable
+                    || mgr.EffectiveCooldownTicks > cdBeforeCore
+                    || mgr.EffectiveCooldownTicks >= MapComponent_LCExtraction.ExtractionCooldownTicks)
+                {
+                    throw new InvalidOperationException($"ExtractionTeam perk failed to activate (freeReroll={mgr.IsFreeRerollAvailable}, cd={mgr.EffectiveCooldownTicks}, before={cdBeforeCore}).");
+                }
+                if (!mgr.TryBeginExtraction(LCExtractionTier.Shallow, out err))
+                {
+                    throw new InvalidOperationException($"Shallow draw with ExtractionTeam failed: {err}");
+                }
+                int cogBeforeFreeReroll = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+                if (!mgr.TryRerollCandidates(out err))
+                {
+                    throw new InvalidOperationException($"ExtractionTeam free TryRerollCandidates failed: {err}");
+                }
+                int cogAfterFreeReroll = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+                if (cogAfterFreeReroll != cogBeforeFreeReroll)
+                {
+                    throw new InvalidOperationException($"Expected free reroll under ExtractionTeam, but Cogito changed {cogBeforeFreeReroll} -> {cogAfterFreeReroll}.");
+                }
+                mgr.SelectedIndex = 0;
+                if (!mgr.TryConfirmExtraction(well, out Thing perkEgg, out err) || perkEgg == null || !perkEgg.Spawned)
+                {
+                    throw new InvalidOperationException($"TryConfirmExtraction (ExtractionTeam perk) failed: {err}");
+                }
+                if (perkEgg.Spawned) perkEgg.DeSpawn();
+                if (!perkEgg.Destroyed) perkEgg.Destroy();
+            }
+            finally
+            {
+                if (extractionCore.Spawned) extractionCore.DeSpawn();
+                if (!extractionCore.Destroyed) extractionCore.Destroy();
+            }
+
+            Type storyAccess = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(a => a.GetType("LCAnomalyStory.StoryComponents", false))
+                .FirstOrDefault(t => t != null);
+            object dev = storyAccess?.GetProperty("Development", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+            if (dev != null)
+            {
+                long extractedStat = (long)dev.GetType().GetMethod("GetStatistic", BindingFlags.Public | BindingFlags.Instance)
+                    .Invoke(dev, new object[] { "abnormalitiesExtracted" });
+                if (extractedStat < 3)
+                {
+                    throw new InvalidOperationException($"LCAnomalyStory did not record abnormalitiesExtracted >= 3 (got {extractedStat}).");
+                }
+            }
 
             foreach (Thing leftover in map.listerThings.ThingsOfDef(LCAnomalyCore.Defs.ThingDefOf.Cogito).ToList())
             {

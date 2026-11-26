@@ -273,7 +273,7 @@
   <ThingDef ParentName="LC_DepartmentCoreBase">
     <defName>LC_DepartmentCore_ExtractionTeam</defName>
     <label>Department Core (Extraction Team)</label>
-    <description>The deep-layer Cogito and E.G.O forging core of the Extraction Team. Streamlines E.G.O manufacturing across the entire facility while powered.\n\nDepartment Bonus:\n- Facility-wide (when powered): E.G.O PE-Box extraction cost -25%\n- Assigned employees: Abnormality study rate +15%</description>
+    <description>The deep-layer Cogito and E.G.O forging core of the Extraction Team. Streamlines E.G.O manufacturing and Abnormality extraction across the entire facility while powered.\n\nDepartment Bonus:\n- Facility-wide (when powered): E.G.O PE-Box extraction cost -25%, free Re-Extraction once per draw, and -33% Abnormality extraction cooldown (4h instead of 6h)\n- Assigned employees: Abnormality study rate +15%</description>
     <costList>
       <Steel>2000</Steel>
       <ComponentSpacer>10</ComponentSpacer>

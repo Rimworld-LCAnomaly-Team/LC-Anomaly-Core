@@ -104,6 +104,38 @@ namespace LCAnomalyCore.Util
         }
 
         /// <summary>
+        /// 研发部核心通电或完成研发部核心抑制后，每轮异想体三选一提取的“二次提取”重抽免费。
+        /// </summary>
+        public static bool HasFreeAbnormalityReExtract(Map map)
+        {
+            if (HasActiveDepartmentCore(map, EDepartmentType.ExtractionTeam))
+            {
+                return true;
+            }
+
+            return GameComponent.GameComponent_LC.Instance?.HasCoreSuppression(GameComponent.GameComponent_LC.CoreSuppression_Binah) == true;
+        }
+
+        /// <summary>
+        /// 计算应用研发部核心通电（-33%，即 4h）与研发部核心抑制（额外 -30%）后的异想体提取冷却 Tick。
+        /// </summary>
+        public static int GetAbnormalityExtractionCooldownTicks(Map map)
+        {
+            float ticks = GameComponent.MapComponent_LCExtraction.ExtractionCooldownTicks;
+            if (HasActiveDepartmentCore(map, EDepartmentType.ExtractionTeam))
+            {
+                ticks *= (2f / 3f);
+            }
+
+            if (GameComponent.GameComponent_LC.Instance?.HasCoreSuppression(GameComponent.GameComponent_LC.CoreSuppression_Binah) == true)
+            {
+                ticks *= 0.70f;
+            }
+
+            return Mathf.Max(2500, Mathf.RoundToInt(ticks));
+        }
+
+        /// <summary>
         /// 获取员工在异想体工作中的四维属性经验倍率（培训部 +50%，记录部 +20%，培训部核心抑制永久额外 +50%）。
         /// </summary>
         public static float GetExpGainMultiplier(Pawn pawn)

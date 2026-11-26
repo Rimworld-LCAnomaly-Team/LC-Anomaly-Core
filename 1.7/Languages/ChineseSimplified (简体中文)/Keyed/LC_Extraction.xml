@@ -48,6 +48,7 @@
   <LC_Extract_ActiveTierHeader>当前协议：{0}</LC_Extract_ActiveTierHeader>
   <LC_Extract_UndiscoveredTag>[ ??? 尚未录入图鉴 ??? ]</LC_Extract_UndiscoveredTag>
   <LC_Extract_RerollBtn>重新抽取（{0} Cog / {1} 箱）</LC_Extract_RerollBtn>
+  <LC_Extract_RerollFreeTip>二次提取免费（研发部核心通电 / 研发部核心抑制加成）</LC_Extract_RerollFreeTip>
   <LC_Extract_RerollUsedBtn>已使用重抽机会</LC_Extract_RerollUsedBtn>
   <LC_Extract_ReExtractShort>二次提取</LC_Extract_ReExtractShort>
   <LC_Extract_ClickAgainConfirm>再次点击箱体或点击下方确认提取</LC_Extract_ClickAgainConfirm>
