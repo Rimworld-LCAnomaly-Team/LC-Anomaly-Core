@@ -1427,9 +1427,19 @@ public static class GameplayValidation
             throw new InvalidOperationException("Wiki Rule IV failed: Bad result with Justice >= IV did not kill worker.");
         if (abnNt.Escaped || !(bool)propHasDisguise.GetValue(abnNt) || Convert.ToInt32(propForm.GetValue(abnNt)) != 0)
             throw new InvalidOperationException("Wiki Rule IV failed: NothingThere did not enter Contained Disguised state inside unit.");
+        PropertyInfo propDisguiseMat = abnNt.GetType().GetProperty("CachedDisguiseMaterial", BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException("CompNothingThere missing CachedDisguiseMaterial property.");
+        if (propDisguiseMat.GetValue(abnNt) == null)
+            throw new InvalidOperationException("CompNothingThere.CachedDisguiseMaterial was null after KillAndStealSkinContained.");
         ntPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, ntPlat.DrawPos);
         ntPlat.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, ntPlat.DrawPos);
         ntPlat.DynamicDrawPhaseAt(DrawPhase.Draw, ntPlat.DrawPos);
+        if (victimWorker.Corpse != null && victimWorker.Corpse.Spawned)
+        {
+            victimWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, victimWorker.Corpse.DrawPos);
+            victimWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, victimWorker.Corpse.DrawPos);
+            victimWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.Draw, victimWorker.Corpse.DrawPos);
+        }
 
         // 5c. Wiki Rules V & VI: Low-Fortitude worker enters Contained Disguised unit -> killed, skin stolen, breaches as Form1_Disguised
         Pawn weakWorker = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
@@ -1457,6 +1467,20 @@ public static class GameplayValidation
             throw new InvalidOperationException("Form1_Disguised missing LC_NothingThere_Form1Buff speed boost.");
 
         heldNt.Drawer.renderer.EnsureGraphicsInitialized();
+        if (propDisguiseMat.GetValue(abnNt) == null)
+            throw new InvalidOperationException("CompNothingThere.CachedDisguiseMaterial was null in Form1_Disguised.");
+        PawnRenderNodeTagDef seamTag = DefDatabase<PawnRenderNodeTagDef>.GetNamedSilentFail("NothingThere_DisguiseSeam");
+        if (seamTag != null && heldNt.Drawer.renderer.renderTree.TryGetNodeByTag(seamTag, out PawnRenderNode seamNode))
+            throw new InvalidOperationException($"NothingThere DisguiseSeam node unexpectedly exists in render tree: {seamNode}");
+        heldNt.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, heldNt.DrawPos);
+        heldNt.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, heldNt.DrawPos);
+        heldNt.DynamicDrawPhaseAt(DrawPhase.Draw, heldNt.DrawPos);
+        if (weakWorker.Corpse != null && weakWorker.Corpse.Spawned)
+        {
+            weakWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, weakWorker.Corpse.DrawPos);
+            weakWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.ParallelPreDraw, weakWorker.Corpse.DrawPos);
+            weakWorker.Corpse.DynamicDrawPhaseAt(DrawPhase.Draw, weakWorker.Corpse.DrawPos);
+        }
         heldNt.Drawer.renderer.RenderPawnAt(heldNt.DrawPos);
 
         DamageDef redDef = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);
