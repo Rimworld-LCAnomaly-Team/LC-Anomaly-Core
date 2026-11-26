@@ -327,16 +327,19 @@ namespace LCAnomalyCore.Comp
             if (PeBoxProducedTemp > PeBoxComp.Props.amountProdueRangeNormal.max)
             {
                 StudyEvent_Good(studier);
+                HoldingPlaformTargetComp?.BoundTerminal?.Notify_StudyFinished(LC_StudyResult.Good);
             }
             //差
             else if (PeBoxProducedTemp < PeBoxComp.Props.amountProdueRangeNormal.min)
             {
                 StudyEvent_Bad(studier);
+                HoldingPlaformTargetComp?.BoundTerminal?.Notify_StudyFinished(LC_StudyResult.Bad);
             }
             //良好
             else
             {
                 StudyEvent_Normal(studier);
+                HoldingPlaformTargetComp?.BoundTerminal?.Notify_StudyFinished(LC_StudyResult.Normal);
             }
 
             //清空缓存数量

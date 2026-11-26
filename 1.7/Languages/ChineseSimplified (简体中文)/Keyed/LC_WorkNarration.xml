@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <LC_WorkNarration_FallbackWorker>员工</LC_WorkNarration_FallbackWorker>
+  <LC_WorkNarration_FallbackAbnormality>异想体</LC_WorkNarration_FallbackAbnormality>
+
+  <!-- 通用开场旁白（按工作类型） -->
+  <LC_WorkNarration_Generic_Start_Instinct_1>{0} 步入 {1} 的收容单元，开始执行{2}工作。</LC_WorkNarration_Generic_Start_Instinct_1>
+  <LC_WorkNarration_Generic_Start_Instinct_2>{0} 确认安全警戒线后，靠近 {1} 进行本能照料。</LC_WorkNarration_Generic_Start_Instinct_2>
+  <LC_WorkNarration_Generic_Start_Insight_1>{0} 进入收容室，对 {1} 的收容环境展开{2}检查。</LC_WorkNarration_Generic_Start_Insight_1>
+  <LC_WorkNarration_Generic_Start_Insight_2>{0} 翻开观察记录表，仔细审视 {1} 周围的状况。</LC_WorkNarration_Generic_Start_Insight_2>
+  <LC_WorkNarration_Generic_Start_Attachment_1>{0} 放轻脚步走近 {1}，开始温和的{2}沟通。</LC_WorkNarration_Generic_Start_Attachment_1>
+  <LC_WorkNarration_Generic_Start_Attachment_2>{0} 保持平静呼吸，尝试与 {1} 建立情绪共鸣。</LC_WorkNarration_Generic_Start_Attachment_2>
+  <LC_WorkNarration_Generic_Start_Repression_1>{0} 握紧镇压装备，对 {1} 执行严格的{2}压迫。</LC_WorkNarration_Generic_Start_Repression_1>
+  <LC_WorkNarration_Generic_Start_Repression_2>{0} 保持戒备姿态，准备遏制 {1} 的躁动倾向。</LC_WorkNarration_Generic_Start_Repression_2>
+
+  <!-- 通用工作中段旁白（按工作类型） -->
+  <LC_WorkNarration_Generic_Mid_Instinct_1>{0} 在保持警惕的同时照料 {1} 的基本需求。</LC_WorkNarration_Generic_Mid_Instinct_1>
+  <LC_WorkNarration_Generic_Mid_Instinct_2>{0} 小心控制着安全距离，观察 {1} 的生理反应。</LC_WorkNarration_Generic_Mid_Instinct_2>
+  <LC_WorkNarration_Generic_Mid_Instinct_3>{1} 微微晃动了一下，{0} 立即记录其肢体动向。</LC_WorkNarration_Generic_Mid_Instinct_3>
+  <LC_WorkNarration_Generic_Mid_Instinct_4>{0} 调节着收容室内的温湿度与给养装置。</LC_WorkNarration_Generic_Mid_Instinct_4>
+
+  <LC_WorkNarration_Generic_Mid_Insight_1>{0} 擦拭环境传感器，记录 {1} 发出的异常读数。</LC_WorkNarration_Generic_Mid_Insight_1>
+  <LC_WorkNarration_Generic_Mid_Insight_2>{0} 一边巡检隔离墙体与过滤口，一边观察 {1}。</LC_WorkNarration_Generic_Mid_Insight_2>
+  <LC_WorkNarration_Generic_Mid_Insight_3>随着 {0} 校准终端仪器，脑啡肽计量表稳定跳动。</LC_WorkNarration_Generic_Mid_Insight_3>
+  <LC_WorkNarration_Generic_Mid_Insight_4>{0} 不放过 {1} 姿态上的任何一丝细微变化。</LC_WorkNarration_Generic_Mid_Insight_4>
+
+  <LC_WorkNarration_Generic_Mid_Attachment_1>{0} 轻声交谈，缓解了 {1} 收容室内的紧张气息。</LC_WorkNarration_Generic_Mid_Attachment_1>
+  <LC_WorkNarration_Generic_Mid_Attachment_2>{1} 对 {0} 沉稳耐心的陪伴做出了轻微回应。</LC_WorkNarration_Generic_Mid_Attachment_2>
+  <LC_WorkNarration_Generic_Mid_Attachment_3>{0} 放慢动作，细心安抚着 {1} 的情绪波动。</LC_WorkNarration_Generic_Mid_Attachment_3>
+  <LC_WorkNarration_Generic_Mid_Attachment_4>在 {0} 的安抚下，{1} 周围的压迫感逐渐缓和。</LC_WorkNarration_Generic_Mid_Attachment_4>
+
+  <LC_WorkNarration_Generic_Mid_Repression_1>{0} 采取强硬的收容压制手段，迫使 {1} 退缩。</LC_WorkNarration_Generic_Mid_Repression_1>
+  <LC_WorkNarration_Generic_Mid_Repression_2>{1} 在 {0} 的持续压迫下发出了低沉的躁动。</LC_WorkNarration_Generic_Mid_Repression_2>
+  <LC_WorkNarration_Generic_Mid_Repression_3>{0} 顶住 {1} 令人窒息的注视，寸步不退。</LC_WorkNarration_Generic_Mid_Repression_3>
+  <LC_WorkNarration_Generic_Mid_Repression_4>{0} 检查了物理锁扣，确保 {1} 无法趁隙反扑。</LC_WorkNarration_Generic_Mid_Repression_4>
+
+  <!-- 通用结算旁白 -->
+  <LC_WorkNarration_Generic_Result_Good>工作顺利完成并产出了丰沛的 PE-Box，{1} 显得十分安定。</LC_WorkNarration_Generic_Result_Good>
+  <LC_WorkNarration_Generic_Result_Normal>{0} 按常规标准完成了对 {1} 的本次收容工作。</LC_WorkNarration_Generic_Result_Normal>
+  <LC_WorkNarration_Generic_Result_Bad>{0} 结束工作时，{1} 的收容读数出现了明显恶化。</LC_WorkNarration_Generic_Result_Bad>
+</LanguageData>

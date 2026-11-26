@@ -73,6 +73,7 @@
     <Compile Include="Defs\ResearchProjectDefOf.cs" />
     <Compile Include="Defs\ResearchTabDefOf.cs" />
     <Compile Include="Defs\FactionDefOf.cs" />
+    <Compile Include="Defs\SoundDefOf.cs" />
     <Compile Include="Defs\StatDefOf.cs" />
     <Compile Include="Defs\SongDefOf.cs" />
     <Compile Include="Defs\ThingDefOf.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Jobs\WorkGiver_TakeAbnormalityToHoldingPlatform.cs" />
     <Compile Include="Misc\LC_FX_Standard.cs" />
     <Compile Include="Misc\Mote_FourColorDamage.cs" />
+    <Compile Include="Misc\Mote_LCWorkNarration.cs" />
     <Compile Include="ModExtensions\AbnormalityCategory.cs" />
     <Compile Include="ModExtensions\FourColorDamageExtensions.cs" />
     <Compile Include="Patch\PatchMain.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Patch\Patch_RoomContainment.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAnimation.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAutoCast.cs" />
+    <Compile Include="Patch\Patch_LCEntityUnifiedHealth.cs" />
     <Compile Include="Patch\Patch_SpecialDisplayStats_FourColor.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
     <Compile Include="Patch\Patch_Thing_TakeDamage.cs" />
@@ -132,6 +135,7 @@
     <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="UI\Dialog_LC_EntityCodex.cs" />
+    <Compile Include="UI\EscapedAbnormalityOverlayDrawer.cs" />
     <Compile Include="UI\FloatMenu\FloatMenuOptionProvider_CaptureAbnormality.cs" />
     <Compile Include="UI\ITab_PawnStatus.cs" />
     <Compile Include="Util\AssetBundleUtil.cs" />
@@ -147,6 +151,7 @@
     <Compile Include="Util\GraphicUtil.cs" />
     <Compile Include="Util\HealthUtil.cs" />
     <Compile Include="Util\LabelDrawerUtil.cs" />
+    <Compile Include="Util\LCEntityHealthUtility.cs" />
     <Compile Include="Util\LogUtil.cs" />
     <Compile Include="Util\ManagerBulletUtility.cs" />
     <Compile Include="Util\MaterialDatabase.cs" />
@@ -157,6 +162,7 @@
     <Compile Include="Util\RoomRoleWorker_LCContainmentRoom.cs" />
     <Compile Include="Util\StatWorker_LCContainmentStrength.cs" />
     <Compile Include="Util\Types.cs" />
+    <Compile Include="Util\WorkNarrationUtility.cs" />
     <Reference Include="0Harmony"><HintPath>$(HarmonyAssembliesDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="HarmonyMod"><HintPath>$(HarmonyAssembliesDir)\HarmonyMod.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <SoundDef>
+    <defName>LC_Sound_ContainmentWork_Start</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/WorkStart</clipPath>
+          </li>
+        </grains>
+        <volumeRange>22~28</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+        <distRange>0~60</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ContainmentWork_Finish</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/WorkFinish</clipPath>
+          </li>
+        </grains>
+        <volumeRange>22~28</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+        <distRange>0~60</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ContainmentWork_DefaultLoop</defName>
+    <sustain>true</sustain>
+    <context>MapOnly</context>
+    <maxSimultaneous>6</maxSimultaneous>
+    <priorityMode>PrioritizeNearest</priorityMode>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/WorkLoop_Default</clipPath>
+          </li>
+        </grains>
+        <sustainLoop>false</sustainLoop>
+        <sustainIntervalRange>1.6~2.8</sustainIntervalRange>
+        <volumeRange>13~17</volumeRange>
+        <pitchRange>0.95~1.05</pitchRange>
+        <distRange>10~55</distRange>
+        <sustainRelease>1.5</sustainRelease>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ContainmentWork_PeBox</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>6</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/PeBoxTick</clipPath>
+          </li>
+        </grains>
+        <volumeRange>18~24</volumeRange>
+        <pitchRange>1.04~1.12</pitchRange>
+        <distRange>0~55</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_ContainmentWork_NeBox</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>6</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/NeBoxTick</clipPath>
+          </li>
+        </grains>
+        <volumeRange>20~26</volumeRange>
+        <pitchRange>0.94~1.02</pitchRange>
+        <distRange>0~55</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

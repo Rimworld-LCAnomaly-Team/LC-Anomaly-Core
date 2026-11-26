@@ -82,8 +82,8 @@ namespace LCAnomalyCore.Jobs
         {
             yield return Toils_Goto.GotoThing(platformIndex, PathEndMode.ClosestTouch);
             Toil toil = Toils_General.WaitWith(platformIndex, 300, useProgressBar: true);
-            if (ModsConfig.AnomalyActive && SoundDefOf.ChainToPlatform != null)
-                toil.PlaySustainerOrSound(SoundDefOf.ChainToPlatform);
+            if (ModsConfig.AnomalyActive && RimWorld.SoundDefOf.ChainToPlatform != null)
+                toil.PlaySustainerOrSound(RimWorld.SoundDefOf.ChainToPlatform);
             yield return toil;
             yield return Toils_General.Do(delegate
             {

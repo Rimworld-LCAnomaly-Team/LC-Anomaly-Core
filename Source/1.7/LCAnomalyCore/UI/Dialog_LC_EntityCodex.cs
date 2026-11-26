@@ -171,7 +171,7 @@ namespace LCAnomalyCore.UI
                     if (Widgets.ButtonText(new Rect(0f, num, viewRect.width, ButSize.y), "DEV: Discover"))
                     {
                         selectedEntry.Discovered = true;
-                        SoundDefOf.Tick_High.PlayOneShotOnCamera();
+                        RimWorld.SoundDefOf.Tick_High.PlayOneShotOnCamera();
                     }
 
                     num += ButSize.y + 8f;
@@ -453,7 +453,7 @@ namespace LCAnomalyCore.UI
             if (Widgets.ButtonInvisible(rect))
             {
                 selectedEntry = entry;
-                SoundDefOf.Tick_High.PlayOneShotOnCamera();
+                RimWorld.SoundDefOf.Tick_High.PlayOneShotOnCamera();
             }
         }
 

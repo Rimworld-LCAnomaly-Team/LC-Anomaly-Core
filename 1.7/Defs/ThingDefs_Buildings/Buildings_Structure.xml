@@ -111,14 +111,13 @@
       <WorkToBuild>1600</WorkToBuild>
     </statBases>
     <graphicData>
-      <texPath>Things/Building/Door/Autodoor_Mover</texPath>
+      <texPath>Things/Building/LC_ContainmentDoor/ContainmentDoor_Mover</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <color>(85, 95, 112)</color>
       <damageData>
         <enabled>false</enabled>
       </damageData>
     </graphicData>
-    <uiIconPath>Things/Building/Door/Autodoor_MenuIcon</uiIconPath>
+    <uiIconPath>Things/Building/LC_ContainmentDoor/ContainmentDoor_MenuIcon</uiIconPath>
     <costList>
       <Steel>60</Steel>
       <ComponentIndustrial>2</ComponentIndustrial>

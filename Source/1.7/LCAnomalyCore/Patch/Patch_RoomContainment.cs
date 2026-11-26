@@ -24,6 +24,113 @@ namespace LCAnomalyCore.Patch
                 && p.Spawned
                 && p.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.CurrentlyContainedInRoom == true;
         }
+
+        /// <summary>判断目标是否为已突破收容（处于出逃态且未重新被收容）的异想体。</summary>
+        public static bool IsBreachedAbnormality(Pawn p)
+        {
+            if (p == null || p.Dead || p.Downed || IsContainedInRoom(p))
+            {
+                return false;
+            }
+
+            if (p.TryGetComp<CompAbnormality>()?.Escaped == true)
+            {
+                return true;
+            }
+
+            return p.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.isEscaping == true;
+        }
+
+        /// <summary>判断指定门当前是否因邻接正在进行工作的收容室而处于锁死状态。</summary>
+        /// <remarks>只读访问 Map.listerThings 与 regionGrid，保证寻路后台线程安全。</remarks>
+        public static bool IsDoorLockedByActiveWork(Building_Door door)
+        {
+            if (door == null || !door.Spawned || door.Map?.listerThings == null || door.Map.regionGrid == null)
+            {
+                return false;
+            }
+
+            ThingDef terminalDef = Defs.ThingDefOf.LC_ContainmentTerminal;
+            List<Thing> terminals = terminalDef != null ? door.Map.listerThings.ThingsOfDef(terminalDef) : null;
+            if (terminals == null || terminals.Count == 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < terminals.Count; i++)
+            {
+                if (terminals[i] is Building_AbnormalityContainmentTerminal term
+                    && term.Spawned
+                    && term.Occupied
+                    && term.IsStudySessionActive)
+                {
+                    Room termRoom = door.Map.regionGrid.GetValidRegionAt_NoRebuild(term.Position)?.Room;
+                    if (termRoom == null || termRoom.TouchesMapEdge)
+                    {
+                        continue;
+                    }
+
+                    for (int d = 0; d < GenAdj.CardinalDirections.Length; d++)
+                    {
+                        IntVec3 adj = door.Position + GenAdj.CardinalDirections[d];
+                        if (adj.InBounds(door.Map) && door.Map.regionGrid.GetValidRegionAt_NoRebuild(adj)?.Room == termRoom)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.CanOpenAnyDoor), MethodType.Getter)]
+    public static class Patch_Pawn_CanOpenAnyDoor_RoomContainment
+    {
+        public static void Postfix(Pawn __instance, ref bool __result)
+        {
+            if (!__result && Patch_RoomContainment.IsBreachedAbnormality(__instance))
+            {
+                __result = true;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Building_Door), nameof(Building_Door.PawnCanOpen))]
+    public static class Patch_Building_Door_PawnCanOpen_RoomContainment
+    {
+        public static void Postfix(Building_Door __instance, Pawn p, ref bool __result)
+        {
+            if (Patch_RoomContainment.IsContainedInRoom(p))
+            {
+                __result = false;
+                return;
+            }
+
+            if (Patch_RoomContainment.IsBreachedAbnormality(p))
+            {
+                __result = true;
+                return;
+            }
+
+            if (__result && Patch_RoomContainment.IsDoorLockedByActiveWork(__instance))
+            {
+                __result = false;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Building_Door), nameof(Building_Door.FreePassage), MethodType.Getter)]
+    public static class Patch_Building_Door_FreePassage_RoomContainment
+    {
+        public static void Postfix(Building_Door __instance, ref bool __result)
+        {
+            if (__result && Patch_RoomContainment.IsDoorLockedByActiveWork(__instance))
+            {
+                __result = false;
+            }
+        }
     }
 
     [HarmonyPatch(typeof(GenHostility), nameof(GenHostility.HostileTo), new[] { typeof(Thing), typeof(Thing) })]
@@ -87,7 +194,11 @@ namespace LCAnomalyCore.Patch
                 && ___pawn.GetStatValue(StatDefOf.MoveSpeed) > 0.01f;
 
             Job job = null;
-            if (canWander)
+            if (terminal.IsStudySessionActive)
+            {
+                job = JobMaker.MakeJob(RimWorld.JobDefOf.Wait, 60);
+            }
+            else if (canWander)
             {
                 Room room = terminal.GetRoom();
                 if (room != null && !room.TouchesMapEdge && !Rand.Chance(0.45f))
@@ -136,6 +247,15 @@ namespace LCAnomalyCore.Patch
 
             __result = new ThinkResult(job, null);
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.DrawGUIOverlay))]
+    public static class Patch_Pawn_DrawGUIOverlay_EscapedAbnormality
+    {
+        public static void Postfix(Pawn __instance)
+        {
+            UI.EscapedAbnormalityOverlayDrawer.DrawEscapedOverlay(__instance);
         }
     }
 }

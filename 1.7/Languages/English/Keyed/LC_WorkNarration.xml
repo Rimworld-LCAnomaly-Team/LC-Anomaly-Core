@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <LC_WorkNarration_FallbackWorker>Employee</LC_WorkNarration_FallbackWorker>
+  <LC_WorkNarration_FallbackAbnormality>Abnormality</LC_WorkNarration_FallbackAbnormality>
+
+  <!-- Generic Start lines by Work Type -->
+  <LC_WorkNarration_Generic_Start_Instinct_1>{0} steps into {1}'s containment unit to perform {2} work.</LC_WorkNarration_Generic_Start_Instinct_1>
+  <LC_WorkNarration_Generic_Start_Instinct_2>{0} checks feeding and bodily safety protocols before approaching {1}.</LC_WorkNarration_Generic_Start_Instinct_2>
+  <LC_WorkNarration_Generic_Start_Insight_1>{0} enters the chamber to examine {1}'s containment environment ({2}).</LC_WorkNarration_Generic_Start_Insight_1>
+  <LC_WorkNarration_Generic_Start_Insight_2>{0} opens the observation log and inspects the conditions around {1}.</LC_WorkNarration_Generic_Start_Insight_2>
+  <LC_WorkNarration_Generic_Start_Attachment_1>{0} steps inside quietly to initiate {2} work with {1}.</LC_WorkNarration_Generic_Start_Attachment_1>
+  <LC_WorkNarration_Generic_Start_Attachment_2>{0} maintains a calm demeanor while establishing contact with {1}.</LC_WorkNarration_Generic_Start_Attachment_2>
+  <LC_WorkNarration_Generic_Start_Repression_1>{0} arms safety restraints and begins {2} procedures on {1}.</LC_WorkNarration_Generic_Start_Repression_1>
+  <LC_WorkNarration_Generic_Start_Repression_2>{0} stands firm and forces compliance protocols upon {1}.</LC_WorkNarration_Generic_Start_Repression_2>
+
+  <!-- Generic Mid-Work lines by Work Type -->
+  <LC_WorkNarration_Generic_Mid_Instinct_1>{0} attends to {1}'s primal needs without dropping guard.</LC_WorkNarration_Generic_Mid_Instinct_1>
+  <LC_WorkNarration_Generic_Mid_Instinct_2>{0} keeps a measured distance while tending directly to {1}.</LC_WorkNarration_Generic_Mid_Instinct_2>
+  <LC_WorkNarration_Generic_Mid_Instinct_3>{1} stirs slightly as {0} monitors its physical reaction.</LC_WorkNarration_Generic_Mid_Instinct_3>
+  <LC_WorkNarration_Generic_Mid_Instinct_4>{0} adjusts temperature and nutrition feeds inside the unit.</LC_WorkNarration_Generic_Mid_Instinct_4>
+
+  <LC_WorkNarration_Generic_Mid_Insight_1>{0} cleans the sensors and records anomalous readings from {1}.</LC_WorkNarration_Generic_Mid_Insight_1>
+  <LC_WorkNarration_Generic_Mid_Insight_2>{0} inspects the chamber walls and filters while observing {1}.</LC_WorkNarration_Generic_Mid_Insight_2>
+  <LC_WorkNarration_Generic_Mid_Insight_3>Enkephalin meters flicker steadily as {0} calibrates the containment unit.</LC_WorkNarration_Generic_Mid_Insight_3>
+  <LC_WorkNarration_Generic_Mid_Insight_4>{0} studies every subtle shift in {1}'s posture.</LC_WorkNarration_Generic_Mid_Insight_4>
+
+  <LC_WorkNarration_Generic_Mid_Attachment_1>{0} speaks softly, easing the tension inside {1}'s chamber.</LC_WorkNarration_Generic_Mid_Attachment_1>
+  <LC_WorkNarration_Generic_Mid_Attachment_2>{1} responds quietly to {0}'s steady, patient presence.</LC_WorkNarration_Generic_Mid_Attachment_2>
+  <LC_WorkNarration_Generic_Mid_Attachment_3>{0} observes {1}'s emotional reaction without sudden movement.</LC_WorkNarration_Generic_Mid_Attachment_3>
+  <LC_WorkNarration_Generic_Mid_Attachment_4>The atmosphere in {1}'s unit softens under {0}'s care.</LC_WorkNarration_Generic_Mid_Attachment_4>
+
+  <LC_WorkNarration_Generic_Mid_Repression_1>{0} suppresses {1}'s agitation with strict disciplinary measures.</LC_WorkNarration_Generic_Mid_Repression_1>
+  <LC_WorkNarration_Generic_Mid_Repression_2>{1} recoils as {0} enforces containment authority.</LC_WorkNarration_Generic_Mid_Repression_2>
+  <LC_WorkNarration_Generic_Mid_Repression_3>{0} refuses to flinch under {1}'s oppressive stare.</LC_WorkNarration_Generic_Mid_Repression_3>
+  <LC_WorkNarration_Generic_Mid_Repression_4>{0} verifies the containment locks while keeping {1} in check.</LC_WorkNarration_Generic_Mid_Repression_4>
+
+  <!-- Generic Result lines -->
+  <LC_WorkNarration_Generic_Result_Good>Work concluded with high PE-Box output; {1} appears calmer.</LC_WorkNarration_Generic_Result_Good>
+  <LC_WorkNarration_Generic_Result_Normal>{0} completes the work within acceptable Enkephalin tolerances.</LC_WorkNarration_Generic_Result_Normal>
+  <LC_WorkNarration_Generic_Result_Bad>Containment readings destabilized as {0} finishes work on {1}.</LC_WorkNarration_Generic_Result_Bad>
+</LanguageData>

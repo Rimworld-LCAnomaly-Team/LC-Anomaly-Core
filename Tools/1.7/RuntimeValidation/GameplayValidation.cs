@@ -5158,7 +5158,83 @@ public static class GameplayValidation
                 }
             }
         }
+
+        // Pass 2 fallback: clear natural plants, filth, rock chunks, or mineable outcrops while never disturbing pawns, items, corpses, or buildings.
+        for (int x = 12; x < map.Size.x - 12 - size; x += 2)
+        {
+            for (int z = 12; z < map.Size.z - 12 - size; z += 2)
+            {
+                CellRect rect = new CellRect(x, z, size, size);
+                bool ok = true;
+                foreach (IntVec3 c in rect.ExpandedBy(1).Cells)
+                {
+                    if (!c.InBounds(map) || c.Fogged(map) || c.GetFirstPawn(map) != null)
+                    {
+                        ok = false;
+                        break;
+                    }
+
+                    RoofDef roof = c.GetRoof(map);
+                    if (roof != null && roof.isThickRoof)
+                    {
+                        ok = false;
+                        break;
+                    }
+
+                    List<Thing> things = c.GetThingList(map);
+                    for (int i = 0; i < things.Count; i++)
+                    {
+                        Thing t = things[i];
+                        bool clearableNatural = t.def.category == ThingCategory.Plant
+                            || t.def.category == ThingCategory.Filth
+                            || t.def.mineable
+                            || (t.def.thingCategories != null && t.def.thingCategories.Contains(ThingCategoryDefOf.Chunks));
+                        if (!clearableNatural)
+                        {
+                            ok = false;
+                            break;
+                        }
+                    }
+
+                    if (!ok)
+                    {
+                        break;
+                    }
+                }
+                if (ok)
+                {
+                    return rect;
+                }
+            }
+        }
+
         throw new InvalidOperationException($"Could not find a clear {size}x{size} area for room containment test.");
+    }
+
+    private static void ClearCellForTestRoom(Map map, IntVec3 c)
+    {
+        if (!c.InBounds(map))
+        {
+            return;
+        }
+
+        List<Thing> things = c.GetThingList(map);
+        for (int i = things.Count - 1; i >= 0; i--)
+        {
+            Thing t = things[i];
+            if (!t.Destroyed && (t.def.category == ThingCategory.Plant
+                || t.def.category == ThingCategory.Filth
+                || t.def.mineable
+                || (t.def.thingCategories != null && t.def.thingCategories.Contains(ThingCategoryDefOf.Chunks))))
+            {
+                t.Destroy();
+            }
+        }
+
+        if (!c.SupportsStructureType(map, TerrainAffordanceDefOf.Heavy))
+        {
+            map.terrainGrid?.SetTerrain(c, TerrainDefOf.Concrete);
+        }
     }
 
     private static Room BuildTestContainmentRoom(Map map, out CellRect roomRect, out Building_LCContainmentDoor door)
@@ -5168,6 +5244,12 @@ public static class GameplayValidation
         ThingDef doorDef = DefDatabase<ThingDef>.GetNamed("LC_ContainmentDoor", true);
         IntVec3 doorCell = new IntVec3(roomRect.CenterCell.x, 0, roomRect.minZ);
         door = null;
+
+        foreach (IntVec3 c in roomRect.Cells)
+        {
+            ClearCellForTestRoom(map, c);
+        }
+        ClearCellForTestRoom(map, doorCell + IntVec3.South);
 
         foreach (IntVec3 c in roomRect.EdgeCells)
         {
@@ -5289,8 +5371,38 @@ public static class GameplayValidation
             throw new InvalidOperationException("Study job targets mismatch for room terminal.");
         }
 
+        foreach (string hudTexPath in new[]
+        {
+            "UI/ContainmentRoom/RoomHeaderFrame",
+            "UI/ContainmentRoom/QliphothFrame",
+            "UI/ContainmentRoom/QliphothAlertFrame",
+            "UI/ContainmentRoom/PeBoxIcon",
+            "UI/ContainmentRoom/EnergyBarFrame",
+            "UI/ContainmentRoom/EnergyCube_PE",
+            "UI/ContainmentRoom/EnergyCube_NE",
+            "UI/ContainmentRoom/EnergyCube_Empty",
+            "UI/ContainmentRoom/ResultBadge_Good",
+            "UI/ContainmentRoom/ResultBadge_Normal",
+            "UI/ContainmentRoom/ResultBadge_Bad",
+            "Things/Building/LC_ContainmentTerminal/ContainmentTerminal",
+            "Things/Building/LC_ContainmentDoor/ContainmentDoor_Mover",
+            "Things/Building/LC_ContainmentDoor/ContainmentDoor_MenuIcon"
+        })
+        {
+            if (ContentFinder<Texture2D>.Get(hudTexPath, false) == null)
+            {
+                throw new InvalidOperationException($"Missing containment room texture asset: {hudTexPath}");
+            }
+        }
+
         terminal1.CurWorkType = EAnomalyWorkType.Attachment;
         terminal1.Notify_StudyStart(worker);
+        if (!door1.IsLockedForActiveWork || door1.PawnCanOpen(worker) || door1.PawnCanOpen(nonEmployee) || door1.PawnCanOpen(oneSinHeld) || door1.FreePassage)
+        {
+            throw new InvalidOperationException(
+                $"door1 should be locked during active work: locked={door1.IsLockedForActiveWork}, workerOpen={door1.PawnCanOpen(worker)}, freePassage={door1.FreePassage}");
+        }
+        door1.GetInspectString();
         terminal1.Notify_Studying(worker);
         Rand.PushState(0x4c430901);
         try
@@ -5298,11 +5410,31 @@ public static class GameplayValidation
             for (int i = 0; i < 12; i++) terminal1.Notify_StudyInterval(employee);
         }
         finally { Rand.PopState(); }
+
+        if (!terminal1.IsStudySessionActive
+            || terminal1.ActiveSessionMaxBoxes <= 0
+            || terminal1.ActiveSessionPeCount + terminal1.ActiveSessionNeCount != 12)
+        {
+            throw new InvalidOperationException(
+                $"Room HUD active study metrics mismatch: active={terminal1.IsStudySessionActive}, PE={terminal1.ActiveSessionPeCount}, NE={terminal1.ActiveSessionNeCount}, max={terminal1.ActiveSessionMaxBoxes}");
+        }
+        terminal1.GetInspectString();
+        terminal1.DrawGUIOverlay();
+
         CompAbnormality oneSinAbn = oneSinHeld.GetComp<CompAbnormality>();
         oneSinAbn.Notify_Studied(worker);
         if (oneSinAbn.PeBoxComp.CurAmountIndiPebox <= 0)
         {
             throw new InvalidOperationException("Room-contained OneSin produced 0 PE-Boxes.");
+        }
+        if (terminal1.IsStudySessionActive || !terminal1.LastStudyResult.HasValue)
+        {
+            throw new InvalidOperationException(
+                $"Room HUD did not finalize study session cleanly: active={terminal1.IsStudySessionActive}, result={terminal1.LastStudyResult?.ToString() ?? "<null>"}");
+        }
+        if (door1.IsLockedForActiveWork || !door1.PawnCanOpen(worker))
+        {
+            throw new InvalidOperationException($"door1 failed to unlock when work ended: locked={door1.IsLockedForActiveWork}, workerOpen={door1.PawnCanOpen(worker)}");
         }
 
         terminal1.GetGizmos().ToList();
@@ -5341,6 +5473,10 @@ public static class GameplayValidation
         {
             throw new InvalidOperationException("Room-contained PunishingBird must be non-hostile and ThreatDisabled.");
         }
+        if (EscapedAbnormalityOverlayDrawer.ShouldDrawEscapedOverlay(bird))
+        {
+            throw new InvalidOperationException("Room-contained PunishingBird must not draw escaped bottom overlay.");
+        }
         if (door2.PawnCanOpen(bird))
         {
             throw new InvalidOperationException("Room-contained PunishingBird must not be able to open LC_ContainmentDoor.");
@@ -5350,21 +5486,43 @@ public static class GameplayValidation
             throw new InvalidOperationException("Room-contained PunishingBird was falsely counted as breached by CountBreachedForestBirds.");
         }
 
+        if (birdAbn.Props.canWanderInContainmentRoom)
+        {
+            throw new InvalidOperationException("PunishingBird must have canWanderInContainmentRoom=false.");
+        }
+
+        IntVec3 birdStartCell = bird.Position;
         bird.jobs.CheckForJobOverride();
         for (int i = 0; i < 30; i++) Find.TickManager.DoSingleTick();
         if (!birdTarget.CurrentlyContainedInRoom || birdAbn.Escaped || bird.GetRoom() != room2)
         {
             throw new InvalidOperationException("Room-contained PunishingBird unexpectedly escaped or left room2 during ticks.");
         }
+        if (bird.Position != birdStartCell || (bird.CurJob != null && (bird.CurJob.def == RimWorld.JobDefOf.GotoWander || bird.CurJob.def == RimWorld.JobDefOf.Wait_Wander)))
+        {
+            throw new InvalidOperationException(
+                $"Stationary PunishingBird unexpectedly wandered in containment: start={birdStartCell}, now={bird.Position}, job={bird.CurJob?.def?.defName ?? "<null>"}.");
+        }
         if (bird.CurJob != null && bird.CurJob.canBashDoors)
         {
             throw new InvalidOperationException("Room-contained PunishingBird job must not allow bashing doors.");
+        }
+
+        terminal2.Notify_StudyStart(worker);
+        if (!door2.IsLockedForActiveWork || door2.PawnCanOpen(worker) || door2.PawnCanOpen(bird))
+        {
+            throw new InvalidOperationException($"door2 should lock during active work on PunishingBird: locked={door2.IsLockedForActiveWork}");
         }
 
         birdTarget.Escape();
         if (birdTarget.CurrentlyContainedInRoom || terminal2.HeldPawn != null || !birdAbn.Escaped)
         {
             throw new InvalidOperationException("PunishingBird Escape() did not release from terminal2.");
+        }
+        if (door2.IsLockedForActiveWork || !bird.CanOpenAnyDoor || !door2.PawnCanOpen(bird) || door2.BlocksPawn(bird) || !door2.PawnCanOpen(worker))
+        {
+            throw new InvalidOperationException(
+                $"Breached PunishingBird door/unlock checks failed: locked={door2.IsLockedForActiveWork}, canOpenAnyDoor={bird.CanOpenAnyDoor}, doorPawnCanOpen={door2.PawnCanOpen(bird)}, blocksBird={door2.BlocksPawn(bird)}, workerOpen={door2.PawnCanOpen(worker)}");
         }
         if (!GenHostility.HostileTo(worker, bird) || bird.ThreatDisabled(worker))
         {
@@ -5374,6 +5532,128 @@ public static class GameplayValidation
         {
             throw new InvalidOperationException("Escaped PunishingBird was not counted by CountBreachedForestBirds.");
         }
+        if (!EscapedAbnormalityOverlayDrawer.ShouldDrawEscapedOverlay(bird)
+            || EscapedAbnormalityOverlayDrawer.GetRiskTag(bird) != "TETH"
+            || EscapedAbnormalityOverlayDrawer.GetHealthPercent(bird) <= 0f)
+        {
+            throw new InvalidOperationException(
+                $"Escaped PunishingBird overlay check failed: shouldDraw={EscapedAbnormalityOverlayDrawer.ShouldDrawEscapedOverlay(bird)}, risk={EscapedAbnormalityOverlayDrawer.GetRiskTag(bird) ?? "<null>"}, hp={EscapedAbnormalityOverlayDrawer.GetHealthPercent(bird)}");
+        }
+        EscapedAbnormalityOverlayDrawer.DrawEscapedOverlay(bird);
+
+        // Verify working SoundDefs & work narration resolution/spawning
+        if (LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_Start == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_Finish == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_DefaultLoop == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_PeBox == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_NeBox == null)
+        {
+            throw new InvalidOperationException("One or more LC_Sound_ContainmentWork_* SoundDefs failed DefOf binding.");
+        }
+        foreach (ThingDef abnDef in DefDatabase<ThingDef>.AllDefsListForReading)
+        {
+            CompProperties_Abnormality abnProps = abnDef.GetCompProperties<CompProperties_Abnormality>();
+            if (abnProps != null && abnDef.GetCompProperties<CompProperties_PeBoxProduce>() != null)
+            {
+                SoundDef resolvedWorkSound = abnProps.soundWorking ?? LCAnomalyCore.Defs.SoundDefOf.LC_Sound_ContainmentWork_DefaultLoop;
+                if (resolvedWorkSound == null)
+                {
+                    throw new InvalidOperationException($"Workable abnormality {abnDef.defName} has neither soundWorking nor DefaultLoop.");
+                }
+            }
+        }
+        foreach (string testAbnName in new[] { "OneSin", "PunishingBird", "AllAroundHelper", "NothingThere" })
+        {
+            Pawn sampleAbn = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed(testAbnName, true));
+            try
+            {
+                string startLine = WorkNarrationUtility.ResolveStartLine(worker, sampleAbn, EAnomalyWorkType.Instinct, "Instinct");
+                string midLine = WorkNarrationUtility.ResolveMidLine(worker, sampleAbn, EAnomalyWorkType.Insight, "Insight", 0);
+                string resLine = WorkNarrationUtility.ResolveResultLine(worker, sampleAbn, LC_StudyResult.Good);
+                foreach (string line in new[] { startLine, midLine, resLine })
+                {
+                    if (string.IsNullOrWhiteSpace(line)
+                        || line.Contains("{0}")
+                        || line.Contains("{1}")
+                        || line.Contains("LC_WorkNarration_"))
+                    {
+                        throw new InvalidOperationException($"Invalid work narration line for {testAbnName}: '{line ?? "<null>"}'");
+                    }
+                }
+                if (testAbnName == "PunishingBird")
+                {
+                    Mote_LCWorkNarration spawnedMote = WorkNarrationUtility.SpawnNarration(map, terminal2.DrawPos, midLine, WorkNarrationUtility.GetWorkTypeAccentColor(EAnomalyWorkType.Insight));
+                    if (spawnedMote == null || !spawnedMote.Spawned)
+                    {
+                        throw new InvalidOperationException("WorkNarrationUtility.SpawnNarration failed to spawn Mote_LCWorkNarration.");
+                    }
+                    spawnedMote.Destroy();
+                }
+            }
+            finally
+            {
+                if (sampleAbn != null && !sampleAbn.Destroyed)
+                {
+                    sampleAbn.Destroy();
+                }
+            }
+        }
+
+        // Verify unified HP pool (no vanilla limb/organ death, no pain/bleeding, dies only when full HP pool hits 0)
+        if (!LCEntityHealthUtility.UsesUnifiedHealthPool(bird) || LCEntityHealthUtility.UsesUnifiedHealthPool(worker))
+        {
+            throw new InvalidOperationException(
+                $"UsesUnifiedHealthPool mismatch: bird={LCEntityHealthUtility.UsesUnifiedHealthPool(bird)}, worker={LCEntityHealthUtility.UsesUnifiedHealthPool(worker)}");
+        }
+        float maxBirdHp = LCEntityHealthUtility.GetMaxHealth(bird);
+        BodyPartRecord birdBrain = bird.health.hediffSet.GetBrain() ?? bird.RaceProps.body.corePart;
+        DamageInfo brainCut = new DamageInfo(RimWorld.DamageDefOf.Cut, maxBirdHp * 0.50f, armorPenetration: 2f, instigator: worker, hitPart: birdBrain);
+        brainCut.SetIgnoreArmor(true);
+        bird.TakeDamage(brainCut);
+        if (bird.Dead || bird.Downed
+            || bird.health.hediffSet.hediffs.Any(h => h is Hediff_MissingPart || h.def == RimWorld.HediffDefOf.BloodLoss)
+            || bird.health.hediffSet.PainTotal > 0.001f
+            || bird.health.hediffSet.BleedRateTotal > 0.001f)
+        {
+            throw new InvalidOperationException(
+                $"Unified HP brain-hit check failed: dead={bird.Dead}, downed={bird.Downed}, pain={bird.health.hediffSet.PainTotal}, bleed={bird.health.hediffSet.BleedRateTotal}");
+        }
+        float pctAfter50 = bird.health.summaryHealth.SummaryHealthPercent;
+        if (Math.Abs(pctAfter50 - 0.50f) > 0.05f)
+        {
+            throw new InvalidOperationException($"Expected ~0.50 HP after 50% damage hit, got {pctAfter50:0.###} (cur={LCEntityHealthUtility.GetCurrentHealth(bird):0.##}/{maxBirdHp:0.##}).");
+        }
+
+        DamageInfo heartCrush = new DamageInfo(RimWorld.DamageDefOf.Blunt, maxBirdHp * 0.40f, armorPenetration: 2f, instigator: worker, hitPart: bird.RaceProps.body.corePart);
+        heartCrush.SetIgnoreArmor(true);
+        Verse.DamageWorker.DamageResult crushRes = bird.TakeDamage(heartCrush);
+        float pctAfter90 = bird.health.summaryHealth.SummaryHealthPercent;
+        if (bird.Dead || bird.Downed || crushRes.totalDamageDealt < maxBirdHp * 0.35f || pctAfter90 <= 0.03f || pctAfter90 >= 0.20f)
+        {
+            throw new InvalidOperationException(
+                $"Unified HP 90% damage check failed: dead={bird.Dead}, downed={bird.Downed}, dealt={crushRes.totalDamageDealt:0.##}, pct={pctAfter90:0.###}");
+        }
+
+        DamageInfo finishHit = new DamageInfo(RimWorld.DamageDefOf.Cut, maxBirdHp * 0.20f, armorPenetration: 2f, instigator: worker);
+        finishHit.SetIgnoreArmor(true);
+        bird.TakeDamage(finishHit);
+        if (!bird.Dead || bird.health.summaryHealth.SummaryHealthPercent > 0.001f)
+        {
+            throw new InvalidOperationException($"Unified HP entity did not die after >=100% damage: dead={bird.Dead}, pct={bird.health.summaryHealth.SummaryHealthPercent:0.###}");
+        }
+        if (bird.Corpse != null && !bird.Corpse.Destroyed)
+        {
+            bird.Corpse.Destroy();
+        }
+        foreach (Thing spawnedBirdCleanup in birdPosCleanupList(map, bird.PositionHeld))
+        {
+            if (!spawnedBirdCleanup.Destroyed) spawnedBirdCleanup.Destroy();
+        }
+
+        static List<Thing> birdPosCleanupList(Map m, IntVec3 pos) => pos.InBounds(m)
+            ? m.listerThings.ThingsOfDef(DefDatabase<ThingDef>.GetNamed("PunishingBirdEgg", true))
+                .Where(t => t.Position.DistanceTo(pos) <= 3f).ToList()
+            : new List<Thing>();
 
         if (bird.Spawned) bird.DeSpawn();
         if (!bird.Destroyed) bird.Destroy();
@@ -5418,6 +5698,19 @@ public static class GameplayValidation
         if (!recalled || terminal2.HeldPawn != lrPawn || !lrPawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>().CurrentlyContainedInRoom)
         {
             throw new InvalidOperationException("LittleRed RecallFromHunt failed to return into room terminal.");
+        }
+        if (!lrComp.Props.canWanderInContainmentRoom)
+        {
+            throw new InvalidOperationException("LittleRed should have canWanderInContainmentRoom=true.");
+        }
+        terminal2.Notify_StudyStart(worker);
+        Job simWaitJob = JobMaker.MakeJob(RimWorld.JobDefOf.Wait, worker);
+        simWaitJob.expiryInterval = 90;
+        lrPawn.jobs.StartJob(simWaitJob, JobCondition.InterruptForced, null, resumeCurJobAfterwards: false);
+        lrComp.Notify_Studied(worker);
+        if (lrPawn.CurJobDef == RimWorld.JobDefOf.Wait)
+        {
+            throw new InvalidOperationException("Wandering abnormality remained frozen in Wait job after study finished.");
         }
         terminal2.EjectContents();
         if (lrTarget.Spawned) lrTarget.DeSpawn();

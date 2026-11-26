@@ -28,7 +28,17 @@
   <LC_ContainmentRoom_Occupied>该收容室已被占用。</LC_ContainmentRoom_Occupied>
   <LC_ContainmentRoom_BreachWarning>收容室完整性已被破坏！</LC_ContainmentRoom_BreachWarning>
   <LC_ContainmentDoor_RestrictLabel>仅限员工通行</LC_ContainmentDoor_RestrictLabel>
-  <LC_ContainmentDoor_RestrictDesc>启用后，当此门邻接已收容异想体的收容室时，仅已激活的脑叶公司员工（及征召/紧急救援人员）可开启通过。</LC_ContainmentDoor_RestrictDesc>
+  <LC_ContainmentDoor_RestrictDesc>启用后，当此门邻接已收容异想体的收容室时，平时仅已激活的脑叶公司员工（及征召/紧急救援人员）可开启通过。员工入室开始工作后门会自动锁死，直到工作结束或异想体突破收容（突破收容的异想体可直接开门而出）。</LC_ContainmentDoor_RestrictDesc>
   <LC_ContainmentDoor_InspectRestricted>通行模式：仅限 LC 员工（房间占用时）</LC_ContainmentDoor_InspectRestricted>
   <LC_ContainmentDoor_InspectOpen>通行模式：全员自由通行</LC_ContainmentDoor_InspectOpen>
+  <LC_ContainmentDoor_InspectWorkLocked>门禁已锁死：收容工作进行中（工作结束或突破收容后解锁）</LC_ContainmentDoor_InspectWorkLocked>
+  <LC_ContainmentRoom_InspectQliphoth>逆卡巴拉计数器：{0}/{1}</LC_ContainmentRoom_InspectQliphoth>
+  <LC_ContainmentRoom_InspectQliphothNone>逆卡巴拉计数器：无</LC_ContainmentRoom_InspectQliphothNone>
+  <LC_ContainmentRoom_InspectPeBox>独立 PE-Box：{0}</LC_ContainmentRoom_InspectPeBox>
+  <LC_ContainmentRoom_InspectWorkProgress>当前工作产出：+{0} PE / -{1} NE（上限 {2}）</LC_ContainmentRoom_InspectWorkProgress>
+  <LC_ContainmentRoom_HudWork>工作中</LC_ContainmentRoom_HudWork>
+  <LC_ContainmentRoom_HudAuto>自动</LC_ContainmentRoom_HudAuto>
+  <LC_ContainmentRoom_HudReady>就绪</LC_ContainmentRoom_HudReady>
+  <LC_ContainmentRoom_HudWait>冷却中</LC_ContainmentRoom_HudWait>
+  <LC_ContainmentRoom_HudCooldown>冷却</LC_ContainmentRoom_HudCooldown>
 </LanguageData>

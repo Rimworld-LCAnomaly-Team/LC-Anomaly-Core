@@ -20,11 +20,11 @@
     <size>(1, 1)</size>
     <defaultPlacingRot>North</defaultPlacingRot>
     <graphicData>
-      <texPath>Things/Building/DepartmentCore/Base_100p</texPath>
+      <texPath>Things/Building/LC_ContainmentTerminal/ContainmentTerminal</texPath>
       <graphicClass>Graphic_Single</graphicClass>
       <drawSize>(1, 1)</drawSize>
     </graphicData>
-    <uiIconPath>Things/Building/DepartmentCore/Base_100p</uiIconPath>
+    <uiIconPath>Things/Building/LC_ContainmentTerminal/ContainmentTerminal</uiIconPath>
     <thingCategories>
       <li>LC_Building_Containment</li>
     </thingCategories>

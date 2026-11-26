@@ -28,7 +28,17 @@
   <LC_ContainmentRoom_Occupied>Containment room is already occupied.</LC_ContainmentRoom_Occupied>
   <LC_ContainmentRoom_BreachWarning>Containment room integrity lost!</LC_ContainmentRoom_BreachWarning>
   <LC_ContainmentDoor_RestrictLabel>Employee access only</LC_ContainmentDoor_RestrictLabel>
-  <LC_ContainmentDoor_RestrictDesc>When enabled and bordering an occupied containment room, only activated Lobotomy Corporation employees (or drafted/emergency pawns) may open this door.</LC_ContainmentDoor_RestrictDesc>
+  <LC_ContainmentDoor_RestrictDesc>When enabled and bordering an occupied containment room, only activated Lobotomy Corporation employees (or drafted/emergency pawns) may open this door. While active containment work is underway inside, bordering doors automatically lock shut until work ends or the abnormality breaches (breached entities can open doors directly).</LC_ContainmentDoor_RestrictDesc>
   <LC_ContainmentDoor_InspectRestricted>Access mode: LC employees only (when occupied)</LC_ContainmentDoor_InspectRestricted>
   <LC_ContainmentDoor_InspectOpen>Access mode: Unrestricted</LC_ContainmentDoor_InspectOpen>
+  <LC_ContainmentDoor_InspectWorkLocked>Door locked: containment work in progress (unlocks on completion or breach)</LC_ContainmentDoor_InspectWorkLocked>
+  <LC_ContainmentRoom_InspectQliphoth>Qliphoth counter: {0}/{1}</LC_ContainmentRoom_InspectQliphoth>
+  <LC_ContainmentRoom_InspectQliphothNone>Qliphoth counter: N/A</LC_ContainmentRoom_InspectQliphothNone>
+  <LC_ContainmentRoom_InspectPeBox>Individual PE-Boxes: {0}</LC_ContainmentRoom_InspectPeBox>
+  <LC_ContainmentRoom_InspectWorkProgress>Active work: +{0} PE / -{1} NE (max {2})</LC_ContainmentRoom_InspectWorkProgress>
+  <LC_ContainmentRoom_HudWork>WORK</LC_ContainmentRoom_HudWork>
+  <LC_ContainmentRoom_HudAuto>AUTO</LC_ContainmentRoom_HudAuto>
+  <LC_ContainmentRoom_HudReady>READY</LC_ContainmentRoom_HudReady>
+  <LC_ContainmentRoom_HudWait>WAIT</LC_ContainmentRoom_HudWait>
+  <LC_ContainmentRoom_HudCooldown>CD</LC_ContainmentRoom_HudCooldown>
 </LanguageData>

@@ -71,11 +71,16 @@ namespace LCAnomalyCore.Jobs
                 this.FailOn(() => !(ThingToStudy is Pawn rp) || !rp.Spawned || rp.Dead || rp.Downed || rp.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.CurrentlyContainedInRoom != true);
             }
 
+            bool studyStarted = false;
             AddFinishAction(delegate
             {
                 if (StudyComp != null)
                 {
                     StudyComp.studyInteractions += studyInteractions;
+                }
+                if (studyStarted && Unit is LCAnomalyCore.Buildings.Building_AbnormalityContainmentTerminal term)
+                {
+                    term.Notify_StudySessionEnded();
                 }
             });
 
@@ -95,8 +100,6 @@ namespace LCAnomalyCore.Jobs
                     duration = System.Math.Max(1, (int)(300 / ((1 + statusRate + unlockRate) * workSpeed)));
                     numModified = duration * comp.Props.amountProdueMax + duration;
                     LogUtil.Warning($"Study amount: {numModified}, Study duration: {duration}\nStatusRate: {statusRate}, UnlockRate: {unlockRate}");
-
-                    Unit?.Notify_StudyStart(pawn);
                 }
             }
 
@@ -126,6 +129,15 @@ namespace LCAnomalyCore.Jobs
                     ThingToStudy.TryGetComp<CompObelisk>()?.Notify_InteractedTick(pawn, delta);
                 });
             }
+
+            studyToil.AddPreInitAction(delegate
+            {
+                if (!studyStarted && ThingToStudy?.TryGetComp<CompPeBoxProduce>() != null)
+                {
+                    studyStarted = true;
+                    Unit?.Notify_StudyStart(pawn);
+                }
+            });
 
             studyToil.AddPreTickAction(delegate
             {
@@ -202,7 +214,12 @@ namespace LCAnomalyCore.Jobs
                 actor.pather.StopDead();
                 if (actor.CurJob.GetTarget(pawnIndex).Thing is Pawn recipient)
                 {
-                    PawnUtility.ForceWait(recipient, duration + 30, study.actor);
+                    if (recipient.Spawned && !recipient.Dead && !recipient.Downed)
+                    {
+                        Job waitJob = JobMaker.MakeJob(RimWorld.JobDefOf.Wait, study.actor);
+                        waitJob.expiryInterval = 90;
+                        recipient.jobs?.StartJob(waitJob, JobCondition.InterruptForced, null, resumeCurJobAfterwards: false);
+                    }
                     if (InteractionDefOf.PrisonerStudyAnomaly != null)
                         actor.interactions.TryInteractWith(recipient, InteractionDefOf.PrisonerStudyAnomaly);
                 }
@@ -214,8 +231,23 @@ namespace LCAnomalyCore.Jobs
                 {
                     recipient.pather?.StopDead();
                     recipient.rotationTracker?.FaceCell(study.actor.Position);
+                    if (recipient.CurJobDef == RimWorld.JobDefOf.Wait && recipient.CurJob != null && Find.TickManager != null)
+                    {
+                        recipient.CurJob.startTick = Find.TickManager.TicksGame;
+                    }
                 }
             };
+            study.AddFinishAction(delegate
+            {
+                if (study.actor?.CurJob?.GetTarget(pawnIndex).Thing is Pawn recipient
+                    && recipient.Spawned
+                    && !recipient.Dead
+                    && !recipient.Downed
+                    && recipient.CurJobDef == RimWorld.JobDefOf.Wait)
+                {
+                    recipient.jobs?.EndCurrentJob(JobCondition.Succeeded, startNewJob: true);
+                }
+            });
             study.handlingFacing = true;
             study.defaultCompleteMode = ToilCompleteMode.Delay;
             study.defaultDuration = duration;

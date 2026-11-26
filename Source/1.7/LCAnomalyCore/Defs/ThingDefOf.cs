@@ -54,6 +54,11 @@ namespace LCAnomalyCore.Defs
         /// </summary>
         public static ThingDef LC_Mote_FourColorDamage;
 
+        /// <summary>
+        /// 收容工作期间浮现旁白飘字 Mote
+        /// </summary>
+        public static ThingDef LC_Mote_WorkNarration;
+
         static ThingDefOf()
         {
             DefOfHelper.EnsureInitializedInCtor(typeof(ThingDefOf));

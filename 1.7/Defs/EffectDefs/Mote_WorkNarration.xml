@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThingDef ParentName="MoteBase">
+    <defName>LC_Mote_WorkNarration</defName>
+    <graphicData>
+      <texPath>Things/Mote/Transparent</texPath>
+    </graphicData>
+    <thingClass>LCAnomalyCore.Misc.Mote_LCWorkNarration</thingClass>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <altitudeLayer>MetaOverlays</altitudeLayer>
+    <mote>
+      <realTime>true</realTime>
+      <fadeInTime>0.22</fadeInTime>
+      <solidTime>3.0</solidTime>
+      <fadeOutTime>0.75</fadeOutTime>
+    </mote>
+  </ThingDef>
+
+</Defs>

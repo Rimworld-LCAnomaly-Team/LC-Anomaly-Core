@@ -22,6 +22,22 @@ namespace LCAnomalyCore.Buildings
     {
         private static readonly Color TerminalBadgeColor = new Color(0.95f, 0.92f, 0.55f);
 
+        private static readonly Texture2D TexRoomHeaderFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RoomHeaderFrame", false);
+        private static readonly Texture2D TexQliphothFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/QliphothFrame", false);
+        private static readonly Texture2D TexQliphothAlertFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/QliphothAlertFrame", false);
+        private static readonly Texture2D TexPeBoxIcon = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/PeBoxIcon", false);
+        private static readonly Texture2D TexEnergyBarFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/EnergyBarFrame", false);
+        private static readonly Texture2D TexEnergyCubePE = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/EnergyCube_PE", false);
+        private static readonly Texture2D TexEnergyCubeNE = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/EnergyCube_NE", false);
+        private static readonly Texture2D TexEnergyCubeEmpty = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/EnergyCube_Empty", false);
+        private static readonly Texture2D TexResultGood = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/ResultBadge_Good", false);
+        private static readonly Texture2D TexResultNormal = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/ResultBadge_Normal", false);
+        private static readonly Texture2D TexResultBad = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/ResultBadge_Bad", false);
+        private static readonly Texture2D TexWorkInstinct = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Instinct", false);
+        private static readonly Texture2D TexWorkInsight = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Insight", false);
+        private static readonly Texture2D TexWorkAttachment = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Attachment", false);
+        private static readonly Texture2D TexWorkRepression = ContentFinder<Texture2D>.Get("UI/Commands/WorkType/Repression", false);
+
         private Pawn boundPawn;
         private int breachGraceTicks;
         protected EAnomalyWorkType curWorkType = EAnomalyWorkType.Instinct;
@@ -34,8 +50,24 @@ namespace LCAnomalyCore.Buildings
         private CompAbnormalityStudiable compAbnormalityStudiable;
         private Sustainer workingSustainer;
 
-        private readonly List<Graphic> cachedPeBoxBarGraphics = new List<Graphic>();
-        private readonly List<Graphic> cachedNeBoxBarGraphics = new List<Graphic>();
+        private int activeSessionPeCount;
+        private int activeSessionNeCount;
+        private int activeSessionMaxBoxes;
+        private bool isStudySessionActive;
+        private int lastStudyActivityTick = -999999;
+        private LC_StudyResult? lastStudyResult;
+        private int resultDisplayUntilTick = -999999;
+        private Pawn activeStudier;
+        private int nextNarrationTick = -999999;
+        private int narrationStep;
+        private int narrationSeed;
+
+        private int cachedRoomAnchorId = int.MinValue;
+        private int cachedRoomAnchorTick = -999999;
+        private Vector3 cachedRoomTopAnchor;
+        private Vector3 cachedRoomLeftAnchor;
+        private float cachedRoomWidthCells = 5f;
+        private float cachedRoomHeightCells = 5f;
 
         /// <inheritdoc />
         public Thing UnitThing => this;
@@ -93,6 +125,24 @@ namespace LCAnomalyCore.Buildings
         /// <summary>当前逆卡巴拉计数器值。</summary>
         public int QliphothCounter => EntityCached ? cachedEntity.QliphothCountCurrent : 0;
 
+        /// <summary>当前逆卡巴拉计数器上限。</summary>
+        public int QliphothCounterMax => EntityCached ? cachedEntity.Props.qliphothCountMax : 0;
+
+        /// <summary>当前工作会话已产出的 PE-Box 格数。</summary>
+        public int ActiveSessionPeCount => activeSessionPeCount;
+
+        /// <summary>当前工作会话已产出的 NE-Box 格数。</summary>
+        public int ActiveSessionNeCount => activeSessionNeCount;
+
+        /// <summary>当前工作会话最大 PE/NE-Box 格数上限。</summary>
+        public int ActiveSessionMaxBoxes => activeSessionMaxBoxes;
+
+        /// <summary>当前是否处于工作进行中。</summary>
+        public bool IsStudySessionActive => isStudySessionActive;
+
+        /// <summary>最近一次完成的工作评级结果。</summary>
+        public LC_StudyResult? LastStudyResult => lastStudyResult;
+
         /// <summary>当前独立 PE-Box 数量。</summary>
         public int PeBoxCounter
         {
@@ -134,6 +184,7 @@ namespace LCAnomalyCore.Buildings
                 EjectContents();
             }
 
+            StopWorkingSustainer();
             base.DeSpawn(mode);
         }
 
@@ -141,6 +192,15 @@ namespace LCAnomalyCore.Buildings
         protected override void Tick()
         {
             base.Tick();
+
+            if (isStudySessionActive && Find.TickManager != null && Find.TickManager.TicksGame - lastStudyActivityTick > 120)
+            {
+                isStudySessionActive = false;
+                activeStudier = null;
+                nextNarrationTick = -999999;
+                StopWorkingSustainer();
+                NotifyBorderingDoorsWorkLockChanged(lockNow: false);
+            }
 
             if (boundPawn == null)
             {
@@ -348,6 +408,7 @@ namespace LCAnomalyCore.Buildings
         /// <inheritdoc />
         public void EjectContents()
         {
+            StopWorkingSustainer();
             Pawn prev = boundPawn;
             boundPawn = null;
             breachGraceTicks = 0;
@@ -362,9 +423,34 @@ namespace LCAnomalyCore.Buildings
         /// <inheritdoc />
         public void Notify_StudyStart(Pawn studier)
         {
-            cachedPeBoxBarGraphics.Clear();
-            cachedNeBoxBarGraphics.Clear();
+            int curTick = Find.TickManager?.TicksGame ?? 0;
+            activeSessionPeCount = 0;
+            activeSessionNeCount = 0;
+            activeSessionMaxBoxes = cachedEntity?.PeBoxComp?.Props.amountProdueMax ?? 0;
+            isStudySessionActive = true;
+            lastStudyActivityTick = curTick;
+            lastStudyResult = null;
+            resultDisplayUntilTick = -999999;
+            activeStudier = studier;
+            narrationStep = 0;
+            narrationSeed = Rand.Range(0, 1000);
+            nextNarrationTick = curTick + Rand.Range(210, 280);
+
             cachedEntity?.Notify_StudyStart(studier);
+            NotifyBorderingDoorsWorkLockChanged(lockNow: true);
+
+            if (Spawned && Map != null)
+            {
+                Defs.SoundDefOf.LC_Sound_ContainmentWork_Start?.PlayOneShot(new TargetInfo(Position, Map));
+                if (HeldPawn != null && !IsHoldingTool)
+                {
+                    string startLine = WorkNarrationUtility.ResolveStartLine(studier, HeldPawn, CurWorkType, GetWorkTypeLabel());
+                    if (!startLine.NullOrEmpty())
+                    {
+                        WorkNarrationUtility.SpawnNarration(Map, GetNarrationSpawnPos(studier), startLine, WorkNarrationUtility.GetWorkTypeAccentColor(CurWorkType));
+                    }
+                }
+            }
         }
 
         /// <inheritdoc />
@@ -375,14 +461,34 @@ namespace LCAnomalyCore.Buildings
                 return;
             }
 
+            int curTick = Find.TickManager?.TicksGame ?? 0;
+            isStudySessionActive = true;
+            lastStudyActivityTick = curTick;
+            if (studier != null)
+            {
+                activeStudier = studier;
+            }
             cachedEntity.Notify_Studying(studier);
-            if (cachedEntity.Props.soundWorking != null)
+
+            SoundDef workSound = cachedEntity.Props.soundWorking ?? Defs.SoundDefOf.LC_Sound_ContainmentWork_DefaultLoop;
+            if (workSound != null && Spawned && Map != null)
             {
                 if (workingSustainer == null || workingSustainer.Ended)
                 {
-                    workingSustainer = cachedEntity.Props.soundWorking.TrySpawnSustainer(SoundInfo.InMap(this, MaintenanceType.PerTick));
+                    workingSustainer = workSound.TrySpawnSustainer(SoundInfo.InMap(this, MaintenanceType.PerTick));
                 }
-                workingSustainer.Maintain();
+                workingSustainer?.Maintain();
+            }
+
+            if (curTick >= nextNarrationTick && Spawned && Map != null && HeldPawn != null && !IsHoldingTool)
+            {
+                string midLine = WorkNarrationUtility.ResolveMidLine(activeStudier ?? studier, HeldPawn, CurWorkType, GetWorkTypeLabel(), narrationSeed + narrationStep);
+                narrationStep++;
+                nextNarrationTick = curTick + Rand.Range(230, 320);
+                if (!midLine.NullOrEmpty())
+                {
+                    WorkNarrationUtility.SpawnNarration(Map, GetNarrationSpawnPos(activeStudier ?? studier), midLine, WorkNarrationUtility.GetWorkTypeAccentColor(CurWorkType));
+                }
             }
         }
 
@@ -394,16 +500,159 @@ namespace LCAnomalyCore.Buildings
                 return;
             }
 
+            isStudySessionActive = true;
+            lastStudyActivityTick = Find.TickManager?.TicksGame ?? 0;
             bool success = cachedEntity.Notify_StudyInterval(studier, CurWorkType);
             if (cachedEntity.PeBoxComp != null)
             {
+                activeSessionMaxBoxes = Mathf.Max(activeSessionMaxBoxes, cachedEntity.PeBoxComp.Props.amountProdueMax);
                 if (success)
                 {
-                    cachedPeBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("PE", cachedEntity.PeBoxComp.Props.amountProdueMax));
+                    activeSessionPeCount++;
                 }
                 else
                 {
-                    cachedNeBoxBarGraphics.Add(GraphicUtil.CachedTopGraphic_BoxBarUnit_Get("NE", cachedEntity.PeBoxComp.Props.amountProdueMax));
+                    activeSessionNeCount++;
+                }
+            }
+
+            if (Spawned && Map != null)
+            {
+                (success ? Defs.SoundDefOf.LC_Sound_ContainmentWork_PeBox : Defs.SoundDefOf.LC_Sound_ContainmentWork_NeBox)?.PlayOneShot(new TargetInfo(Position, Map));
+            }
+        }
+
+        /// <summary>工作完成结算时通知房间终端切换为结果展示阶段。</summary>
+        public void Notify_StudyFinished(LC_StudyResult result)
+        {
+            bool wasActive = isStudySessionActive;
+            Pawn finishStudier = activeStudier;
+            isStudySessionActive = false;
+            lastStudyResult = result;
+            resultDisplayUntilTick = (Find.TickManager?.TicksGame ?? 0) + 210;
+            activeStudier = null;
+            nextNarrationTick = -999999;
+
+            StopWorkingSustainer();
+            ReleaseHeldPawnFromStudyWait();
+            if (wasActive)
+            {
+                NotifyBorderingDoorsWorkLockChanged(lockNow: false);
+            }
+
+            if (Spawned && Map != null)
+            {
+                Defs.SoundDefOf.LC_Sound_ContainmentWork_Finish?.PlayOneShot(new TargetInfo(Position, Map));
+                if (HeldPawn != null && !IsHoldingTool)
+                {
+                    string resultLine = WorkNarrationUtility.ResolveResultLine(finishStudier, HeldPawn, result);
+                    if (!resultLine.NullOrEmpty())
+                    {
+                        WorkNarrationUtility.SpawnNarration(Map, GetNarrationSpawnPos(finishStudier), resultLine, WorkNarrationUtility.GetResultAccentColor(result));
+                    }
+                }
+            }
+        }
+
+        /// <summary>工作会话结束或被中断时解除邻接门锁并刷新可达性缓存。</summary>
+        public void Notify_StudySessionEnded()
+        {
+            StopWorkingSustainer();
+            activeStudier = null;
+            nextNarrationTick = -999999;
+            ReleaseHeldPawnFromStudyWait();
+            if (isStudySessionActive)
+            {
+                isStudySessionActive = false;
+                NotifyBorderingDoorsWorkLockChanged(lockNow: false);
+            }
+        }
+
+        private void StopWorkingSustainer()
+        {
+            if (workingSustainer != null && !workingSustainer.Ended)
+            {
+                workingSustainer.End();
+            }
+            workingSustainer = null;
+        }
+
+        private Vector3 GetNarrationSpawnPos(Pawn studier)
+        {
+            Vector3 anchor;
+            if (HeldPawn != null && HeldPawn.Spawned)
+            {
+                anchor = (studier != null && studier.Spawned && studier.Map == HeldPawn.Map)
+                    ? (HeldPawn.DrawPos + studier.DrawPos) * 0.5f
+                    : HeldPawn.DrawPos;
+            }
+            else
+            {
+                anchor = DrawPos;
+            }
+
+            return anchor + new Vector3(Rand.Range(-0.45f, 0.45f), 0f, 0.55f);
+        }
+
+        private void ReleaseHeldPawnFromStudyWait()
+        {
+            if (HeldPawn is Pawn held
+                && held.Spawned
+                && !held.Dead
+                && !held.Downed
+                && held.CurJobDef == RimWorld.JobDefOf.Wait)
+            {
+                held.jobs?.EndCurrentJob(JobCondition.Succeeded, startNewJob: true);
+            }
+        }
+
+        private void ClearStudySessionState()
+        {
+            StopWorkingSustainer();
+            bool wasActive = isStudySessionActive;
+            activeSessionPeCount = 0;
+            activeSessionNeCount = 0;
+            activeSessionMaxBoxes = 0;
+            isStudySessionActive = false;
+            lastStudyActivityTick = -999999;
+            lastStudyResult = null;
+            resultDisplayUntilTick = -999999;
+            activeStudier = null;
+            nextNarrationTick = -999999;
+            if (wasActive || Spawned)
+            {
+                NotifyBorderingDoorsWorkLockChanged(lockNow: false);
+            }
+        }
+
+        private void NotifyBorderingDoorsWorkLockChanged(bool lockNow)
+        {
+            if (!Spawned || Map == null)
+            {
+                return;
+            }
+
+            Map.reachability?.ClearCache();
+            if (!lockNow)
+            {
+                return;
+            }
+
+            Room room = ContainmentRoom;
+            if (room == null || room.TouchesMapEdge)
+            {
+                return;
+            }
+
+            foreach (IntVec3 c in room.Cells)
+            {
+                for (int d = 0; d < GenAdj.CardinalDirections.Length; d++)
+                {
+                    IntVec3 adj = c + GenAdj.CardinalDirections[d];
+                    if (adj.InBounds(Map) && adj.GetDoor(Map) is Building_LCContainmentDoor lcDoor)
+                    {
+                        lcDoor.ForceCloseForWorkLock();
+                    }
                 }
             }
         }
@@ -416,14 +665,13 @@ namespace LCAnomalyCore.Buildings
 
         private void RefreshCachedEntity()
         {
+            ClearStudySessionState();
             Pawn pawn = HeldPawn;
             if (pawn == null)
             {
                 cachedEntity = null;
                 compAbnormalityStudiable = null;
                 cachedTool = null;
-                cachedPeBoxBarGraphics.Clear();
-                cachedNeBoxBarGraphics.Clear();
                 return;
             }
 
@@ -445,6 +693,104 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        private static Texture2D GetWorkTypeIcon(EAnomalyWorkType workType)
+        {
+            switch (workType)
+            {
+                case EAnomalyWorkType.Instinct: return TexWorkInstinct;
+                case EAnomalyWorkType.Insight: return TexWorkInsight;
+                case EAnomalyWorkType.Attachment: return TexWorkAttachment;
+                case EAnomalyWorkType.Repression: return TexWorkRepression;
+                default: return TexWorkInstinct;
+            }
+        }
+
+        private static Texture2D GetResultBadgeTexture(LC_StudyResult result)
+        {
+            switch (result)
+            {
+                case LC_StudyResult.Good: return TexResultGood;
+                case LC_StudyResult.Normal: return TexResultNormal;
+                case LC_StudyResult.Bad: return TexResultBad;
+                default: return TexResultNormal;
+            }
+        }
+
+        private static Vector2 WorldToScreenGUI(Vector3 worldPos)
+        {
+            Vector2 screenPos = Find.Camera.WorldToScreenPoint(worldPos) / Prefs.UIScale;
+            screenPos.y = Verse.UI.screenHeight - screenPos.y;
+            return screenPos;
+        }
+
+        private void EnsureRoomHudAnchors()
+        {
+            int curTick = Find.TickManager?.TicksGame ?? 0;
+            Room room = ContainmentRoom;
+            int roomId = (room != null && !room.TouchesMapEdge && !room.PsychologicallyOutdoors) ? room.ID : -1;
+
+            if (roomId == cachedRoomAnchorId && curTick - cachedRoomAnchorTick < 60 && cachedRoomAnchorTick != -999999)
+            {
+                return;
+            }
+
+            cachedRoomAnchorId = roomId;
+            cachedRoomAnchorTick = curTick;
+
+            if (roomId >= 0)
+            {
+                int minX = int.MaxValue;
+                int maxX = int.MinValue;
+                int minZ = int.MaxValue;
+                int maxZ = int.MinValue;
+                bool any = false;
+                foreach (IntVec3 c in room.Cells)
+                {
+                    any = true;
+                    if (c.x < minX) minX = c.x;
+                    if (c.x > maxX) maxX = c.x;
+                    if (c.z < minZ) minZ = c.z;
+                    if (c.z > maxZ) maxZ = c.z;
+                }
+
+                if (any)
+                {
+                    cachedRoomWidthCells = (maxX - minX + 1) + 2f;
+                    cachedRoomHeightCells = (maxZ - minZ + 1) + 2f;
+                    cachedRoomTopAnchor = new Vector3((minX + maxX + 1f) * 0.5f, 0f, maxZ + 2.02f);
+                    cachedRoomLeftAnchor = new Vector3(minX - 1.05f, 0f, (minZ + maxZ + 1f) * 0.5f);
+                    return;
+                }
+            }
+
+            cachedRoomWidthCells = 3f;
+            cachedRoomHeightCells = 3f;
+            cachedRoomTopAnchor = DrawPos + new Vector3(0f, 0f, 0.85f);
+            cachedRoomLeftAnchor = DrawPos + new Vector3(-0.75f, 0f, 0f);
+        }
+
+        private string GetWorkTypeLabel()
+        {
+            if (IsHoldingTool)
+            {
+                return "TOOL";
+            }
+
+            string tipKey = "TipDialogWorkType_" + CurWorkType;
+            if (tipKey.CanTranslate())
+            {
+                return tipKey.Translate().ToString();
+            }
+
+            string cmdKey = "CommandAssignmentWorkTypeLabel_" + CurWorkType;
+            if (cmdKey.CanTranslate())
+            {
+                return cmdKey.Translate().ToString();
+            }
+
+            return CurWorkType.ToString();
+        }
+
         /// <inheritdoc />
         public override void DrawGUIOverlay()
         {
@@ -454,91 +800,364 @@ namespace LCAnomalyCore.Buildings
                 return;
             }
 
-            Vector2 screenPos = Find.Camera.WorldToScreenPoint(DrawPos + new Vector3(0f, 0f, 0.82f)) / Prefs.UIScale;
-            screenPos.y = Verse.UI.screenHeight - screenPos.y;
-            if (screenPos.x < -120f || screenPos.x > Verse.UI.screenWidth + 120f || screenPos.y < -60f || screenPos.y > Verse.UI.screenHeight + 60f)
-            {
-                return;
-            }
+            EnsureRoomHudAnchors();
+            Vector2 topScreen = WorldToScreenGUI(cachedRoomTopAnchor);
+            bool topVisible = topScreen.x >= -180f && topScreen.x <= Verse.UI.screenWidth + 180f
+                && topScreen.y >= -100f && topScreen.y <= Verse.UI.screenHeight + 100f;
+
+            float cellPx = (Find.CameraDriver != null && Find.CameraDriver.CellSizePixels > 0.1f)
+                ? Find.CameraDriver.CellSizePixels
+                : 42f;
+            float roomScreenW = Mathf.Max(3f, cachedRoomWidthCells) * cellPx;
+            float roomScreenH = Mathf.Max(3f, cachedRoomHeightCells) * cellPx;
+            bool isSelected = Find.Selector != null && (Find.Selector.IsSelected(this) || (HeldPawn != null && Find.Selector.IsSelected(HeldPawn)));
 
             bool showDetailRow = CompWorkable == null || CompWorkable.UIAllowed;
-            float width = 184f;
-            float height = showDetailRow ? 36f : 19f;
-            Rect panelRect = new Rect(screenPos.x - width * 0.5f, screenPos.y - height * 0.5f, width, height);
-
             string riskTag = cachedEntity?.AbnormalityCategory?.defName;
-            string qText = cachedEntity != null && cachedEntity.QliphothEnabled
-                ? $"Q:{QliphothCounter}"
-                : "Q:-";
+            Color riskColor = GetRiskBadgeColor(riskTag);
+            bool qliphothEnabled = cachedEntity != null && cachedEntity.QliphothEnabled;
+            bool qliphothCritical = qliphothEnabled && QliphothCounter <= 1;
+            Color qliphothNumColor = qliphothCritical
+                ? new Color(1.0f, 0.48f, 0.44f)
+                : (qliphothEnabled ? new Color(1.0f, 0.86f, 0.42f) : Color.gray);
+            string qDisplay = qliphothEnabled ? QliphothCounter.ToString() : "-";
 
             GameFont oldFont = Text.Font;
             TextAnchor oldAnchor = Text.Anchor;
             Color oldColor = GUI.color;
             try
             {
-                Widgets.DrawBoxSolid(panelRect, new Color(0.06f, 0.08f, 0.11f, 0.80f));
-                Widgets.DrawBoxSolid(new Rect(panelRect.x, panelRect.y, panelRect.width, 1.5f), GetRiskBadgeColor(riskTag));
-
-                Text.Font = GameFont.Tiny;
-                Rect headerRect = new Rect(panelRect.x + 4f, panelRect.y + 2f, panelRect.width - 8f, 16f);
-                Rect qRect = new Rect(headerRect.xMax - 30f, headerRect.y, 30f, headerRect.height);
-                Rect nameRect = new Rect(headerRect.x, headerRect.y, headerRect.width - 32f, headerRect.height);
-
-                Text.Anchor = TextAnchor.MiddleLeft;
-                GUI.color = GetRiskBadgeColor(riskTag);
-                string headerLabel = riskTag.NullOrEmpty()
-                    ? HeldPawn.LabelShortCap
-                    : $"[{riskTag}] {HeldPawn.LabelShortCap}";
-                Widgets.LabelFit(nameRect, headerLabel);
-
-                Text.Anchor = TextAnchor.MiddleRight;
-                GUI.color = (cachedEntity != null && cachedEntity.QliphothEnabled && QliphothCounter <= 1)
-                    ? ColorLibrary.RedReadable
-                    : TerminalBadgeColor;
-                Widgets.LabelFit(qRect, qText);
-
-                if (showDetailRow)
+                if (topVisible)
                 {
-                    Rect detailRect = new Rect(panelRect.x + 4f, panelRect.y + 18f, panelRect.width - 8f, 16f);
-                    string workText = IsHoldingTool
-                        ? "TOOL"
-                        : ("CommandAssignmentWorkTypeLabel_" + CurWorkType).CanTranslate()
-                            ? ("CommandAssignmentWorkTypeLabel_" + CurWorkType).Translate().ToString()
-                            : CurWorkType.ToString();
+                    if (cellPx < 17f)
+                    {
+                        // Tier 3 (Ultra-far zoom): hide wide bar; show only a compact Qliphoth pod when critical, working, or selected
+                        if ((qliphothCritical || isStudySessionActive || isSelected) && (cellPx >= 9f || qliphothCritical))
+                        {
+                            float qPodSize = 20f;
+                            Rect qPodRect = new Rect(topScreen.x - qPodSize * 0.5f, topScreen.y - qPodSize - 2f, qPodSize, qPodSize);
+                            GUI.color = Color.white;
+                            Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
+                            GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
+                            Text.Font = GameFont.Tiny;
+                            Text.Anchor = TextAnchor.MiddleCenter;
+                            GUI.color = qliphothNumColor;
+                            Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 0.5f, qPodRect.width, qPodRect.height), qDisplay);
+                        }
+                    }
+                    else if (cellPx < 30f || roomScreenW < 150f)
+                    {
+                        // Tier 2 (Medium-far zoom): compact single-line industrial pill sized proportionally to the room
+                        float tagH = 21f;
+                        float qPodSize = 21f;
+                        float mainW = Mathf.Round(Mathf.Clamp(roomScreenW * 1.08f, 78f, 132f));
+                        float totalW = mainW + qPodSize + 3f;
 
-                    string statusTag;
-                    Color statusColor;
-                    if (IsHoldingTool)
-                    {
-                        statusTag = HeldToolComp.IsOnCooldown ? "CD" : "READY";
-                        statusColor = HeldToolComp.IsOnCooldown ? ColorLibrary.Orange : ColorLibrary.Green;
+                        Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
+                        Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
+
+                        Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.88f));
+                        GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
+                        Widgets.DrawBox(pillRect, 1);
+                        Widgets.DrawBoxSolid(new Rect(pillRect.x + 1f, pillRect.y + 2f, 3f, tagH - 4f), riskColor);
+
+                        bool showCompactPe = !IsHoldingTool && mainW >= 106f;
+                        float peWidth = showCompactPe ? 36f : 0f;
+
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleLeft;
+                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
+                        Widgets.LabelFit(new Rect(pillRect.x + 6f, pillRect.y + 1f, pillRect.width - 10f - peWidth, tagH - 2f), HeldPawn.LabelShortCap);
+
+                        if (showCompactPe)
+                        {
+                            Text.Anchor = TextAnchor.MiddleRight;
+                            GUI.color = new Color(0.45f, 0.98f, 0.70f);
+                            Widgets.LabelFit(new Rect(pillRect.xMax - 39f, pillRect.y + 1f, 35f, tagH - 2f), $"PE:{PeBoxCounter}");
+                        }
+
+                        GUI.color = Color.white;
+                        Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
+                        GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        GUI.color = qliphothNumColor;
+                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 0.5f, qPodRect.width, qPodRect.height), qDisplay);
                     }
-                    else if (CompAssignable != null && CompAssignable.AssignedPawns.Any())
+                    else if (!showDetailRow)
                     {
-                        statusTag = "AUTO";
-                        statusColor = ColorLibrary.Cyan;
-                    }
-                    else if (CompAbnormalityStudiable != null && CompAbnormalityStudiable.TicksTilNextStudy <= 0)
-                    {
-                        statusTag = "READY";
-                        statusColor = ColorLibrary.Green;
+                        // Tier 1 minimal detail-off mode: single compact industrial header pill + Qliphoth pod
+                        float tagH = 24f;
+                        float qPodSize = 24f;
+                        float mainW = Mathf.Round(Mathf.Clamp(roomScreenW * 0.92f, 118f, 186f));
+                        float totalW = mainW + qPodSize + 3f;
+
+                        Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
+                        Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
+
+                        Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.90f));
+                        GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
+                        Widgets.DrawBox(pillRect, 1);
+                        Widgets.DrawBoxSolid(new Rect(pillRect.x + 1f, pillRect.y + 2f, 3f, tagH - 4f), riskColor);
+
+                        float nameX = pillRect.x + 7f;
+                        if (!riskTag.NullOrEmpty() && mainW >= 140f)
+                        {
+                            Rect riskRect = new Rect(pillRect.x + 6f, pillRect.y + 3f, 44f, 18f);
+                            Widgets.DrawBoxSolid(riskRect, new Color(riskColor.r * 0.22f, riskColor.g * 0.22f, riskColor.b * 0.22f, 0.92f));
+                            GUI.color = riskColor;
+                            Widgets.DrawBox(riskRect, 1);
+                            Text.Font = GameFont.Tiny;
+                            Text.Anchor = TextAnchor.MiddleCenter;
+                            Widgets.LabelFit(riskRect, riskTag);
+                            nameX = riskRect.xMax + 5f;
+                        }
+
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleLeft;
+                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
+                        Widgets.LabelFit(new Rect(nameX, pillRect.y + 1f, pillRect.xMax - 4f - nameX, tagH - 2f), HeldPawn.LabelShortCap);
+
+                        GUI.color = Color.white;
+                        Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
+                        GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        GUI.color = qliphothNumColor;
+                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 1f, qPodRect.width, qPodRect.height), qDisplay);
                     }
                     else
                     {
-                        statusTag = "WAIT";
-                        statusColor = Color.gray;
+                        // Tier 1 (Close / Normal zoom): dual-deck RoomHeaderFrame continuously scaled to zoom & room width
+                        float scale = Mathf.Clamp(cellPx / 46f, 0.68f, 1.0f);
+                        float qPodSize = Mathf.Round(Mathf.Clamp(52f * scale, 34f, 52f));
+                        float maxTotalW = Mathf.Clamp(roomScreenW * 1.18f, 178f, 296f);
+                        float mainWidth = Mathf.Round(Mathf.Clamp(228f * scale, 146f, maxTotalW - qPodSize - 3f));
+                        float height = Mathf.Round(Mathf.Clamp(56f * scale, 40f, 56f));
+                        float totalWidth = mainWidth + qPodSize + 3f;
+
+                        Rect mainRect = new Rect(topScreen.x - totalWidth * 0.5f, topScreen.y - height - 3f, mainWidth, height);
+                        Rect qPodRect = new Rect(mainRect.xMax + 3f, mainRect.center.y - qPodSize * 0.5f, qPodSize, qPodSize);
+
+                        GUI.color = Color.white;
+                        GUI.DrawTexture(mainRect, TexRoomHeaderFrame ?? BaseContent.WhiteTex);
+
+                        bool useSmallFont = height >= 48f && mainWidth >= 190f;
+                        float padX = Mathf.Round(mainWidth * 0.043f);
+                        float padY = Mathf.Round(height * 0.09f);
+                        float innerW = mainWidth - padX * 2f;
+                        float bayGap = Mathf.Round(height * 0.07f);
+                        float bayH = (height - padY * 2f - bayGap) * 0.5f;
+
+                        // Upper Deck: Left risk accent + [RISK] pill badge + Abnormality Name
+                        Rect upperRect = new Rect(mainRect.x + padX, mainRect.y + padY, innerW, bayH);
+                        Widgets.DrawBoxSolid(new Rect(upperRect.x, upperRect.y + 2f, 3f, Mathf.Max(10f, upperRect.height - 4f)), riskColor);
+
+                        float nameX = upperRect.x + 6f;
+                        if (!riskTag.NullOrEmpty())
+                        {
+                            float pillW = useSmallFont ? 48f : 42f;
+                            float pillH = Mathf.Min(19f, upperRect.height - 2f);
+                            Rect pillRect = new Rect(upperRect.x + 5f, upperRect.center.y - pillH * 0.5f, pillW, pillH);
+                            Widgets.DrawBoxSolid(pillRect, new Color(riskColor.r * 0.22f, riskColor.g * 0.22f, riskColor.b * 0.22f, 0.92f));
+                            GUI.color = riskColor;
+                            Widgets.DrawBox(pillRect, 1);
+
+                            Text.Font = GameFont.Tiny;
+                            Text.Anchor = TextAnchor.MiddleCenter;
+                            Widgets.LabelFit(pillRect, riskTag);
+                            nameX = pillRect.xMax + 5f;
+                        }
+
+                        Text.Font = useSmallFont ? GameFont.Small : GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleLeft;
+                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
+                        Widgets.LabelFit(new Rect(nameX, upperRect.y, upperRect.xMax - nameX, upperRect.height), HeldPawn.LabelShortCap);
+
+                        // Lower Deck: Work icon + Work Type | PE icon + count | Status Pill
+                        Rect lowerRect = new Rect(mainRect.x + padX, mainRect.y + padY + bayH + bayGap, innerW, bayH);
+                        float curX = lowerRect.x;
+
+                        float statusW = useSmallFont ? 48f : 40f;
+                        float workIconSize = useSmallFont ? 19f : 15f;
+                        float peIconSize = useSmallFont ? 17f : 14f;
+                        float peNumW = IsHoldingTool ? 0f : (useSmallFont ? 36f : 28f);
+                        float rightReserved = statusW + 4f + (IsHoldingTool ? 0f : (peIconSize + 3f + peNumW + 4f));
+
+                        if (!IsHoldingTool)
+                        {
+                            Texture2D workIcon = GetWorkTypeIcon(CurWorkType);
+                            if (workIcon != null)
+                            {
+                                GUI.color = Color.white;
+                                GUI.DrawTexture(new Rect(curX, lowerRect.center.y - workIconSize * 0.5f, workIconSize, workIconSize), workIcon);
+                                curX += workIconSize + 3f;
+                            }
+                        }
+
+                        string workText = GetWorkTypeLabel();
+                        Text.Font = useSmallFont ? GameFont.Small : GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleLeft;
+                        GUI.color = new Color(0.95f, 0.97f, 0.99f);
+                        float workWidth = Mathf.Max(28f, lowerRect.xMax - rightReserved - curX);
+                        Widgets.LabelFit(new Rect(curX, lowerRect.y, workWidth, lowerRect.height), workText);
+                        curX += workWidth + 4f;
+
+                        if (!IsHoldingTool)
+                        {
+                            Texture2D peIcon = TexPeBoxIcon;
+                            if (peIcon != null)
+                            {
+                                GUI.color = Color.white;
+                                GUI.DrawTexture(new Rect(curX, lowerRect.center.y - peIconSize * 0.5f, peIconSize, peIconSize), peIcon);
+                                curX += peIconSize + 3f;
+                            }
+
+                            GUI.color = new Color(0.45f, 0.98f, 0.70f);
+                            Widgets.LabelFit(new Rect(curX, lowerRect.y, peNumW, lowerRect.height), PeBoxCounter.ToString());
+                        }
+
+                        string statusTag;
+                        Color statusColor;
+                        if (IsHoldingTool)
+                        {
+                            statusTag = HeldToolComp.IsOnCooldown
+                                ? "LC_ContainmentRoom_HudCooldown".Translate().ToString()
+                                : "LC_ContainmentRoom_HudReady".Translate().ToString();
+                            statusColor = HeldToolComp.IsOnCooldown ? ColorLibrary.Orange : ColorLibrary.Green;
+                        }
+                        else if (isStudySessionActive)
+                        {
+                            statusTag = "LC_ContainmentRoom_HudWork".Translate().ToString();
+                            statusColor = ColorLibrary.Cyan;
+                        }
+                        else if (CompAssignable != null && CompAssignable.AssignedPawns.Any())
+                        {
+                            statusTag = "LC_ContainmentRoom_HudAuto".Translate().ToString();
+                            statusColor = new Color(0.45f, 0.88f, 1.0f);
+                        }
+                        else if (CompAbnormalityStudiable != null && CompAbnormalityStudiable.TicksTilNextStudy <= 0)
+                        {
+                            statusTag = "LC_ContainmentRoom_HudReady".Translate().ToString();
+                            statusColor = ColorLibrary.Green;
+                        }
+                        else
+                        {
+                            statusTag = "LC_ContainmentRoom_HudWait".Translate().ToString();
+                            statusColor = Color.gray;
+                        }
+
+                        float stH = Mathf.Min(18f, lowerRect.height - 2f);
+                        Rect statusPillRect = new Rect(lowerRect.xMax - statusW, lowerRect.center.y - stH * 0.5f, statusW, stH);
+                        Widgets.DrawBoxSolid(statusPillRect, new Color(statusColor.r * 0.18f, statusColor.g * 0.18f, statusColor.b * 0.18f, 0.88f));
+                        GUI.color = statusColor;
+                        Widgets.DrawBox(statusPillRect, 1);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        Widgets.LabelFit(statusPillRect, statusTag);
+
+                        // Right attached Qliphoth Counter Pod
+                        GUI.color = Color.white;
+                        Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
+                        GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
+                        Text.Font = useSmallFont ? GameFont.Medium : GameFont.Small;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        GUI.color = qliphothNumColor;
+                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 1f, qPodRect.width, qPodRect.height), qDisplay);
                     }
+                }
 
-                    Text.Anchor = TextAnchor.MiddleLeft;
-                    GUI.color = new Color(0.85f, 0.88f, 0.92f);
-                    string leftDetail = IsHoldingTool
-                        ? workText
-                        : $"{workText}  PE:{PeBoxCounter}";
-                    Widgets.LabelFit(new Rect(detailRect.x, detailRect.y, detailRect.width - 42f, detailRect.height), leftDetail);
+                // Left-Edge Vertical PE-Box / NE-Box Live Energy Gauge during active work & brief post-work result hold
+                int curTick = Find.TickManager?.TicksGame ?? 0;
+                bool showGauge = cellPx >= 18f
+                    && !IsHoldingTool
+                    && activeSessionMaxBoxes > 0
+                    && (isStudySessionActive || curTick <= resultDisplayUntilTick);
 
-                    Text.Anchor = TextAnchor.MiddleRight;
-                    GUI.color = statusColor;
-                    Widgets.LabelFit(new Rect(detailRect.xMax - 40f, detailRect.y, 40f, detailRect.height), statusTag);
+                if (showGauge)
+                {
+                    Vector2 leftScreen = WorldToScreenGUI(cachedRoomLeftAnchor);
+                    if (leftScreen.x >= -80f && leftScreen.x <= Verse.UI.screenWidth + 80f
+                        && leftScreen.y >= -120f && leftScreen.y <= Verse.UI.screenHeight + 120f)
+                    {
+                        int maxBoxes = Mathf.Max(1, activeSessionMaxBoxes);
+                        int peCount = Mathf.Clamp(activeSessionPeCount, 0, maxBoxes);
+                        int neCount = Mathf.Clamp(activeSessionNeCount, 0, maxBoxes - peCount);
+
+                        float barWidth = Mathf.Round(Mathf.Clamp(cellPx * 0.56f, 16f, 26f));
+                        float barHeight = Mathf.Round(Mathf.Clamp(roomScreenH * 0.82f, 64f, 176f));
+                        Rect barRect = new Rect(leftScreen.x - barWidth - 4f, leftScreen.y - barHeight * 0.5f, barWidth, barHeight);
+
+                        GUI.color = Color.white;
+                        GUI.DrawTexture(barRect, TexEnergyBarFrame ?? BaseContent.WhiteTex);
+
+                        float padX = Mathf.Round(barWidth * 0.143f);
+                        float padY = Mathf.Round(barHeight * 0.055f);
+                        Rect trackRect = new Rect(barRect.x + padX, barRect.y + padY, barRect.width - padX * 2f, barRect.height - padY * 2f);
+                        float slotH = trackRect.height / maxBoxes;
+                        float cellGap = slotH > 5f ? 0.8f : 0.3f;
+
+                        // Slots 0..maxBoxes-1 counted from bottom (0) to top (maxBoxes - 1)
+                        for (int s = 0; s < maxBoxes; s++)
+                        {
+                            float slotY = trackRect.yMax - (s + 1) * slotH;
+                            Rect cellRect = new Rect(trackRect.x, slotY + cellGap * 0.5f, trackRect.width, Mathf.Max(1.5f, slotH - cellGap));
+
+                            Texture2D segTex;
+                            if (s < peCount)
+                            {
+                                segTex = TexEnergyCubePE ?? BaseContent.WhiteTex;
+                            }
+                            else if (s >= maxBoxes - neCount)
+                            {
+                                segTex = TexEnergyCubeNE ?? BaseContent.WhiteTex;
+                            }
+                            else
+                            {
+                                segTex = TexEnergyCubeEmpty ?? BaseContent.WhiteTex;
+                            }
+
+                            GUI.color = Color.white;
+                            GUI.DrawTexture(cellRect, segTex);
+                        }
+
+                        // Bad/Normal and Normal/Good threshold tick lines
+                        CompProperties_PeBoxProduce peProps = cachedEntity?.PeBoxComp?.Props;
+                        if (peProps != null)
+                        {
+                            int badThreshold = Mathf.Clamp(peProps.amountProdueRangeNormal.min, 1, maxBoxes);
+                            int goodThreshold = Mathf.Clamp(peProps.amountProdueRangeNormal.max + 1, 1, maxBoxes);
+
+                            float badLineY = trackRect.yMax - badThreshold * slotH;
+                            float goodLineY = trackRect.yMax - goodThreshold * slotH;
+
+                            Widgets.DrawBoxSolid(new Rect(trackRect.x - 2f, badLineY - 0.75f, trackRect.width + 4f, 1.5f), new Color(1.0f, 0.56f, 0.22f, 0.95f));
+                            Widgets.DrawBoxSolid(new Rect(trackRect.x - 2f, goodLineY - 0.75f, trackRect.width + 4f, 1.5f), new Color(0.32f, 1.0f, 0.64f, 0.95f));
+                        }
+
+                        // Numeric readout underneath gauge (+PE / -NE)
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.UpperCenter;
+                        GUI.color = new Color(0.45f, 0.96f, 0.68f);
+                        Widgets.Label(new Rect(barRect.x - 10f, barRect.yMax + 1f, barRect.width + 20f, 16f), $"+{peCount}");
+                        if (neCount > 0)
+                        {
+                            GUI.color = new Color(1.0f, 0.42f, 0.42f);
+                            Widgets.Label(new Rect(barRect.x - 10f, barRect.yMax + 14f, barRect.width + 20f, 16f), $"-{neCount}");
+                        }
+
+                        // Post-work final result face badge above gauge
+                        if (!isStudySessionActive && lastStudyResult.HasValue)
+                        {
+                            Texture2D badgeTex = GetResultBadgeTexture(lastStudyResult.Value);
+                            if (badgeTex != null)
+                            {
+                                float badgeSize = Mathf.Clamp(barWidth, 18f, 28f);
+                                GUI.color = Color.white;
+                                GUI.DrawTexture(new Rect(barRect.center.x - badgeSize * 0.5f, barRect.y - badgeSize - 3f, badgeSize, badgeSize), badgeTex);
+                            }
+                        }
+                    }
                 }
             }
             finally
@@ -687,6 +1306,17 @@ namespace LCAnomalyCore.Buildings
                 }
                 else if (EntityCached)
                 {
+                    string qLine = cachedEntity.QliphothEnabled
+                        ? "LC_ContainmentRoom_InspectQliphoth".Translate(QliphothCounter, QliphothCounterMax)
+                        : "LC_ContainmentRoom_InspectQliphothNone".Translate();
+                    Color qColor = (cachedEntity.QliphothEnabled && QliphothCounter <= 1) ? ColorLibrary.RedReadable : Color.white;
+                    inspectTextSB.Append("\n").Append(qLine.Colorize(qColor));
+                    inspectTextSB.Append("\n").Append("LC_ContainmentRoom_InspectPeBox".Translate(PeBoxCounter).Colorize(new Color(0.55f, 0.95f, 0.72f)));
+                    if (isStudySessionActive && activeSessionMaxBoxes > 0)
+                    {
+                        inspectTextSB.Append("\n").Append("LC_ContainmentRoom_InspectWorkProgress".Translate(activeSessionPeCount, activeSessionNeCount, activeSessionMaxBoxes));
+                    }
+
                     string entityInspect = cachedEntity.GetPlatformInspectString();
                     if (!entityInspect.NullOrEmpty())
                     {
