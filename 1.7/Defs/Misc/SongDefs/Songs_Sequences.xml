@@ -3,8 +3,9 @@
 
   <SongDef>
     <defName>Anomaly_Extract</defName>
+    <playOnMap>false</playOnMap>
     <clipPath>Songs/Extract_Ritual/Anomaly_Extract</clipPath>
-    <volume>2.00</volume>
+    <volume>1.05</volume>
     <commonality>0</commonality>
   </SongDef>
 

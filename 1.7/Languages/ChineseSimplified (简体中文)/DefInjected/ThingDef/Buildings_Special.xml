@@ -34,4 +34,7 @@
   <LC_DepartmentCore_ArchitectureTeam.label>部门核心（构筑部）</LC_DepartmentCore_ArchitectureTeam.label>
   <LC_DepartmentCore_ArchitectureTeam.description>构筑部的最深层整合核心。汇集公司各部门的综合优势，为已分配员工提供全面强化。\n\n部门加成（已分配员工）：\n- 移动速度 ×110%，全局工作速度 ×110%\n- 异想体研究速率 +10%，承伤系数 ×92%</LC_DepartmentCore_ArchitectureTeam.description>
 
+  <LC_ExtractionWell.label>异想体提取井</LC_ExtractionWell.label>
+  <LC_ExtractionWell.description>连接人类意识深层的早期“井”型共鸣终端。即使尚未建成完整的 Cogito 水桶，主管也可通过该装置进行三选一异想体提取，获取对应异想体的收容匣。\n\n- 工作时需消耗 120W 电力。\n- 每次提取消耗 Cogito 或脑啡肽箱（新殖民地首次启封提取免费）。\n- 也可通过顶部“脑叶控制”面板或通电后的 Cogito 水桶直接打开提取界面。</LC_ExtractionWell.description>
+
 </LanguageData>

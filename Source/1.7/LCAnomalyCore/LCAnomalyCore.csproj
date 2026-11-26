@@ -9,6 +9,7 @@
     <Compile Include="Buildings\Building_CogitoBucket.cs" />
     <Compile Include="Buildings\Building_DepartmentCore.cs" />
     <Compile Include="Buildings\Building_EnkephalinGenerator.cs" />
+    <Compile Include="Buildings\Building_ExtractionWell.cs" />
     <Compile Include="Buildings\Building_AbnormalityContainmentTerminal.cs" />
     <Compile Include="Buildings\Building_LCContainmentDoor.cs" />
     <Compile Include="Buildings\PlaceWorker_AbnormalityContainmentTerminal.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Defs\WorkTypeDefOf.cs" />
     <Compile Include="GameComponent\GameComponent_LC.cs" />
     <Compile Include="GameComponent\MapComponent_LCQliphothMeltdown.cs" />
+    <Compile Include="GameComponent\MapComponent_LCExtraction.cs" />
     <Compile Include="Hediffs\HediffComp_BulletShield.cs" />
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="UI\Dialog_LC_AssignWorkType.cs" />
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="UI\Dialog_LC_EntityCodex.cs" />
+    <Compile Include="UI\Dialog_LC_ExtractAbnormality.cs" />
     <Compile Include="UI\EscapedAbnormalityOverlayDrawer.cs" />
     <Compile Include="UI\MainTabWindow_LCFacility.cs" />
     <Compile Include="UI\ManagerBulletHudDrawer.cs" />

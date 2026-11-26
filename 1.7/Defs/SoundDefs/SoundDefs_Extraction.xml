@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Start</defName>
+    <context>Any</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Start</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~38</volumeRange>
+        <pitchRange>0.98~1.02</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_DropIn</defName>
+    <context>Any</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_DropIn</clipPath>
+          </li>
+        </grains>
+        <volumeRange>30~36</volumeRange>
+        <pitchRange>0.98~1.02</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Hover</defName>
+    <context>Any</context>
+    <maxSimultaneous>6</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Hover</clipPath>
+          </li>
+        </grains>
+        <volumeRange>22~28</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Select</defName>
+    <context>Any</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Select</clipPath>
+          </li>
+        </grains>
+        <volumeRange>28~34</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Confirm</defName>
+    <context>Any</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Confirm</clipPath>
+          </li>
+        </grains>
+        <volumeRange>30~36</volumeRange>
+        <pitchRange>0.99~1.01</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Reroll</defName>
+    <context>Any</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Reroll</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~38</volumeRange>
+        <pitchRange>0.98~1.02</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_Extraction_Manifest</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Extraction/Extract_Manifest</clipPath>
+          </li>
+        </grains>
+        <volumeRange>34~42</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+        <distRange>0~60</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

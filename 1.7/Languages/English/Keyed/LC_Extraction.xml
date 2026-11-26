@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <LC_Extract_GizmoLabel>Extract Abnormality</LC_Extract_GizmoLabel>
+  <LC_Extract_GizmoDesc>Open the Lobotomy Corporation 3-Choice Abnormality Extraction terminal to manifest a new Abnormality container beside this structure.</LC_Extract_GizmoDesc>
+
+  <LC_Extract_WindowTitle>ABNORMALITY EXTRACTION</LC_Extract_WindowTitle>
+  <LC_Extract_SubtitlePrep>Select resonance depth from the Well to draw three candidate containment boxes.</LC_Extract_SubtitlePrep>
+  <LC_Extract_SubtitleDrawing>Review the classification code and whispered quote. Select one box to manifest.</LC_Extract_SubtitleDrawing>
+
+  <LC_Extract_NoMap>No active colony map found for extraction.</LC_Extract_NoMap>
+  <LC_Extract_CogitoStock>Cogito: {0}</LC_Extract_CogitoStock>
+  <LC_Extract_EnkStock>Enkephalin: {0}</LC_Extract_EnkStock>
+  <LC_Extract_FreeCharterChip>FREE FIRST CHARTER</LC_Extract_FreeCharterChip>
+  <LC_Extract_CooldownChip>Cooldown: {0}</LC_Extract_CooldownChip>
+
+  <LC_Extract_NeedTerminal>Requires a built Extraction Well or Cogito Bucket on this map.</LC_Extract_NeedTerminal>
+  <LC_Extract_NeedPower>Extraction terminal must be powered on and operational.</LC_Extract_NeedPower>
+  <LC_Extract_OnCooldown>Extraction protocol is cooling down ({0} remaining).</LC_Extract_OnCooldown>
+  <LC_Extract_InsufficientResource>Requires {0} Cogito or {1} Enkephalin Box (current: {2} Cogito / {3} Enkephalin).</LC_Extract_InsufficientResource>
+  <LC_Extract_EmptyPool>No extractable Abnormality candidates are available in the loaded pool.</LC_Extract_EmptyPool>
+  <LC_Extract_NoPending>There is no active extraction draw in progress.</LC_Extract_NoPending>
+  <LC_Extract_RerollUsed>This draw has already used its one re-extraction attempt.</LC_Extract_RerollUsed>
+  <LC_Extract_SelectCardFirst>Select one of the three containment boxes first.</LC_Extract_SelectCardFirst>
+  <LC_Extract_SuccessMsg>Abnormality extraction complete: {0} has materialized beside the extraction terminal.</LC_Extract_SuccessMsg>
+
+  <LC_Extract_InspectPending>Status: 3 candidate containment boxes awaiting Manager selection.</LC_Extract_InspectPending>
+  <LC_Extract_InspectCooldown>Status: Resonance cooling down ({0} remaining).</LC_Extract_InspectCooldown>
+  <LC_Extract_InspectFreeCharter>Status: Free First-Charter Extraction ready.</LC_Extract_InspectFreeCharter>
+  <LC_Extract_InspectReady>Status: Extraction Well ready ({0} total completed).</LC_Extract_InspectReady>
+
+  <LC_Extract_SelectTierPrompt>Choose Extraction Depth Protocol (charges upfront when started):</LC_Extract_SelectTierPrompt>
+  <LC_Extract_ReadyHint>Ready to cast Cogito into the Well. Three mysterious boxes will surface.</LC_Extract_ReadyHint>
+  <LC_Extract_StartBtn>Start Extraction</LC_Extract_StartBtn>
+  <LC_Extract_FreeCost>FREE (Charter)</LC_Extract_FreeCost>
+  <LC_Extract_TierCost>{0} Cogito / {1} Enk-Box</LC_Extract_TierCost>
+
+  <LC_Extract_Tier_Standard_Label>Standard Resonance</LC_Extract_Tier_Standard_Label>
+  <LC_Extract_Tier_Standard_Desc>Balanced Lobotomy protocol drawing from ZAYIN, TETH, and HE tiers. Eligible for the free First-Charter draw.</LC_Extract_Tier_Standard_Desc>
+  <LC_Extract_Tier_Shallow_Label>Shallow Layer</LC_Extract_Tier_Shallow_Label>
+  <LC_Extract_Tier_Shallow_Desc>Safe early-facility extraction focused on ZAYIN and TETH Abnormalities. Eligible for the free First-Charter draw.</LC_Extract_Tier_Shallow_Desc>
+  <LC_Extract_Tier_Mid_Label>Mid-Layer Resonance</LC_Extract_Tier_Mid_Label>
+  <LC_Extract_Tier_Mid_Desc>Moderate energy output targeting TETH and HE class Abnormalities with stronger E.G.O yield.</LC_Extract_Tier_Mid_Desc>
+  <LC_Extract_Tier_Deep_Label>Deep Layer Resonance</LC_Extract_Tier_Deep_Label>
+  <LC_Extract_Tier_Deep_Desc>High-pressure extraction drawing from HE and WAW class entities. Ensure containment teams are ready.</LC_Extract_Tier_Deep_Desc>
+  <LC_Extract_Tier_Abyss_Label>Abyssal Resonance</LC_Extract_Tier_Abyss_Label>
+  <LC_Extract_Tier_Abyss_Desc>Bottom-of-the-Well resonance guaranteeing at least one ALEPH candidate alongside WAW Abnormalities.</LC_Extract_Tier_Abyss_Desc>
+
+  <LC_Extract_ActiveTierHeader>Active Protocol: {0}</LC_Extract_ActiveTierHeader>
+  <LC_Extract_UndiscoveredTag>[ ??? UNDISCOVERED ??? ]</LC_Extract_UndiscoveredTag>
+  <LC_Extract_RerollBtn>Re-Extract ({0} Cog / {1} Enk)</LC_Extract_RerollBtn>
+  <LC_Extract_RerollUsedBtn>Re-Extract Used</LC_Extract_RerollUsedBtn>
+  <LC_Extract_ReExtractShort>RE-EXTRACT</LC_Extract_ReExtractShort>
+  <LC_Extract_ClickAgainConfirm>Click box again or press Confirm to manifest</LC_Extract_ClickAgainConfirm>
+  <LC_Extract_SuspendNote>Closing keeps this draw paused until you pick a box.</LC_Extract_SuspendNote>
+  <LC_Extract_ConfirmBtn>Confirm Extraction</LC_Extract_ConfirmBtn>
+
+  <LC_Extract_CodeUnknown>?-??-??</LC_Extract_CodeUnknown>
+  <LC_Extract_QuoteDefault>"Something shifts inside the dark box, waiting to be named."</LC_Extract_QuoteDefault>
+</LanguageData>

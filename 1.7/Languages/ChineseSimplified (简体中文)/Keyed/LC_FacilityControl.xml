@@ -51,5 +51,6 @@
   <LC_FacilityTab_BtnAssign>派员</LC_FacilityTab_BtnAssign>
   <LC_FacilityTab_BtnJump>跳转</LC_FacilityTab_BtnJump>
   <LC_FacilityTab_BtnDept>部门</LC_FacilityTab_BtnDept>
+  <LC_FacilityTab_OpenExtraction>提取异想体</LC_FacilityTab_OpenExtraction>
   <LC_FacilityTab_NoDepartmentCore>当前地图尚未建造任何部门核心。</LC_FacilityTab_NoDepartmentCore>
 </LanguageData>

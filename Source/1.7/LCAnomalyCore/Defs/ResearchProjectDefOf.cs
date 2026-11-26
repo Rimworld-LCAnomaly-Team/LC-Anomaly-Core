@@ -13,5 +13,10 @@ namespace LCAnomalyCore.Defs
         /// 提取脑啡肽
         /// </summary>
         public static ResearchProjectDef ExtractEnkephalin;
+
+        /// <summary>
+        /// 异想体提取协议
+        /// </summary>
+        public static ResearchProjectDef ExtractAbnormalityRiturals;
     }
 }

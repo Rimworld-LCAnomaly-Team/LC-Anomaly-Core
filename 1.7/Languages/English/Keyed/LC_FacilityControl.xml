@@ -51,5 +51,6 @@
   <LC_FacilityTab_BtnAssign>Staff</LC_FacilityTab_BtnAssign>
   <LC_FacilityTab_BtnJump>Jump</LC_FacilityTab_BtnJump>
   <LC_FacilityTab_BtnDept>Dept</LC_FacilityTab_BtnDept>
+  <LC_FacilityTab_OpenExtraction>Extract Entity</LC_FacilityTab_OpenExtraction>
   <LC_FacilityTab_NoDepartmentCore>No Department Core built on this map yet.</LC_FacilityTab_NoDepartmentCore>
 </LanguageData>

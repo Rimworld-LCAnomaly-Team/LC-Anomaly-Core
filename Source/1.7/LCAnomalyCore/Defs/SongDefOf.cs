@@ -21,5 +21,15 @@ namespace LCAnomalyCore.Defs
         /// 三级警报
         /// </summary>
         public static SongDef ThirdWarning;
+
+        /// <summary>
+        /// 异想体三选一提取界面 BGM (Never Frozen Bottom Flows)
+        /// </summary>
+        public static SongDef Anomaly_Extract;
+
+        static SongDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(SongDefOf));
+        }
     }
 }

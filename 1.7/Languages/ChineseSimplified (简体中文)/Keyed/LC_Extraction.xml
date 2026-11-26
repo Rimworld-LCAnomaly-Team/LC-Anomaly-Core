@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <LC_Extract_GizmoLabel>提取异想体</LC_Extract_GizmoLabel>
+  <LC_Extract_GizmoDesc>打开脑叶公司“三选一”异想体提取终端，从意识之井中具现化一枚新的异想体收容匣。</LC_Extract_GizmoDesc>
+
+  <LC_Extract_WindowTitle>异想体提取协议</LC_Extract_WindowTitle>
+  <LC_Extract_SubtitlePrep>选择向意识之井投射的共鸣深度，并抽取三份候选异想体收容匣。</LC_Extract_SubtitlePrep>
+  <LC_Extract_SubtitleDrawing>根据分类编号与档案低语做出抉择。未录入图鉴的目标不会预先揭示真身。</LC_Extract_SubtitleDrawing>
+
+  <LC_Extract_NoMap>未找到可用于提取的殖民地地图。</LC_Extract_NoMap>
+  <LC_Extract_CogitoStock>Cogito：{0}</LC_Extract_CogitoStock>
+  <LC_Extract_EnkStock>脑啡肽箱：{0}</LC_Extract_EnkStock>
+  <LC_Extract_FreeCharterChip>首次启封免费</LC_Extract_FreeCharterChip>
+  <LC_Extract_CooldownChip>冷却中：{0}</LC_Extract_CooldownChip>
+
+  <LC_Extract_NeedTerminal>地图上需至少建成一座“异想体提取井”或“Cogito 水桶”。</LC_Extract_NeedTerminal>
+  <LC_Extract_NeedPower>提取终端未通电或处于停机/损坏状态。</LC_Extract_NeedPower>
+  <LC_Extract_OnCooldown>提取协议正处于冷却期（剩余 {0}）。</LC_Extract_OnCooldown>
+  <LC_Extract_InsufficientResource>需要 {0} Cogito 或 {1} 脑啡肽箱（当前可用：{2} Cogito / {3} 脑啡肽箱）。</LC_Extract_InsufficientResource>
+  <LC_Extract_EmptyPool>当前已加载的异想体池中没有可提取的目标。</LC_Extract_EmptyPool>
+  <LC_Extract_NoPending>当前没有挂起的提取抽卡会话。</LC_Extract_NoPending>
+  <LC_Extract_RerollUsed>本轮提取已消耗唯一的重抽机会。</LC_Extract_RerollUsed>
+  <LC_Extract_SelectCardFirst>请先点击选择三枚候选收容匣之一。</LC_Extract_SelectCardFirst>
+  <LC_Extract_SuccessMsg>异想体提取完成：【{0}】的收容匣已在提取终端旁具现化。</LC_Extract_SuccessMsg>
+
+  <LC_Extract_InspectPending>状态：3 份候选异想体匣正在等待主管抉择。</LC_Extract_InspectPending>
+  <LC_Extract_InspectCooldown>状态：提取冷却中（剩余 {0}）。</LC_Extract_InspectCooldown>
+  <LC_Extract_InspectFreeCharter>状态：首次启封免费提取就绪。</LC_Extract_InspectFreeCharter>
+  <LC_Extract_InspectReady>状态：提取终端就绪（已累计完成 {0} 次提取）。</LC_Extract_InspectReady>
+
+  <LC_Extract_SelectTierPrompt>请选择本次提取深度（点击“开始提取”即扣除资源并锁定三选一池）：</LC_Extract_SelectTierPrompt>
+  <LC_Extract_ReadyHint>井水共鸣稳定。点击“开始提取”以浮现三份未知收容匣。</LC_Extract_ReadyHint>
+  <LC_Extract_StartBtn>开始提取</LC_Extract_StartBtn>
+  <LC_Extract_FreeCost>免费（首次特许）</LC_Extract_FreeCost>
+  <LC_Extract_TierCost>{0} Cogito / {1} 脑啡肽箱</LC_Extract_TierCost>
+
+  <LC_Extract_Tier_Standard_Label>常规共鸣（Standard）</LC_Extract_Tier_Standard_Label>
+  <LC_Extract_Tier_Standard_Desc>公司标准均衡协议，从 ZAYIN、TETH、HE 级池中混合抽取。可享用新殖民地首抽免费。</LC_Extract_Tier_Standard_Desc>
+  <LC_Extract_Tier_Shallow_Label>浅层共鸣（Shallow）</LC_Extract_Tier_Shallow_Label>
+  <LC_Extract_Tier_Shallow_Desc>稳健的前期扩建协议，集中于 ZAYIN 与 TETH 级异想体。可享用新殖民地首抽免费。</LC_Extract_Tier_Shallow_Desc>
+  <LC_Extract_Tier_Mid_Label>中层共鸣（Mid）</LC_Extract_Tier_Mid_Label>
+  <LC_Extract_Tier_Mid_Desc>提升井水投射强度，定向抽取 TETH 与 HE 级异想体以拓展中阶 E.G.O 装备。</LC_Extract_Tier_Mid_Desc>
+  <LC_Extract_Tier_Deep_Label>深层共鸣（Deep）</LC_Extract_Tier_Deep_Label>
+  <LC_Extract_Tier_Deep_Desc>高压深层打捞，聚焦 HE 与 WAW 级危险实体，请确保收容部具备镇压战力。</LC_Extract_Tier_Deep_Desc>
+  <LC_Extract_Tier_Abyss_Label>深渊共振（Abyss）</LC_Extract_Tier_Abyss_Label>
+  <LC_Extract_Tier_Abyss_Desc>直抵意识最深层的危险协议，保证出现至少 1 份 ALEPH 级候选与高阶 WAW 异想体。</LC_Extract_Tier_Abyss_Desc>
+
+  <LC_Extract_ActiveTierHeader>当前协议：{0}</LC_Extract_ActiveTierHeader>
+  <LC_Extract_UndiscoveredTag>[ ??? 尚未录入图鉴 ??? ]</LC_Extract_UndiscoveredTag>
+  <LC_Extract_RerollBtn>重新抽取（{0} Cog / {1} 箱）</LC_Extract_RerollBtn>
+  <LC_Extract_RerollUsedBtn>已使用重抽机会</LC_Extract_RerollUsedBtn>
+  <LC_Extract_ReExtractShort>二次提取</LC_Extract_ReExtractShort>
+  <LC_Extract_ClickAgainConfirm>再次点击箱体或点击下方确认提取</LC_Extract_ClickAgainConfirm>
+  <LC_Extract_SuspendNote>关闭窗口将保留当前三选一进度，不会丢失或重置候选。</LC_Extract_SuspendNote>
+  <LC_Extract_ConfirmBtn>确认提取</LC_Extract_ConfirmBtn>
+
+  <LC_Extract_CodeUnknown>?-??-??</LC_Extract_CodeUnknown>
+  <LC_Extract_QuoteDefault>“黑暗收容匣内传来微弱的搏动，静候被赋予名字。”</LC_Extract_QuoteDefault>
+</LanguageData>

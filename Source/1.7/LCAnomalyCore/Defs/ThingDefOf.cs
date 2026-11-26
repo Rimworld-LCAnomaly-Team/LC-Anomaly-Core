@@ -45,6 +45,11 @@ namespace LCAnomalyCore.Defs
         public static ThingDef CogitoBucket;
 
         /// <summary>
+        /// 异想体提取井（建筑）
+        /// </summary>
+        public static ThingDef LC_ExtractionWell;
+
+        /// <summary>
         /// 控制部核心（建筑）
         /// </summary>
         public static ThingDef LC_DepartmentCore_ControlTeam;

@@ -176,6 +176,16 @@ namespace LCAnomalyCore.UI
             }
 
             Text.Font = GameFont.Small;
+            Rect extractBtn = new Rect(rect.xMax - 294f, rect.y + 10f, 138f, 34f);
+            if (Widgets.ButtonText(extractBtn, "LC_FacilityTab_OpenExtraction".Translate()))
+            {
+                if (!Find.WindowStack.IsOpen<Dialog_LC_ExtractAbnormality>())
+                {
+                    (Defs.SoundDefOf.LC_Sound_Extraction_Start ?? RimWorld.SoundDefOf.Click).PlayOneShotOnCamera();
+                    Find.WindowStack.Add(new Dialog_LC_ExtractAbnormality(map, null));
+                }
+            }
+
             Rect codexBtn = new Rect(rect.xMax - 148f, rect.y + 10f, 136f, 34f);
             if (Widgets.ButtonText(codexBtn, "LC_FacilityTab_OpenCodex".Translate()))
             {

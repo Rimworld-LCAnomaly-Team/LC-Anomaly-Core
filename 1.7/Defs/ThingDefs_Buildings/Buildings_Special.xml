@@ -73,4 +73,70 @@
     <tradeability>Sellable</tradeability>
   </ThingDef>
 
+  <!-- Abnormality Extraction Well (early-game Cognitive Well terminal) -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>LC_ExtractionWell</defName>
+    <label>abnormality extraction well</label>
+    <description>An early-stage Cognitive Well terminal connected to the deep layer of the human psyche. Even before a full Cogito Bucket is constructed, the manager can resonance-cast into the well to extract three candidate Abnormality containers.\n\n- Requires 120W power when operational.\n- Costs Cogito or Enkephalin Boxes per extraction (first extraction on a new colony charter is free).\n- Can also be operated directly from the Lobotomy Control tab or a powered Cogito Bucket.</description>
+    <thingClass>LCAnomalyCore.Buildings.Building_ExtractionWell</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/TheWell/TheWell</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3, 3)</drawSize>
+      <shadowData>
+        <volume>(1.8, 0.8, 1.8)</volume>
+        <offset>(0.0, 0.0, -0.2)</offset>
+      </shadowData>
+    </graphicData>
+    <thingCategories>
+      <li>LC_Building_Production</li>
+    </thingCategories>
+    <designationCategory>Buildings_LC</designationCategory>
+    <uiIconPath>Things/Building/TheWell/TheWell</uiIconPath>
+    <costList>
+      <Steel>120</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Medium</destroySound>
+    </building>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>120</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="CompProperties_Glower">
+        <glowRadius>4</glowRadius>
+        <glowColor>(90, 210, 255, 0)</glowColor>
+      </li>
+    </comps>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MarketValue>420</MarketValue>
+      <MaxHitPoints>220</MaxHitPoints>
+      <Flammability>0.2</Flammability>
+      <Beauty>-2</Beauty>
+      <Mass>28</Mass>
+      <WorkToBuild>2200</WorkToBuild>
+    </statBases>
+    <researchPrerequisites>
+      <li>ExtractAbnormalityRiturals</li>
+    </researchPrerequisites>
+    <size>(3, 3)</size>
+    <fillPercent>0.75</fillPercent>
+    <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <passability>PassThroughOnly</passability>
+    <pathCost>50</pathCost>
+    <rotatable>false</rotatable>
+    <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+    <canOverlapZones>false</canOverlapZones>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <tradeability>Sellable</tradeability>
+  </ThingDef>
+
 </Defs>

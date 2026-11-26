@@ -1768,6 +1768,7 @@ public static class GameplayValidation
         ValidatePhase3(map, abnSettings);
         ValidatePhase4(map, abnSettings);
         ValidateRoomContainment(map);
+        ValidateAbnormalityExtraction(map);
     }
 
     public static void CheckReload(Map map)
@@ -2302,7 +2303,7 @@ public static class GameplayValidation
 
         if (sqAbn.CanBeStudiedNow(out string sqBlockReason) || string.IsNullOrEmpty(sqBlockReason) || sqAbn.StudiableComp.CurrentlyStudiable())
             throw new InvalidOperationException("SnowQueen failed to block normal study while a captive is frozen.");
-        if (!sqAbn.GetPlatformFloatMenuOptions(worker).Any(opt => !opt.Disabled && opt.action != null))
+        if (!sqAbn.GetPlatformFloatMenuOptions(fortTester).Any(opt => !opt.Disabled && opt.action != null))
             throw new InvalidOperationException("SnowQueen missing right-click Rescue Duel float menu option while captive is frozen.");
 
         sqPlat.DynamicDrawPhaseAt(DrawPhase.EnsureInitialized, sqPlat.DrawPos);
@@ -2368,8 +2369,41 @@ public static class GameplayValidation
 
         // Ensure save/reload fixture colonists start healthy and away from roaming test hostiles
         GameComponent_LC gcNow = GameComponent_LC.Instance;
-        Pawn savedBlessed = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(p => p.equipment?.Primary != null && gcNow != null && gcNow.IsWeaponBlessed(p.equipment.Primary))
-            ?? throw new InvalidOperationException("No live colonist holds blessed weapon before save.");
+        Pawn savedBlessed = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(p => !p.Dead && !p.Downed && p.equipment?.Primary != null && gcNow != null && gcNow.IsWeaponBlessed(p.equipment.Primary));
+        if (savedBlessed == null && gcNow != null)
+        {
+            ThingWithComps blessedWeapon = map.listerThings.AllThings.OfType<ThingWithComps>().FirstOrDefault(t => gcNow.IsWeaponBlessed(t));
+            if (blessedWeapon == null)
+            {
+                Pawn downedHolder = map.mapPawns.AllPawnsSpawned.FirstOrDefault(p => p.equipment?.Primary != null && gcNow.IsWeaponBlessed(p.equipment.Primary));
+                if (downedHolder != null)
+                {
+                    blessedWeapon = downedHolder.equipment.Primary;
+                    downedHolder.equipment.Remove(blessedWeapon);
+                }
+            }
+            if (blessedWeapon == null)
+            {
+                Corpse corpseHolder = map.listerThings.ThingsInGroup(ThingRequestGroup.Corpse).OfType<Corpse>()
+                    .FirstOrDefault(c => c.InnerPawn?.equipment?.Primary != null && gcNow.IsWeaponBlessed(c.InnerPawn.equipment.Primary));
+                if (corpseHolder != null)
+                {
+                    blessedWeapon = corpseHolder.InnerPawn.equipment.Primary;
+                    corpseHolder.InnerPawn.equipment.Remove(blessedWeapon);
+                }
+            }
+            if (blessedWeapon != null)
+            {
+                if (blessedWeapon.Spawned) blessedWeapon.DeSpawn();
+                savedBlessed = SpawnValidationColonist(map, FindFarthestSafeCell(map));
+                savedBlessed.equipment?.DestroyAllEquipment();
+                savedBlessed.equipment?.AddEquipment(blessedWeapon);
+            }
+        }
+        if (savedBlessed == null)
+        {
+            throw new InvalidOperationException("No live colonist holds blessed weapon before save.");
+        }
         foreach (Pawn fixturePawn in new[] { savedBlessed, savedHeartBearer })
         {
             var injuries = new List<Hediff_Injury>();
@@ -5999,6 +6033,164 @@ public static class GameplayValidation
         {
             throw new InvalidOperationException("MapComponent_LCQliphothMeltdown missing after save/reload.");
         }
+        MapComponent_LCExtraction loadedExtract = map.GetComponent<MapComponent_LCExtraction>();
+        if (loadedExtract == null || loadedExtract.TotalExtractions < 2)
+        {
+            throw new InvalidOperationException($"MapComponent_LCExtraction missing or lost TotalExtractions after reload: {loadedExtract?.TotalExtractions ?? -1}");
+        }
         Log.Message("[LC17 Validation] GAMEPLAY PASS; RoomContainmentReload; terminal_and_OneSin_persisted");
+    }
+
+    private static void ValidateAbnormalityExtraction(Map map)
+    {
+        if (LCAnomalyCore.Defs.ThingDefOf.LC_ExtractionWell == null)
+        {
+            throw new InvalidOperationException("ThingDefOf.LC_ExtractionWell is null.");
+        }
+        if (LCAnomalyCore.Defs.ResearchProjectDefOf.ExtractAbnormalityRiturals == null)
+        {
+            throw new InvalidOperationException("ResearchProjectDefOf.ExtractAbnormalityRiturals is null.");
+        }
+        if (LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Start == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_DropIn == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Hover == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Select == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Confirm == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Reroll == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_Extraction_Manifest == null)
+        {
+            throw new InvalidOperationException("One or more LC_Sound_Extraction_* SoundDefs failed to bind.");
+        }
+        if (LCAnomalyCore.Defs.SongDefOf.Anomaly_Extract == null)
+        {
+            throw new InvalidOperationException("SongDefOf.Anomaly_Extract is null.");
+        }
+
+        IntVec3 wellCell = FindSafePawnCell(map, map.Center);
+        var well = (LCAnomalyCore.Buildings.Building_ExtractionWell)ThingMaker.MakeThing(LCAnomalyCore.Defs.ThingDefOf.LC_ExtractionWell);
+        well.SetFaction(Faction.OfPlayer);
+        GenSpawn.Spawn(well, wellCell, map);
+        CompPowerTrader wellPower = well.GetComp<CompPowerTrader>();
+        if (wellPower != null)
+        {
+            wellPower.PowerOn = true;
+        }
+        if (!well.IsOperational)
+        {
+            throw new InvalidOperationException("LC_ExtractionWell failed to become operational with power on.");
+        }
+        well.GetGizmos().ToList();
+        well.GetInspectString();
+
+        MapComponent_LCExtraction mgr = MapComponent_LCExtraction.GetFor(map)
+            ?? throw new InvalidOperationException("MapComponent_LCExtraction.GetFor returned null.");
+        if (!mgr.IsFreeCharterAvailable)
+        {
+            throw new InvalidOperationException("Expected fresh map to have IsFreeCharterAvailable=true.");
+        }
+
+        // 1) Free First-Charter Standard 3-choice draw + confirm
+        if (!mgr.TryBeginExtraction(LCExtractionTier.Standard, out string err))
+        {
+            throw new InvalidOperationException($"Free Standard TryBeginExtraction failed: {err}");
+        }
+        if (!mgr.HasPendingDraw || mgr.PendingCandidates.Count != 3 || mgr.PendingCandidates.Distinct().Count() != 3)
+        {
+            throw new InvalidOperationException($"Expected 3 distinct candidates, got {mgr.PendingCandidates?.Count ?? 0}.");
+        }
+        var dialog = new LCAnomalyCore.UI.Dialog_LC_ExtractAbnormality(map, well);
+        if (dialog.InitialSize.x < 900f)
+        {
+            throw new InvalidOperationException("Dialog_LC_ExtractAbnormality InitialSize unexpected.");
+        }
+
+        mgr.SelectedIndex = 0;
+        if (!mgr.TryConfirmExtraction(well, out Thing freeEgg, out err) || freeEgg == null || !freeEgg.Spawned)
+        {
+            throw new InvalidOperationException($"TryConfirmExtraction (free) failed: {err}");
+        }
+        if (mgr.TotalExtractions != 1 || mgr.HasPendingDraw || mgr.CooldownTicksRemaining <= 0)
+        {
+            throw new InvalidOperationException("Post-confirm extraction state invalid (TotalExtractions/HasPendingDraw/Cooldown).");
+        }
+        if (freeEgg.Spawned) freeEgg.DeSpawn();
+        if (!freeEgg.Destroyed) freeEgg.Destroy();
+
+        // 2) Verify cooldown blocks while active (outside GodMode), then reset cooldown for Abyss test
+        bool prevGod = DebugSettings.godMode;
+        DebugSettings.godMode = false;
+        try
+        {
+            if (mgr.CanStartExtraction(LCExtractionTier.Standard, out _))
+            {
+                throw new InvalidOperationException("Extraction should be blocked during cooldown when godMode is off.");
+            }
+            mgr.DebugResetCooldown();
+            if (mgr.CooldownTicksRemaining != 0)
+            {
+                throw new InvalidOperationException("DebugResetCooldown did not clear cooldown.");
+            }
+
+            // 3) Paid Abyss draw + single Reroll + Confirm (guarantee ALEPH present)
+            int cogBefore = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+            Thing cogitoStack = ThingMaker.MakeThing(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+            cogitoStack.stackCount = 10;
+            GenPlace.TryPlaceThing(cogitoStack, wellCell, map, ThingPlaceMode.Near);
+
+            if (!mgr.TryBeginExtraction(LCExtractionTier.Abyss, out err))
+            {
+                throw new InvalidOperationException($"Paid Abyss TryBeginExtraction failed: {err}");
+            }
+            int cogAfterBegin = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+            if (cogAfterBegin != cogBefore + 5)
+            {
+                throw new InvalidOperationException($"Expected {cogBefore + 5} Cogito remaining after Abyss draw, got {cogAfterBegin}.");
+            }
+            if (!mgr.PendingCandidates.Any(d => LCAnomalyCore.Util.AbnormalityUtility.ResolveCodexEntry(d)?.category?.defName == "ALEPH"))
+            {
+                throw new InvalidOperationException("Abyss tier extraction did not include an ALEPH candidate.");
+            }
+
+            if (!mgr.TryRerollCandidates(out err) || !mgr.UsedReroll)
+            {
+                throw new InvalidOperationException($"TryRerollCandidates failed: {err}");
+            }
+            int cogAfterReroll = mgr.CountAvailableResource(LCAnomalyCore.Defs.ThingDefOf.Cogito);
+            if (cogAfterReroll != cogBefore + 4)
+            {
+                throw new InvalidOperationException($"Expected {cogBefore + 4} Cogito remaining after Reroll, got {cogAfterReroll}.");
+            }
+            if (mgr.TryRerollCandidates(out _))
+            {
+                throw new InvalidOperationException("Second reroll in same draw should have been rejected.");
+            }
+
+            mgr.SelectedIndex = 0;
+            if (!mgr.TryConfirmExtraction(well, out Thing abyssEgg, out err) || abyssEgg == null || !abyssEgg.Spawned)
+            {
+                throw new InvalidOperationException($"TryConfirmExtraction (Abyss) failed: {err}");
+            }
+            if (mgr.TotalExtractions != 2)
+            {
+                throw new InvalidOperationException($"Expected TotalExtractions=2, got {mgr.TotalExtractions}.");
+            }
+            if (abyssEgg.Spawned) abyssEgg.DeSpawn();
+            if (!abyssEgg.Destroyed) abyssEgg.Destroy();
+
+            foreach (Thing leftover in map.listerThings.ThingsOfDef(LCAnomalyCore.Defs.ThingDefOf.Cogito).ToList())
+            {
+                if (leftover.Spawned) leftover.DeSpawn();
+                if (!leftover.Destroyed) leftover.Destroy();
+            }
+        }
+        finally
+        {
+            DebugSettings.godMode = prevGod;
+            mgr.DebugResetCooldown();
+            if (well.Spawned) well.DeSpawn();
+            if (!well.Destroyed) well.Destroy();
+        }
+
+        Log.Message("[LC17 Validation] GAMEPLAY PASS; AbnormalityExtraction; well/free_charter/cooldown/abyss_aleph/reroll/confirm");
     }
 }
