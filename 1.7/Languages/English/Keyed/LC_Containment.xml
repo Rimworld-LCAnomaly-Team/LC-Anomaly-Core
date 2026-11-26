@@ -41,4 +41,15 @@
   <LC_ContainmentRoom_HudReady>READY</LC_ContainmentRoom_HudReady>
   <LC_ContainmentRoom_HudWait>WAIT</LC_ContainmentRoom_HudWait>
   <LC_ContainmentRoom_HudCooldown>CD</LC_ContainmentRoom_HudCooldown>
+  <LC_Meltdown_HudBanner>MELTDOWN {0}s</LC_Meltdown_HudBanner>
+  <LC_ContainmentRoom_InspectMeltdown>QLIPHOTH MELTDOWN ACTIVE: {0}s remaining (send an employee immediately!)</LC_ContainmentRoom_InspectMeltdown>
+  <LC_Meltdown_RoomTriggeredMote>Qliphoth Meltdown! Work on {0} immediately!</LC_Meltdown_RoomTriggeredMote>
+  <LC_Meltdown_RoomClearedMote>Qliphoth Meltdown averted ({0}).</LC_Meltdown_RoomClearedMote>
+  <LC_Meltdown_RoomFailedLabel>Qliphoth Meltdown Breached</LC_Meltdown_RoomFailedLabel>
+  <LC_Meltdown_RoomFailedText>A Qliphoth Meltdown in {0}'s containment room was not resolved in time! {1} stored PE-Boxes were lost and the abnormality's Qliphoth Counter dropped to 0.</LC_Meltdown_RoomFailedText>
+  <LC_Meltdown_WaveTriggeredMessage>Qliphoth Meltdown Level {0}: {1} containment room(s) require immediate work!</LC_Meltdown_WaveTriggeredMessage>
+  <LC_Meltdown_TopHudLevel>MELTDOWN Lv.{0}</LC_Meltdown_TopHudLevel>
+  <LC_Meltdown_TopHudAlert>MELTDOWN! {0} room(s) · {1}s</LC_Meltdown_TopHudAlert>
+  <LC_Meltdown_TopHudTip>Qliphoth Meltdown overload gauge. Completing {0} containment works advances the gauge and triggers a Meltdown wave in random containment rooms.</LC_Meltdown_TopHudTip>
+  <LC_Meltdown_TopHudAlertTip>Click to jump camera to the most urgent melting containment room! Dispatch an employee to work inside before the timer hits 0.</LC_Meltdown_TopHudAlertTip>
 </LanguageData>

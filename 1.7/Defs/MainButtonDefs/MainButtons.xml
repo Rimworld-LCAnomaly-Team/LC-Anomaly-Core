@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <MainButtonDef>
+    <defName>LC_FacilityControl</defName>
+    <label>LC facility</label>
+    <description>Monitor containment rooms, Qliphoth Meltdowns, PE-Box reserves, and LC employees.</description>
+    <tabWindowClass>LCAnomalyCore.UI.MainTabWindow_LCFacility</tabWindowClass>
+    <order>45</order>
+  </MainButtonDef>
+</Defs>

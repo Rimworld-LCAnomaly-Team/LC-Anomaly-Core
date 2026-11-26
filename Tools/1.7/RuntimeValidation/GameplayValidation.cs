@@ -132,6 +132,30 @@ public static class GameplayValidation
 
     public static void Run(Map map, CompPawnStatus employee)
     {
+        bool prevMeltdownEnabled = Setting_LCAnomalyCore_Main.Settings?.If_EnableQliphothMeltdown ?? true;
+        bool prevMeltdownOrdealEnabled = Setting_LCAnomalyCore_Main.Settings?.If_EnableMeltdownOrdealTrigger ?? true;
+        if (Setting_LCAnomalyCore_Main.Settings != null)
+        {
+            Setting_LCAnomalyCore_Main.Settings.If_EnableQliphothMeltdown = false;
+            Setting_LCAnomalyCore_Main.Settings.If_EnableMeltdownOrdealTrigger = false;
+            map?.GetComponent<MapComponent_LCQliphothMeltdown>()?.ResetAllMeltdowns(resetWaveProgress: true);
+        }
+        try
+        {
+            RunInternal(map, employee);
+        }
+        finally
+        {
+            if (Setting_LCAnomalyCore_Main.Settings != null)
+            {
+                Setting_LCAnomalyCore_Main.Settings.If_EnableQliphothMeltdown = prevMeltdownEnabled;
+                Setting_LCAnomalyCore_Main.Settings.If_EnableMeltdownOrdealTrigger = prevMeltdownOrdealEnabled;
+            }
+        }
+    }
+
+    private static void RunInternal(Map map, CompPawnStatus employee)
+    {
         TestContainmentRoomRects.Clear();
         Pawn worker = (Pawn)employee.parent;
         worker.skills.GetSkill(SkillDefOf.Intellectual).Level = 20;
@@ -4049,6 +4073,22 @@ public static class GameplayValidation
             if (central.GetGizmos().Count() < 6 || !welfare.GetGizmos().Any() || !disc.GetGizmos().Any())
                 throw new InvalidOperationException("Department cores failed to expose Manager Bullet gizmos.");
 
+            if (DefDatabase<SoundDef>.GetNamedSilentFail("LC_Sound_BulletFire") == null)
+                throw new InvalidOperationException("LC_Sound_BulletFire SoundDef missing.");
+            if (lc.GetManagerBulletRechargeProgress(map) < 0f || lc.GetManagerBulletRechargeProgress(map) > 1f)
+                throw new InvalidOperationException("GetManagerBulletRechargeProgress out of [0,1] range.");
+            foreach (EManagerBulletType bt in ManagerBulletUtility.OrderedBulletTypes)
+            {
+                if (string.IsNullOrEmpty(ManagerBulletUtility.GetBulletIconPath(bt)) || ManagerBulletUtility.GetBulletRadius(bt) <= 0f)
+                    throw new InvalidOperationException($"Invalid metadata for bullet {bt}.");
+            }
+            IntVec3 emptyExecCell = FindFarthestSafeCell(map, minColonistDist: 10);
+            int chargesBeforeInvalidExec = lc.GetManagerBulletCharges(map);
+            if (ManagerBulletUtility.FireBulletAt(map, emptyExecCell, EManagerBulletType.Execution))
+                throw new InvalidOperationException("Execution Bullet unexpectedly succeeded on empty cell.");
+            if (lc.GetManagerBulletCharges(map) != chargesBeforeInvalidExec)
+                throw new InvalidOperationException("Execution Bullet wasted a charge on invalid empty cell.");
+
             friendly = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
                 PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
                 canGeneratePawnRelations: false, forceNoBackstory: true, fixedBiologicalAge: 25f, forceBaselinerChance: 1f));
@@ -5441,6 +5481,134 @@ public static class GameplayValidation
         terminal1.GetInspectString();
         terminal1.DrawGUIOverlay();
 
+        // 1b) Work assignment preview dialog + Qliphoth Meltdown wave/clear/breach validation
+        if (LCAnomalyCore.Defs.SoundDefOf.LC_Sound_QliphothMeltdown_Alert == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_QliphothMeltdown_Clear == null
+            || LCAnomalyCore.Defs.SoundDefOf.LC_Sound_QliphothMeltdown_Fail == null)
+        {
+            throw new InvalidOperationException("One or more LC_Sound_QliphothMeltdown_* SoundDefs failed DefOf binding.");
+        }
+
+        var workDialog = new Dialog_LC_AssignWorkType(terminal1);
+        foreach (EAnomalyWorkType wt in Enum.GetValues(typeof(EAnomalyWorkType)))
+        {
+            if (wt == EAnomalyWorkType.Unknown) continue;
+            float previewRate = Dialog_LC_AssignWorkType.ComputeSuccessRatePreview(oneSinAbn, employee, wt);
+            string tierKey = Dialog_LC_AssignWorkType.GetSuccessTierKey(previewRate);
+            if (previewRate < 0f || previewRate > 1f || !tierKey.CanTranslate())
+            {
+                throw new InvalidOperationException($"Work preview rate/tier invalid for {wt}: rate={previewRate}, key={tierKey}");
+            }
+        }
+
+        MapComponent_LCQliphothMeltdown meltdownMgr = map.GetComponent<MapComponent_LCQliphothMeltdown>()
+            ?? throw new InvalidOperationException("MapComponent_LCQliphothMeltdown missing on map.");
+        bool prevSettingInRoomTest = Setting_LCAnomalyCore_Main.Settings?.If_EnableQliphothMeltdown ?? true;
+        try
+        {
+            if (Setting_LCAnomalyCore_Main.Settings != null)
+            {
+                Setting_LCAnomalyCore_Main.Settings.If_EnableQliphothMeltdown = true;
+            }
+            meltdownMgr.ResetAllMeltdowns(resetWaveProgress: true);
+
+            // Verify automatic facility-wide meltdown wave trigger after WorksPerWave completed works
+            int worksNeeded = meltdownMgr.WorksPerWave;
+            for (int w = 0; w < worksNeeded; w++)
+            {
+                terminal1.Notify_StudyFinished(LC_StudyResult.Good);
+            }
+            if (meltdownMgr.MeltdownLevel < 1 || meltdownMgr.ActiveMeltdownCount < 1)
+            {
+                throw new InvalidOperationException($"Automatic Qliphoth Meltdown wave did not trigger after {worksNeeded} works: level={meltdownMgr.MeltdownLevel}, active={meltdownMgr.ActiveMeltdownCount}");
+            }
+            meltdownMgr.ResetAllMeltdowns(resetWaveProgress: true);
+
+            // Verify cooldown bypass + urgent WorkGiver priority + immediate clear on Notify_StudyStart
+            oneSinHeld.GetComp<CompAbnormalityStudiable>().lastStudiedTick = Find.TickManager.TicksGame;
+            if (oneSinHeld.GetComp<CompAbnormalityStudiable>().CurrentlyStudiable())
+            {
+                throw new InvalidOperationException("OneSin should still be on cooldown before meltdown triggers.");
+            }
+            if (!terminal1.TriggerMeltdown(120) || !terminal1.IsInMeltdown)
+            {
+                throw new InvalidOperationException("terminal1.TriggerMeltdown(120) failed.");
+            }
+            if (!oneSinHeld.GetComp<CompAbnormalityStudiable>().CurrentlyStudiable())
+            {
+                throw new InvalidOperationException("Meltdown did not bypass study cooldown in CurrentlyStudiable().");
+            }
+            var studyWorkGiver = new LCAnomalyCore.Jobs.WorkGiver_AbnormalityStudyInteract();
+            if (studyWorkGiver.GetPriority(worker, terminal1) < 1000000f)
+            {
+                throw new InvalidOperationException("Meltdown WorkGiver priority did not elevate above 1000000.");
+            }
+            if (!studyWorkGiver.HasJobOnThing(worker, terminal1, forced: false))
+            {
+                throw new InvalidOperationException("Meltdown did not allow emergency employee response when no pawns were pre-assigned.");
+            }
+            terminal1.GetInspectString();
+            terminal1.DrawGUIOverlay();
+            meltdownMgr.MapComponentOnGUI();
+            terminal1.Notify_StudyStart(worker);
+            if (terminal1.IsInMeltdown)
+            {
+                throw new InvalidOperationException("terminal1 meltdown did not clear immediately on Notify_StudyStart.");
+            }
+            terminal1.Notify_StudySessionEnded();
+        }
+        finally
+        {
+            terminal1.ClearMeltdown(resolvedByWork: false);
+            meltdownMgr.ResetAllMeltdowns(resetWaveProgress: true);
+            if (Setting_LCAnomalyCore_Main.Settings != null)
+            {
+                Setting_LCAnomalyCore_Main.Settings.If_EnableQliphothMeltdown = prevSettingInRoomTest;
+            }
+        }
+
+        // 1c) Facility Control MainTab + Story/Ordeals meltdown & warning bridges
+        if (DefDatabase<MainButtonDef>.GetNamedSilentFail("LC_FacilityControl") == null)
+        {
+            throw new InvalidOperationException("MainButtonDef LC_FacilityControl is missing.");
+        }
+        var facilityTab = new LCAnomalyCore.UI.MainTabWindow_LCFacility();
+        if (facilityTab.InitialSize.x < 900f)
+        {
+            throw new InvalidOperationException("MainTabWindow_LCFacility InitialSize unexpected.");
+        }
+        if (MapComponent_LCQliphothMeltdown.NextMilestonePreviewProvider == null)
+        {
+            throw new InvalidOperationException("MeltdownOrdealBridge did not register NextMilestonePreviewProvider.");
+        }
+        Type ordealBridgeType = AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetType("LCAnomalyOrdeals.Meltdown.GameComponent_OrdealWarningBridge", false))
+            .FirstOrDefault(t => t != null)
+            ?? throw new InvalidOperationException("GameComponent_OrdealWarningBridge type not found.");
+        MethodInfo warnPtsMethod = ordealBridgeType.GetMethod("GetWarningPointsForOrdealKind", BindingFlags.Public | BindingFlags.Static);
+        if ((int)warnPtsMethod.Invoke(null, new object[] { "LCOrdeal_AmberDawn" }) != 15
+            || (int)warnPtsMethod.Invoke(null, new object[] { "LCOrdeal_CrimsonNoon" }) != 35
+            || (int)warnPtsMethod.Invoke(null, new object[] { "LCOrdeal_AmberDusk" }) != 55
+            || (int)warnPtsMethod.Invoke(null, new object[] { "LCOrdeal_GreenMidnight" }) != 85
+            || (int)warnPtsMethod.Invoke(null, new object[] { "LCOrdeal_WhiteClaw" }) != 85)
+        {
+            throw new InvalidOperationException("GameComponent_OrdealWarningBridge returned unexpected tier warning points.");
+        }
+        Type storyCompAccessType = AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetType("LCAnomalyStory.StoryComponents", false))
+            .FirstOrDefault(t => t != null);
+        object devComp = storyCompAccessType?.GetProperty("Development", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+        if (devComp != null)
+        {
+            MethodInfo getStat = devComp.GetType().GetMethod("GetStatistic", BindingFlags.Public | BindingFlags.Instance);
+            long waveStats = (long)getStat.Invoke(devComp, new object[] { "meltdownWaves" });
+            long resolvedStats = (long)getStat.Invoke(devComp, new object[] { "meltdownsResolved" });
+            if (waveStats < 1 || resolvedStats < 1)
+            {
+                throw new InvalidOperationException($"LCAnomalyStory did not record meltdown statistics: waves={waveStats}, resolved={resolvedStats}");
+            }
+        }
+
         // 2) Wandering biological abnormality (PunishingBird): Three-Birds count guard + wander + escape restores hostility
         Room room2 = BuildTestContainmentRoom(map, out CellRect rect2, out Building_LCContainmentDoor door2);
         IntVec3 term2Pos = new IntVec3(rect2.minX + 1, 0, rect2.maxZ - 1);
@@ -5658,6 +5826,30 @@ public static class GameplayValidation
         if (bird.Spawned) bird.DeSpawn();
         if (!bird.Destroyed) bird.Destroy();
 
+        // Also validate Meltdown countdown expiry failure -> Qliphoth drops to 0 & breaches room
+        Thing sfMeltEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("ScorchedGirlEgg", true));
+        if (!terminal2.TryCaptureThing(sfMeltEgg))
+        {
+            throw new InvalidOperationException("terminal2.TryCaptureThing(ScorchedGirlEgg) failed for meltdown expiry test.");
+        }
+        Pawn sfMeltPawn = terminal2.HeldPawn ?? throw new InvalidOperationException("ScorchedGirl failed to enter terminal2.");
+        CompAbnormality sfMeltAbn = sfMeltPawn.GetComp<CompAbnormality>();
+        if (!terminal2.TriggerMeltdown(60) || !terminal2.IsInMeltdown)
+        {
+            throw new InvalidOperationException("terminal2.TriggerMeltdown(60) failed on ScorchedGirl.");
+        }
+        for (int mt = 0; mt < 65; mt++)
+        {
+            Find.TickManager.DoSingleTick();
+        }
+        if (terminal2.IsInMeltdown || terminal2.Occupied || sfMeltAbn.QliphothCountCurrent != 0 || !sfMeltAbn.Escaped)
+        {
+            throw new InvalidOperationException(
+                $"Meltdown expiry failure did not force breach: isMelting={terminal2.IsInMeltdown}, occupied={terminal2.Occupied}, Q={sfMeltAbn.QliphothCountCurrent}, escaped={sfMeltAbn.Escaped}");
+        }
+        if (sfMeltPawn.Spawned) sfMeltPawn.DeSpawn();
+        if (!sfMeltPawn.Destroyed) sfMeltPawn.Destroy();
+
         // 3) Reuse terminal2 to test special migrated abnormalities: WellCheers, LittleRed hire/recall, and Portrait tool
         Thing wcEgg = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("WellCheersEgg", true));
         if (!terminal2.TryCaptureThing(wcEgg))
@@ -5779,6 +5971,10 @@ public static class GameplayValidation
         savedTerminal.GetInspectString();
         savedTerminal.DrawGUIOverlay();
         savedTerminal.DrawExtraSelectionOverlays();
+        if (map.GetComponent<MapComponent_LCQliphothMeltdown>() == null)
+        {
+            throw new InvalidOperationException("MapComponent_LCQliphothMeltdown missing after save/reload.");
+        }
         Log.Message("[LC17 Validation] GAMEPLAY PASS; RoomContainmentReload; terminal_and_OneSin_persisted");
     }
 }

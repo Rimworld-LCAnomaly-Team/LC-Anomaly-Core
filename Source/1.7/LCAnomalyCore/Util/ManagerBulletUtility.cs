@@ -37,6 +37,115 @@ namespace LCAnomalyCore.Util
         public const int BulletRechargeIntervalTicks = 6000;
         public const int BinahBulletRechargeIntervalTicks = 4000;
 
+        /// <summary>按 Lobotomy Corporation 原作顺序排列的 8 种战术子弹。</summary>
+        public static readonly EManagerBulletType[] OrderedBulletTypes =
+        {
+            EManagerBulletType.HpHeal,
+            EManagerBulletType.SpHeal,
+            EManagerBulletType.RedShield,
+            EManagerBulletType.WhiteShield,
+            EManagerBulletType.BlackShield,
+            EManagerBulletType.PaleShield,
+            EManagerBulletType.Slow,
+            EManagerBulletType.Execution
+        };
+
+        /// <summary>当前正在瞄准中的主管战术子弹类型（未处于子弹瞄准时为 null）。</summary>
+        public static EManagerBulletType? ActiveTargetingBullet { get; private set; }
+
+        /// <summary>获取指定主管战术子弹对应的图标资源路径。</summary>
+        public static string GetBulletIconPath(EManagerBulletType bulletType)
+        {
+            switch (bulletType)
+            {
+                case EManagerBulletType.HpHeal: return "UI/Commands/Bullets/Bullet_HP";
+                case EManagerBulletType.SpHeal: return "UI/Commands/Bullets/Bullet_SP";
+                case EManagerBulletType.RedShield: return "UI/Commands/Bullets/Bullet_RedShield";
+                case EManagerBulletType.WhiteShield: return "UI/Commands/Bullets/Bullet_WhiteShield";
+                case EManagerBulletType.BlackShield: return "UI/Commands/Bullets/Bullet_BlackShield";
+                case EManagerBulletType.PaleShield: return "UI/Commands/Bullets/Bullet_PaleShield";
+                case EManagerBulletType.Slow: return "UI/Commands/Bullets/Bullet_Slow";
+                case EManagerBulletType.Execution: return "UI/Commands/Bullets/Bullet_Execution";
+                default: return "UI/Commands/Bullets/Bullet_HP";
+            }
+        }
+
+        /// <summary>获取指定主管战术子弹的作用半径（格）。</summary>
+        public static float GetBulletRadius(EManagerBulletType bulletType)
+        {
+            switch (bulletType)
+            {
+                case EManagerBulletType.Slow: return SlowBulletRadius;
+                case EManagerBulletType.Execution: return ExecutionBulletRadius;
+                default: return StandardBulletRadius;
+            }
+        }
+
+        /// <summary>获取指定主管战术子弹对应的主题色。</summary>
+        public static Color GetBulletAccentColor(EManagerBulletType bulletType)
+        {
+            switch (bulletType)
+            {
+                case EManagerBulletType.HpHeal: return new Color(0.32f, 0.92f, 0.44f);
+                case EManagerBulletType.SpHeal: return new Color(0.35f, 0.86f, 0.96f);
+                case EManagerBulletType.RedShield: return new Color(0.95f, 0.30f, 0.30f);
+                case EManagerBulletType.WhiteShield: return new Color(0.92f, 0.94f, 0.96f);
+                case EManagerBulletType.BlackShield: return new Color(0.74f, 0.45f, 0.96f);
+                case EManagerBulletType.PaleShield: return new Color(0.45f, 0.90f, 0.98f);
+                case EManagerBulletType.Slow: return new Color(0.42f, 0.72f, 0.98f);
+                case EManagerBulletType.Execution: return new Color(0.96f, 0.22f, 0.28f);
+                default: return Color.white;
+            }
+        }
+
+        /// <summary>进入主管战术子弹瞄准模式并附带作用域圆环高亮预览。</summary>
+        public static void BeginBulletTargeting(Map map, EManagerBulletType bulletType)
+        {
+            if (map == null || Find.Targeter == null || !IsBulletUnlocked(map, bulletType))
+            {
+                return;
+            }
+
+            if ((GameComponent_LC.Instance?.GetManagerBulletCharges(map) ?? 0) <= 0)
+            {
+                DefDatabase<SoundDef>.GetNamedSilentFail("LC_Sound_BulletEmpty")?.PlayOneShotOnCamera();
+                Messages.Message("LC_Bullet_NoCharges".Translate(), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+
+            TargetingParameters parms = bulletType == EManagerBulletType.Execution
+                ? TargetingParameters.ForAttackAny()
+                : TargetingParameters.ForCell();
+
+            ActiveTargetingBullet = bulletType;
+            Find.Targeter.BeginTargeting(
+                parms,
+                target =>
+                {
+                    if (target.IsValid && target.Cell.InBounds(map))
+                    {
+                        FireBulletAt(map, target.Cell, bulletType, consumeCharge: true);
+                    }
+                },
+                highlightAction: target =>
+                {
+                    if (target.IsValid && target.Cell.InBounds(map))
+                    {
+                        GenDraw.DrawRadiusRing(target.Cell, GetBulletRadius(bulletType), GetBulletAccentColor(bulletType));
+                    }
+                },
+                targetValidator: null,
+                caster: null,
+                actionWhenFinished: () =>
+                {
+                    if (ActiveTargetingBullet == bulletType)
+                    {
+                        ActiveTargetingBullet = null;
+                    }
+                },
+                mouseAttachment: ContentFinder<Texture2D>.Get(GetBulletIconPath(bulletType), reportFailure: false));
+        }
+
         /// <summary>计算指定地图由通电部门核心及惩戒部核心抑制提供的最大战术子弹容量。</summary>
         public static int GetMaxBulletCharges(Map map)
         {
@@ -122,24 +231,7 @@ namespace LCAnomalyCore.Util
                 icon = ContentFinder<Texture2D>.Get(iconPath, reportFailure: false) ?? BaseContent.BadTex,
                 action = delegate
                 {
-                    if ((GameComponent_LC.Instance?.GetManagerBulletCharges(map) ?? 0) <= 0)
-                    {
-                        DefDatabase<SoundDef>.GetNamedSilentFail("LC_Sound_BulletEmpty")?.PlayOneShotOnCamera();
-                        Messages.Message("LC_Bullet_NoCharges".Translate(), MessageTypeDefOf.RejectInput, false);
-                        return;
-                    }
-
-                    TargetingParameters parms = bulletType == EManagerBulletType.Execution
-                        ? TargetingParameters.ForAttackAny()
-                        : TargetingParameters.ForCell();
-
-                    Find.Targeter.BeginTargeting(parms, target =>
-                    {
-                        if (target.IsValid && target.Cell.InBounds(map))
-                        {
-                            FireBulletAt(map, target.Cell, bulletType, consumeCharge: true);
-                        }
-                    });
+                    BeginBulletTargeting(map, bulletType);
                 }
             };
 
@@ -159,12 +251,26 @@ namespace LCAnomalyCore.Util
                 return false;
             }
 
+            Pawn executionVictim = null;
+            if (bulletType == EManagerBulletType.Execution)
+            {
+                executionVictim = FindExecutionVictim(map, targetCell);
+                if (executionVictim == null)
+                {
+                    Messages.Message("LC_Bullet_ExecutionInvalidTarget".Translate(), MessageTypeDefOf.RejectInput, false);
+                    return false;
+                }
+            }
+
             GameComponent_LC lc = GameComponent_LC.Instance;
             if (consumeCharge && (lc == null || !lc.TryConsumeManagerBullet(map)))
             {
                 DefDatabase<SoundDef>.GetNamedSilentFail("LC_Sound_BulletEmpty")?.PlayOneShotOnCamera();
                 return false;
             }
+
+            DefDatabase<SoundDef>.GetNamedSilentFail("LC_Sound_BulletFire")?.PlayOneShotOnCamera(map);
+            FleckMaker.ThrowLightningGlow(targetCell.ToVector3Shifted(), map, 1.4f);
 
             switch (bulletType)
             {
@@ -183,7 +289,7 @@ namespace LCAnomalyCore.Util
                 case EManagerBulletType.Slow:
                     return ApplySlow(map, targetCell);
                 case EManagerBulletType.Execution:
-                    return ApplyExecution(map, targetCell);
+                    return ApplyExecution(map, executionVictim);
                 default:
                     return false;
             }
@@ -306,16 +412,19 @@ namespace LCAnomalyCore.Util
             return any;
         }
 
-        private static bool ApplyExecution(Map map, IntVec3 center)
+        private static Pawn FindExecutionVictim(Map map, IntVec3 center)
         {
-            Pawn victim = map.mapPawns.AllPawnsSpawned
+            return map.mapPawns.AllPawnsSpawned
                 .Where(p => p != null && !p.Dead && p.Spawned
                     && p.Position.InHorDistOf(center, ExecutionBulletRadius)
                     && p.RaceProps != null && p.RaceProps.Humanlike
                     && p.TryGetComp<CompAbnormality>() == null)
                 .OrderBy(p => p.Position.DistanceToSquared(center))
                 .FirstOrDefault();
+        }
 
+        private static bool ApplyExecution(Map map, Pawn victim)
+        {
             if (victim == null)
             {
                 Messages.Message("LC_Bullet_ExecutionInvalidTarget".Translate(), MessageTypeDefOf.RejectInput, false);

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
   <SoundDef>
+    <defName>LC_Sound_BulletFire</defName>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains><li Class="AudioGrain_Clip"><clipPath>Bullets/Bullet_Fire</clipPath></li></grains>
+        <volumeRange>42~50</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
     <defName>LC_Sound_BulletHeal</defName>
     <context>MapOnly</context>
     <maxSimultaneous>4</maxSimultaneous>

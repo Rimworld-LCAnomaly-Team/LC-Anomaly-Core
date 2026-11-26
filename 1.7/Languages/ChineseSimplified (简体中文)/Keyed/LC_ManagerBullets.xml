@@ -27,4 +27,8 @@
   <LC_Bullet_NoCharges>主管战术子弹充能已耗尽，将随时间自动补充。</LC_Bullet_NoCharges>
   <LC_Bullet_ExecutionInvalidTarget>目标位置附近没有可处决的非异想体类人目标。</LC_Bullet_ExecutionInvalidTarget>
   <LC_Bullet_ExecutedTag>已处决</LC_Bullet_ExecutedTag>
+
+  <LC_Bullet_HudTitle>主管战术子弹</LC_Bullet_HudTitle>
+  <LC_Bullet_HudRechargeTip>战术子弹充能：{0}/{1}\n下一发补充倒计时：{2} 秒</LC_Bullet_HudRechargeTip>
+  <LC_Bullet_HudFullTip>战术子弹充能：{0}/{1}\n当前战术子弹充能已满</LC_Bullet_HudFullTip>
 </LanguageData>

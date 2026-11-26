@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,12 @@ namespace LCAnomalyCore.Buildings
     [StaticConstructorOnStartup]
     public class Building_AbnormalityContainmentTerminal : Building, IAbnormalityContainmentUnit, IRoofCollapseAlert
     {
+        /// <summary>收容室熔毁由工作及时解除时触发。</summary>
+        public static event Action<Building_AbnormalityContainmentTerminal> OnAnyMeltdownResolved;
+
+        /// <summary>收容室熔毁倒计时归零突破时触发（参数：终端、损失 PE-Box 数）。</summary>
+        public static event Action<Building_AbnormalityContainmentTerminal, int> OnAnyMeltdownBreached;
+
         private static readonly Color TerminalBadgeColor = new Color(0.95f, 0.92f, 0.55f);
 
         private static readonly Texture2D TexRoomHeaderFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RoomHeaderFrame", false);
@@ -61,6 +68,9 @@ namespace LCAnomalyCore.Buildings
         private int nextNarrationTick = -999999;
         private int narrationStep;
         private int narrationSeed;
+        private bool meltdownActive;
+        private int meltdownTicksRemaining;
+        private int meltdownTicksTotal;
 
         private int cachedRoomAnchorId = int.MinValue;
         private int cachedRoomAnchorTick = -999999;
@@ -140,8 +150,28 @@ namespace LCAnomalyCore.Buildings
         /// <summary>当前是否处于工作进行中。</summary>
         public bool IsStudySessionActive => isStudySessionActive;
 
+        /// <summary>当前工作会话中的研究员工（若仍在工作）。</summary>
+        public Pawn ActiveStudier => isStudySessionActive && activeStudier != null && !activeStudier.Destroyed ? activeStudier : null;
+
+        /// <summary>当前收容室所收容实体的 CompAbnormality。</summary>
+        public CompAbnormality HeldAbnormality => cachedEntity ?? HeldPawn?.GetComp<CompAbnormality>();
+
         /// <summary>最近一次完成的工作评级结果。</summary>
         public LC_StudyResult? LastStudyResult => lastStudyResult;
+
+        /// <summary>当前收容室是否正处于逆卡巴拉熔毁倒计时状态。</summary>
+        public bool IsInMeltdown => meltdownActive && Occupied && !IsHoldingTool;
+
+        /// <summary>逆卡巴拉熔毁剩余 Tick 数。</summary>
+        public int MeltdownTicksRemaining => IsInMeltdown ? Mathf.Max(0, meltdownTicksRemaining) : 0;
+
+        /// <summary>逆卡巴拉熔毁剩余秒数。</summary>
+        public float MeltdownSecondsRemaining => MeltdownTicksRemaining / 60f;
+
+        /// <summary>逆卡巴拉熔毁剩余时间比例（0~1）。</summary>
+        public float MeltdownRemainingRatio => (IsInMeltdown && meltdownTicksTotal > 0)
+            ? Mathf.Clamp01((float)meltdownTicksRemaining / meltdownTicksTotal)
+            : 0f;
 
         /// <summary>当前独立 PE-Box 数量。</summary>
         public int PeBoxCounter
@@ -204,15 +234,44 @@ namespace LCAnomalyCore.Buildings
 
             if (boundPawn == null)
             {
+                if (meltdownActive)
+                {
+                    ClearMeltdown(resolvedByWork: false);
+                }
                 return;
             }
 
             if (boundPawn.Destroyed || boundPawn.Dead || !boundPawn.Spawned)
             {
+                ClearMeltdown(resolvedByWork: false);
                 boundPawn = null;
                 breachGraceTicks = 0;
                 OnContentChanged();
                 return;
+            }
+
+            if (meltdownActive)
+            {
+                if (IsHoldingTool)
+                {
+                    ClearMeltdown(resolvedByWork: false);
+                }
+                else if (isStudySessionActive)
+                {
+                    ClearMeltdown(resolvedByWork: true);
+                }
+                else
+                {
+                    meltdownTicksRemaining--;
+                    if (meltdownTicksRemaining <= 0)
+                    {
+                        FailMeltdown();
+                        if (boundPawn == null)
+                        {
+                            return;
+                        }
+                    }
+                }
             }
 
             if (this.IsHashIntervalTick(60))
@@ -408,6 +467,7 @@ namespace LCAnomalyCore.Buildings
         /// <inheritdoc />
         public void EjectContents()
         {
+            ClearMeltdown(resolvedByWork: false);
             StopWorkingSustainer();
             Pawn prev = boundPawn;
             boundPawn = null;
@@ -420,9 +480,112 @@ namespace LCAnomalyCore.Buildings
             OnContentChanged();
         }
 
+        /// <summary>判断当前收容室是否具备进入逆卡巴拉熔毁倒计时的条件。</summary>
+        public bool CanTriggerMeltdownNow()
+        {
+            return Spawned
+                && Map != null
+                && Occupied
+                && !IsHoldingTool
+                && !isStudySessionActive
+                && !meltdownActive
+                && HeldPawn != null
+                && !HeldPawn.Dead
+                && !HeldPawn.Downed
+                && cachedEntity != null;
+        }
+
+        /// <summary>触发当前收容室的逆卡巴拉熔毁倒计时警报。</summary>
+        public bool TriggerMeltdown(int durationTicks)
+        {
+            if (!CanTriggerMeltdownNow())
+            {
+                return false;
+            }
+
+            meltdownActive = true;
+            meltdownTicksTotal = Mathf.Max(60, durationTicks);
+            meltdownTicksRemaining = meltdownTicksTotal;
+
+            string abnoName = HeldPawn?.LabelShortCap ?? LabelCap;
+            WorkNarrationUtility.SpawnNarration(
+                Map,
+                DrawPos + new Vector3(0f, 0f, 0.45f),
+                "LC_Meltdown_RoomTriggeredMote".Translate(abnoName),
+                new Color(1.0f, 0.34f, 0.22f));
+            return true;
+        }
+
+        /// <summary>解除当前收容室的逆卡巴拉熔毁状态。</summary>
+        public void ClearMeltdown(bool resolvedByWork)
+        {
+            bool wasMeltdown = meltdownActive;
+            meltdownActive = false;
+            meltdownTicksRemaining = 0;
+            meltdownTicksTotal = 0;
+
+            if (wasMeltdown && resolvedByWork && Spawned && Map != null)
+            {
+                Defs.SoundDefOf.LC_Sound_QliphothMeltdown_Clear?.PlayOneShot(new TargetInfo(Position, Map));
+                string abnoName = HeldPawn?.LabelShortCap ?? LabelCap;
+                WorkNarrationUtility.SpawnNarration(
+                    Map,
+                    DrawPos + new Vector3(0f, 0f, 0.45f),
+                    "LC_Meltdown_RoomClearedMote".Translate(abnoName),
+                    new Color(0.32f, 0.94f, 0.56f));
+                OnAnyMeltdownResolved?.Invoke(this);
+            }
+        }
+
+        private void FailMeltdown()
+        {
+            Pawn held = HeldPawn;
+            CompAbnormality abn = cachedEntity ?? held?.GetComp<CompAbnormality>();
+            ClearMeltdown(resolvedByWork: false);
+
+            int lostPe = 0;
+            if (held != null && Util.Components.LC != null && abn != null)
+            {
+                Util.Components.LC.TryGetAnomalyStatusSaved(held.def, out var saved);
+                int before = saved.IndiPeBoxAmount;
+                lostPe = Mathf.Min(before, 5);
+                if (lostPe > 0)
+                {
+                    saved.IndiPeBoxAmount = before - lostPe;
+                    Util.Components.LC.AnomalyStatusSavedDict[held.def] = saved;
+                }
+            }
+
+            if (Spawned && Map != null)
+            {
+                Defs.SoundDefOf.LC_Sound_QliphothMeltdown_Fail?.PlayOneShotOnCamera(Map);
+            }
+
+            if (abn != null)
+            {
+                Find.LetterStack?.ReceiveLetter(
+                    "LC_Meltdown_RoomFailedLabel".Translate(),
+                    "LC_Meltdown_RoomFailedText".Translate(held?.LabelCap ?? LabelCap, lostPe),
+                    LetterDefOf.ThreatBig,
+                    held ?? (Thing)this);
+
+                if (abn.QliphothEnabled)
+                {
+                    abn.QliphothCountCurrent = 0;
+                }
+            }
+
+            OnAnyMeltdownBreached?.Invoke(this, lostPe);
+        }
+
         /// <inheritdoc />
         public void Notify_StudyStart(Pawn studier)
         {
+            if (meltdownActive)
+            {
+                ClearMeltdown(resolvedByWork: true);
+            }
+
             int curTick = Find.TickManager?.TicksGame ?? 0;
             activeSessionPeCount = 0;
             activeSessionNeCount = 0;
@@ -550,6 +713,7 @@ namespace LCAnomalyCore.Buildings
                     {
                         WorkNarrationUtility.SpawnNarration(Map, GetNarrationSpawnPos(finishStudier), resultLine, WorkNarrationUtility.GetResultAccentColor(result));
                     }
+                    Map.GetComponent<GameComponent.MapComponent_LCQliphothMeltdown>()?.Notify_ContainmentWorkCompleted(this);
                 }
             }
         }
@@ -608,6 +772,7 @@ namespace LCAnomalyCore.Buildings
 
         private void ClearStudySessionState()
         {
+            ClearMeltdown(resolvedByWork: false);
             StopWorkingSustainer();
             bool wasActive = isStudySessionActive;
             activeSessionPeCount = 0;
@@ -813,10 +978,11 @@ namespace LCAnomalyCore.Buildings
             bool isSelected = Find.Selector != null && (Find.Selector.IsSelected(this) || (HeldPawn != null && Find.Selector.IsSelected(HeldPawn)));
 
             bool showDetailRow = CompWorkable == null || CompWorkable.UIAllowed;
+            bool isMelting = IsInMeltdown;
             string riskTag = cachedEntity?.AbnormalityCategory?.defName;
             Color riskColor = GetRiskBadgeColor(riskTag);
             bool qliphothEnabled = cachedEntity != null && cachedEntity.QliphothEnabled;
-            bool qliphothCritical = qliphothEnabled && QliphothCounter <= 1;
+            bool qliphothCritical = isMelting || (qliphothEnabled && QliphothCounter <= 1);
             Color qliphothNumColor = qliphothCritical
                 ? new Color(1.0f, 0.48f, 0.44f)
                 : (qliphothEnabled ? new Color(1.0f, 0.86f, 0.42f) : Color.gray);
@@ -831,8 +997,8 @@ namespace LCAnomalyCore.Buildings
                 {
                     if (cellPx < 17f)
                     {
-                        // Tier 3 (Ultra-far zoom): hide wide bar; show only a compact Qliphoth pod when critical, working, or selected
-                        if ((qliphothCritical || isStudySessionActive || isSelected) && (cellPx >= 9f || qliphothCritical))
+                        // Tier 3 (Ultra-far zoom): hide wide bar; show only a compact Qliphoth pod when melting, critical, working, or selected
+                        if ((isMelting || qliphothCritical || isStudySessionActive || isSelected) && (cellPx >= 9f || qliphothCritical || isMelting))
                         {
                             float qPodSize = 20f;
                             Rect qPodRect = new Rect(topScreen.x - qPodSize * 0.5f, topScreen.y - qPodSize - 2f, qPodSize, qPodSize);
@@ -843,6 +1009,12 @@ namespace LCAnomalyCore.Buildings
                             Text.Anchor = TextAnchor.MiddleCenter;
                             GUI.color = qliphothNumColor;
                             Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 0.5f, qPodRect.width, qPodRect.height), qDisplay);
+
+                            if (isMelting)
+                            {
+                                Rect miniBadge = new Rect(qPodRect.center.x - 22f, qPodRect.y - 16f, 44f, 14f);
+                                DrawMeltdownRoomBanner(miniBadge, isCompact: true);
+                            }
                         }
                     }
                     else if (cellPx < 30f || roomScreenW < 150f)
@@ -855,6 +1027,11 @@ namespace LCAnomalyCore.Buildings
 
                         Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
                         Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
+
+                        if (isMelting)
+                        {
+                            DrawMeltdownRoomBanner(new Rect(pillRect.x, pillRect.y - 17f, totalW, 15f), isCompact: true);
+                        }
 
                         Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.88f));
                         GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
@@ -894,6 +1071,11 @@ namespace LCAnomalyCore.Buildings
 
                         Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
                         Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
+
+                        if (isMelting)
+                        {
+                            DrawMeltdownRoomBanner(new Rect(pillRect.x, pillRect.y - 18f, totalW, 16f), isCompact: false);
+                        }
 
                         Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.90f));
                         GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
@@ -938,6 +1120,11 @@ namespace LCAnomalyCore.Buildings
 
                         Rect mainRect = new Rect(topScreen.x - totalWidth * 0.5f, topScreen.y - height - 3f, mainWidth, height);
                         Rect qPodRect = new Rect(mainRect.xMax + 3f, mainRect.center.y - qPodSize * 0.5f, qPodSize, qPodSize);
+
+                        if (isMelting)
+                        {
+                            DrawMeltdownRoomBanner(new Rect(mainRect.x, mainRect.y - 20f, mainWidth, 18f), isCompact: false);
+                        }
 
                         GUI.color = Color.white;
                         GUI.DrawTexture(mainRect, TexRoomHeaderFrame ?? BaseContent.WhiteTex);
@@ -1168,6 +1355,29 @@ namespace LCAnomalyCore.Buildings
             }
         }
 
+        private void DrawMeltdownRoomBanner(Rect bannerRect, bool isCompact)
+        {
+            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.realtimeSinceStartup * 8.0f);
+            Widgets.DrawBoxSolid(bannerRect, Color.Lerp(new Color(0.24f, 0.04f, 0.05f, 0.92f), new Color(0.45f, 0.08f, 0.06f, 0.96f), pulse));
+
+            float ratio = MeltdownRemainingRatio;
+            if (ratio > 0f)
+            {
+                Rect innerFill = new Rect(bannerRect.x + 1f, bannerRect.y + 1f, Mathf.Max(2f, (bannerRect.width - 2f) * ratio), bannerRect.height - 2f);
+                Widgets.DrawBoxSolid(innerFill, Color.Lerp(new Color(0.84f, 0.24f, 0.14f, 0.65f), new Color(0.96f, 0.42f, 0.18f, 0.78f), pulse));
+            }
+
+            GUI.color = Color.Lerp(new Color(0.98f, 0.34f, 0.22f), new Color(1.0f, 0.74f, 0.28f), pulse);
+            Widgets.DrawBox(bannerRect, 1);
+
+            Text.Font = GameFont.Tiny;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            GUI.color = Color.white;
+            int secs = Mathf.CeilToInt(MeltdownSecondsRemaining);
+            string label = isCompact ? $"{secs}s" : "LC_Meltdown_HudBanner".Translate(secs).ToString();
+            Widgets.LabelFit(bannerRect, label);
+        }
+
         /// <inheritdoc />
         public override void DrawExtraSelectionOverlays()
         {
@@ -1237,6 +1447,26 @@ namespace LCAnomalyCore.Buildings
             }
 
             yield return Util.Gizmos.Get_EntityCodex(HeldPawn);
+
+            if (DebugSettings.ShowDevGizmos && Occupied && !IsHoldingTool)
+            {
+                yield return new Command_Action
+                {
+                    defaultLabel = IsInMeltdown ? "DEV: Clear Meltdown" : "DEV: Trigger Meltdown",
+                    action = delegate
+                    {
+                        if (IsInMeltdown)
+                        {
+                            ClearMeltdown(resolvedByWork: true);
+                        }
+                        else
+                        {
+                            int secs = Mathf.Clamp(Settings.Setting_LCAnomalyCore_Main.Settings?.QliphothMeltdown_CountdownSeconds ?? 60, 20, 180);
+                            TriggerMeltdown(secs * 60);
+                        }
+                    }
+                };
+            }
         }
 
         /// <inheritdoc />
@@ -1312,6 +1542,10 @@ namespace LCAnomalyCore.Buildings
                     Color qColor = (cachedEntity.QliphothEnabled && QliphothCounter <= 1) ? ColorLibrary.RedReadable : Color.white;
                     inspectTextSB.Append("\n").Append(qLine.Colorize(qColor));
                     inspectTextSB.Append("\n").Append("LC_ContainmentRoom_InspectPeBox".Translate(PeBoxCounter).Colorize(new Color(0.55f, 0.95f, 0.72f)));
+                    if (IsInMeltdown)
+                    {
+                        inspectTextSB.Append("\n").Append("LC_ContainmentRoom_InspectMeltdown".Translate(Mathf.CeilToInt(MeltdownSecondsRemaining)).Colorize(ColorLibrary.RedReadable));
+                    }
                     if (isStudySessionActive && activeSessionMaxBoxes > 0)
                     {
                         inspectTextSB.Append("\n").Append("LC_ContainmentRoom_InspectWorkProgress".Translate(activeSessionPeCount, activeSessionNeCount, activeSessionMaxBoxes));
@@ -1360,6 +1594,9 @@ namespace LCAnomalyCore.Buildings
             Scribe_Values.Look(ref curWorkType, "curWorkType", EAnomalyWorkType.Instinct);
             Scribe_References.Look(ref boundPawn, "boundPawn");
             Scribe_Values.Look(ref breachGraceTicks, "breachGraceTicks", 0);
+            Scribe_Values.Look(ref meltdownActive, "meltdownActive", false);
+            Scribe_Values.Look(ref meltdownTicksRemaining, "meltdownTicksRemaining", 0);
+            Scribe_Values.Look(ref meltdownTicksTotal, "meltdownTicksTotal", 0);
         }
     }
 }

@@ -9,4 +9,25 @@
   <TipDialogWorkType_Attachment>Attachment</TipDialogWorkType_Attachment>
   <TipDialogWorkType_Repression>Repression</TipDialogWorkType_Repression>
 
+  <LC_WorkPreview_TitleHint>Select a work type and preview expected PE-Box success rate by employee virtues.</LC_WorkPreview_TitleHint>
+  <LC_WorkPreview_HeaderStats>Q:{0} | PE:{1} | Bad &lt;{2} / Norm {2}-{3} / Good &gt;{3} (Max {4})</LC_WorkPreview_HeaderStats>
+  <LC_WorkPreview_MeltdownAlert>MELTDOWN EMERGENCY ({0}s left) — Assign work &amp; dispatch immediately!</LC_WorkPreview_MeltdownAlert>
+  <LC_WorkPreview_NoEmployees>No activated LC employees available</LC_WorkPreview_NoEmployees>
+  <LC_WorkPreview_EmployeeBtn>Employee: {0}</LC_WorkPreview_EmployeeBtn>
+  <LC_WorkPreview_Virtue_Instinct>Fortitude</LC_WorkPreview_Virtue_Instinct>
+  <LC_WorkPreview_Virtue_Insight>Prudence</LC_WorkPreview_Virtue_Insight>
+  <LC_WorkPreview_Virtue_Attachment>Temperance</LC_WorkPreview_Virtue_Attachment>
+  <LC_WorkPreview_Virtue_Repression>Justice</LC_WorkPreview_Virtue_Repression>
+  <LC_WorkPreview_SelectedTag>SELECTED</LC_WorkPreview_SelectedTag>
+  <LC_WorkPreview_SuccessRateLabel>Success Rate</LC_WorkPreview_SuccessRateLabel>
+  <LC_WorkPreview_TierVeryHigh>Very High</LC_WorkPreview_TierVeryHigh>
+  <LC_WorkPreview_TierHigh>High</LC_WorkPreview_TierHigh>
+  <LC_WorkPreview_TierCommon>Common</LC_WorkPreview_TierCommon>
+  <LC_WorkPreview_TierLow>Low</LC_WorkPreview_TierLow>
+  <LC_WorkPreview_TierVeryLow>Very Low</LC_WorkPreview_TierVeryLow>
+  <LC_WorkPreview_UnlockBonusTip>Codex unlock bonus: +{0}% work success</LC_WorkPreview_UnlockBonusTip>
+  <LC_WorkPreview_NotStudiableNow>Work temporarily unavailable</LC_WorkPreview_NotStudiableNow>
+  <LC_WorkPreview_DispatchBtn>Dispatch {0}</LC_WorkPreview_DispatchBtn>
+  <LC_WorkPreview_DispatchDisabled>Cannot Dispatch Now</LC_WorkPreview_DispatchDisabled>
+
 </LanguageData>

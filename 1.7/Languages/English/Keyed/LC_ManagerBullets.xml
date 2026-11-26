@@ -27,4 +27,8 @@
   <LC_Bullet_NoCharges>No Manager Bullet charges remaining. Recharges automatically over time.</LC_Bullet_NoCharges>
   <LC_Bullet_ExecutionInvalidTarget>No valid humanlike non-abnormality target near the selected cell.</LC_Bullet_ExecutionInvalidTarget>
   <LC_Bullet_ExecutedTag>EXECUTED</LC_Bullet_ExecutedTag>
+
+  <LC_Bullet_HudTitle>MANAGER BULLETS</LC_Bullet_HudTitle>
+  <LC_Bullet_HudRechargeTip>Manager Bullets: {0}/{1}\nNext bullet charge ready in {2}s.</LC_Bullet_HudRechargeTip>
+  <LC_Bullet_HudFullTip>Manager Bullets: {0}/{1}\nAll bullet charges fully stocked.</LC_Bullet_HudFullTip>
 </LanguageData>

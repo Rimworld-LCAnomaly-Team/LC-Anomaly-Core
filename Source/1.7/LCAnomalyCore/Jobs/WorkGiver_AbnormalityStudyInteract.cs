@@ -99,6 +99,15 @@ namespace LCAnomalyCore.Jobs
                     //如果是非右键强制状态
                     if (!forced)
                     {
+                        if (t is LCAnomalyCore.Buildings.Building_AbnormalityContainmentTerminal term && term.IsInMeltdown)
+                        {
+                            if (unit.CompAssignable != null && unit.CompAssignable.AssignedPawns.Any())
+                            {
+                                return unit.CompAssignable.AssignedPawns.Contains(pawn);
+                            }
+                            return true;
+                        }
+
                         //如果分配列表里有该小人，那就允许自动研究
                         return unit.CompAssignable != null && unit.CompAssignable.AssignedPawns.Contains(pawn);
                     }

@@ -74,4 +74,12 @@
   <LC_Col_Black>侵蚀</LC_Col_Black>
   <LC_Col_Pale>灵魂</LC_Col_Pale>
 
+  <LC_Settings_MeltdownHeader>逆卡巴拉熔毁（过载波次）</LC_Settings_MeltdownHeader>
+  <LC_Settings_EnableQliphothMeltdown>启用逆卡巴拉熔毁过载波次机制</LC_Settings_EnableQliphothMeltdown>
+  <LC_Settings_ShowQliphothMeltdownHud>显示屏幕顶部逆卡巴拉熔毁监控条</LC_Settings_ShowQliphothMeltdownHud>
+  <LC_Settings_MeltdownWorksPerWave>每波熔毁所需的完成工作次数：{0} 次</LC_Settings_MeltdownWorksPerWave>
+  <LC_Settings_MeltdownCountdownSeconds>单间收容室熔毁倒计时时长：{0} 秒</LC_Settings_MeltdownCountdownSeconds>
+  <LC_Settings_ShowManagerBulletHud>显示屏幕左上角主管战术子弹快捷施法栏</LC_Settings_ShowManagerBulletHud>
+  <LC_Settings_EnableMeltdownOrdealTrigger>熔毁波次抵达里程碑时自动触发对应考验</LC_Settings_EnableMeltdownOrdealTrigger>
+
 </LanguageData>

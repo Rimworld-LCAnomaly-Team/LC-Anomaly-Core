@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_FacilityTab_Title>收容设施总控台</LC_FacilityTab_Title>
+  <LC_FacilityTab_NoMap>当前尚未载入有效设施地图。</LC_FacilityTab_NoMap>
+  <LC_FacilityTab_Rooms>收容室总览</LC_FacilityTab_Rooms>
+  <LC_FacilityTab_Employees>员工名册</LC_FacilityTab_Employees>
+  <LC_FacilityTab_OpenCodex>打开异想体图鉴</LC_FacilityTab_OpenCodex>
+
+  <LC_FacilityTab_KpiContained>已收容：{0}</LC_FacilityTab_KpiContained>
+  <LC_FacilityTab_KpiMeltdown>熔毁警报：{0}</LC_FacilityTab_KpiMeltdown>
+  <LC_FacilityTab_KpiEscaped>出逃中：{0}</LC_FacilityTab_KpiEscaped>
+  <LC_FacilityTab_KpiWave>熔毁 Lv.{0} ({1}/{2})</LC_FacilityTab_KpiWave>
+  <LC_FacilityTab_KpiBullets>子弹：{0}/{1}</LC_FacilityTab_KpiBullets>
+  <LC_FacilityTab_EscapedBanner>收容突破警报：{0}</LC_FacilityTab_EscapedBanner>
+
+  <LC_FacilityTab_RoomFilter_All>全部</LC_FacilityTab_RoomFilter_All>
+  <LC_FacilityTab_RoomFilter_Melting>熔毁中</LC_FacilityTab_RoomFilter_Melting>
+  <LC_FacilityTab_RoomFilter_Working>工作中</LC_FacilityTab_RoomFilter_Working>
+  <LC_FacilityTab_RoomFilter_Idle>待命</LC_FacilityTab_RoomFilter_Idle>
+  <LC_FacilityTab_RoomFilter_Tools>工具类</LC_FacilityTab_RoomFilter_Tools>
+
+  <LC_FacilityTab_EmpFilter_All>全部殖民者</LC_FacilityTab_EmpFilter_All>
+  <LC_FacilityTab_EmpFilter_Assigned>LC 在编员工</LC_FacilityTab_EmpFilter_Assigned>
+  <LC_FacilityTab_EmpFilter_Unassigned>未编入</LC_FacilityTab_EmpFilter_Unassigned>
+
+  <LC_FacilityTab_ColEntity>异想体 / 收容单元</LC_FacilityTab_ColEntity>
+  <LC_FacilityTab_ColQliphoth>Q 计数</LC_FacilityTab_ColQliphoth>
+  <LC_FacilityTab_ColStatus>当前状态</LC_FacilityTab_ColStatus>
+  <LC_FacilityTab_ColPeBox>PE-Box</LC_FacilityTab_ColPeBox>
+  <LC_FacilityTab_ColWorkAssign>工作偏好 / 指派</LC_FacilityTab_ColWorkAssign>
+  <LC_FacilityTab_ColActions>快捷操作</LC_FacilityTab_ColActions>
+
+  <LC_FacilityTab_ColEmployee>员工姓名</LC_FacilityTab_ColEmployee>
+  <LC_FacilityTab_ColDepartment>所属部门</LC_FacilityTab_ColDepartment>
+  <LC_FacilityTab_ColVirtues>四维美德 (F / P / T / J)</LC_FacilityTab_ColVirtues>
+  <LC_FacilityTab_ColVitals>HP / SP</LC_FacilityTab_ColVitals>
+  <LC_FacilityTab_ColEgo>E.G.O 配装与四色抗性</LC_FacilityTab_ColEgo>
+
+  <LC_FacilityTab_NoRooms>没有符合当前筛选条件的收容室。</LC_FacilityTab_NoRooms>
+  <LC_FacilityTab_NoEmployees>没有符合当前筛选条件的殖民者。</LC_FacilityTab_NoEmployees>
+  <LC_FacilityTab_StatusMeltdown>熔毁 {0} 秒</LC_FacilityTab_StatusMeltdown>
+  <LC_FacilityTab_StatusWorking>工作中：{0}</LC_FacilityTab_StatusWorking>
+  <LC_FacilityTab_StatusCooldown>冷却 {0} 秒</LC_FacilityTab_StatusCooldown>
+  <LC_FacilityTab_StatusReady>就绪</LC_FacilityTab_StatusReady>
+  <LC_FacilityTab_StatusTool>工具型异想体</LC_FacilityTab_StatusTool>
+  <LC_FacilityTab_AssignedCount>{0} 人</LC_FacilityTab_AssignedCount>
+  <LC_FacilityTab_GradePrefix>{0} 级</LC_FacilityTab_GradePrefix>
+  <LC_FacilityTab_UnassignedBadge>未分配</LC_FacilityTab_UnassignedBadge>
+
+  <LC_FacilityTab_BtnWork>工作</LC_FacilityTab_BtnWork>
+  <LC_FacilityTab_BtnAssign>派员</LC_FacilityTab_BtnAssign>
+  <LC_FacilityTab_BtnJump>跳转</LC_FacilityTab_BtnJump>
+  <LC_FacilityTab_BtnDept>部门</LC_FacilityTab_BtnDept>
+  <LC_FacilityTab_NoDepartmentCore>当前地图尚未建造任何部门核心。</LC_FacilityTab_NoDepartmentCore>
+</LanguageData>

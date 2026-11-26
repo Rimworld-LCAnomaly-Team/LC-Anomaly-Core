@@ -99,10 +99,26 @@ namespace LCAnomalyCore.Settings
         /// </summary>
         public int PointsOfWarning_AllyFactionMentalBreak = 1;
 
-        /// <summary>
-        /// 中立派系精神崩溃提供的警报点数
-        /// </summary>
+        /// <summary>中立派系精神崩溃提供的警报点数</summary>
         public int PointsOfWarning_NeturalFactionMentalBreak = 0;
+
+        /// <summary>是否启用逆卡巴拉熔毁过载波次机制</summary>
+        public bool If_EnableQliphothMeltdown = true;
+
+        /// <summary>是否显示屏幕顶部逆卡巴拉熔毁监控条</summary>
+        public bool If_ShowQliphothMeltdownHud = true;
+
+        /// <summary>每推进一次熔毁波次所需的收容工作完成次数</summary>
+        public int QliphothMeltdown_WorksPerWave = 6;
+
+        /// <summary>单间收容室进入熔毁状态后的倒计时（秒）</summary>
+        public int QliphothMeltdown_CountdownSeconds = 60;
+
+        /// <summary>是否显示左上角主管战术子弹快捷栏</summary>
+        public bool If_ShowManagerBulletHud = true;
+
+        /// <summary>熔毁波次到达对应等级时是否自动触发考验</summary>
+        public bool If_EnableMeltdownOrdealTrigger = true;
 
         #endregion 警报相关
 
@@ -160,6 +176,14 @@ namespace LCAnomalyCore.Settings
             Scribe_Values.Look<int>(ref this.PointsOfWarning_AllyFactionMentalBreak, "PointsOfWarning_AllyFactionMentalBreak", 1, false);
             Scribe_Values.Look<int>(ref this.PointsOfWarning_NeturalFactionMentalBreak, "PointsOfWarning_NeturalFactionMentalBreak", 0, false);
 
+            //逆卡巴拉熔毁
+            Scribe_Values.Look(ref If_EnableQliphothMeltdown, "If_EnableQliphothMeltdown", true);
+            Scribe_Values.Look(ref If_ShowQliphothMeltdownHud, "If_ShowQliphothMeltdownHud", true);
+            Scribe_Values.Look(ref QliphothMeltdown_WorksPerWave, "QliphothMeltdown_WorksPerWave", 6);
+            Scribe_Values.Look(ref QliphothMeltdown_CountdownSeconds, "QliphothMeltdown_CountdownSeconds", 60);
+            Scribe_Values.Look(ref If_ShowManagerBulletHud, "If_ShowManagerBulletHud", true);
+            Scribe_Values.Look(ref If_EnableMeltdownOrdealTrigger, "If_EnableMeltdownOrdealTrigger", true);
+
             #endregion 警报相关
 
             #region 部门分配显示
@@ -203,6 +227,8 @@ namespace LCAnomalyCore.Settings
                 raceOverrides.RemoveAll(e => e == null || e.defName.NullOrEmpty());
 
                 FourColorGlobalDamageScale = Mathf.Clamp(FourColorGlobalDamageScale, 0.25f, 3.0f);
+                QliphothMeltdown_WorksPerWave = Mathf.Clamp(QliphothMeltdown_WorksPerWave, 2, 20);
+                QliphothMeltdown_CountdownSeconds = Mathf.Clamp(QliphothMeltdown_CountdownSeconds, 20, 180);
 
                 if (settingsVersion < CurrentSettingsVersion)
                 {

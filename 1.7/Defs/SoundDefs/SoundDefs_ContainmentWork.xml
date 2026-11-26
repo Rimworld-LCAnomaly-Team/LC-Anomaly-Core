@@ -96,4 +96,56 @@
     </subSounds>
   </SoundDef>
 
+  <SoundDef>
+    <defName>LC_Sound_QliphothMeltdown_Alert</defName>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/MeltdownAlert</clipPath>
+          </li>
+        </grains>
+        <volumeRange>34~40</volumeRange>
+        <pitchRange>0.98~1.02</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_QliphothMeltdown_Clear</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>4</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/MeltdownClear</clipPath>
+          </li>
+        </grains>
+        <volumeRange>24~30</volumeRange>
+        <pitchRange>0.97~1.03</pitchRange>
+        <distRange>0~70</distRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>LC_Sound_QliphothMeltdown_Fail</defName>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>true</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>ContainmentWork/MeltdownFail</clipPath>
+          </li>
+        </grains>
+        <volumeRange>36~42</volumeRange>
+        <pitchRange>0.98~1.02</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
 </Defs>

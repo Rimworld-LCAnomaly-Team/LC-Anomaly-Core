@@ -24,6 +24,15 @@ namespace LCAnomalyCore.Defs
         /// <summary>工作中产出 NE-Box 时的警示音</summary>
         public static SoundDef LC_Sound_ContainmentWork_NeBox;
 
+        /// <summary>逆卡巴拉熔毁波次触发警报音</summary>
+        public static SoundDef LC_Sound_QliphothMeltdown_Alert;
+
+        /// <summary>逆卡巴拉熔毁被成功压制解除的提示音</summary>
+        public static SoundDef LC_Sound_QliphothMeltdown_Clear;
+
+        /// <summary>逆卡巴拉熔毁倒计时耗尽导致突破的失败警报音</summary>
+        public static SoundDef LC_Sound_QliphothMeltdown_Fail;
+
         static SoundDefOf()
         {
             DefOfHelper.EnsureInitializedInCtor(typeof(SoundDefOf));

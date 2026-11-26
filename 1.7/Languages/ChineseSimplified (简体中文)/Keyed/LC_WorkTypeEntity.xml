@@ -9,4 +9,25 @@
   <TipDialogWorkType_Attachment>沟通</TipDialogWorkType_Attachment>
   <TipDialogWorkType_Repression>压迫</TipDialogWorkType_Repression>
 
+  <LC_WorkPreview_TitleHint>选择工作类型，并按不同员工的四维等级实时预览预估产盒成功率。</LC_WorkPreview_TitleHint>
+  <LC_WorkPreview_HeaderStats>计数:{0} | PE:{1} | 差&lt;{2} / 良{2}-{3} / 优&gt;{3}（上限 {4}）</LC_WorkPreview_HeaderStats>
+  <LC_WorkPreview_MeltdownAlert>逆卡巴拉熔毁警报（剩余 {0} 秒）——请选定工作并立即派遣员工！</LC_WorkPreview_MeltdownAlert>
+  <LC_WorkPreview_NoEmployees>当前无已激活的脑叶员工</LC_WorkPreview_NoEmployees>
+  <LC_WorkPreview_EmployeeBtn>预览员工：{0}</LC_WorkPreview_EmployeeBtn>
+  <LC_WorkPreview_Virtue_Instinct>勇气</LC_WorkPreview_Virtue_Instinct>
+  <LC_WorkPreview_Virtue_Insight>谨慎</LC_WorkPreview_Virtue_Insight>
+  <LC_WorkPreview_Virtue_Attachment>自律</LC_WorkPreview_Virtue_Attachment>
+  <LC_WorkPreview_Virtue_Repression>正义</LC_WorkPreview_Virtue_Repression>
+  <LC_WorkPreview_SelectedTag>当前</LC_WorkPreview_SelectedTag>
+  <LC_WorkPreview_SuccessRateLabel>预估成功率</LC_WorkPreview_SuccessRateLabel>
+  <LC_WorkPreview_TierVeryHigh>极高</LC_WorkPreview_TierVeryHigh>
+  <LC_WorkPreview_TierHigh>较高</LC_WorkPreview_TierHigh>
+  <LC_WorkPreview_TierCommon>普通</LC_WorkPreview_TierCommon>
+  <LC_WorkPreview_TierLow>较低</LC_WorkPreview_TierLow>
+  <LC_WorkPreview_TierVeryLow>极低</LC_WorkPreview_TierVeryLow>
+  <LC_WorkPreview_UnlockBonusTip>观察等级加成：工作成功率 +{0}%</LC_WorkPreview_UnlockBonusTip>
+  <LC_WorkPreview_NotStudiableNow>当前无法直接开始工作</LC_WorkPreview_NotStudiableNow>
+  <LC_WorkPreview_DispatchBtn>立即派遣 {0}</LC_WorkPreview_DispatchBtn>
+  <LC_WorkPreview_DispatchDisabled>当前不可直接派遣</LC_WorkPreview_DispatchDisabled>
+
 </LanguageData>

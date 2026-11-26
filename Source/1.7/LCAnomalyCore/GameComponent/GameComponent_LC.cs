@@ -21,6 +21,7 @@ namespace LCAnomalyCore.GameComponent
         public override void GameComponentOnGUI()
         {
             WarningOverlay.Draw();
+            UI.ManagerBulletHudDrawer.DrawOnGUI();
         }
 
         /// <summary>
@@ -155,6 +156,38 @@ namespace LCAnomalyCore.GameComponent
             managerBulletCharges = max;
             managerBulletsInitialized = max > 0;
             managerBulletRechargeCounter = 0;
+        }
+
+        /// <summary>返回下一发主管战术子弹充能进度（0~1，满充或未解锁返回 1）。</summary>
+        public float GetManagerBulletRechargeProgress(Map map)
+        {
+            int max = Util.ManagerBulletUtility.GetMaxBulletCharges(map);
+            int cur = GetManagerBulletCharges(map);
+            if (max <= 0 || cur >= max)
+            {
+                return 1f;
+            }
+
+            int interval = HasCoreSuppression(CoreSuppression_Binah)
+                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
+                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            return interval > 0 ? Mathf.Clamp01((float)managerBulletRechargeCounter / interval) : 1f;
+        }
+
+        /// <summary>返回距离下一发主管战术子弹完成充能的剩余秒数（满充返回 0）。</summary>
+        public float GetManagerBulletRechargeSecondsRemaining(Map map)
+        {
+            int max = Util.ManagerBulletUtility.GetMaxBulletCharges(map);
+            int cur = GetManagerBulletCharges(map);
+            if (max <= 0 || cur >= max)
+            {
+                return 0f;
+            }
+
+            int interval = HasCoreSuppression(CoreSuppression_Binah)
+                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
+                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            return Mathf.Max(0f, (interval - managerBulletRechargeCounter) / 60f);
         }
 
         public bool IsWeaponBlessed(Thing weapon)

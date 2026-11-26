@@ -41,4 +41,15 @@
   <LC_ContainmentRoom_HudReady>就绪</LC_ContainmentRoom_HudReady>
   <LC_ContainmentRoom_HudWait>冷却中</LC_ContainmentRoom_HudWait>
   <LC_ContainmentRoom_HudCooldown>冷却</LC_ContainmentRoom_HudCooldown>
+  <LC_Meltdown_HudBanner>熔毁警报 {0}s</LC_Meltdown_HudBanner>
+  <LC_ContainmentRoom_InspectMeltdown>逆卡巴拉熔毁倒计时中：剩余 {0} 秒（请立即指派员工进室工作解除！）</LC_ContainmentRoom_InspectMeltdown>
+  <LC_Meltdown_RoomTriggeredMote>逆卡巴拉熔毁！请立即对 {0} 开展工作！</LC_Meltdown_RoomTriggeredMote>
+  <LC_Meltdown_RoomClearedMote>{0} 的逆卡巴拉熔毁已解除。</LC_Meltdown_RoomClearedMote>
+  <LC_Meltdown_RoomFailedLabel>逆卡巴拉熔毁突破</LC_Meltdown_RoomFailedLabel>
+  <LC_Meltdown_RoomFailedText>{0} 所在收容室的逆卡巴拉熔毁未能及时压制！损失了 {1} 个独立 PE-Box，且该异想体的逆卡巴拉计数器已直接归零。</LC_Meltdown_RoomFailedText>
+  <LC_Meltdown_WaveTriggeredMessage>逆卡巴拉熔毁 等级 {0}：共 {1} 间收容室进入过载警报，请立即派员工作！</LC_Meltdown_WaveTriggeredMessage>
+  <LC_Meltdown_TopHudLevel>熔毁等级 {0}</LC_Meltdown_TopHudLevel>
+  <LC_Meltdown_TopHudAlert>熔毁警报！{0} 室 · {1}s</LC_Meltdown_TopHudAlert>
+  <LC_Meltdown_TopHudTip>逆卡巴拉熔毁过载进度条：每完成 {0} 次收容工作将推高熔毁等级并随机令部分收容室进入倒计时。</LC_Meltdown_TopHudTip>
+  <LC_Meltdown_TopHudAlertTip>点击立即跳转至最危急的熔毁收容室！倒计时归零前派员工入室工作即可解除警报。</LC_Meltdown_TopHudAlertTip>
 </LanguageData>

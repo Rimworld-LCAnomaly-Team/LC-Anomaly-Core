@@ -133,11 +133,6 @@ namespace LCAnomalyCore.Comp
                 return false;
             }
 
-            if (Props.frequencyTicks > 0 && TicksTilNextStudy > 0)
-            {
-                return false;
-            }
-
             if (parent is Pawn pawn)
             {
                 var compHoldingPlatformTarget = pawn.TryGetComp<CompAbnormalityHoldingPlatformTarget>();
@@ -150,6 +145,12 @@ namespace LCAnomalyCore.Comp
                 {
                     return false;
                 }
+            }
+
+            bool inMeltdown = (parent as Pawn)?.TryGetComp<CompAbnormalityHoldingPlatformTarget>()?.BoundTerminal?.IsInMeltdown == true;
+            if (!inMeltdown && Props.frequencyTicks > 0 && TicksTilNextStudy > 0)
+            {
+                return false;
             }
 
             CompAbnormality abn = parent.TryGetComp<CompAbnormality>();

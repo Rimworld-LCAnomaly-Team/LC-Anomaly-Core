@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_FacilityTab_Title>Facility Containment Console</LC_FacilityTab_Title>
+  <LC_FacilityTab_NoMap>No active facility map loaded.</LC_FacilityTab_NoMap>
+  <LC_FacilityTab_Rooms>Containment Rooms</LC_FacilityTab_Rooms>
+  <LC_FacilityTab_Employees>Employee Roster</LC_FacilityTab_Employees>
+  <LC_FacilityTab_OpenCodex>Abnormality Codex</LC_FacilityTab_OpenCodex>
+
+  <LC_FacilityTab_KpiContained>Contained: {0}</LC_FacilityTab_KpiContained>
+  <LC_FacilityTab_KpiMeltdown>Meltdowns: {0}</LC_FacilityTab_KpiMeltdown>
+  <LC_FacilityTab_KpiEscaped>Breached: {0}</LC_FacilityTab_KpiEscaped>
+  <LC_FacilityTab_KpiWave>Meltdown Lv.{0} ({1}/{2})</LC_FacilityTab_KpiWave>
+  <LC_FacilityTab_KpiBullets>Bullets: {0}/{1}</LC_FacilityTab_KpiBullets>
+  <LC_FacilityTab_EscapedBanner>ACTIVE BREACH ALERT: {0}</LC_FacilityTab_EscapedBanner>
+
+  <LC_FacilityTab_RoomFilter_All>All</LC_FacilityTab_RoomFilter_All>
+  <LC_FacilityTab_RoomFilter_Melting>Meltdown</LC_FacilityTab_RoomFilter_Melting>
+  <LC_FacilityTab_RoomFilter_Working>Working</LC_FacilityTab_RoomFilter_Working>
+  <LC_FacilityTab_RoomFilter_Idle>Idle</LC_FacilityTab_RoomFilter_Idle>
+  <LC_FacilityTab_RoomFilter_Tools>Tools</LC_FacilityTab_RoomFilter_Tools>
+
+  <LC_FacilityTab_EmpFilter_All>All Colonists</LC_FacilityTab_EmpFilter_All>
+  <LC_FacilityTab_EmpFilter_Assigned>LC Employees</LC_FacilityTab_EmpFilter_Assigned>
+  <LC_FacilityTab_EmpFilter_Unassigned>Unassigned</LC_FacilityTab_EmpFilter_Unassigned>
+
+  <LC_FacilityTab_ColEntity>Abnormality / Room</LC_FacilityTab_ColEntity>
+  <LC_FacilityTab_ColQliphoth>Q-Counter</LC_FacilityTab_ColQliphoth>
+  <LC_FacilityTab_ColStatus>Status</LC_FacilityTab_ColStatus>
+  <LC_FacilityTab_ColPeBox>PE-Box</LC_FacilityTab_ColPeBox>
+  <LC_FacilityTab_ColWorkAssign>Work / Assigned</LC_FacilityTab_ColWorkAssign>
+  <LC_FacilityTab_ColActions>Actions</LC_FacilityTab_ColActions>
+
+  <LC_FacilityTab_ColEmployee>Employee</LC_FacilityTab_ColEmployee>
+  <LC_FacilityTab_ColDepartment>Department</LC_FacilityTab_ColDepartment>
+  <LC_FacilityTab_ColVirtues>Virtues (F / P / T / J)</LC_FacilityTab_ColVirtues>
+  <LC_FacilityTab_ColVitals>HP / SP</LC_FacilityTab_ColVitals>
+  <LC_FacilityTab_ColEgo>E.G.O Gear &amp; Resists</LC_FacilityTab_ColEgo>
+
+  <LC_FacilityTab_NoRooms>No containment rooms match the selected filter.</LC_FacilityTab_NoRooms>
+  <LC_FacilityTab_NoEmployees>No colonists match the selected filter.</LC_FacilityTab_NoEmployees>
+  <LC_FacilityTab_StatusMeltdown>MELTDOWN {0}s</LC_FacilityTab_StatusMeltdown>
+  <LC_FacilityTab_StatusWorking>Working: {0}</LC_FacilityTab_StatusWorking>
+  <LC_FacilityTab_StatusCooldown>Cooldown {0}s</LC_FacilityTab_StatusCooldown>
+  <LC_FacilityTab_StatusReady>Ready</LC_FacilityTab_StatusReady>
+  <LC_FacilityTab_StatusTool>Tool Abnormality</LC_FacilityTab_StatusTool>
+  <LC_FacilityTab_AssignedCount>{0} staff</LC_FacilityTab_AssignedCount>
+  <LC_FacilityTab_GradePrefix>Grade {0}</LC_FacilityTab_GradePrefix>
+  <LC_FacilityTab_UnassignedBadge>Not Enlisted</LC_FacilityTab_UnassignedBadge>
+
+  <LC_FacilityTab_BtnWork>Work</LC_FacilityTab_BtnWork>
+  <LC_FacilityTab_BtnAssign>Staff</LC_FacilityTab_BtnAssign>
+  <LC_FacilityTab_BtnJump>Jump</LC_FacilityTab_BtnJump>
+  <LC_FacilityTab_BtnDept>Dept</LC_FacilityTab_BtnDept>
+  <LC_FacilityTab_NoDepartmentCore>No Department Core built on this map yet.</LC_FacilityTab_NoDepartmentCore>
+</LanguageData>

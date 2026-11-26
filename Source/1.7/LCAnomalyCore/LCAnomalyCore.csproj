@@ -81,6 +81,7 @@
     <Compile Include="Defs\ThoughtDefOf.cs" />
     <Compile Include="Defs\WorkTypeDefOf.cs" />
     <Compile Include="GameComponent\GameComponent_LC.cs" />
+    <Compile Include="GameComponent\MapComponent_LCQliphothMeltdown.cs" />
     <Compile Include="Hediffs\HediffComp_BulletShield.cs" />
     <Compile Include="Hediffs\HediffComp_PawnStatus.cs" />
     <Compile Include="Hediffs\Hediff_LCMentalDamage.cs" />
@@ -136,6 +137,8 @@
     <Compile Include="UI\Dialog_LC_AssignEntity.cs" />
     <Compile Include="UI\Dialog_LC_EntityCodex.cs" />
     <Compile Include="UI\EscapedAbnormalityOverlayDrawer.cs" />
+    <Compile Include="UI\MainTabWindow_LCFacility.cs" />
+    <Compile Include="UI\ManagerBulletHudDrawer.cs" />
     <Compile Include="UI\FloatMenu\FloatMenuOptionProvider_CaptureAbnormality.cs" />
     <Compile Include="UI\ITab_PawnStatus.cs" />
     <Compile Include="Util\AssetBundleUtil.cs" />

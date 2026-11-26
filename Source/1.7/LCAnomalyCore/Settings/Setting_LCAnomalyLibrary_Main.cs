@@ -212,6 +212,10 @@ namespace LCAnomalyCore.Settings
                 Widgets.Label(new Rect(35f, y + 1f, viewRect.width - 50f, 25f), Translator.Translate("If_ShowDepartmentSettingsText"));
                 ShowDepartmentSettings(Settings.If_ShowDepartmentSettings, ref y, viewRect);
 
+                //逆卡巴拉熔毁设置
+                y += 45f;
+                ShowMeltdownSettings(ref y, viewRect);
+
                 warningScrollHeight = y + 60f;
             }
             finally
@@ -340,6 +344,56 @@ namespace LCAnomalyCore.Settings
                     , new FloatRange(-5, 5)
                     , Translator.Translate("DepartmentLabel_ColonistBar_VerticalOffsetPerLineText"));
             }
+        }
+
+        private void ShowMeltdownSettings(ref float y, Rect inRect)
+        {
+            Text.Font = GameFont.Medium;
+            Widgets.Label(new Rect(0f, y, inRect.width, 28f), "LC_Settings_MeltdownHeader".Translate());
+            Text.Font = GameFont.Small;
+            y += 32f;
+
+            Widgets.Checkbox(0f, y, ref Settings.If_ShowManagerBulletHud, 25f, false, false, null, null);
+            Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), "LC_Settings_ShowManagerBulletHud".Translate());
+
+            y += 34f;
+            Widgets.Checkbox(0f, y, ref Settings.If_EnableQliphothMeltdown, 25f, false, false, null, null);
+            Widgets.Label(new Rect(35f, y + 1f, inRect.width - 50f, 25f), "LC_Settings_EnableQliphothMeltdown".Translate());
+
+            if (!Settings.If_EnableQliphothMeltdown)
+            {
+                return;
+            }
+
+            y += 34f;
+            Widgets.Checkbox(35f, y, ref Settings.If_ShowQliphothMeltdownHud, 25f, false, false, null, null);
+            Widgets.Label(new Rect(70f, y + 1f, inRect.width - 80f, 25f), "LC_Settings_ShowQliphothMeltdownHud".Translate());
+
+            y += 34f;
+            Widgets.Checkbox(35f, y, ref Settings.If_EnableMeltdownOrdealTrigger, 25f, false, false, null, null);
+            Widgets.Label(new Rect(70f, y + 1f, inRect.width - 80f, 25f), "LC_Settings_EnableMeltdownOrdealTrigger".Translate());
+
+            y += 38f;
+            float worksFloat = Settings.QliphothMeltdown_WorksPerWave;
+            worksFloat = Widgets.HorizontalSlider(
+                new Rect(35f, y, inRect.width * 0.65f, 28f),
+                worksFloat,
+                2f,
+                20f,
+                label: "LC_Settings_MeltdownWorksPerWave".Translate(Settings.QliphothMeltdown_WorksPerWave),
+                roundTo: 1f);
+            Settings.QliphothMeltdown_WorksPerWave = Mathf.Clamp(Mathf.RoundToInt(worksFloat), 2, 20);
+
+            y += 40f;
+            float secFloat = Settings.QliphothMeltdown_CountdownSeconds;
+            secFloat = Widgets.HorizontalSlider(
+                new Rect(35f, y, inRect.width * 0.65f, 28f),
+                secFloat,
+                20f,
+                180f,
+                label: "LC_Settings_MeltdownCountdownSeconds".Translate(Settings.QliphothMeltdown_CountdownSeconds),
+                roundTo: 5f);
+            Settings.QliphothMeltdown_CountdownSeconds = Mathf.Clamp(Mathf.RoundToInt(secFloat), 20, 180);
         }
     }
 }

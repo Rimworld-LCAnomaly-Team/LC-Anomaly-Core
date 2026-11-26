@@ -74,4 +74,12 @@
   <LC_Col_Black>BLACK</LC_Col_Black>
   <LC_Col_Pale>PALE</LC_Col_Pale>
 
+  <LC_Settings_MeltdownHeader>Qliphoth Meltdown System</LC_Settings_MeltdownHeader>
+  <LC_Settings_EnableQliphothMeltdown>Enable Qliphoth Meltdown overload waves</LC_Settings_EnableQliphothMeltdown>
+  <LC_Settings_ShowQliphothMeltdownHud>Show top-left Qliphoth Meltdown HUD bar</LC_Settings_ShowQliphothMeltdownHud>
+  <LC_Settings_MeltdownWorksPerWave>Completed works required per wave: {0}</LC_Settings_MeltdownWorksPerWave>
+  <LC_Settings_MeltdownCountdownSeconds>Meltdown room countdown duration: {0}s</LC_Settings_MeltdownCountdownSeconds>
+  <LC_Settings_ShowManagerBulletHud>Show top-left Manager Bullets quick-cast bar</LC_Settings_ShowManagerBulletHud>
+  <LC_Settings_EnableMeltdownOrdealTrigger>Trigger scheduled Ordeals on Qliphoth Meltdown milestones</LC_Settings_EnableMeltdownOrdealTrigger>
+
 </LanguageData>
