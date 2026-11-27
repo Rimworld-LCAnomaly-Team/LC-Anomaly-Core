@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_FourColor_RiskLevel.label>E.G.O 危险等级</LC_FourColor_RiskLevel.label>
+  <LC_FourColor_RiskLevel.description>脑叶公司危险等级（ZAYIN / TETH / HE / WAW / ALEPH）。攻防双方危险等级的差值会按等级压制系数修正四色伤害。</LC_FourColor_RiskLevel.description>
+
+  <LC_FourColor_DamageType.label>四色伤害类型</LC_FourColor_DamageType.label>
+  <LC_FourColor_DamageType.description>该武器在脑叶公司四色伤害体系下的攻击属性：物理（红）、精神（白）、侵蚀（黑，物理+精神）或灵魂（蓝，最大生命值百分比）。</LC_FourColor_DamageType.description>
+
+  <LC_FourColor_WeaponDamage.label>武器四色伤害</LC_FourColor_WeaponDamage.label>
+  <LC_FourColor_WeaponDamage.description>该 E.G.O 武器每次常规攻击的有效四色伤害（计入四色武器倍率、品质修正与古老的信念赐福）；灵魂（蓝）伤害按目标核心部位最大生命值百分比结算。</LC_FourColor_WeaponDamage.description>
+
+  <LC_FourColor_SkillDamage.label>E.G.O 技能伤害</LC_FourColor_SkillDamage.label>
+  <LC_FourColor_SkillDamage.description>该 E.G.O 武器附带主动技能在四色伤害体系下的总伤害与分段明细（含多段命中统计及品质/赐福加成）。</LC_FourColor_SkillDamage.description>
+
+  <LC_FourColor_DamageMultiplier.label>四色伤害倍率</LC_FourColor_DamageMultiplier.label>
+  <LC_FourColor_DamageMultiplier.description>该武器在四色结算中的有效输出倍率（综合基础倍率、品质修正与古老的信念赐福加成）。</LC_FourColor_DamageMultiplier.description>
+
+  <LC_FourColor_ResistRed.label>物理（红）抗性</LC_FourColor_ResistRed.label>
+  <LC_FourColor_ResistRed.description>受到红色物理伤害时的承伤倍率。数值越低减伤越强（0.0=免疫，&lt;0.5=抗性，&lt;1.0=耐受，1.0=一般，&gt;1.0=脆弱，&gt;=2.0=致命）。</LC_FourColor_ResistRed.description>
+
+  <LC_FourColor_ResistWhite.label>精神（白）抗性</LC_FourColor_ResistWhite.label>
+  <LC_FourColor_ResistWhite.description>受到白色精神伤害时的承伤倍率。数值越低减伤越强（0.0=免疫，&lt;0.5=抗性，&lt;1.0=耐受，1.0=一般，&gt;1.0=脆弱，&gt;=2.0=致命）。</LC_FourColor_ResistWhite.description>
+
+  <LC_FourColor_ResistBlack.label>侵蚀（黑）抗性</LC_FourColor_ResistBlack.label>
+  <LC_FourColor_ResistBlack.description>受到黑色侵蚀伤害（物理+精神）时的承伤倍率。数值越低减伤越强（0.0=免疫，&lt;0.5=抗性，&lt;1.0=耐受，1.0=一般，&gt;1.0=脆弱，&gt;=2.0=致命）。</LC_FourColor_ResistBlack.description>
+
+  <LC_FourColor_ResistPale.label>灵魂（蓝）抗性</LC_FourColor_ResistPale.label>
+  <LC_FourColor_ResistPale.description>受到苍白/灵魂百分比伤害时的承伤倍率。数值越低减伤越强（0.0=免疫，&lt;0.5=抗性，&lt;1.0=耐受，1.0=一般，&gt;1.0=脆弱，&gt;=2.0=致命）。</LC_FourColor_ResistPale.description>
+</LanguageData>

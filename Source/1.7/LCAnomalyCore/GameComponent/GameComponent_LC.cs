@@ -20,7 +20,6 @@ namespace LCAnomalyCore.GameComponent
 
         public override void GameComponentOnGUI()
         {
-            WarningOverlay.Draw();
             UI.ManagerBulletHudDrawer.DrawOnGUI();
         }
 

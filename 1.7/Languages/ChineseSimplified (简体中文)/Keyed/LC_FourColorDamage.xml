@@ -37,4 +37,88 @@
   <LC_Stat_WeaponBlessing>古老的信念赐福</LC_Stat_WeaponBlessing>
   <LC_Stat_WeaponBlessingDesc>该武器已获得“古老的信念与承诺”的永恒赐福，造成的伤害永久提高 {0}。</LC_Stat_WeaponBlessingDesc>
   <LC_Stat_WeaponBlessingLine>信念赐福加成：{0}</LC_Stat_WeaponBlessingLine>
+
+  <LC_ResistTier_Immune>免疫</LC_ResistTier_Immune>
+  <LC_ResistTier_Resist>抗性</LC_ResistTier_Resist>
+  <LC_ResistTier_Endure>耐受</LC_ResistTier_Endure>
+  <LC_ResistTier_Normal>一般</LC_ResistTier_Normal>
+  <LC_ResistTier_Weak>脆弱</LC_ResistTier_Weak>
+  <LC_ResistTier_Fatal>致命</LC_ResistTier_Fatal>
+  <LC_Stat_ResistDisplay>{0}（{1}）</LC_Stat_ResistDisplay>
+
+  <LC_Stat_DamageMechanic_Red>对目标造成纯粹的物理生命值（HP）伤害。</LC_Stat_DamageMechanic_Red>
+  <LC_Stat_DamageMechanic_White>对员工与人类造成精神值（SP）伤害，精神值耗尽时陷入恐慌；对异想体造成物理伤害。</LC_Stat_DamageMechanic_White>
+  <LC_Stat_DamageMechanic_Black>同时对目标造成物理生命值（HP）伤害与精神值（SP）侵蚀伤害。</LC_Stat_DamageMechanic_Black>
+  <LC_Stat_DamageMechanic_Pale>基于目标核心部位最大生命值的百分比造成灵魂伤害，无视原版护甲减伤。</LC_Stat_DamageMechanic_Pale>
+  <LC_Stat_DamageMechanic_None>沿用常规边缘世界伤害结算，不进行四色伤害转换。</LC_Stat_DamageMechanic_None>
+
+  <LC_Stat_WeaponSecondaryDamageType>复合伤害类型：{0}</LC_Stat_WeaponSecondaryDamageType>
+  <LC_Stat_WeaponBaseMultiplier>基础伤害倍率：x{0}</LC_Stat_WeaponBaseMultiplier>
+  <LC_Stat_ApparelBaseResist>基础护甲倍率：x{0}</LC_Stat_ApparelBaseResist>
+  <LC_Stat_ResistTierLine>抗性评级：{0}</LC_Stat_ResistTierLine>
+  <LC_Stat_PawnRaceBaseResist>种族基础倍率：x{0}</LC_Stat_PawnRaceBaseResist>
+  <LC_Stat_PawnDynamicRaceResist>当前阶段动态倍率：x{0}</LC_Stat_PawnDynamicRaceResist>
+  <LC_Stat_PawnArmorResist>穿戴护甲最佳倍率：x{0}（{1}）</LC_Stat_PawnArmorResist>
+  <LC_Stat_PawnArmorRiskLevel>护甲防御等级：{0}</LC_Stat_PawnArmorRiskLevel>
+  <LC_Stat_PawnEntityRiskLevel>异想体危险等级：{0}</LC_Stat_PawnEntityRiskLevel>
+  <LC_Stat_RiskLevelSuppressedNote>攻防双方的危险等级差值会触发脑叶公司等级压制系数（x0.4 ~ x2.0）。</LC_Stat_RiskLevelSuppressedNote>
+
+  <LC_Stat_FinalRiskLevel>最终判定等级：{0}</LC_Stat_FinalRiskLevel>
+  <LC_Stat_FinalDamageType>最终伤害类型：{0}</LC_Stat_FinalDamageType>
+  <LC_Stat_FinalDamageMultiplier>最终伤害倍率：x{0}</LC_Stat_FinalDamageMultiplier>
+  <LC_Stat_FinalResistance>最终承伤倍率：x{0}（{1}）</LC_Stat_FinalResistance>
+
+  <LC_Stat_WeaponModeRanged>攻击模式：远程弹道</LC_Stat_WeaponModeRanged>
+  <LC_Stat_WeaponModeMelee>攻击模式：近战招式</LC_Stat_WeaponModeMelee>
+  <LC_Stat_WeaponProjDamageLine>单发伤害：{0}（基础 {1}）</LC_Stat_WeaponProjDamageLine>
+  <LC_Stat_WeaponBurstLine>连发齐射：{0} 发（单轮合计 {1}）</LC_Stat_WeaponBurstLine>
+  <LC_Stat_WeaponApRangeLine>护甲穿透：{0} · 射程：{1}</LC_Stat_WeaponApRangeLine>
+  <LC_Stat_WeaponMeleeToolLine>  - {0}：{1}（冷却 {2}秒，穿甲 {3}）</LC_Stat_WeaponMeleeToolLine>
+  <LC_Stat_PalePercentNote>注：蓝色（灵魂）伤害按目标核心部位最大生命值的百分比结算，并无视原版护甲。</LC_Stat_PalePercentNote>
+
+  <LC_Stat_SkillNameLine>附带技能：{0}</LC_Stat_SkillNameLine>
+  <LC_Stat_SkillCooldownRangeLine>技能冷却：{0}秒 · 施放距离：{1}</LC_Stat_SkillCooldownRangeLine>
+  <LC_Stat_SkillRangeMelee>近战接触</LC_Stat_SkillRangeMelee>
+  <LC_Stat_SkillStageLine>  - {0}：{1}</LC_Stat_SkillStageLine>
+  <LC_Stat_SkillMultiplierLine>已计入四色武器输出倍率：x{0}</LC_Stat_SkillMultiplierLine>
+  <LC_Stat_WeaponGuaranteedHit>必中特性：无视掩体、天气与精度惩罚</LC_Stat_WeaponGuaranteedHit>
+  <LC_Stat_FinalWeaponDamage>有效攻击伤害：{0}</LC_Stat_FinalWeaponDamage>
+  <LC_Stat_FinalSkillDamage>技能总伤害：{0}</LC_Stat_FinalSkillDamage>
+
+  <LC_SkillStage_Hit>主段伤害</LC_SkillStage_Hit>
+  <LC_SkillStage_Beat1>首拍打击</LC_SkillStage_Beat1>
+  <LC_SkillStage_Beat2>次拍打击</LC_SkillStage_Beat2>
+  <LC_SkillStage_Direct>直击爆破</LC_SkillStage_Direct>
+  <LC_SkillStage_Echo>星光回响</LC_SkillStage_Echo>
+  <LC_SkillStage_Execute>处决重劈</LC_SkillStage_Execute>
+  <LC_SkillStage_Explosion>烈焰引爆</LC_SkillStage_Explosion>
+  <LC_SkillStage_Feast>盛宴噬咬</LC_SkillStage_Feast>
+  <LC_SkillStage_Finale>终结爆发</LC_SkillStage_Finale>
+  <LC_SkillStage_Finisher>终结重斩</LC_SkillStage_Finisher>
+  <LC_SkillStage_Lance>穿刺光枪</LC_SkillStage_Lance>
+  <LC_SkillStage_Main>主炮贯通</LC_SkillStage_Main>
+  <LC_SkillStage_Maw>巨口啃咬</LC_SkillStage_Maw>
+  <LC_SkillStage_Nightmare>梦魇爆发</LC_SkillStage_Nightmare>
+  <LC_SkillStage_Opener>起手突袭</LC_SkillStage_Opener>
+  <LC_SkillStage_Opening>起手裁决斩</LC_SkillStage_Opening>
+  <LC_SkillStage_Pellet>惩罚连射</LC_SkillStage_Pellet>
+  <LC_SkillStage_Pierce>长矛突刺</LC_SkillStage_Pierce>
+  <LC_SkillStage_Portal>异界传送弹幕</LC_SkillStage_Portal>
+  <LC_SkillStage_Pulse>脉冲切斩</LC_SkillStage_Pulse>
+  <LC_SkillStage_Sanctum>净罪光环</LC_SkillStage_Sanctum>
+  <LC_SkillStage_Shatter>极寒碎裂</LC_SkillStage_Shatter>
+  <LC_SkillStage_Shot>近距霰弹</LC_SkillStage_Shot>
+  <LC_SkillStage_Sickle>猩红镰斩</LC_SkillStage_Sickle>
+  <LC_SkillStage_Siphon>汲取脉冲</LC_SkillStage_Siphon>
+  <LC_SkillStage_Slam>重锤轰击</LC_SkillStage_Slam>
+  <LC_SkillStage_Slash>连携快斩</LC_SkillStage_Slash>
+  <LC_SkillStage_Sleep>催眠星球</LC_SkillStage_Sleep>
+  <LC_SkillStage_Smite>圣光重槌</LC_SkillStage_Smite>
+  <LC_SkillStage_Spire>棘刺喷发</LC_SkillStage_Spire>
+  <LC_SkillStage_Splash>浪潮飞溅</LC_SkillStage_Splash>
+  <LC_SkillStage_StormTick>苍白风暴</LC_SkillStage_StormTick>
+  <LC_SkillStage_Sweep>横扫</LC_SkillStage_Sweep>
+  <LC_SkillStage_Thrust>突刺</LC_SkillStage_Thrust>
+  <LC_SkillStage_Tick>锯刃狂切</LC_SkillStage_Tick>
+  <LC_SkillStage_Volley>死蝶连射</LC_SkillStage_Volley>
 </LanguageData>

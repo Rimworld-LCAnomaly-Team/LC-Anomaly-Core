@@ -71,6 +71,21 @@ namespace LCAnomalyCore.Util
             return ComputeAdjustedDamage(dinfo, victim, damageType, fallbackRiskLevel, out _);
         }
 
+        /// <summary>尝试从 Pawn 的 ThingDef（或其抽象父级）解析脑叶危险等级扩展。</summary>
+        public static bool TryGetEntityRiskLevel(ThingDef def, out LCRiskLevel level)
+        {
+            ModExtension_AbnormalityCategory ext = def?.GetModExtension<ModExtension_AbnormalityCategory>();
+            if (ext?.abnormalityCategoryDef != null
+                && !ext.abnormalityCategoryDef.defName.NullOrEmpty()
+                && Enum.TryParse(ext.abnormalityCategoryDef.defName, true, out level))
+            {
+                return true;
+            }
+
+            level = LCRiskLevel.ZAYIN;
+            return false;
+        }
+
         /// <summary>计算四色伤害经等级压制与抗性倍率修正后的最终伤害，并返回目标的有效抗性倍率。</summary>
         public static float ComputeAdjustedDamage(DamageInfo dinfo, Thing victim,
             FourColorDamageType damageType, LCRiskLevel fallbackRiskLevel, out float effectiveResistance)
@@ -85,6 +100,13 @@ namespace LCAnomalyCore.Util
                 weaponMultiplier = weaponProfile.damageMultiplier;
                 isAuthoredWeapon = weaponProfile.isAuthoredEgo;
             }
+            else if (dinfo.Weapon == null
+                && dinfo.Instigator is Pawn attackerPawn
+                && TryGetEntityRiskLevel(attackerPawn.def, out LCRiskLevel attackerEntityLevel)
+                && attackerEntityLevel > attackLevel)
+            {
+                attackLevel = attackerEntityLevel;
+            }
 
             float weaponQualityFactor = 1f;
             float weaponBlessingFactor = 1f;
@@ -98,8 +120,11 @@ namespace LCAnomalyCore.Util
                 }
             }
 
+            int entityDefenseLevel = (victim is Pawn victimEntity && TryGetEntityRiskLevel(victimEntity.def, out LCRiskLevel entityDefLevel))
+                ? (int)entityDefLevel
+                : (int)LCRiskLevel.ZAYIN;
             float resistance = 1f;
-            int defenseLevel = (int)LCRiskLevel.ZAYIN;
+            int defenseLevel = entityDefenseLevel;
             if (victim is Pawn pawn && pawn.apparel != null)
             {
                 float bestFactor = float.MaxValue;
@@ -114,13 +139,14 @@ namespace LCAnomalyCore.Util
                         apparelProfile.ResistanceFor(damageType),
                         apparel,
                         apparelProfile.isAuthoredEgo);
+                    int candidateDefenseLevel = Mathf.Max(entityDefenseLevel, (int)apparelProfile.riskLevel);
                     float candidate = Mathf.Max(0f, effResistance)
-                        * GetDamageLevelFactor((int)attackLevel, (int)apparelProfile.riskLevel);
+                        * GetDamageLevelFactor((int)attackLevel, candidateDefenseLevel);
                     if (candidate < bestFactor)
                     {
                         bestFactor = candidate;
                         resistance = Mathf.Max(0f, effResistance);
-                        defenseLevel = (int)apparelProfile.riskLevel;
+                        defenseLevel = candidateDefenseLevel;
                     }
                 }
             }

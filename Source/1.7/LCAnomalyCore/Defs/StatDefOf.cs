@@ -14,6 +14,16 @@ namespace LCAnomalyCore.Defs
         public static StatDef LC_MinimumContainmentStrength;
         public static StatDef LC_AbnormalityStudyRate;
 
+        public static StatDef LC_FourColor_RiskLevel;
+        public static StatDef LC_FourColor_DamageType;
+        public static StatDef LC_FourColor_WeaponDamage;
+        public static StatDef LC_FourColor_SkillDamage;
+        public static StatDef LC_FourColor_DamageMultiplier;
+        public static StatDef LC_FourColor_ResistRed;
+        public static StatDef LC_FourColor_ResistWhite;
+        public static StatDef LC_FourColor_ResistBlack;
+        public static StatDef LC_FourColor_ResistPale;
+
         static StatDefOf()
         {
             DefOfHelper.EnsureInitializedInCtor(typeof(StatDefOf));

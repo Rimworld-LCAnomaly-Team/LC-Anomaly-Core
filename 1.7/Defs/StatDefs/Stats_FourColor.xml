@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <StatDef>
+    <defName>LC_FourColor_RiskLevel</defName>
+    <label>E.G.O risk level</label>
+    <description>Lobotomy Corporation risk grade (ZAYIN, TETH, HE, WAW, ALEPH). Comparing attacker and defender risk grades adjusts incoming four-color damage.</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorRiskLevel</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>500</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_DamageType</defName>
+    <label>four-color damage type</label>
+    <description>The Lobotomy Corporation four-color damage type dealt by this weapon: RED (physical HP), WHITE (mental SP), BLACK (HP + SP erosion), or PALE (% max HP).</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorDamageType</workerClass>
+    <defaultBaseValue>0</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>490</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_WeaponDamage</defName>
+    <label>weapon damage (four-color)</label>
+    <description>Effective base attack damage dealt by this E.G.O weapon after four-color weapon multipliers, quality scaling, and Old Belief blessing. PALE weapons deal percentage damage of the target's core max HP.</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorWeaponDamage</workerClass>
+    <defaultBaseValue>0</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>485</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_SkillDamage</defName>
+    <label>E.G.O skill damage</label>
+    <description>Total four-color damage output and per-stage breakdown of the E.G.O weapon's active ability, including multi-hit sequences and quality/blessing scaling.</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorSkillDamage</workerClass>
+    <defaultBaseValue>0</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>475</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_DamageMultiplier</defName>
+    <label>four-color damage multiplier</label>
+    <description>Effective four-color damage output multiplier for this weapon, including base tuning, quality scaling, and Old Belief blessing.</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorDamageMultiplier</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>465</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_ResistRed</defName>
+    <label>RED resistance</label>
+    <description>Incoming RED (physical) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorResistRed</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>440</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_ResistWhite</defName>
+    <label>WHITE resistance</label>
+    <description>Incoming WHITE (mental) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorResistWhite</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>430</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_ResistBlack</defName>
+    <label>BLACK resistance</label>
+    <description>Incoming BLACK (erosion: physical + mental) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorResistBlack</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>420</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+  <StatDef>
+    <defName>LC_FourColor_ResistPale</defName>
+    <label>PALE resistance</label>
+    <description>Incoming PALE (soul / max HP percentage) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</description>
+    <category>LC_FourColorStats</category>
+    <workerClass>LCAnomalyCore.Util.StatWorker_FourColorResistPale</workerClass>
+    <defaultBaseValue>1</defaultBaseValue>
+    <minValue>0</minValue>
+    <displayPriorityInCategory>410</displayPriorityInCategory>
+    <cacheable>false</cacheable>
+    <showOnDefaultValue>true</showOnDefaultValue>
+    <showIfUndefined>true</showIfUndefined>
+    <overridesHideStats>true</overridesHideStats>
+  </StatDef>
+
+</Defs>

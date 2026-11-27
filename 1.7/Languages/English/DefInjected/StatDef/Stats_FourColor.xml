@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <LC_FourColor_RiskLevel.label>E.G.O risk level</LC_FourColor_RiskLevel.label>
+  <LC_FourColor_RiskLevel.description>Lobotomy Corporation risk grade (ZAYIN, TETH, HE, WAW, ALEPH). Comparing attacker and defender risk grades adjusts incoming four-color damage.</LC_FourColor_RiskLevel.description>
+
+  <LC_FourColor_DamageType.label>four-color damage type</LC_FourColor_DamageType.label>
+  <LC_FourColor_DamageType.description>The Lobotomy Corporation four-color damage type dealt by this weapon: RED (physical HP), WHITE (mental SP), BLACK (HP + SP erosion), or PALE (% max HP).</LC_FourColor_DamageType.description>
+
+  <LC_FourColor_WeaponDamage.label>weapon damage (four-color)</LC_FourColor_WeaponDamage.label>
+  <LC_FourColor_WeaponDamage.description>Effective base attack damage dealt by this E.G.O weapon after four-color weapon multipliers, quality scaling, and Old Belief blessing. PALE weapons deal percentage damage of the target's core max HP.</LC_FourColor_WeaponDamage.description>
+
+  <LC_FourColor_SkillDamage.label>E.G.O skill damage</LC_FourColor_SkillDamage.label>
+  <LC_FourColor_SkillDamage.description>Total four-color damage output and per-stage breakdown of the E.G.O weapon's active ability, including multi-hit sequences and quality/blessing scaling.</LC_FourColor_SkillDamage.description>
+
+  <LC_FourColor_DamageMultiplier.label>four-color damage multiplier</LC_FourColor_DamageMultiplier.label>
+  <LC_FourColor_DamageMultiplier.description>Effective four-color damage output multiplier for this weapon, including base tuning, quality scaling, and Old Belief blessing.</LC_FourColor_DamageMultiplier.description>
+
+  <LC_FourColor_ResistRed.label>RED resistance</LC_FourColor_ResistRed.label>
+  <LC_FourColor_ResistRed.description>Incoming RED (physical) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</LC_FourColor_ResistRed.description>
+
+  <LC_FourColor_ResistWhite.label>WHITE resistance</LC_FourColor_ResistWhite.label>
+  <LC_FourColor_ResistWhite.description>Incoming WHITE (mental) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</LC_FourColor_ResistWhite.description>
+
+  <LC_FourColor_ResistBlack.label>BLACK resistance</LC_FourColor_ResistBlack.label>
+  <LC_FourColor_ResistBlack.description>Incoming BLACK (erosion: physical + mental) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</LC_FourColor_ResistBlack.description>
+
+  <LC_FourColor_ResistPale.label>PALE resistance</LC_FourColor_ResistPale.label>
+  <LC_FourColor_ResistPale.description>Incoming PALE (soul / max HP percentage) damage multiplier. Lower values provide stronger mitigation (0.0 = Immune, &lt;0.5 = Resist, &lt;1.0 = Endure, 1.0 = Normal, &gt;1.0 = Weak, &gt;=2.0 = Fatal).</LC_FourColor_ResistPale.description>
+</LanguageData>

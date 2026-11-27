@@ -112,10 +112,12 @@
     <Compile Include="Patch\Patch_RoomContainment.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAnimation.cs" />
     <Compile Include="Patch\Patch_EgoWeaponAutoCast.cs" />
+    <Compile Include="Patch\Patch_FourColorHitRules.cs" />
     <Compile Include="Patch\Patch_LCEntityUnifiedHealth.cs" />
     <Compile Include="Patch\Patch_SpecialDisplayStats_FourColor.cs" />
     <Compile Include="Patch\Patch_TickManager.cs" />
     <Compile Include="Patch\Patch_Thing_TakeDamage.cs" />
+    <Compile Include="Patch\Patch_WarningOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe\Recipe_CogitoInjection.cs" />
     <Compile Include="Recipe\Recipe_ExtractBrainSpinalNerve.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Util\StudyUtil.cs" />
     <Compile Include="Util\LCContainmentUtility.cs" />
     <Compile Include="Util\RoomRoleWorker_LCContainmentRoom.cs" />
+    <Compile Include="Util\StatWorker_FourColor.cs" />
     <Compile Include="Util\StatWorker_LCContainmentStrength.cs" />
     <Compile Include="Util\Types.cs" />
     <Compile Include="Util\WorkNarrationUtility.cs" />

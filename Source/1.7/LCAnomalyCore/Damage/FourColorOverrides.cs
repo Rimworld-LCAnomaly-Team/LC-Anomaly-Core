@@ -116,10 +116,12 @@ namespace LCAnomalyCore.Damage
         public struct ResolvedWeaponProfile
         {
             public FourColorDamageType damageType;
+            public FourColorDamageType secondaryDamageType;
             public LCRiskLevel riskLevel;
             public float damageMultiplier;
             public FourColorProfileSource source;
             public bool isAuthoredEgo;
+            public bool guaranteedHit;
         }
 
         /// <summary>解析后的种族四色配置。</summary>
@@ -445,10 +447,12 @@ namespace LCAnomalyCore.Damage
                     weaponCache[def] = new ResolvedWeaponProfile
                     {
                         damageType = ov.damageType,
+                        secondaryDamageType = hasBaseline ? baseline.secondaryDamageType : FourColorDamageType.None,
                         riskLevel = ov.riskLevel,
                         damageMultiplier = Mathf.Max(0f, ov.damageMultiplier),
                         source = FourColorProfileSource.UserOverride,
-                        isAuthoredEgo = hasBaseline && baseline.isAuthoredEgo
+                        isAuthoredEgo = hasBaseline && baseline.isAuthoredEgo,
+                        guaranteedHit = hasBaseline && baseline.guaranteedHit
                     };
                 }
                 return;
@@ -468,10 +472,12 @@ namespace LCAnomalyCore.Damage
                 profile = new ResolvedWeaponProfile
                 {
                     damageType = ext.damageType,
+                    secondaryDamageType = ext.secondaryDamageType,
                     riskLevel = ext.riskLevel,
                     damageMultiplier = Mathf.Max(0f, ext.damageMultiplier),
                     source = FourColorProfileSource.Authored,
-                    isAuthoredEgo = true
+                    isAuthoredEgo = true,
+                    guaranteedHit = ext.guaranteedHit
                 };
                 return true;
             }
@@ -482,10 +488,12 @@ namespace LCAnomalyCore.Damage
                 profile = new ResolvedWeaponProfile
                 {
                     damageType = comp.damageType,
+                    secondaryDamageType = FourColorDamageType.None,
                     riskLevel = (LCRiskLevel)DamageUtils.LevelTag2Int(comp.level),
                     damageMultiplier = Mathf.Max(0f, comp.damageMultiplier),
                     source = FourColorProfileSource.Authored,
-                    isAuthoredEgo = true
+                    isAuthoredEgo = true,
+                    guaranteedHit = false
                 };
                 return true;
             }

@@ -37,4 +37,88 @@
   <LC_Stat_WeaponBlessing>Old Belief blessing</LC_Stat_WeaponBlessing>
   <LC_Stat_WeaponBlessingDesc>Blessed by Old Belief and Promise. Weapon damage output is permanently multiplied by {0}.</LC_Stat_WeaponBlessingDesc>
   <LC_Stat_WeaponBlessingLine>Blessing Bonus: {0}</LC_Stat_WeaponBlessingLine>
+
+  <LC_ResistTier_Immune>Immune</LC_ResistTier_Immune>
+  <LC_ResistTier_Resist>Resist</LC_ResistTier_Resist>
+  <LC_ResistTier_Endure>Endure</LC_ResistTier_Endure>
+  <LC_ResistTier_Normal>Normal</LC_ResistTier_Normal>
+  <LC_ResistTier_Weak>Weak</LC_ResistTier_Weak>
+  <LC_ResistTier_Fatal>Fatal</LC_ResistTier_Fatal>
+  <LC_Stat_ResistDisplay>{0} ({1})</LC_Stat_ResistDisplay>
+
+  <LC_Stat_DamageMechanic_Red>Deals physical HP damage directly to body parts.</LC_Stat_DamageMechanic_Red>
+  <LC_Stat_DamageMechanic_White>Deals mental SP damage to employees and humanlikes, triggering panic when depleted; deals physical damage to Abnormalities.</LC_Stat_DamageMechanic_White>
+  <LC_Stat_DamageMechanic_Black>Deals both physical HP damage and mental SP erosion simultaneously.</LC_Stat_DamageMechanic_Black>
+  <LC_Stat_DamageMechanic_Pale>Deals soul damage scaled by a percentage of the target's core max HP, bypassing vanilla armor.</LC_Stat_DamageMechanic_Pale>
+  <LC_Stat_DamageMechanic_None>Uses standard RimWorld damage rules without four-color conversion.</LC_Stat_DamageMechanic_None>
+
+  <LC_Stat_WeaponSecondaryDamageType>Secondary Damage Type: {0}</LC_Stat_WeaponSecondaryDamageType>
+  <LC_Stat_WeaponBaseMultiplier>Base Multiplier: x{0}</LC_Stat_WeaponBaseMultiplier>
+  <LC_Stat_ApparelBaseResist>Base Armor Multiplier: x{0}</LC_Stat_ApparelBaseResist>
+  <LC_Stat_ResistTierLine>Resistance Rating: {0}</LC_Stat_ResistTierLine>
+  <LC_Stat_PawnRaceBaseResist>Race Base Multiplier: x{0}</LC_Stat_PawnRaceBaseResist>
+  <LC_Stat_PawnDynamicRaceResist>Dynamic Phase Multiplier: x{0}</LC_Stat_PawnDynamicRaceResist>
+  <LC_Stat_PawnArmorResist>Best Worn Armor Multiplier: x{0} ({1})</LC_Stat_PawnArmorResist>
+  <LC_Stat_PawnArmorRiskLevel>Defense Risk Grade (Armor): {0}</LC_Stat_PawnArmorRiskLevel>
+  <LC_Stat_PawnEntityRiskLevel>Entity Risk Grade: {0}</LC_Stat_PawnEntityRiskLevel>
+  <LC_Stat_RiskLevelSuppressedNote>Defense risk grade compares against attacker grade to adjust incoming damage (0.4x to 2.0x).</LC_Stat_RiskLevelSuppressedNote>
+
+  <LC_Stat_FinalRiskLevel>Resolved Grade: {0}</LC_Stat_FinalRiskLevel>
+  <LC_Stat_FinalDamageType>Resolved Damage Type: {0}</LC_Stat_FinalDamageType>
+  <LC_Stat_FinalDamageMultiplier>Effective Multiplier: x{0}</LC_Stat_FinalDamageMultiplier>
+  <LC_Stat_FinalResistance>Effective Multiplier: x{0} ({1})</LC_Stat_FinalResistance>
+
+  <LC_Stat_WeaponModeRanged>Attack Mode: Ranged projectile</LC_Stat_WeaponModeRanged>
+  <LC_Stat_WeaponModeMelee>Attack Mode: Melee tools</LC_Stat_WeaponModeMelee>
+  <LC_Stat_WeaponProjDamageLine>Per-Shot Damage: {0} (base {1})</LC_Stat_WeaponProjDamageLine>
+  <LC_Stat_WeaponBurstLine>Burst Volley: {0} shots ({1} total per volley)</LC_Stat_WeaponBurstLine>
+  <LC_Stat_WeaponApRangeLine>Armor Penetration: {0} · Range: {1}</LC_Stat_WeaponApRangeLine>
+  <LC_Stat_WeaponMeleeToolLine>  - {0}: {1} (Cooldown {2}s, AP {3})</LC_Stat_WeaponMeleeToolLine>
+  <LC_Stat_PalePercentNote>Note: PALE values represent percentages of the target's core max HP (ignoring vanilla armor).</LC_Stat_PalePercentNote>
+
+  <LC_Stat_SkillNameLine>Active Skill: {0}</LC_Stat_SkillNameLine>
+  <LC_Stat_SkillCooldownRangeLine>Cooldown: {0}s · Range: {1}</LC_Stat_SkillCooldownRangeLine>
+  <LC_Stat_SkillRangeMelee>Melee touch</LC_Stat_SkillRangeMelee>
+  <LC_Stat_SkillStageLine>  - {0}: {1}</LC_Stat_SkillStageLine>
+  <LC_Stat_SkillMultiplierLine>Four-Color Weapon Multiplier Applied: x{0}</LC_Stat_SkillMultiplierLine>
+  <LC_Stat_WeaponGuaranteedHit>Guaranteed Hit: ignores cover, weather, and accuracy penalties</LC_Stat_WeaponGuaranteedHit>
+  <LC_Stat_FinalWeaponDamage>Effective Attack Damage: {0}</LC_Stat_FinalWeaponDamage>
+  <LC_Stat_FinalSkillDamage>Total Skill Damage: {0}</LC_Stat_FinalSkillDamage>
+
+  <LC_SkillStage_Hit>Primary hit</LC_SkillStage_Hit>
+  <LC_SkillStage_Beat1>First beat</LC_SkillStage_Beat1>
+  <LC_SkillStage_Beat2>Second beat</LC_SkillStage_Beat2>
+  <LC_SkillStage_Direct>Direct shot</LC_SkillStage_Direct>
+  <LC_SkillStage_Echo>Starlight echo</LC_SkillStage_Echo>
+  <LC_SkillStage_Execute>Execution cleave</LC_SkillStage_Execute>
+  <LC_SkillStage_Explosion>Flame explosion</LC_SkillStage_Explosion>
+  <LC_SkillStage_Feast>Devouring cleave</LC_SkillStage_Feast>
+  <LC_SkillStage_Finale>Finale strike</LC_SkillStage_Finale>
+  <LC_SkillStage_Finisher>Finishing cleave</LC_SkillStage_Finisher>
+  <LC_SkillStage_Lance>Piercing lance</LC_SkillStage_Lance>
+  <LC_SkillStage_Main>Main beam</LC_SkillStage_Main>
+  <LC_SkillStage_Maw>Maw chomp</LC_SkillStage_Maw>
+  <LC_SkillStage_Nightmare>Nightmare burst</LC_SkillStage_Nightmare>
+  <LC_SkillStage_Opener>Opening strike</LC_SkillStage_Opener>
+  <LC_SkillStage_Opening>Opening cleave</LC_SkillStage_Opening>
+  <LC_SkillStage_Pellet>Tracer round</LC_SkillStage_Pellet>
+  <LC_SkillStage_Pierce>Spear thrust</LC_SkillStage_Pierce>
+  <LC_SkillStage_Portal>Portal beam</LC_SkillStage_Portal>
+  <LC_SkillStage_Pulse>Sweep pulse</LC_SkillStage_Pulse>
+  <LC_SkillStage_Sanctum>Sanctum wave</LC_SkillStage_Sanctum>
+  <LC_SkillStage_Shatter>Glacial shatter</LC_SkillStage_Shatter>
+  <LC_SkillStage_Shot>Buckshot blast</LC_SkillStage_Shot>
+  <LC_SkillStage_Sickle>Crimson sickle</LC_SkillStage_Sickle>
+  <LC_SkillStage_Siphon>Wisdom siphon</LC_SkillStage_Siphon>
+  <LC_SkillStage_Slam>Heavy slam</LC_SkillStage_Slam>
+  <LC_SkillStage_Slash>Quick slash</LC_SkillStage_Slash>
+  <LC_SkillStage_Sleep>Sleep orb</LC_SkillStage_Sleep>
+  <LC_SkillStage_Smite>Sacred smite</LC_SkillStage_Smite>
+  <LC_SkillStage_Spire>Root spire</LC_SkillStage_Spire>
+  <LC_SkillStage_Splash>Soda wave</LC_SkillStage_Splash>
+  <LC_SkillStage_StormTick>Pale storm</LC_SkillStage_StormTick>
+  <LC_SkillStage_Sweep>Horizontal sweep</LC_SkillStage_Sweep>
+  <LC_SkillStage_Thrust>Piercing thrust</LC_SkillStage_Thrust>
+  <LC_SkillStage_Tick>Saw flurry</LC_SkillStage_Tick>
+  <LC_SkillStage_Volley>Butterfly round</LC_SkillStage_Volley>
 </LanguageData>

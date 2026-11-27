@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
-using System.Text;
 using HarmonyLib;
 using LCAnomalyCore.Damage;
 using LCAnomalyCore.GameComponent;
 using LCAnomalyCore.Interface;
+using LCAnomalyCore.Misc;
+using LCAnomalyCore.ModExtensions;
 using LCAnomalyCore.Util;
 using RimWorld;
 using UnityEngine;
@@ -46,171 +48,211 @@ namespace LCAnomalyCore.Patch
                 default: return "LC_TargetKind_Default".Translate();
             }
         }
-    }
 
-    [HarmonyPatch(typeof(ThingDef), nameof(ThingDef.SpecialDisplayStats))]
-    internal static class Patch_ThingDef_SpecialDisplayStats_FourColor
-    {
-        private static IEnumerable<StatDrawEntry> Postfix(IEnumerable<StatDrawEntry> __result, ThingDef __instance, StatRequest req)
+        public static string GetDamageTypeHex(FourColorDamageType damageType)
         {
-            foreach (StatDrawEntry entry in __result)
+            switch (damageType)
             {
-                yield return entry;
-            }
-
-            if (__instance == null)
-            {
-                yield break;
-            }
-
-            float blessingMult = (__instance.IsWeapon && req.Thing != null)
-                ? (GameComponent_LC.Instance?.GetWeaponBlessingMultiplier(req.Thing) ?? 1f)
-                : 1f;
-
-            if (__instance.IsApparel && FourColorOverrides.TryGetApparelProfile(__instance, out FourColorOverrides.ResolvedApparelProfile ap))
-            {
-                Thing apparelThing = req.Thing;
-                float qualityFactor = apparelThing != null
-                    ? FourColorOverrides.GetApparelQualityFactor(apparelThing, ap.isAuthoredEgo)
-                    : 1f;
-                float red = apparelThing != null ? FourColorOverrides.ApplyApparelQuality(ap.red, apparelThing, ap.isAuthoredEgo) : ap.red;
-                float white = apparelThing != null ? FourColorOverrides.ApplyApparelQuality(ap.white, apparelThing, ap.isAuthoredEgo) : ap.white;
-                float black = apparelThing != null ? FourColorOverrides.ApplyApparelQuality(ap.black, apparelThing, ap.isAuthoredEgo) : ap.black;
-                float pale = apparelThing != null ? FourColorOverrides.ApplyApparelQuality(ap.pale, apparelThing, ap.isAuthoredEgo) : ap.pale;
-
-                string valueText = $"{ap.riskLevel} (R {red:0.##} / W {white:0.##} / B {black:0.##} / P {pale:0.##})";
-                var sb = new StringBuilder();
-                sb.AppendLine("LC_Stat_FourColorArmorDesc".Translate());
-                sb.AppendLine();
-                sb.AppendLine("LC_Stat_RiskLevel".Translate(ap.riskLevel.ToString()));
-                sb.AppendLine("LC_Stat_ResistLine".Translate("LC_DamageType_Red".Translate(), red.ToString("0.##"), ap.red.ToString("0.##")));
-                sb.AppendLine("LC_Stat_ResistLine".Translate("LC_DamageType_White".Translate(), white.ToString("0.##"), ap.white.ToString("0.##")));
-                sb.AppendLine("LC_Stat_ResistLine".Translate("LC_DamageType_Black".Translate(), black.ToString("0.##"), ap.black.ToString("0.##")));
-                sb.AppendLine("LC_Stat_ResistLine".Translate("LC_DamageType_Pale".Translate(), pale.ToString("0.##"), ap.pale.ToString("0.##")));
-                if (apparelThing != null)
-                {
-                    sb.AppendLine("LC_Stat_QualityFactor".Translate(qualityFactor.ToString("0.##")));
-                }
-                sb.AppendLine("LC_Stat_ProfileSource".Translate(FourColorDisplayHelper.FormatSource(ap.source)));
-
-                yield return new StatDrawEntry(
-                    StatCategoryDefOf.Apparel,
-                    "LC_Stat_FourColorArmor".Translate(),
-                    valueText,
-                    sb.ToString().TrimEndNewlines(),
-                    2150);
-            }
-            else if (__instance.IsWeapon && FourColorOverrides.TryGetWeaponProfile(__instance, out FourColorOverrides.ResolvedWeaponProfile wp))
-            {
-                Thing weaponThing = req.Thing;
-                float qualityFactor = weaponThing != null
-                    ? FourColorOverrides.GetWeaponQualityFactor(weaponThing, wp.isAuthoredEgo)
-                    : 1f;
-                float effMult = wp.damageMultiplier * qualityFactor * blessingMult;
-                string typeLabel = FourColorDisplayHelper.FormatDamageType(wp.damageType);
-                string valueText = $"{typeLabel} · {wp.riskLevel} (x{effMult:0.##})";
-
-                var sb = new StringBuilder();
-                sb.AppendLine("LC_Stat_FourColorWeaponDesc".Translate());
-                sb.AppendLine();
-                sb.AppendLine("LC_Stat_WeaponDamageType".Translate(typeLabel));
-                sb.AppendLine("LC_Stat_RiskLevel".Translate(wp.riskLevel.ToString()));
-                sb.AppendLine("LC_Stat_WeaponMultiplier".Translate(wp.damageMultiplier.ToString("0.##"), effMult.ToString("0.##")));
-                if (weaponThing != null)
-                {
-                    sb.AppendLine("LC_Stat_QualityFactor".Translate(qualityFactor.ToString("0.##")));
-                }
-                if (blessingMult > 1.0001f)
-                {
-                    string bonusPct = $"+{(blessingMult - 1f) * 100f:0.#}%";
-                    sb.AppendLine("LC_Stat_WeaponBlessingLine".Translate(bonusPct));
-                }
-                sb.AppendLine("LC_Stat_ProfileSource".Translate(FourColorDisplayHelper.FormatSource(wp.source)));
-
-                yield return new StatDrawEntry(
-                    StatCategoryDefOf.Weapon,
-                    "LC_Stat_FourColorWeapon".Translate(),
-                    valueText,
-                    sb.ToString().TrimEndNewlines(),
-                    2150);
-            }
-
-            if (__instance.IsWeapon && blessingMult > 1.0001f)
-            {
-                string bonusPct = $"+{(blessingMult - 1f) * 100f:0.#}%";
-                yield return new StatDrawEntry(
-                    StatCategoryDefOf.Weapon,
-                    "LC_Stat_WeaponBlessing".Translate(),
-                    bonusPct,
-                    "LC_Stat_WeaponBlessingDesc".Translate(bonusPct),
-                    2155);
+                case FourColorDamageType.Red: return "#F24747";
+                case FourColorDamageType.White: return "#F8F3D0";
+                case FourColorDamageType.Black: return "#B866F5";
+                case FourColorDamageType.Pale: return "#66E6F2";
+                default: return "#D0D0D0";
             }
         }
-    }
 
-    [HarmonyPatch(typeof(Pawn), nameof(Pawn.SpecialDisplayStats))]
-    internal static class Patch_Pawn_SpecialDisplayStats_FourColor
-    {
-        private static IEnumerable<StatDrawEntry> Postfix(IEnumerable<StatDrawEntry> __result, Pawn __instance)
+        public static string GetRiskLevelHex(LCRiskLevel level)
         {
-            foreach (StatDrawEntry entry in __result)
+            switch (level)
             {
-                yield return entry;
+                case LCRiskLevel.ZAYIN: return "#5CE65C";
+                case LCRiskLevel.TETH: return "#4DA6FF";
+                case LCRiskLevel.HE: return "#FFD23F";
+                case LCRiskLevel.WAW: return "#C47DFF";
+                case LCRiskLevel.ALEPH: return "#FF4747";
+                default: return "#D0D0D0";
             }
-
-            if (__instance == null)
-            {
-                yield break;
-            }
-
-            FourColorOverrides.ResolvedRaceProfile raceProfile = FourColorOverrides.GetRaceProfile(__instance.def);
-            LCRiskLevel bestLevel = LCRiskLevel.ZAYIN;
-
-            ILCFourColorDynamicResistance dynResist = __instance as ILCFourColorDynamicResistance;
-            float baseRed = (dynResist != null && dynResist.TryGetDynamicFourColorResistance(FourColorDamageType.Red, out float dynRed)) ? dynRed : raceProfile.red;
-            float baseWhite = (dynResist != null && dynResist.TryGetDynamicFourColorResistance(FourColorDamageType.White, out float dynWhite)) ? dynWhite : raceProfile.white;
-            float baseBlack = (dynResist != null && dynResist.TryGetDynamicFourColorResistance(FourColorDamageType.Black, out float dynBlack)) ? dynBlack : raceProfile.black;
-            float basePale = (dynResist != null && dynResist.TryGetDynamicFourColorResistance(FourColorDamageType.Pale, out float dynPale)) ? dynPale : raceProfile.pale;
-
-            float red = ComputeEffectivePawnResistance(__instance, FourColorDamageType.Red, baseRed, ref bestLevel, out string redApparel);
-            float white = ComputeEffectivePawnResistance(__instance, FourColorDamageType.White, baseWhite, ref bestLevel, out string whiteApparel);
-            float black = ComputeEffectivePawnResistance(__instance, FourColorDamageType.Black, baseBlack, ref bestLevel, out string blackApparel);
-            float pale = ComputeEffectivePawnResistance(__instance, FourColorDamageType.Pale, basePale, ref bestLevel, out string paleApparel);
-
-            string valueText = $"{bestLevel} (R {red:0.##} / W {white:0.##} / B {black:0.##} / P {pale:0.##})";
-            bool takesMental = DamageUtils.CanTakeMentalDamage(__instance);
-
-            var sb = new StringBuilder();
-            sb.AppendLine("LC_Stat_FourColorPawnDesc".Translate());
-            sb.AppendLine();
-            sb.AppendLine("LC_Stat_RiskLevel".Translate(bestLevel.ToString()));
-            sb.AppendLine("LC_Stat_PawnMentalSusceptible".Translate(takesMental ? "Yes".Translate() : "No".Translate()));
-            sb.AppendLine("LC_Stat_PawnTargetKind".Translate(FourColorDisplayHelper.FormatTargetKind(raceProfile.targetKind)));
-            sb.AppendLine("LC_Stat_PawnResistRow".Translate("LC_DamageType_Red".Translate(), red.ToString("0.##"), baseRed.ToString("0.##"), redApparel));
-            sb.AppendLine("LC_Stat_PawnResistRow".Translate("LC_DamageType_White".Translate(), white.ToString("0.##"), baseWhite.ToString("0.##"), whiteApparel));
-            sb.AppendLine("LC_Stat_PawnResistRow".Translate("LC_DamageType_Black".Translate(), black.ToString("0.##"), baseBlack.ToString("0.##"), blackApparel));
-            sb.AppendLine("LC_Stat_PawnResistRow".Translate("LC_DamageType_Pale".Translate(), pale.ToString("0.##"), basePale.ToString("0.##"), paleApparel));
-            sb.AppendLine("LC_Stat_ProfileSource".Translate(FourColorDisplayHelper.FormatSource(raceProfile.source)));
-
-            yield return new StatDrawEntry(
-                StatCategoryDefOf.PawnResistances,
-                "LC_Stat_FourColorPawn".Translate(),
-                valueText,
-                sb.ToString().TrimEndNewlines(),
-                2150);
         }
 
-        private static float ComputeEffectivePawnResistance(
+        public static string FormatColoredDamageType(FourColorDamageType damageType)
+        {
+            string label = FormatDamageType(damageType);
+            if (damageType == FourColorDamageType.None)
+            {
+                return label;
+            }
+
+            return $"<color={GetDamageTypeHex(damageType)}>{label}</color>";
+        }
+
+        public static string FormatColoredWeaponDamageTypes(FourColorDamageType primary, FourColorDamageType secondary)
+        {
+            if (secondary != FourColorDamageType.None && secondary != primary)
+            {
+                return $"{FormatColoredDamageType(primary)} / {FormatColoredDamageType(secondary)}";
+            }
+
+            return FormatColoredDamageType(primary);
+        }
+
+        public static string FormatDamageTypeMechanism(FourColorDamageType damageType)
+        {
+            switch (damageType)
+            {
+                case FourColorDamageType.Red: return "LC_Stat_DamageMechanic_Red".Translate();
+                case FourColorDamageType.White: return "LC_Stat_DamageMechanic_White".Translate();
+                case FourColorDamageType.Black: return "LC_Stat_DamageMechanic_Black".Translate();
+                case FourColorDamageType.Pale: return "LC_Stat_DamageMechanic_Pale".Translate();
+                default: return "LC_Stat_DamageMechanic_None".Translate();
+            }
+        }
+
+        public static string FormatColoredRiskLevel(LCRiskLevel level)
+        {
+            return $"<color={GetRiskLevelHex(level)}>{level}</color>";
+        }
+
+        public static string FormatResistanceTier(FourColorResistanceTier tier)
+        {
+            switch (tier)
+            {
+                case FourColorResistanceTier.Immune: return "LC_ResistTier_Immune".Translate();
+                case FourColorResistanceTier.Resist: return "LC_ResistTier_Resist".Translate();
+                case FourColorResistanceTier.Endure: return "LC_ResistTier_Endure".Translate();
+                case FourColorResistanceTier.Weak: return "LC_ResistTier_Weak".Translate();
+                case FourColorResistanceTier.Fatal: return "LC_ResistTier_Fatal".Translate();
+                default: return "LC_ResistTier_Normal".Translate();
+            }
+        }
+
+        public static string FormatResistanceValue(float value, FourColorDamageType channel)
+        {
+            FourColorResistanceTier tier = DamageUtils.ClassifyResistanceTier(value);
+            string coloredNum = $"<color={GetDamageTypeHex(channel)}>x{value:0.##}</color>";
+            return "LC_Stat_ResistDisplay".Translate(coloredNum, FormatResistanceTier(tier));
+        }
+
+        public static string FormatDamageNumber(float value, bool isPercent = false)
+        {
+            string formatted = value >= 10f ? value.ToString("0.#") : value.ToString("0.##");
+            return isPercent ? $"{formatted}%" : formatted;
+        }
+
+        public static string FormatDamageRange(float min, float max, bool isPercent = false)
+        {
+            string minStr = FormatDamageNumber(min, isPercent: false);
+            string maxStr = FormatDamageNumber(max, isPercent: false);
+            if (Mathf.Approximately(min, max) || minStr == maxStr)
+            {
+                return isPercent ? $"{maxStr}%" : maxStr;
+            }
+
+            return isPercent ? $"{minStr}~{maxStr}%" : $"{minStr}~{maxStr}";
+        }
+
+        public static string FormatColoredDamageValue(string text, FourColorDamageType damageType)
+        {
+            if (damageType == FourColorDamageType.None)
+            {
+                return text;
+            }
+
+            return $"<color={GetDamageTypeHex(damageType)}>{text}</color>";
+        }
+
+        public static bool TryResolveEntityCategoryRiskLevel(ThingDef def, out LCRiskLevel level)
+        {
+            return DamageUtils.TryGetEntityRiskLevel(def, out level);
+        }
+
+        public static bool HasWornFourColorArmor(Pawn pawn)
+        {
+            if (pawn?.apparel == null)
+            {
+                return false;
+            }
+
+            List<Apparel> worn = pawn.apparel.WornApparel;
+            for (int i = 0; i < worn.Count; i++)
+            {
+                Apparel apparel = worn[i];
+                if (apparel != null && FourColorOverrides.TryGetApparelProfile(apparel.def, out _))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static LCRiskLevel GetPawnHighestArmorRiskLevel(Pawn pawn)
+        {
+            LCRiskLevel highest = LCRiskLevel.ZAYIN;
+            if (pawn?.apparel == null)
+            {
+                return highest;
+            }
+
+            List<Apparel> worn = pawn.apparel.WornApparel;
+            for (int i = 0; i < worn.Count; i++)
+            {
+                Apparel apparel = worn[i];
+                if (apparel != null && FourColorOverrides.TryGetApparelProfile(apparel.def, out FourColorOverrides.ResolvedApparelProfile ap))
+                {
+                    if (ap.riskLevel > highest)
+                    {
+                        highest = ap.riskLevel;
+                    }
+                }
+            }
+
+            return highest;
+        }
+
+        public static LCRiskLevel GetPawnDisplayRiskLevel(
+            Pawn pawn,
+            out LCRiskLevel armorLevel,
+            out bool hasEntityCategory,
+            out LCRiskLevel entityLevel)
+        {
+            armorLevel = GetPawnHighestArmorRiskLevel(pawn);
+            entityLevel = LCRiskLevel.ZAYIN;
+            hasEntityCategory = pawn != null && TryResolveEntityCategoryRiskLevel(pawn.def, out entityLevel);
+            if (!hasEntityCategory)
+            {
+                return armorLevel;
+            }
+
+            return entityLevel > armorLevel ? entityLevel : armorLevel;
+        }
+
+        public static float ComputeEffectivePawnResistance(
             Pawn pawn,
             FourColorDamageType damageType,
-            float raceResist,
-            ref LCRiskLevel highestApparelLevel,
-            out string sourceApparelLabel)
+            out float baseRaceResist,
+            out bool isDynamic,
+            out float apparelResist,
+            out string sourceApparelLabel,
+            out LCRiskLevel highestApparelLevel)
         {
-            float bestApparelResist = 1f;
-            float bestScore = float.MaxValue;
+            FourColorOverrides.ResolvedRaceProfile raceProfile = FourColorOverrides.GetRaceProfile(pawn.def);
+            ILCFourColorDynamicResistance dynResist = pawn as ILCFourColorDynamicResistance;
+            if (dynResist != null && dynResist.TryGetDynamicFourColorResistance(damageType, out float dynVal))
+            {
+                baseRaceResist = Mathf.Max(0f, dynVal);
+                isDynamic = true;
+            }
+            else
+            {
+                baseRaceResist = Mathf.Max(0f, raceProfile.ResistanceFor(damageType));
+                isDynamic = false;
+            }
+
+            apparelResist = 1f;
+            highestApparelLevel = LCRiskLevel.ZAYIN;
             sourceApparelLabel = "None".Translate();
 
+            float bestScore = float.MaxValue;
             if (pawn.apparel != null)
             {
                 List<Apparel> worn = pawn.apparel.WornApparel;
@@ -227,18 +269,203 @@ namespace LCAnomalyCore.Patch
                         highestApparelLevel = ap.riskLevel;
                     }
 
-                    float eff = FourColorOverrides.ApplyApparelQuality(ap.ResistanceFor(damageType), apparel, ap.isAuthoredEgo);
+                    float eff = Mathf.Max(0f, FourColorOverrides.ApplyApparelQuality(ap.ResistanceFor(damageType), apparel, ap.isAuthoredEgo));
                     float score = eff * DamageUtils.GetDamageLevelFactor((int)LCRiskLevel.ZAYIN, (int)ap.riskLevel);
                     if (score < bestScore)
                     {
                         bestScore = score;
-                        bestApparelResist = eff;
+                        apparelResist = eff;
                         sourceApparelLabel = apparel.LabelCap;
                     }
                 }
             }
 
-            return Mathf.Max(0f, bestApparelResist * raceResist);
+            return Mathf.Max(0f, apparelResist * baseRaceResist);
+        }
+    }
+
+    [HarmonyPatch(typeof(ThingDef), nameof(ThingDef.SpecialDisplayStats))]
+    internal static class Patch_ThingDef_SpecialDisplayStats_FourColor
+    {
+        private static IEnumerable<StatDrawEntry> Postfix(IEnumerable<StatDrawEntry> __result, ThingDef __instance, StatRequest req)
+        {
+            foreach (StatDrawEntry entry in __result)
+            {
+                yield return entry;
+            }
+
+            if (__instance == null || !__instance.IsWeapon || req.Thing == null)
+            {
+                yield break;
+            }
+
+            float blessingMult = GameComponent_LC.Instance?.GetWeaponBlessingMultiplier(req.Thing) ?? 1f;
+            if (blessingMult > 1.0001f)
+            {
+                string bonusPct = $"+{(blessingMult - 1f) * 100f:0.#}%";
+                yield return new StatDrawEntry(
+                    StatCategoryDefOf.Weapon,
+                    "LC_Stat_WeaponBlessing".Translate(),
+                    bonusPct,
+                    "LC_Stat_WeaponBlessingDesc".Translate(bonusPct),
+                    2155);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(StatDrawEntry), nameof(StatDrawEntry.Draw))]
+    internal static class Patch_StatDrawEntry_Draw_FourColorIcons
+    {
+        private const float IconSize = 16f;
+        private const float IconGap = 2f;
+        private const float IconPaddingRight = 4f;
+
+        private static bool Prefix(
+            StatDrawEntry __instance,
+            ref float __result,
+            float x,
+            float y,
+            float width,
+            bool selected,
+            bool highlightLabel,
+            bool lowlightLabel,
+            Action clickedCallback,
+            Action mousedOverCallback,
+            Vector2 scrollPosition,
+            Rect scrollOutRect,
+            string valueCached)
+        {
+            if (__instance?.stat == null || !TryResolveIcons(__instance.stat, __instance.optionalReq, out Texture2D primaryIcon, out Texture2D secondaryIcon))
+            {
+                return true;
+            }
+
+            int iconCount = secondaryIcon != null ? 2 : 1;
+            float iconBlockWidth = iconCount * IconSize + (iconCount - 1) * IconGap + IconPaddingRight;
+            float valueColWidth = width * 0.45f;
+            float textWidth = Mathf.Max(20f, valueColWidth - iconBlockWidth);
+            string text = valueCached ?? __instance.ValueString;
+            float rowHeight = Mathf.Max(20f, Text.CalcHeight(text, textWidth));
+            Rect rect = new Rect(8f, y, width, rowHeight);
+
+            if (!(y - scrollPosition.y + rect.height < 0f) && !(y - scrollPosition.y > scrollOutRect.height))
+            {
+                Color prevColor = GUI.color;
+                try
+                {
+                    GUI.color = Color.white;
+                    if (selected)
+                    {
+                        Widgets.DrawHighlightSelected(rect);
+                    }
+                    else if (Mouse.IsOver(rect))
+                    {
+                        Widgets.DrawHighlight(rect);
+                    }
+
+                    if (highlightLabel)
+                    {
+                        Widgets.DrawTextHighlight(rect);
+                    }
+
+                    GUI.color = lowlightLabel ? Color.grey : Color.white;
+                    Rect labelRect = rect;
+                    labelRect.width -= valueColWidth;
+                    Widgets.Label(labelRect, __instance.LabelCap);
+
+                    Rect valueRect = rect;
+                    valueRect.x = labelRect.xMax;
+                    valueRect.width = valueColWidth;
+
+                    float iconY = valueRect.y + 2f;
+                    GUI.color = lowlightLabel ? new Color(1f, 1f, 1f, 0.55f) : Color.white;
+                    GUI.DrawTexture(new Rect(valueRect.x, iconY, IconSize, IconSize), primaryIcon);
+                    if (secondaryIcon != null)
+                    {
+                        GUI.DrawTexture(new Rect(valueRect.x + IconSize + IconGap, iconY, IconSize, IconSize), secondaryIcon);
+                    }
+
+                    GUI.color = lowlightLabel ? Color.grey : Color.white;
+                    Rect textRect = new Rect(valueRect.x + iconBlockWidth, valueRect.y, textWidth, valueRect.height);
+                    Widgets.Label(textRect, text);
+
+                    GUI.color = Color.white;
+                    if (Mouse.IsOver(rect))
+                    {
+                        StatDef localStat = __instance.stat;
+                        TooltipHandler.TipRegion(rect, new TipSignal(() => localStat.LabelCap + ": " + localStat.description, localStat.GetHashCode()));
+                    }
+
+                    if (Widgets.ButtonInvisible(rect))
+                    {
+                        clickedCallback?.Invoke();
+                    }
+
+                    if (Mouse.IsOver(rect))
+                    {
+                        mousedOverCallback?.Invoke();
+                    }
+                }
+                finally
+                {
+                    GUI.color = prevColor;
+                }
+            }
+
+            __result = rect.height;
+            return false;
+        }
+
+        private static bool TryResolveIcons(StatDef stat, StatRequest req, out Texture2D primaryIcon, out Texture2D secondaryIcon)
+        {
+            primaryIcon = null;
+            secondaryIcon = null;
+
+            FourColorDamageType primary = FourColorDamageType.None;
+            FourColorDamageType secondary = FourColorDamageType.None;
+
+            if (stat == Defs.StatDefOf.LC_FourColor_ResistRed)
+            {
+                primary = FourColorDamageType.Red;
+            }
+            else if (stat == Defs.StatDefOf.LC_FourColor_ResistWhite)
+            {
+                primary = FourColorDamageType.White;
+            }
+            else if (stat == Defs.StatDefOf.LC_FourColor_ResistBlack)
+            {
+                primary = FourColorDamageType.Black;
+            }
+            else if (stat == Defs.StatDefOf.LC_FourColor_ResistPale)
+            {
+                primary = FourColorDamageType.Pale;
+            }
+            else if (stat == Defs.StatDefOf.LC_FourColor_DamageType || stat == Defs.StatDefOf.LC_FourColor_WeaponDamage)
+            {
+                if (!req.Empty && req.Def is ThingDef td && FourColorOverrides.TryGetWeaponProfile(td, out FourColorOverrides.ResolvedWeaponProfile wp))
+                {
+                    primary = wp.damageType;
+                    secondary = wp.secondaryDamageType;
+                }
+            }
+            else if (stat == Defs.StatDefOf.LC_FourColor_SkillDamage)
+            {
+                FourColorSkillDamageUtility.ResolveSkillIcons(req, out primary, out secondary);
+            }
+
+            primaryIcon = FourColorPopupTextures.GetIcon(primary);
+            if (secondary != FourColorDamageType.None && secondary != primary)
+            {
+                secondaryIcon = FourColorPopupTextures.GetIcon(secondary);
+            }
+
+            if (primaryIcon == null && secondaryIcon != null)
+            {
+                primaryIcon = secondaryIcon;
+                secondaryIcon = null;
+            }
+
+            return primaryIcon != null;
         }
     }
 }

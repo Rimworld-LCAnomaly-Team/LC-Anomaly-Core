@@ -33,6 +33,8 @@
   <LC_Settings_ShowFourColorHitIconsDesc>Display floating resistance grade/effectiveness icons above struck targets when four-color damage hits.</LC_Settings_ShowFourColorHitIconsDesc>
   <LC_Settings_ShowFourColorDamageNumbers>Show floating four-color damage numbers</LC_Settings_ShowFourColorDamageNumbers>
   <LC_Settings_ShowFourColorDamageNumbersDesc>Display color-coded numeric four-color damage values (RED / WHITE / BLACK / PALE) when hits connect.</LC_Settings_ShowFourColorDamageNumbersDesc>
+  <LC_Settings_GuaranteedFourColorHit>LobCorp guaranteed-hit mode (E.G.O &amp; Entities)</LC_Settings_GuaranteedFourColorHit>
+  <LC_Settings_GuaranteedFourColorHitDesc>Make all E.G.O / four-color weapons and Abnormality / Ordeal attacks always hit, ignoring cover, weather, miss, and melee dodge (active skills and Magic Bullet always hit regardless of this setting).</LC_Settings_GuaranteedFourColorHitDesc>
   <LC_Settings_GlobalDamageScale>Global four-color damage scale: x{0}</LC_Settings_GlobalDamageScale>
   <LC_Settings_GlobalDamageScaleDesc>Global multiplier applied to four-color damage calculations.</LC_Settings_GlobalDamageScaleDesc>
 

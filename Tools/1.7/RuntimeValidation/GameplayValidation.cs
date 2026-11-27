@@ -348,22 +348,27 @@ public static class GameplayValidation
             throw new InvalidOperationException("RevertApparel did not restore Apparel_PowerArmor default profile.");
         }
 
-        // P1: SpecialDisplayStats InfoCard entries (apparel, weapon, pawn)
-        string expectedArmorLabel = "LC_Stat_FourColorArmor".Translate().CapitalizeFirst();
-        if (!powerArmor.SpecialDisplayStats(StatRequest.For(powerArmor, null)).Any(e => e.LabelCap == expectedArmorLabel))
-            throw new InvalidOperationException("Apparel_PowerArmor SpecialDisplayStats missing four-color armor StatDrawEntry.");
+        // P1: Dedicated InfoCard four-color StatDef entries (apparel, weapon, pawn)
+        StatRequest powerArmorReq = StatRequest.For(powerArmor, null);
+        if (!LCAnomalyCore.Defs.StatDefOf.LC_FourColor_RiskLevel.Worker.ShouldShowFor(powerArmorReq)
+            || !LCAnomalyCore.Defs.StatDefOf.LC_FourColor_ResistRed.Worker.ShouldShowFor(powerArmorReq))
+            throw new InvalidOperationException("Apparel_PowerArmor missing dedicated four-color StatDef entries.");
 
         ThingDef egoOneSinWeapon = DefDatabase<ThingDef>.GetNamed("EgoWeapon_OneSin", true);
-        string expectedWeaponLabel = "LC_Stat_FourColorWeapon".Translate().CapitalizeFirst();
-        if (!egoOneSinWeapon.SpecialDisplayStats(StatRequest.For(egoOneSinWeapon, null)).Any(e => e.LabelCap == expectedWeaponLabel))
-            throw new InvalidOperationException("EgoWeapon_OneSin SpecialDisplayStats missing four-color weapon StatDrawEntry.");
+        StatRequest oneSinReq = StatRequest.For(egoOneSinWeapon, null);
+        if (!LCAnomalyCore.Defs.StatDefOf.LC_FourColor_RiskLevel.Worker.ShouldShowFor(oneSinReq)
+            || !LCAnomalyCore.Defs.StatDefOf.LC_FourColor_DamageType.Worker.ShouldShowFor(oneSinReq)
+            || !LCAnomalyCore.Defs.StatDefOf.LC_FourColor_DamageMultiplier.Worker.ShouldShowFor(oneSinReq))
+            throw new InvalidOperationException("EgoWeapon_OneSin missing dedicated four-color StatDef entries.");
 
         Pawn victim = (!target.Destroyed && !target.Dead)
             ? target
             : (map.mapPawns.FreeColonistsSpawned.FirstOrDefault() ?? monster);
-        string expectedPawnLabel = "LC_Stat_FourColorPawn".Translate().CapitalizeFirst();
-        if (!victim.SpecialDisplayStats().Any(e => e.LabelCap == expectedPawnLabel))
-            throw new InvalidOperationException($"Pawn {victim.def.defName} SpecialDisplayStats missing four-color pawn StatDrawEntry.");
+        StatRequest victimReq = StatRequest.For(victim);
+        if (!LCAnomalyCore.Defs.StatDefOf.LC_FourColor_RiskLevel.Worker.ShouldShowFor(victimReq)
+            || !LCAnomalyCore.Defs.StatDefOf.LC_FourColor_ResistRed.Worker.ShouldShowFor(victimReq)
+            || !LCAnomalyCore.Defs.StatDefOf.LC_FourColor_ResistPale.Worker.ShouldShowFor(victimReq))
+            throw new InvalidOperationException($"Pawn {victim.def.defName} missing dedicated four-color StatDef entries.");
 
         // P1: Four-color TakeDamage with both hit icons and damage numbers enabled
         DamageDef redDamage = DefDatabase<DamageDef>.GetNamed("LC_RedDamage", true);

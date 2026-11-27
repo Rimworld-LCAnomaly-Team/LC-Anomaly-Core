@@ -134,6 +134,10 @@ namespace LCAnomalyCore.Settings
                     "LC_Settings_ShowFourColorDamageNumbers".Translate(),
                     ref Settings.If_ShowFourColorDamageNumbers,
                     "LC_Settings_ShowFourColorDamageNumbersDesc".Translate());
+                listing.CheckboxLabeled(
+                    "LC_Settings_GuaranteedFourColorHit".Translate(),
+                    ref Settings.If_GuaranteedFourColorHit,
+                    "LC_Settings_GuaranteedFourColorHitDesc".Translate());
 
                 string scaleLabel = "LC_Settings_GlobalDamageScale".Translate(Settings.FourColorGlobalDamageScale.ToString("0.00"));
                 Settings.FourColorGlobalDamageScale = Mathf.Clamp(

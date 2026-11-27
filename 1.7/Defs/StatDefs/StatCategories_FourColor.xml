@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <StatCategoryDef>
+    <defName>LC_FourColorStats</defName>
+    <label>E.G.O / Four-Color</label>
+    <displayOrder>25</displayOrder>
+  </StatCategoryDef>
+
+</Defs>

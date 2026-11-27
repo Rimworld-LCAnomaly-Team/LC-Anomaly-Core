@@ -20,6 +20,7 @@ namespace LCAnomalyCore.Settings
 
         public bool If_ShowFourColorHitIcons = true;
         public bool If_ShowFourColorDamageNumbers = true;
+        public bool If_GuaranteedFourColorHit = false;
         public bool If_EnableFourColorDefaults = true;
         public bool If_AutoInferUnlistedApparel = true;
         public bool If_EnableQualityScaling = true;
@@ -206,6 +207,7 @@ namespace LCAnomalyCore.Settings
             Scribe_Values.Look(ref settingsVersion, "settingsVersion", 0);
             Scribe_Values.Look(ref If_ShowFourColorHitIcons, "If_ShowFourColorHitIcons", true);
             Scribe_Values.Look(ref If_ShowFourColorDamageNumbers, "If_ShowFourColorDamageNumbers", true);
+            Scribe_Values.Look(ref If_GuaranteedFourColorHit, "If_GuaranteedFourColorHit", false);
             Scribe_Values.Look(ref If_EnableFourColorDefaults, "If_EnableFourColorDefaults", true);
             Scribe_Values.Look(ref If_AutoInferUnlistedApparel, "If_AutoInferUnlistedApparel", true);
             Scribe_Values.Look(ref If_EnableQualityScaling, "If_EnableQualityScaling", true);
@@ -319,6 +321,7 @@ namespace LCAnomalyCore.Settings
         {
             If_ShowFourColorHitIcons = true;
             If_ShowFourColorDamageNumbers = true;
+            If_GuaranteedFourColorHit = false;
             If_EnableFourColorDefaults = true;
             If_AutoInferUnlistedApparel = true;
             If_EnableQualityScaling = true;

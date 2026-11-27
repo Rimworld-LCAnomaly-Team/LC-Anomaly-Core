@@ -33,6 +33,8 @@
   <LC_Settings_ShowFourColorHitIconsDesc>四色伤害命中时，在受击目标上方显示对应抗性等级或特效图标。</LC_Settings_ShowFourColorHitIconsDesc>
   <LC_Settings_ShowFourColorDamageNumbers>显示四色飘字伤害数值</LC_Settings_ShowFourColorDamageNumbers>
   <LC_Settings_ShowFourColorDamageNumbersDesc>四色伤害命中时，在受击位置显示带红/白/黑/蓝颜色标识的伤害数值。</LC_Settings_ShowFourColorDamageNumbersDesc>
+  <LC_Settings_GuaranteedFourColorHit>脑叶必中模式（E.G.O 与异想体）</LC_Settings_GuaranteedFourColorHit>
+  <LC_Settings_GuaranteedFourColorHitDesc>启用后，所有 E.G.O / 四色武器以及异想体与考验实体的普攻均无视掩体、天气、脱靶与近战闪避必定命中（主动技能与魔弹默认始终必中）。</LC_Settings_GuaranteedFourColorHitDesc>
   <LC_Settings_GlobalDamageScale>四色伤害全局倍率：x{0}</LC_Settings_GlobalDamageScale>
   <LC_Settings_GlobalDamageScaleDesc>作用于所有四色伤害计算的全局缩放倍率。</LC_Settings_GlobalDamageScaleDesc>
 
