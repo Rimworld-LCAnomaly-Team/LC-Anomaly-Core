@@ -30,6 +30,14 @@ namespace LCAnomalyCore.Buildings
         private static readonly Color TerminalBadgeColor = new Color(0.95f, 0.92f, 0.55f);
 
         private static readonly Texture2D TexRoomHeaderFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RoomHeaderFrame", false);
+        private static readonly Texture2D TexRoomHeaderCompactFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RoomHeaderCompactFrame", false);
+        private static readonly Texture2D TexMeltdownBannerFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/MeltdownBannerFrame", false);
+        private static readonly Texture2D TexRiskZayin = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_ZAYIN", false);
+        private static readonly Texture2D TexRiskTeth = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_TETH", false);
+        private static readonly Texture2D TexRiskHe = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_HE", false);
+        private static readonly Texture2D TexRiskWaw = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_WAW", false);
+        private static readonly Texture2D TexRiskAleph = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_ALEPH", false);
+        private static readonly Texture2D TexRiskUnknown = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/RiskBadge_Unknown", false);
         private static readonly Texture2D TexQliphothFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/QliphothFrame", false);
         private static readonly Texture2D TexQliphothAlertFrame = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/QliphothAlertFrame", false);
         private static readonly Texture2D TexPeBoxIcon = ContentFinder<Texture2D>.Get("UI/ContainmentRoom/PeBoxIcon", false);
@@ -849,12 +857,101 @@ namespace LCAnomalyCore.Buildings
         {
             switch (riskTag)
             {
-                case "ZAYIN": return new Color(0.25f, 0.85f, 0.25f);
-                case "TETH": return new Color(0.28f, 0.65f, 1.0f);
-                case "HE": return new Color(0.95f, 0.82f, 0.20f);
-                case "WAW": return new Color(0.72f, 0.35f, 0.96f);
-                case "ALEPH": return new Color(0.95f, 0.22f, 0.25f);
+                case "ZAYIN": return new Color(0.118f, 0.941f, 0.118f);
+                case "TETH": return new Color(0.110f, 0.643f, 0.973f);
+                case "HE": return new Color(0.969f, 0.906f, 0.047f);
+                case "WAW": return new Color(0.518f, 0.165f, 0.941f);
+                case "ALEPH": return new Color(0.957f, 0.094f, 0.094f);
                 default: return TerminalBadgeColor;
+            }
+        }
+
+        private static Texture2D GetRiskBadgeTexture(string riskTag)
+        {
+            switch (riskTag)
+            {
+                case "ZAYIN": return TexRiskZayin;
+                case "TETH": return TexRiskTeth;
+                case "HE": return TexRiskHe;
+                case "WAW": return TexRiskWaw;
+                case "ALEPH": return TexRiskAleph;
+                default: return TexRiskUnknown;
+            }
+        }
+
+        private static void DrawRiskBadge(Rect rect, string riskTag, Color riskColor)
+        {
+            GUI.color = Color.white;
+            Texture2D texture = GetRiskBadgeTexture(riskTag);
+            if (texture != null)
+            {
+                GUI.DrawTexture(rect, texture);
+                return;
+            }
+
+            Widgets.DrawBoxSolid(rect, riskColor);
+            GUI.color = new Color(0.03f, 0.03f, 0.04f);
+            Widgets.DrawBox(rect, 1);
+            Text.Font = GameFont.Tiny;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            Widgets.LabelFit(rect, riskTag.NullOrEmpty() ? "???" : riskTag);
+        }
+
+        private static void DrawCompactHeaderFrame(Rect rect)
+        {
+            GUI.color = Color.white;
+            if (TexRoomHeaderCompactFrame != null)
+            {
+                GUI.DrawTexture(rect, TexRoomHeaderCompactFrame);
+            }
+            else
+            {
+                Widgets.DrawBoxSolid(rect, new Color(0.027f, 0.027f, 0.035f));
+                GUI.color = new Color(0.937f, 0.898f, 0.541f);
+                Widgets.DrawBox(rect, 1);
+            }
+        }
+
+        // 1px stepped chamfers keep the stamp sharp at gameplay scale.
+        private static void DrawAngularHudTag(Rect rect, Color accent)
+        {
+            GUI.color = Color.white;
+            Widgets.DrawBoxSolid(new Rect(rect.x + 1f, rect.y, rect.width - 2f, rect.height), new Color(0.031f, 0.031f, 0.039f));
+            Widgets.DrawBoxSolid(new Rect(rect.x, rect.y + 1f, rect.width, rect.height - 2f), new Color(0.031f, 0.031f, 0.039f));
+            Widgets.DrawBoxSolid(new Rect(rect.x + 1f, rect.y, rect.width - 2f, 1f), accent);
+            Widgets.DrawBoxSolid(new Rect(rect.x + 1f, rect.yMax - 1f, rect.width - 2f, 1f), accent);
+            Widgets.DrawBoxSolid(new Rect(rect.x, rect.y + 1f, 1f, rect.height - 2f), accent);
+            Widgets.DrawBoxSolid(new Rect(rect.xMax - 1f, rect.y + 1f, 1f, rect.height - 2f), accent);
+        }
+
+        private static void DrawGaugeThreshold(Rect barRect, float y, Color color)
+        {
+            GUI.color = Color.white;
+            float lineY = Mathf.Round(y);
+            float thickness = barRect.width >= 32f ? 2f : 1f;
+            float ear = barRect.width >= 32f ? 4f : 3f;
+            Widgets.DrawBoxSolid(new Rect(barRect.x - ear, lineY, barRect.width + ear * 2f, thickness), color);
+            Widgets.DrawBoxSolid(new Rect(barRect.x - ear, lineY - ear * 0.5f, thickness, thickness + ear), color);
+            Widgets.DrawBoxSolid(new Rect(barRect.xMax + ear - thickness, lineY - ear * 0.5f, thickness, thickness + ear), color);
+        }
+
+        private static void DrawCenteredScaledLabel(Rect rect, string text, float scaleFactor)
+        {
+            if (scaleFactor <= 1.02f)
+            {
+                Widgets.Label(rect, text);
+                return;
+            }
+
+            Matrix4x4 oldMatrix = GUI.matrix;
+            try
+            {
+                GUIUtility.ScaleAroundPivot(new Vector2(scaleFactor, scaleFactor), rect.center);
+                Widgets.Label(rect, text);
+            }
+            finally
+            {
+                GUI.matrix = oldMatrix;
             }
         }
 
@@ -984,8 +1081,8 @@ namespace LCAnomalyCore.Buildings
             bool qliphothEnabled = cachedEntity != null && cachedEntity.QliphothEnabled;
             bool qliphothCritical = isMelting || (qliphothEnabled && QliphothCounter <= 1);
             Color qliphothNumColor = qliphothCritical
-                ? new Color(1.0f, 0.48f, 0.44f)
-                : (qliphothEnabled ? new Color(1.0f, 0.86f, 0.42f) : Color.gray);
+                ? new Color(1.0f, 0.941f, 0.933f)
+                : new Color(0.980f, 0.949f, 0.588f);
             string qDisplay = qliphothEnabled ? QliphothCounter.ToString() : "-";
 
             GameFont oldFont = Text.Font;
@@ -1008,7 +1105,7 @@ namespace LCAnomalyCore.Buildings
                             Text.Font = GameFont.Tiny;
                             Text.Anchor = TextAnchor.MiddleCenter;
                             GUI.color = qliphothNumColor;
-                            Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 0.5f, qPodRect.width, qPodRect.height), qDisplay);
+                            Widgets.Label(new Rect(qPodRect.x, qPodRect.y + qPodSize * 0.0625f, qPodRect.width, qPodRect.height), qDisplay);
 
                             if (isMelting)
                             {
@@ -1017,159 +1114,119 @@ namespace LCAnomalyCore.Buildings
                             }
                         }
                     }
-                    else if (cellPx < 30f || roomScreenW < 150f)
+                    else if (cellPx < 30f || roomScreenW < 150f || !showDetailRow)
                     {
-                        // Tier 2 (Medium-far zoom): compact single-line industrial pill sized proportionally to the room
-                        float tagH = 21f;
-                        float qPodSize = 21f;
-                        float mainW = Mathf.Round(Mathf.Clamp(roomScreenW * 1.08f, 78f, 132f));
-                        float totalW = mainW + qPodSize + 3f;
-
-                        Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
-                        Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
+                        // Tier 2 and detail-off share one inked strip and docked counter.
+                        bool detailOff = cellPx >= 30f && roomScreenW >= 150f;
+                        float detailScale = detailOff ? Mathf.Clamp(cellPx / 46f, 0.75f, 1.75f) : 1f;
+                        float tagH = detailOff ? Mathf.Round(Mathf.Clamp(26f * detailScale, 22f, 44f)) : 21f;
+                        float qPodSize = tagH;
+                        float mainW = Mathf.Round(detailOff
+                            ? Mathf.Clamp(roomScreenW * 0.80f, 124f, 360f)
+                            : Mathf.Clamp(roomScreenW * 1.08f, 78f, 132f));
+                        float overlap = Mathf.Round(mainW * 0.03f);
+                        float totalW = mainW + qPodSize - overlap;
+                        Rect stripRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
+                        Rect qPodRect = new Rect(stripRect.xMax - overlap, stripRect.y, qPodSize, qPodSize);
 
                         if (isMelting)
                         {
-                            DrawMeltdownRoomBanner(new Rect(pillRect.x, pillRect.y - 17f, totalW, 15f), isCompact: true);
+                            float compactMeltH = detailOff ? Mathf.Round(Mathf.Clamp(18f * detailScale, 16f, 28f)) : 16f;
+                            DrawMeltdownRoomBanner(new Rect(stripRect.x, stripRect.y - compactMeltH - 2f, totalW, compactMeltH), isCompact: true);
                         }
 
-                        Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.88f));
-                        GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
-                        Widgets.DrawBox(pillRect, 1);
-                        Widgets.DrawBoxSolid(new Rect(pillRect.x + 1f, pillRect.y + 2f, 3f, tagH - 4f), riskColor);
+                        DrawCompactHeaderFrame(stripRect);
+                        GUI.color = Color.white;
+                        Widgets.DrawBoxSolid(new Rect(stripRect.x + 4f, stripRect.y + 5f, 2f, tagH - 10f), riskColor);
+                        float nameX = stripRect.x + 9f;
+                        if (detailOff && mainW >= 140f)
+                        {
+                            float rH = Mathf.Round(tagH * 0.68f);
+                            Rect riskRect = new Rect(nameX, stripRect.center.y - rH * 0.5f, Mathf.Round(rH * 2.5f), rH);
+                            DrawRiskBadge(riskRect, riskTag, riskColor);
+                            nameX = riskRect.xMax + Mathf.Round(3f * Mathf.Min(detailScale, 1.4f));
+                        }
 
                         bool showCompactPe = !IsHoldingTool && mainW >= 106f;
-                        float peWidth = showCompactPe ? 36f : 0f;
-
-                        Text.Font = GameFont.Tiny;
+                        float rightEdge = stripRect.x + mainW * 0.92f;
+                        float peScale = detailOff ? Mathf.Min(detailScale, 1.4f) : 1f;
+                        float peWidth = showCompactPe ? Mathf.Clamp((24f + PeBoxCounter.ToString().Length * 5f) * peScale, 34f, 84f) : 0f;
+                        Text.Font = (detailOff && tagH >= 32f) ? GameFont.Small : GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleLeft;
-                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
-                        Widgets.LabelFit(new Rect(pillRect.x + 6f, pillRect.y + 1f, pillRect.width - 10f - peWidth, tagH - 2f), HeldPawn.LabelShortCap);
-
+                        GUI.color = new Color(0.965f, 0.949f, 0.871f);
+                        Widgets.LabelFit(new Rect(nameX, stripRect.y + 2f, Mathf.Max(12f, rightEdge - peWidth - nameX - 3f), tagH - 4f), HeldPawn.LabelShortCap);
                         if (showCompactPe)
                         {
                             Text.Anchor = TextAnchor.MiddleRight;
-                            GUI.color = new Color(0.45f, 0.98f, 0.70f);
-                            Widgets.LabelFit(new Rect(pillRect.xMax - 39f, pillRect.y + 1f, 35f, tagH - 2f), $"PE:{PeBoxCounter}");
+                            GUI.color = new Color(0.169f, 0.941f, 0.627f);
+                            Widgets.LabelFit(new Rect(rightEdge - peWidth, stripRect.y + 2f, peWidth, tagH - 4f), $"PE:{PeBoxCounter}");
                         }
 
                         GUI.color = Color.white;
                         Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
                         GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
-                        Text.Font = GameFont.Tiny;
+                        Text.Font = (detailOff && qPodSize >= 32f) ? GameFont.Small : GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleCenter;
                         GUI.color = qliphothNumColor;
-                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 0.5f, qPodRect.width, qPodRect.height), qDisplay);
-                    }
-                    else if (!showDetailRow)
-                    {
-                        // Tier 1 minimal detail-off mode: single compact industrial header pill + Qliphoth pod
-                        float tagH = 24f;
-                        float qPodSize = 24f;
-                        float mainW = Mathf.Round(Mathf.Clamp(roomScreenW * 0.92f, 118f, 186f));
-                        float totalW = mainW + qPodSize + 3f;
-
-                        Rect pillRect = new Rect(topScreen.x - totalW * 0.5f, topScreen.y - tagH - 3f, mainW, tagH);
-                        Rect qPodRect = new Rect(pillRect.xMax + 3f, pillRect.y, qPodSize, qPodSize);
-
-                        if (isMelting)
-                        {
-                            DrawMeltdownRoomBanner(new Rect(pillRect.x, pillRect.y - 18f, totalW, 16f), isCompact: false);
-                        }
-
-                        Widgets.DrawBoxSolid(pillRect, new Color(0.08f, 0.10f, 0.13f, 0.90f));
-                        GUI.color = new Color(0.28f, 0.33f, 0.38f, 0.95f);
-                        Widgets.DrawBox(pillRect, 1);
-                        Widgets.DrawBoxSolid(new Rect(pillRect.x + 1f, pillRect.y + 2f, 3f, tagH - 4f), riskColor);
-
-                        float nameX = pillRect.x + 7f;
-                        if (!riskTag.NullOrEmpty() && mainW >= 140f)
-                        {
-                            Rect riskRect = new Rect(pillRect.x + 6f, pillRect.y + 3f, 44f, 18f);
-                            Widgets.DrawBoxSolid(riskRect, new Color(riskColor.r * 0.22f, riskColor.g * 0.22f, riskColor.b * 0.22f, 0.92f));
-                            GUI.color = riskColor;
-                            Widgets.DrawBox(riskRect, 1);
-                            Text.Font = GameFont.Tiny;
-                            Text.Anchor = TextAnchor.MiddleCenter;
-                            Widgets.LabelFit(riskRect, riskTag);
-                            nameX = riskRect.xMax + 5f;
-                        }
-
-                        Text.Font = GameFont.Tiny;
-                        Text.Anchor = TextAnchor.MiddleLeft;
-                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
-                        Widgets.LabelFit(new Rect(nameX, pillRect.y + 1f, pillRect.xMax - 4f - nameX, tagH - 2f), HeldPawn.LabelShortCap);
-
-                        GUI.color = Color.white;
-                        Texture2D qTex = qliphothCritical ? (TexQliphothAlertFrame ?? TexQliphothFrame) : TexQliphothFrame;
-                        GUI.DrawTexture(qPodRect, qTex ?? BaseContent.WhiteTex);
-                        Text.Font = GameFont.Tiny;
-                        Text.Anchor = TextAnchor.MiddleCenter;
-                        GUI.color = qliphothNumColor;
-                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 1f, qPodRect.width, qPodRect.height), qDisplay);
+                        float compactQScale = (detailOff && qPodSize >= 32f) ? Mathf.Clamp(qPodSize / 34f, 1.0f, 1.35f) : 1.0f;
+                        DrawCenteredScaledLabel(new Rect(qPodRect.x, qPodRect.y + qPodSize * 0.0625f, qPodRect.width, qPodRect.height), qDisplay, compactQScale);
                     }
                     else
                     {
                         // Tier 1 (Close / Normal zoom): dual-deck RoomHeaderFrame continuously scaled to zoom & room width
-                        float scale = Mathf.Clamp(cellPx / 46f, 0.68f, 1.0f);
-                        float qPodSize = Mathf.Round(Mathf.Clamp(52f * scale, 34f, 52f));
-                        float maxTotalW = Mathf.Clamp(roomScreenW * 1.18f, 178f, 296f);
-                        float mainWidth = Mathf.Round(Mathf.Clamp(228f * scale, 146f, maxTotalW - qPodSize - 3f));
-                        float height = Mathf.Round(Mathf.Clamp(56f * scale, 40f, 56f));
-                        float totalWidth = mainWidth + qPodSize + 3f;
+                        float scale = Mathf.Clamp(cellPx / 46f, 0.68f, 1.85f);
+                        float qPodSize = Mathf.Round(Mathf.Clamp(56f * scale, 36f, 102f));
+                        float roomCapFactor = cellPx <= 50f ? 1.18f : Mathf.Lerp(1.18f, 0.88f, Mathf.InverseLerp(50f, 95f, cellPx));
+                        float maxTotalW = Mathf.Clamp(roomScreenW * roomCapFactor, 178f, 560f);
+                        const float overlapRatio = 0.03f;
+                        float maxMainW = Mathf.Max(146f, (maxTotalW - qPodSize) / (1f - overlapRatio));
+                        float mainWidth = Mathf.Round(Mathf.Clamp(232f * scale, 146f, maxMainW));
+                        float height = Mathf.Round(Mathf.Clamp(64f * scale, 48f, 114f));
+                        float overlap = Mathf.Round(mainWidth * overlapRatio);
+                        float totalWidth = mainWidth + qPodSize - overlap;
 
                         Rect mainRect = new Rect(topScreen.x - totalWidth * 0.5f, topScreen.y - height - 3f, mainWidth, height);
-                        Rect qPodRect = new Rect(mainRect.xMax + 3f, mainRect.center.y - qPodSize * 0.5f, qPodSize, qPodSize);
+                        Rect qPodRect = new Rect(mainRect.xMax - overlap, mainRect.center.y - qPodSize * 0.5f, qPodSize, qPodSize);
 
                         if (isMelting)
                         {
-                            DrawMeltdownRoomBanner(new Rect(mainRect.x, mainRect.y - 20f, mainWidth, 18f), isCompact: false);
+                            float meltH = Mathf.Round(Mathf.Clamp(28f * scale, 24f, 48f));
+                            DrawMeltdownRoomBanner(new Rect(mainRect.x, mainRect.y - meltH - 3f, mainWidth, meltH), isCompact: false);
                         }
 
                         GUI.color = Color.white;
                         GUI.DrawTexture(mainRect, TexRoomHeaderFrame ?? BaseContent.WhiteTex);
 
-                        bool useSmallFont = height >= 48f && mainWidth >= 190f;
-                        float padX = Mathf.Round(mainWidth * 0.043f);
-                        float padY = Mathf.Round(height * 0.09f);
-                        float innerW = mainWidth - padX * 2f;
-                        float bayGap = Mathf.Round(height * 0.07f);
-                        float bayH = (height - padY * 2f - bayGap) * 0.5f;
-
-                        // Upper Deck: Left risk accent + [RISK] pill badge + Abnormality Name
+                        bool useLargeHud = height >= 84f && mainWidth >= 300f;
+                        bool useSmallFont = height >= 50f && mainWidth >= 190f;
+                        // Native cavity x=38..461, y=23..112; cables begin at x=472.
+                        float padX = Mathf.Round(mainWidth * 0.08f);
+                        float padY = Mathf.Round(height * 0.20f);
+                        float innerW = Mathf.Round(mainWidth * 0.90f) - padX;
+                        float bayGap = Mathf.Round(height * 0.055f);
+                        float bayH = height * 0.30f;
                         Rect upperRect = new Rect(mainRect.x + padX, mainRect.y + padY, innerW, bayH);
-                        Widgets.DrawBoxSolid(new Rect(upperRect.x, upperRect.y + 2f, 3f, Mathf.Max(10f, upperRect.height - 4f)), riskColor);
+                        float riskH = Mathf.Min(bayH * 0.94f, Mathf.Round(20f * scale));
+                        Rect riskRect = new Rect(upperRect.x, upperRect.center.y - riskH * 0.5f, Mathf.Round(riskH * 2.5f), riskH);
+                        DrawRiskBadge(riskRect, riskTag, riskColor);
+                        float nameX = riskRect.xMax + Mathf.Round(4f * scale);
 
-                        float nameX = upperRect.x + 6f;
-                        if (!riskTag.NullOrEmpty())
-                        {
-                            float pillW = useSmallFont ? 48f : 42f;
-                            float pillH = Mathf.Min(19f, upperRect.height - 2f);
-                            Rect pillRect = new Rect(upperRect.x + 5f, upperRect.center.y - pillH * 0.5f, pillW, pillH);
-                            Widgets.DrawBoxSolid(pillRect, new Color(riskColor.r * 0.22f, riskColor.g * 0.22f, riskColor.b * 0.22f, 0.92f));
-                            GUI.color = riskColor;
-                            Widgets.DrawBox(pillRect, 1);
-
-                            Text.Font = GameFont.Tiny;
-                            Text.Anchor = TextAnchor.MiddleCenter;
-                            Widgets.LabelFit(pillRect, riskTag);
-                            nameX = pillRect.xMax + 5f;
-                        }
-
-                        Text.Font = useSmallFont ? GameFont.Small : GameFont.Tiny;
+                        Text.Font = useLargeHud ? GameFont.Medium : (useSmallFont ? GameFont.Small : GameFont.Tiny);
                         Text.Anchor = TextAnchor.MiddleLeft;
-                        GUI.color = Color.Lerp(Color.white, riskColor, 0.22f);
+                        GUI.color = new Color(0.965f, 0.949f, 0.871f);
                         Widgets.LabelFit(new Rect(nameX, upperRect.y, upperRect.xMax - nameX, upperRect.height), HeldPawn.LabelShortCap);
 
-                        // Lower Deck: Work icon + Work Type | PE icon + count | Status Pill
+                        // Lower Deck: work label, discrete PE counter and angular status stamp.
                         Rect lowerRect = new Rect(mainRect.x + padX, mainRect.y + padY + bayH + bayGap, innerW, bayH);
                         float curX = lowerRect.x;
 
-                        float statusW = useSmallFont ? 48f : 40f;
-                        float workIconSize = useSmallFont ? 19f : 15f;
-                        float peIconSize = useSmallFont ? 17f : 14f;
-                        float peNumW = IsHoldingTool ? 0f : (useSmallFont ? 36f : 28f);
-                        float rightReserved = statusW + 4f + (IsHoldingTool ? 0f : (peIconSize + 3f + peNumW + 4f));
+                        float statusW = Mathf.Round(Mathf.Clamp(48f * scale, 36f, 94f));
+                        float workIconSize = Mathf.Min(bayH * 0.88f, Mathf.Round(17f * scale));
+                        float peIconSize = Mathf.Min(bayH * 0.86f, Mathf.Round(16f * scale));
+                        float peNumW = IsHoldingTool ? 0f : Mathf.Round(Mathf.Clamp(32f * scale, 23f, 66f));
+                        float gap = Mathf.Round(Mathf.Clamp(4f * scale, 3f, 8f));
+                        float iconGap = Mathf.Round(gap * 0.75f);
+                        float rightReserved = statusW + gap + (IsHoldingTool ? 0f : (peIconSize + iconGap + peNumW + gap));
 
                         if (!IsHoldingTool)
                         {
@@ -1178,17 +1235,17 @@ namespace LCAnomalyCore.Buildings
                             {
                                 GUI.color = Color.white;
                                 GUI.DrawTexture(new Rect(curX, lowerRect.center.y - workIconSize * 0.5f, workIconSize, workIconSize), workIcon);
-                                curX += workIconSize + 3f;
+                                curX += workIconSize + iconGap;
                             }
                         }
 
                         string workText = GetWorkTypeLabel();
-                        Text.Font = useSmallFont ? GameFont.Small : GameFont.Tiny;
+                        Text.Font = (height >= 94f && mainWidth >= 340f) ? GameFont.Medium : (useSmallFont ? GameFont.Small : GameFont.Tiny);
                         Text.Anchor = TextAnchor.MiddleLeft;
-                        GUI.color = new Color(0.95f, 0.97f, 0.99f);
-                        float workWidth = Mathf.Max(28f, lowerRect.xMax - rightReserved - curX);
+                        GUI.color = new Color(0.980f, 0.949f, 0.588f);
+                        float workWidth = Mathf.Max(12f, lowerRect.xMax - rightReserved - curX);
                         Widgets.LabelFit(new Rect(curX, lowerRect.y, workWidth, lowerRect.height), workText);
-                        curX += workWidth + 4f;
+                        curX += workWidth + gap;
 
                         if (!IsHoldingTool)
                         {
@@ -1197,10 +1254,10 @@ namespace LCAnomalyCore.Buildings
                             {
                                 GUI.color = Color.white;
                                 GUI.DrawTexture(new Rect(curX, lowerRect.center.y - peIconSize * 0.5f, peIconSize, peIconSize), peIcon);
-                                curX += peIconSize + 3f;
+                                curX += peIconSize + iconGap;
                             }
 
-                            GUI.color = new Color(0.45f, 0.98f, 0.70f);
+                            GUI.color = new Color(0.169f, 0.941f, 0.627f);
                             Widgets.LabelFit(new Rect(curX, lowerRect.y, peNumW, lowerRect.height), PeBoxCounter.ToString());
                         }
 
@@ -1211,35 +1268,36 @@ namespace LCAnomalyCore.Buildings
                             statusTag = HeldToolComp.IsOnCooldown
                                 ? "LC_ContainmentRoom_HudCooldown".Translate().ToString()
                                 : "LC_ContainmentRoom_HudReady".Translate().ToString();
-                            statusColor = HeldToolComp.IsOnCooldown ? ColorLibrary.Orange : ColorLibrary.Green;
+                            statusColor = HeldToolComp.IsOnCooldown
+                                ? new Color(0.949f, 0.231f, 0.212f)
+                                : new Color(0.169f, 0.941f, 0.627f);
                         }
                         else if (isStudySessionActive)
                         {
                             statusTag = "LC_ContainmentRoom_HudWork".Translate().ToString();
-                            statusColor = ColorLibrary.Cyan;
+                            statusColor = new Color(0.980f, 0.949f, 0.588f);
                         }
                         else if (CompAssignable != null && CompAssignable.AssignedPawns.Any())
                         {
                             statusTag = "LC_ContainmentRoom_HudAuto".Translate().ToString();
-                            statusColor = new Color(0.45f, 0.88f, 1.0f);
+                            statusColor = new Color(0.937f, 0.898f, 0.541f);
                         }
                         else if (CompAbnormalityStudiable != null && CompAbnormalityStudiable.TicksTilNextStudy <= 0)
                         {
                             statusTag = "LC_ContainmentRoom_HudReady".Translate().ToString();
-                            statusColor = ColorLibrary.Green;
+                            statusColor = new Color(0.169f, 0.941f, 0.627f);
                         }
                         else
                         {
                             statusTag = "LC_ContainmentRoom_HudWait".Translate().ToString();
-                            statusColor = Color.gray;
+                            statusColor = new Color(0.52f, 0.54f, 0.38f);
                         }
 
-                        float stH = Mathf.Min(18f, lowerRect.height - 2f);
+                        float stH = Mathf.Min(bayH - 2f, Mathf.Round(19f * scale));
                         Rect statusPillRect = new Rect(lowerRect.xMax - statusW, lowerRect.center.y - stH * 0.5f, statusW, stH);
-                        Widgets.DrawBoxSolid(statusPillRect, new Color(statusColor.r * 0.18f, statusColor.g * 0.18f, statusColor.b * 0.18f, 0.88f));
+                        DrawAngularHudTag(statusPillRect, statusColor);
                         GUI.color = statusColor;
-                        Widgets.DrawBox(statusPillRect, 1);
-                        Text.Font = GameFont.Tiny;
+                        Text.Font = useLargeHud ? GameFont.Small : GameFont.Tiny;
                         Text.Anchor = TextAnchor.MiddleCenter;
                         Widgets.LabelFit(statusPillRect, statusTag);
 
@@ -1250,7 +1308,8 @@ namespace LCAnomalyCore.Buildings
                         Text.Font = useSmallFont ? GameFont.Medium : GameFont.Small;
                         Text.Anchor = TextAnchor.MiddleCenter;
                         GUI.color = qliphothNumColor;
-                        Widgets.Label(new Rect(qPodRect.x, qPodRect.y + 1f, qPodRect.width, qPodRect.height), qDisplay);
+                        float qNumScale = Mathf.Clamp(qPodSize / 56f, 1.0f, 1.65f);
+                        DrawCenteredScaledLabel(new Rect(qPodRect.x, qPodRect.y + qPodSize * 0.0625f, qPodRect.width, qPodRect.height), qDisplay, qNumScale);
                     }
                 }
 
@@ -1271,15 +1330,15 @@ namespace LCAnomalyCore.Buildings
                         int peCount = Mathf.Clamp(activeSessionPeCount, 0, maxBoxes);
                         int neCount = Mathf.Clamp(activeSessionNeCount, 0, maxBoxes - peCount);
 
-                        float barWidth = Mathf.Round(Mathf.Clamp(cellPx * 0.56f, 16f, 26f));
-                        float barHeight = Mathf.Round(Mathf.Clamp(roomScreenH * 0.82f, 64f, 176f));
+                        float barWidth = Mathf.Round(Mathf.Clamp(cellPx * 0.54f, 16f, 46f));
+                        float barHeight = Mathf.Round(Mathf.Clamp(roomScreenH * 0.78f, 64f, 360f));
                         Rect barRect = new Rect(leftScreen.x - barWidth - 4f, leftScreen.y - barHeight * 0.5f, barWidth, barHeight);
 
                         GUI.color = Color.white;
                         GUI.DrawTexture(barRect, TexEnergyBarFrame ?? BaseContent.WhiteTex);
 
-                        float padX = Mathf.Round(barWidth * 0.143f);
-                        float padY = Mathf.Round(barHeight * 0.055f);
+                        float padX = Mathf.Round(barWidth * 0.1406f);
+                        float padY = Mathf.Round(barHeight * 0.0547f);
                         Rect trackRect = new Rect(barRect.x + padX, barRect.y + padY, barRect.width - padX * 2f, barRect.height - padY * 2f);
                         float slotH = trackRect.height / maxBoxes;
                         float cellGap = slotH > 5f ? 0.8f : 0.3f;
@@ -1318,19 +1377,28 @@ namespace LCAnomalyCore.Buildings
                             float badLineY = trackRect.yMax - badThreshold * slotH;
                             float goodLineY = trackRect.yMax - goodThreshold * slotH;
 
-                            Widgets.DrawBoxSolid(new Rect(trackRect.x - 2f, badLineY - 0.75f, trackRect.width + 4f, 1.5f), new Color(1.0f, 0.56f, 0.22f, 0.95f));
-                            Widgets.DrawBoxSolid(new Rect(trackRect.x - 2f, goodLineY - 0.75f, trackRect.width + 4f, 1.5f), new Color(0.32f, 1.0f, 0.64f, 0.95f));
+                            DrawGaugeThreshold(barRect, badLineY, new Color(0.961f, 0.608f, 0.137f));
+                            DrawGaugeThreshold(barRect, goodLineY, new Color(0.157f, 0.941f, 0.596f));
                         }
 
-                        // Numeric readout underneath gauge (+PE / -NE)
-                        Text.Font = GameFont.Tiny;
-                        Text.Anchor = TextAnchor.UpperCenter;
-                        GUI.color = new Color(0.45f, 0.96f, 0.68f);
-                        Widgets.Label(new Rect(barRect.x - 10f, barRect.yMax + 1f, barRect.width + 20f, 16f), $"+{peCount}");
+                        // Opaque ink tag keeps the readout legible on all terrain.
+                        bool largeReadout = barWidth >= 34f;
+                        float lineH = largeReadout ? 20f : 15f;
+                        float tagW = Mathf.Max(42f, barWidth + 18f);
+                        float tagH = neCount > 0 ? (lineH * 2f + 4f) : (lineH + 4f);
+                        Rect readoutRect = new Rect(barRect.center.x - tagW * 0.5f, barRect.yMax + 3f, tagW, tagH);
+                        GUI.color = Color.white;
+                        Widgets.DrawBoxSolid(new Rect(readoutRect.x + 2f, readoutRect.y, readoutRect.width - 4f, readoutRect.height), new Color(0.027f, 0.027f, 0.035f));
+                        Widgets.DrawBoxSolid(new Rect(readoutRect.x, readoutRect.y + 2f, readoutRect.width, readoutRect.height - 4f), new Color(0.027f, 0.027f, 0.035f));
+                        Widgets.DrawBoxSolid(new Rect(readoutRect.x + 3f, readoutRect.y, readoutRect.width - 6f, 1f), new Color(0.937f, 0.898f, 0.541f));
+                        Text.Font = largeReadout ? GameFont.Small : GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        GUI.color = new Color(0.157f, 0.941f, 0.596f);
+                        Widgets.Label(new Rect(readoutRect.x, readoutRect.y + 2f, readoutRect.width, lineH), $"+{peCount}");
                         if (neCount > 0)
                         {
-                            GUI.color = new Color(1.0f, 0.42f, 0.42f);
-                            Widgets.Label(new Rect(barRect.x - 10f, barRect.yMax + 14f, barRect.width + 20f, 16f), $"-{neCount}");
+                            GUI.color = new Color(0.949f, 0.231f, 0.212f);
+                            Widgets.Label(new Rect(readoutRect.x, readoutRect.y + 2f + lineH, readoutRect.width, lineH), $"-{neCount}");
                         }
 
                         // Post-work final result face badge above gauge
@@ -1339,9 +1407,9 @@ namespace LCAnomalyCore.Buildings
                             Texture2D badgeTex = GetResultBadgeTexture(lastStudyResult.Value);
                             if (badgeTex != null)
                             {
-                                float badgeSize = Mathf.Clamp(barWidth, 18f, 28f);
+                                float badgeSize = Mathf.Round(Mathf.Clamp(barWidth * 1.15f, 18f, 52f));
                                 GUI.color = Color.white;
-                                GUI.DrawTexture(new Rect(barRect.center.x - badgeSize * 0.5f, barRect.y - badgeSize - 3f, badgeSize, badgeSize), badgeTex);
+                                GUI.DrawTexture(new Rect(barRect.center.x - badgeSize * 0.5f, barRect.y - badgeSize - 4f, badgeSize, badgeSize), badgeTex);
                             }
                         }
                     }
@@ -1357,25 +1425,62 @@ namespace LCAnomalyCore.Buildings
 
         private void DrawMeltdownRoomBanner(Rect bannerRect, bool isCompact)
         {
-            float pulse = 0.5f + 0.5f * Mathf.Sin(Time.realtimeSinceStartup * 8.0f);
-            Widgets.DrawBoxSolid(bannerRect, Color.Lerp(new Color(0.24f, 0.04f, 0.05f, 0.92f), new Color(0.45f, 0.08f, 0.06f, 0.96f), pulse));
-
-            float ratio = MeltdownRemainingRatio;
-            if (ratio > 0f)
+            GameFont oldFont = Text.Font;
+            TextAnchor oldAnchor = Text.Anchor;
+            Color oldColor = GUI.color;
+            try
             {
-                Rect innerFill = new Rect(bannerRect.x + 1f, bannerRect.y + 1f, Mathf.Max(2f, (bannerRect.width - 2f) * ratio), bannerRect.height - 2f);
-                Widgets.DrawBoxSolid(innerFill, Color.Lerp(new Color(0.84f, 0.24f, 0.14f, 0.65f), new Color(0.96f, 0.42f, 0.18f, 0.78f), pulse));
+                float pulse = 0.5f + 0.5f * Mathf.Sin(Time.realtimeSinceStartup * 8.0f);
+                GUI.color = Color.white;
+                Rect strip;
+                if (!isCompact)
+                {
+                    if (TexMeltdownBannerFrame != null)
+                    {
+                        GUI.DrawTexture(bannerRect, TexMeltdownBannerFrame);
+                    }
+                    else
+                    {
+                        Widgets.DrawBoxSolid(bannerRect, new Color(0.102f, 0.024f, 0.031f));
+                        GUI.color = new Color(0.949f, 0.282f, 0.133f);
+                        Widgets.DrawBox(bannerRect, 1);
+                    }
+                    // Native safe strip: x=90..446, y=12..60 of 512x72.
+                    strip = new Rect(bannerRect.x + bannerRect.width * (90f / 512f),
+                        bannerRect.y + bannerRect.height / 6f,
+                        bannerRect.width * (356f / 512f), bannerRect.height * (48f / 72f));
+                }
+                else
+                {
+                    Widgets.DrawBoxSolid(bannerRect, new Color(0.027f, 0.027f, 0.035f));
+                    GUI.color = new Color(0.949f, 0.282f, 0.133f);
+                    Widgets.DrawBox(bannerRect, 1);
+                    strip = new Rect(bannerRect.x + 2f, bannerRect.y + 2f, bannerRect.width - 4f, bannerRect.height - 4f);
+                }
+
+                GUI.color = Color.white;
+                float ratio = Mathf.Clamp01(MeltdownRemainingRatio);
+                if (ratio > 0f)
+                {
+                    Rect fill = new Rect(strip.x, strip.y, strip.width * ratio, strip.height);
+                    Widgets.DrawBoxSolid(fill, Color.Lerp(new Color(0.65f, 0.09f, 0.07f), new Color(0.949f, 0.282f, 0.133f), pulse));
+                }
+
+                Text.Font = (!isCompact && bannerRect.height >= 34f) ? GameFont.Small : GameFont.Tiny;
+                Text.Anchor = TextAnchor.MiddleCenter;
+                int secs = Mathf.CeilToInt(MeltdownSecondsRemaining);
+                string label = isCompact ? $"{secs}s" : "LC_Meltdown_HudBanner".Translate(secs).ToString();
+                GUI.color = new Color(0.027f, 0.027f, 0.035f);
+                Widgets.LabelFit(new Rect(strip.x + 1f, strip.y + 1f, strip.width - 1f, strip.height - 1f), label);
+                GUI.color = Color.Lerp(new Color(0.980f, 0.949f, 0.588f), Color.white, pulse);
+                Widgets.LabelFit(strip, label);
             }
-
-            GUI.color = Color.Lerp(new Color(0.98f, 0.34f, 0.22f), new Color(1.0f, 0.74f, 0.28f), pulse);
-            Widgets.DrawBox(bannerRect, 1);
-
-            Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            GUI.color = Color.white;
-            int secs = Mathf.CeilToInt(MeltdownSecondsRemaining);
-            string label = isCompact ? $"{secs}s" : "LC_Meltdown_HudBanner".Translate(secs).ToString();
-            Widgets.LabelFit(bannerRect, label);
+            finally
+            {
+                Text.Font = oldFont;
+                Text.Anchor = oldAnchor;
+                GUI.color = oldColor;
+            }
         }
 
         /// <inheritdoc />
@@ -1386,12 +1491,12 @@ namespace LCAnomalyCore.Buildings
             Room room = ContainmentRoom;
             if (room != null && !room.TouchesMapEdge && !room.PsychologicallyOutdoors)
             {
-                GenDraw.DrawFieldEdges(room.Cells.ToList(), Color.cyan);
+                GenDraw.DrawFieldEdges(room.Cells.ToList(), new Color(0.96f, 0.90f, 0.44f));
             }
 
             if (HeldPawn != null && HeldPawn.Spawned)
             {
-                GenDraw.DrawLineBetween(DrawPos, HeldPawn.DrawPos, SimpleColor.Cyan);
+                GenDraw.DrawLineBetween(DrawPos, HeldPawn.DrawPos, SimpleColor.Yellow);
             }
 
             HeldToolComp?.DrawExtraSelectionOverlaysForUnit(this);
