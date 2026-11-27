@@ -104,7 +104,7 @@ namespace LCAnomalyCore.Util
         }
 
         /// <summary>
-        /// 研发部核心通电或完成研发部核心抑制后，每轮异想体三选一提取的“二次提取”重抽免费。
+        /// 研发部核心通电、完成研发部核心抑制或达成全图鉴 100% 里程碑后，每轮异想体三选一提取的“二次提取”重抽免费。
         /// </summary>
         public static bool HasFreeAbnormalityReExtract(Map map)
         {
@@ -113,7 +113,12 @@ namespace LCAnomalyCore.Util
                 return true;
             }
 
-            return GameComponent.GameComponent_LC.Instance?.HasCoreSuppression(GameComponent.GameComponent_LC.CoreSuppression_Binah) == true;
+            if (GameComponent.GameComponent_LC.Instance?.HasCoreSuppression(GameComponent.GameComponent_LC.CoreSuppression_Binah) == true)
+            {
+                return true;
+            }
+
+            return CodexIntelUtility.GrantsFreeAbnormalityReExtract();
         }
 
         /// <summary>
@@ -167,7 +172,7 @@ namespace LCAnomalyCore.Util
         }
 
         /// <summary>
-        /// 获取员工在完成异想体工作时额外产出 1 点 PE-Box 的概率（福利部 15%，情报部核心抑制永久 +25%）。
+        /// 获取员工在完成异想体工作时额外产出 1 点 PE-Box 的概率（福利部 15%，情报部核心抑制 +25%，图鉴 50% 里程碑 +10%）。
         /// </summary>
         public static float GetBonusPeBoxChance(Pawn pawn)
         {
@@ -176,6 +181,8 @@ namespace LCAnomalyCore.Util
             {
                 chance += 0.25f;
             }
+
+            chance += CodexIntelUtility.GetBonusPeBoxChance();
             return Mathf.Clamp01(chance);
         }
 

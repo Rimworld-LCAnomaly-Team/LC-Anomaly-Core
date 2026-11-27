@@ -2,10 +2,10 @@
 <LanguageData>
 
   <LC_EntityCodexGizmoLabel>打开管理手册</LC_EntityCodexGizmoLabel>
-  <LC_EntityCodexGizmoDesc>点击以打开异想体管理手册</LC_EntityCodexGizmoDesc>
+  <LC_EntityCodexGizmoDesc>点击以打开异想体与考验管理手册</LC_EntityCodexGizmoDesc>
 
-  <LC_EntityCodexLabel>脑叶公司异常</LC_EntityCodexLabel>
-  <LC_EntityCodexDesc>异想体是人类潜意识的根源，通过对其适当的管理我们可以从中获取脑啡肽。\n异想体根据其管理危险性，分为ZAYIN, TETH, HE, WAW和ALEPH这五种等级。</LC_EntityCodexDesc>
+  <LC_EntityCodexLabel>脑叶公司异常管理档案库</LC_EntityCodexLabel>
+  <LC_EntityCodexDesc>记录设施收容的异想体、工具型异想体与考验实体档案。消耗独立 PE-Box 或推进收容观察与镇压次数，可逐步解密各实体情报并激活全公司档案里程碑增益。</LC_EntityCodexDesc>
 
   <LC_EntityCodexTip.ZAYIN>这个等级的异想体几乎不具有侵略性，它们通常不会对员工造成太大伤害。如果情况得当，它们甚至可以对员工产生积极的效应。</LC_EntityCodexTip.ZAYIN>
   <LC_EntityCodexTip.TETH>这个等级的异想体比能够对员工造成一定的伤害，不过，如果您管理得当，他们也不会造成什么大的损失。</LC_EntityCodexTip.TETH>
@@ -13,13 +13,62 @@
   <LC_EntityCodexTip.WAW>这个等级的异想体高度危险，极具破坏力，对大多数员工都怀有敌意。如果这个等级的异想体突破收容，将会导致大量的人员伤亡。</LC_EntityCodexTip.WAW>
   <LC_EntityCodexTip.ALEPH>这个等级的异想体是公司里最危险的异想体。您必须对它们时刻保持关注，确保它们都有好好待在收容单元里。稳定收容这个等级的异想体已经耗费了公司大量的人力物力，请务必不要让他们突破收容。</LC_EntityCodexTip.ALEPH>
 
+  <LC_Codex_Tab_Abnormalities>异想体</LC_Codex_Tab_Abnormalities>
+  <LC_Codex_Tab_Tools>工具型</LC_Codex_Tab_Tools>
+  <LC_Codex_Tab_Ordeals>考验</LC_Codex_Tab_Ordeals>
+
+  <LC_Codex_ArchiveProgress>图鉴完成度：{0}（{1}/{2}）</LC_Codex_ArchiveProgress>
+  <LC_Codex_MilestoneTierLabel>里程碑阶段 {0}/4</LC_Codex_MilestoneTierLabel>
+  <LC_Codex_MilestoneActive>已激活</LC_Codex_MilestoneActive>
+  <LC_Codex_MilestoneLocked>未达成</LC_Codex_MilestoneLocked>
+  <LC_Codex_MilestoneTooltip>已发现条目：{0}/{1} | 完全解密：{2}\n\n档案完成度里程碑奖励：\n- 25% [{3}]：主管战术子弹最大容量 +1（需已通电战术部门核心）\n- 50% [{4}]：收容工作额外 PE-Box 产出概率 +10%\n- 75% [{5}]：主管战术子弹充能冷却缩短 15%\n- 100% [{6}]：主管战术子弹上限再 +1，且每轮异想体提取均享免费重抽</LC_Codex_MilestoneTooltip>
+
+  <LC_Codex_NoEntrySelected>请在右侧目录选择一个条目以查阅档案。</LC_Codex_NoEntrySelected>
+  <LC_Codex_MaskedTitle>[档案编号：{0}] ???</LC_Codex_MaskedTitle>
+  <LC_Codex_OrdealHeaderStats>累计镇压：{0}  ·  阶段：{1}</LC_Codex_OrdealHeaderStats>
+
+  <LC_Codex_Sec_BasicInfo>基础与收容情报</LC_Codex_Sec_BasicInfo>
+  <LC_Codex_Sec_WorkPreferences>工作偏好矩阵</LC_Codex_Sec_WorkPreferences>
+  <LC_Codex_Sec_EscapeCombat>出逃与四色战斗档案</LC_Codex_Sec_EscapeCombat>
+  <LC_Codex_Sec_EgoGear>E.G.O 装备与饰品</LC_Codex_Sec_EgoGear>
+
+  <LC_Codex_QliphothMaxLine>逆卡巴拉计数器上限：{0}</LC_Codex_QliphothMaxLine>
+  <LC_Codex_NoneSymbol>无</LC_Codex_NoneSymbol>
+  <LC_Codex_WorkDamageLine>工作失误伤害：{0}（{1}）</LC_Codex_WorkDamageLine>
+  <LC_Codex_ToolModeLine>使用机制：{0}</LC_Codex_ToolModeLine>
+  <LC_Codex_ToolMode_SingleUse>单次触发型</LC_Codex_ToolMode_SingleUse>
+  <LC_Codex_ToolMode_Continuous>持续驻留型</LC_Codex_ToolMode_Continuous>
+  <LC_Codex_ToolMode_Equippable>可佩戴携带型</LC_Codex_ToolMode_Equippable>
+
+  <LC_Codex_WorkTypeHeader>工作 \ 等级</LC_Codex_WorkTypeHeader>
+  <LC_Codex_WorkMatrixUnavailable>该异想体采用特殊收容协议，工作成功率由专属机制判定。</LC_Codex_WorkMatrixUnavailable>
+
+  <LC_Codex_AttackTypeLine>主要攻击类型：{0}  ·  等级：{1}</LC_Codex_AttackTypeLine>
+  <LC_Codex_CombatVitalsLine>基础生命指数：{0}  ·  移动速度：{1}</LC_Codex_CombatVitalsLine>
+
+  <LC_Codex_EgoWeaponSummary>已提取：{0}  ·  消耗：{1} PE-Box  ·  观察 Lv.{2}</LC_Codex_EgoWeaponSummary>
+  <LC_Codex_EgoArmorSummary>已提取：{0}  ·  消耗：{1} PE-Box  ·  观察 Lv.{2}</LC_Codex_EgoArmorSummary>
+  <LC_Codex_EgoGiftSummary>饰品掉落率：{0}  ·  观察 Lv.{1}</LC_Codex_EgoGiftSummary>
+
+  <LC_Codex_UnlockModuleBtn>消耗独立 PE-Box 解锁（-{0} | 当前：{1}）</LC_Codex_UnlockModuleBtn>
+  <LC_Codex_LockedBasicHint>实体真名与档案概述处于加密状态。消耗独立 PE-Box 或推进观察等级至 1 级即可解锁。</LC_Codex_LockedBasicHint>
+  <LC_Codex_LockedWorkHint>本能 / 洞察 / 沟通 / 压迫偏好矩阵尚待解密。消耗独立 PE-Box 或达到观察等级 2 级后显示。</LC_Codex_LockedWorkHint>
+  <LC_Codex_LockedCombatHint>出逃四色抗性与攻击属性处于保密状态。消耗独立 PE-Box 或完成全部观察研究后解锁。</LC_Codex_LockedCombatHint>
+  <LC_Codex_LockedTipsHint>管理须知与异想体警告条目尚未解密。消耗独立 PE-Box 或达到观察等级 3 级即可解锁。</LC_Codex_LockedTipsHint>
+  <LC_Codex_LockedToolLogsHint>继续在收容平台上使用该工具型异想体，以累积解锁管理指南。</LC_Codex_LockedToolLogsHint>
+  <LC_Codex_LockedOrdealCombatHint>至少成功镇压 1 个该考验实体后，自动记录其四色抗性与战斗属性。</LC_Codex_LockedOrdealCombatHint>
+
+  <LC_Codex_UnlockInvalid>无效的图鉴条目。</LC_Codex_UnlockInvalid>
+  <LC_Codex_UnlockNotApplicable>该情报模块不适用于当前选中的条目。</LC_Codex_UnlockNotApplicable>
+  <LC_Codex_InsufficientPeBox>独立 PE-Box 不足：需要 {0}，当前仅有 {1}。</LC_Codex_InsufficientPeBox>
+
   <LC_Codex_ManagementSummary>管理档案</LC_Codex_ManagementSummary>
   <LC_Codex_ObservationLevel>观察等级：{0}</LC_Codex_ObservationLevel>
-  <LC_Codex_IndiPeBox>独立 PE-Box 余量：{0}</LC_Codex_IndiPeBox>
+  <LC_Codex_IndiPeBox>独立 PE-Box：{0}</LC_Codex_IndiPeBox>
   <LC_Codex_ExtractedWeapon>已提取 E.G.O 武器：{0}</LC_Codex_ExtractedWeapon>
   <LC_Codex_ExtractedArmor>已提取 E.G.O 护甲：{0}</LC_Codex_ExtractedArmor>
   <LC_Codex_LinkedEntries>关联条目与 E.G.O 装备</LC_Codex_LinkedEntries>
-  <LC_Codex_StudyNotes>观察笔记</LC_Codex_StudyNotes>
+  <LC_Codex_StudyNotes>管理须知与观察日志</LC_Codex_StudyNotes>
   <LC_Codex_NoStudyNotes>尚未解锁观察笔记，请在收容平台安排工作以推进观察进度。</LC_Codex_NoStudyNotes>
 
 </LanguageData>

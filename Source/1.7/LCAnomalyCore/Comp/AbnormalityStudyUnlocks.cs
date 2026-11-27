@@ -82,6 +82,7 @@ namespace LCAnomalyCore.Comp
                     component.TryGetAnomalyStatusSaved(parent.def, out AnomalyStatusSaved saved);
                     saved.StudyProgress = i + 1;
                     component.AnomalyStatusSavedDict[parent.def] = saved;
+                    SyncCodexIntelWithStudy(component);
                 }
 
                 UnlockNameCheck();
@@ -126,6 +127,7 @@ namespace LCAnomalyCore.Comp
                     component.TryGetAnomalyStatusSaved(parent.def, out AnomalyStatusSaved saved);
                     saved.StudyProgress = i + 1;
                     component.AnomalyStatusSavedDict[parent.def] = saved;
+                    SyncCodexIntelWithStudy(component);
                 }
             }
         }
@@ -133,6 +135,21 @@ namespace LCAnomalyCore.Comp
         /// <summary>执行 <c>UnlockNameCheck</c> 定义的操作。</summary>
         public virtual void UnlockNameCheck()
         {
+        }
+
+        private void SyncCodexIntelWithStudy(GameComponent_LC component)
+        {
+            if (component == null || parent?.def == null)
+            {
+                return;
+            }
+
+            Defs.AbnormalityCodexEntryDef entry = AbnormalityUtility.ResolveCodexEntry(parent.def);
+            if (entry != null)
+            {
+                AbnormalityUtility.Discover(parent.def);
+                component.UnlockCodexIntelFree(entry, CodexIntelUtility.ComputeAutoUnlockedIntel(entry, component));
+            }
         }
 
         /// <inheritdoc />

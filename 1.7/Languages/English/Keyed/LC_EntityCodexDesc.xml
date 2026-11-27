@@ -4,8 +4,8 @@
   <LC_EntityCodexGizmoLabel>Open Management Manual</LC_EntityCodexGizmoLabel>
   <LC_EntityCodexGizmoDesc>Click to open the Management Manual</LC_EntityCodexGizmoDesc>
 
-  <LC_EntityCodexLabel>Lobotomy Corporation Abnormalities</LC_EntityCodexLabel>
-  <LC_EntityCodexDesc>Abnormalities are the root of the human subconscious, we can obtain enkephalins from them through proper management.\nAccording to their management risk, they are classified into five levels: ZAYIN, TETH, HE, WAW and ALEPH.</LC_EntityCodexDesc>
+  <LC_EntityCodexLabel>Lobotomy Corporation Management Archive</LC_EntityCodexLabel>
+  <LC_EntityCodexDesc>Confidential archive of Abnormalities, Tools, and Ordeals. Spend Individual PE-Boxes or advance Containment Observation &amp; Suppression to unlock classified dossiers and unlock company-wide milestone bonuses.</LC_EntityCodexDesc>
 
   <LC_EntityCodexTip.ZAYIN>With little to no aggression, ZAYIN Abnormalities will cause the least harm to your Agents.\nTheir damage tends to be minuscule, and they may have a positive effect on the employees.</LC_EntityCodexTip.ZAYIN>
   <LC_EntityCodexTip.TETH>These Abnormalities can inflict varying degrees of injury to your employees.\nHowever, as long as your employees follow the proper managerial guidelines, they will not cause much damage.</LC_EntityCodexTip.TETH>
@@ -13,13 +13,62 @@
   <LC_EntityCodexTip.WAW>These are high risk and carry devastating force.\nMost will be hostile toward employees, and the death toll could reach into the dozens.</LC_EntityCodexTip.WAW>
   <LC_EntityCodexTip.ALEPH>The most dangerous. You should devote as much concentration and attention as possible to this Risk Level.\nYou’ll be thankful if the Abnormality is suppressed without ravaging entire departments.</LC_EntityCodexTip.ALEPH>
 
+  <LC_Codex_Tab_Abnormalities>Abnormalities</LC_Codex_Tab_Abnormalities>
+  <LC_Codex_Tab_Tools>Tools</LC_Codex_Tab_Tools>
+  <LC_Codex_Tab_Ordeals>Ordeals</LC_Codex_Tab_Ordeals>
+
+  <LC_Codex_ArchiveProgress>Archive Completion: {0} ({1}/{2})</LC_Codex_ArchiveProgress>
+  <LC_Codex_MilestoneTierLabel>Milestone Tier {0}/4</LC_Codex_MilestoneTierLabel>
+  <LC_Codex_MilestoneActive>ACTIVE</LC_Codex_MilestoneActive>
+  <LC_Codex_MilestoneLocked>Locked</LC_Codex_MilestoneLocked>
+  <LC_Codex_MilestoneTooltip>Discovered Entries: {0}/{1} | Fully Unlocked: {2}\n\nArchive Completion Milestones:\n- 25% [{3}]: +1 Manager Bullet max charge (requires active Tactical Dept Core)\n- 50% [{4}]: +10% bonus PE-Box chance on containment work\n- 75% [{5}]: -15% Manager Bullet recharge interval\n- 100% [{6}]: Additional +1 Manager Bullet max charge &amp; free Extraction Re-Roll every draw</LC_Codex_MilestoneTooltip>
+
+  <LC_Codex_NoEntrySelected>Select an archive entry on the right to inspect its dossier.</LC_Codex_NoEntrySelected>
+  <LC_Codex_MaskedTitle>[Containment File: {0}] ???</LC_Codex_MaskedTitle>
+  <LC_Codex_OrdealHeaderStats>Suppressed: {0}  ·  Stage: {1}</LC_Codex_OrdealHeaderStats>
+
+  <LC_Codex_Sec_BasicInfo>Basic &amp; Containment Intel</LC_Codex_Sec_BasicInfo>
+  <LC_Codex_Sec_WorkPreferences>Work Preferences Matrix</LC_Codex_Sec_WorkPreferences>
+  <LC_Codex_Sec_EscapeCombat>Escape &amp; Four-Color Combat Profile</LC_Codex_Sec_EscapeCombat>
+  <LC_Codex_Sec_EgoGear>E.G.O Gear &amp; Gift</LC_Codex_Sec_EgoGear>
+
+  <LC_Codex_QliphothMaxLine>Qliphoth Counter Max: {0}</LC_Codex_QliphothMaxLine>
+  <LC_Codex_NoneSymbol>None</LC_Codex_NoneSymbol>
+  <LC_Codex_WorkDamageLine>Work Failure Damage: {0} ({1})</LC_Codex_WorkDamageLine>
+  <LC_Codex_ToolModeLine>Operation Mode: {0}</LC_Codex_ToolModeLine>
+  <LC_Codex_ToolMode_SingleUse>Single Activation</LC_Codex_ToolMode_SingleUse>
+  <LC_Codex_ToolMode_Continuous>Continuous Channeling</LC_Codex_ToolMode_Continuous>
+  <LC_Codex_ToolMode_Equippable>Wearable Equipment</LC_Codex_ToolMode_Equippable>
+
+  <LC_Codex_WorkTypeHeader>Work \ Lv</LC_Codex_WorkTypeHeader>
+  <LC_Codex_WorkMatrixUnavailable>Work preference parameters are managed by a specialized containment protocol.</LC_Codex_WorkMatrixUnavailable>
+
+  <LC_Codex_AttackTypeLine>Primary Attack: {0}  ·  Grade: {1}</LC_Codex_AttackTypeLine>
+  <LC_Codex_CombatVitalsLine>Base Vitality Index: {0}  ·  Move Speed: {1}</LC_Codex_CombatVitalsLine>
+
+  <LC_Codex_EgoWeaponSummary>Extracted: {0}  ·  Cost: {1} PE-Box  ·  Obs Lv.{2}</LC_Codex_EgoWeaponSummary>
+  <LC_Codex_EgoArmorSummary>Extracted: {0}  ·  Cost: {1} PE-Box  ·  Obs Lv.{2}</LC_Codex_EgoArmorSummary>
+  <LC_Codex_EgoGiftSummary>Gift Drop Chance: {0}  ·  Obs Lv.{1}</LC_Codex_EgoGiftSummary>
+
+  <LC_Codex_UnlockModuleBtn>Unlock Intel (-{0} PE-Box | Have: {1})</LC_Codex_UnlockModuleBtn>
+  <LC_Codex_LockedBasicHint>True name and overview classified. Spend Individual PE-Boxes below or reach Observation Lv.1 to unlock.</LC_Codex_LockedBasicHint>
+  <LC_Codex_LockedWorkHint>Instinct / Insight / Attachment / Repression success matrix classified. Unlock via PE-Boxes or Observation Lv.2.</LC_Codex_LockedWorkHint>
+  <LC_Codex_LockedCombatHint>Four-color resistances and breach attack profile classified. Unlock via PE-Boxes or full Observation study.</LC_Codex_LockedCombatHint>
+  <LC_Codex_LockedTipsHint>Managerial guidelines and warnings classified. Unlock via PE-Boxes or Observation Lv.3.</LC_Codex_LockedTipsHint>
+  <LC_Codex_LockedToolLogsHint>Continue operating this Tool Abnormality on a containment platform to unlock its managerial logs.</LC_Codex_LockedToolLogsHint>
+  <LC_Codex_LockedOrdealCombatHint>Suppress at least 1 manifestation of this Ordeal to record its four-color resistances and attack profile.</LC_Codex_LockedOrdealCombatHint>
+
+  <LC_Codex_UnlockInvalid>Invalid Codex entry.</LC_Codex_UnlockInvalid>
+  <LC_Codex_UnlockNotApplicable>This intel module is not applicable to the selected entry.</LC_Codex_UnlockNotApplicable>
+  <LC_Codex_InsufficientPeBox>Insufficient Individual PE-Boxes: need {0}, have {1}.</LC_Codex_InsufficientPeBox>
+
   <LC_Codex_ManagementSummary>Management Dossier</LC_Codex_ManagementSummary>
-  <LC_Codex_ObservationLevel>Observation Level: {0}</LC_Codex_ObservationLevel>
-  <LC_Codex_IndiPeBox>Individual PE-Boxes: {0}</LC_Codex_IndiPeBox>
+  <LC_Codex_ObservationLevel>Observation: {0}</LC_Codex_ObservationLevel>
+  <LC_Codex_IndiPeBox>PE-Box: {0}</LC_Codex_IndiPeBox>
   <LC_Codex_ExtractedWeapon>Extracted E.G.O Weapons: {0}</LC_Codex_ExtractedWeapon>
   <LC_Codex_ExtractedArmor>Extracted E.G.O Suits: {0}</LC_Codex_ExtractedArmor>
   <LC_Codex_LinkedEntries>Linked Entries &amp; E.G.O</LC_Codex_LinkedEntries>
-  <LC_Codex_StudyNotes>Observation Logs</LC_Codex_StudyNotes>
+  <LC_Codex_StudyNotes>Management Guidelines &amp; Observation Logs</LC_Codex_StudyNotes>
   <LC_Codex_NoStudyNotes>No observation logs unlocked yet. Conduct work on a containment platform to reveal details.</LC_Codex_NoStudyNotes>
 
 </LanguageData>

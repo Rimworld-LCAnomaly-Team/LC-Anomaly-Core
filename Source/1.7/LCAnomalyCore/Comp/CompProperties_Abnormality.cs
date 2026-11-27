@@ -53,5 +53,24 @@ namespace LCAnomalyCore.Comp
         {
             compClass = typeof(CompAbnormality);
         }
+
+        /// <summary>
+        /// 为管理图鉴提供该异想体在 I~V 级员工属性下的工作偏好基础成功率（0~1）。
+        /// </summary>
+        public virtual bool TryGetWorkPreferenceRates(Util.EAnomalyWorkType workType, out float[] ratesByLevel)
+        {
+            ratesByLevel = null;
+            return false;
+        }
+
+        /// <summary>
+        /// 为管理图鉴提供该异想体在收容工作失败时的工作伤害类型与数值范围。
+        /// </summary>
+        public virtual bool TryGetWorkDamageInfo(out DamageDef damageDef, out FloatRange damageRange)
+        {
+            damageDef = null;
+            damageRange = FloatRange.Zero;
+            return false;
+        }
     }
 }

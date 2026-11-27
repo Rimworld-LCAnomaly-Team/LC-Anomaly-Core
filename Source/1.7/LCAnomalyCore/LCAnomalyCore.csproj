@@ -147,6 +147,7 @@
     <Compile Include="UI\FloatMenu\FloatMenuOptionProvider_CaptureAbnormality.cs" />
     <Compile Include="UI\ITab_PawnStatus.cs" />
     <Compile Include="Util\AssetBundleUtil.cs" />
+    <Compile Include="Util\CodexIntelUtility.cs" />
     <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Util\Components.cs" />
     <Compile Include="Util\Curves.cs" />

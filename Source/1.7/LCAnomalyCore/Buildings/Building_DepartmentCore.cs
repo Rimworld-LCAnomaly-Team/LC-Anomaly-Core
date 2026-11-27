@@ -55,13 +55,26 @@ namespace LCAnomalyCore.Buildings
 
         private CompRefuelable compRefuelable;
 
+        private const int HealPulseDurationTicks = 75;
+        private static Material healWaveMat;
+        private static MaterialPropertyBlock healWavePropBlock;
+
         private GenDraw.FillableBarRequest fillableBarRequest;
         private int healTimer = 0;
+        private int healPulseTicksRemaining = 0;
+        private bool healPulseWasActiveHeal = false;
+        private float healPulseMaxRadius = 5f;
+        private readonly List<IntVec3> cachedPulseCells = new List<IntVec3>();
 
         /// <inheritdoc />
         protected override void Tick()
         {
             base.Tick();
+
+            if (healPulseTicksRemaining > 0)
+            {
+                healPulseTicksRemaining--;
+            }
 
             //通电才能工作
             if (CompPower.PowerOn)
@@ -109,7 +122,7 @@ namespace LCAnomalyCore.Buildings
                 return;
 
             //不在房间内则不进行治疗
-            var room = InteractionCell.GetRoom(this.MapHeld);
+            Room room = ResolveHealRoom();
             if (room == null)
                 return;
 
@@ -148,6 +161,67 @@ namespace LCAnomalyCore.Buildings
 
                 LogUtil.Message($"{def.defName} consumed {amount} KCorpAmpoule.");
             }
+
+            if (healTimes > 0 || CompRefuelable.Fuel >= unitConsume)
+            {
+                StartHealPulse(room, didHeal: healTimes > 0);
+            }
+        }
+
+        private Room ResolveHealRoom()
+        {
+            Map map = MapHeld;
+            if (map == null)
+            {
+                return null;
+            }
+
+            return InteractionCell.GetRoom(map) ?? this.GetRoom();
+        }
+
+        private Color GetHealOverlayColor(float alpha)
+        {
+            Color dept = CompDepartmentCore?.Props?.fillableBarColor ?? new Color(0.28f, 0.92f, 0.60f, 1f);
+            Color blended = Color.Lerp(dept, new Color(0.28f, 0.96f, 0.62f, 1f), 0.55f);
+            blended.a = alpha;
+            return blended;
+        }
+
+        private void StartHealPulse(Room room, bool didHeal)
+        {
+            healPulseTicksRemaining = HealPulseDurationTicks;
+            healPulseWasActiveHeal = didHeal;
+            cachedPulseCells.Clear();
+            if (room != null && !room.TouchesMapEdge && room.CellCount <= 1500)
+            {
+                cachedPulseCells.AddRange(room.Cells);
+                healPulseMaxRadius = Mathf.Clamp(Mathf.Sqrt(room.CellCount / Mathf.PI) + 1.2f, 3.2f, 11f);
+            }
+            else
+            {
+                healPulseMaxRadius = 4.5f;
+            }
+
+            if (didHeal && Spawned && Map != null)
+            {
+                FleckMaker.Static(DrawPos, Map, FleckDefOf.PsycastAreaEffect, 2.4f);
+            }
+        }
+
+        /// <inheritdoc />
+        public override void DrawExtraSelectionOverlays()
+        {
+            base.DrawExtraSelectionOverlays();
+
+            Room room = ResolveHealRoom();
+            if (room == null || room.TouchesMapEdge || room.CellCount > 1500)
+            {
+                return;
+            }
+
+            cachedPulseCells.Clear();
+            cachedPulseCells.AddRange(room.Cells);
+            GenDraw.DrawFieldEdges(cachedPulseCells, GetHealOverlayColor(0.85f));
         }
 
         /// <summary>
@@ -169,6 +243,49 @@ namespace LCAnomalyCore.Buildings
                 .Draw(offsetPos + Altitudes.AltIncVect * 2f, base.Rotation, this, 0f);
 
             ProgressBarDraw(offsetPos);
+            DrawHealPulseOverlay(drawLoc);
+        }
+
+        private void DrawHealPulseOverlay(Vector3 drawLoc)
+        {
+            if (healPulseTicksRemaining <= 0)
+            {
+                return;
+            }
+
+            float t = 1f - (float)healPulseTicksRemaining / HealPulseDurationTicks;
+            float alpha = Mathf.Sin(t * Mathf.PI);
+            if (alpha <= 0.01f)
+            {
+                return;
+            }
+
+            float intensity = healPulseWasActiveHeal ? 1f : 0.42f;
+            if (cachedPulseCells.Count > 0)
+            {
+                GenDraw.DrawFieldEdges(cachedPulseCells, GetHealOverlayColor(0.90f * alpha * intensity));
+            }
+
+            if (!UnityData.IsInMainThread)
+            {
+                return;
+            }
+
+            healWaveMat ??= MaterialPool.MatFrom("Other/ShieldBubble", ShaderDatabase.Transparent);
+            if (healWaveMat == null)
+            {
+                return;
+            }
+
+            healWavePropBlock ??= new MaterialPropertyBlock();
+            Color waveColor = GetHealOverlayColor(0.48f * alpha * intensity);
+            healWavePropBlock.SetColor(ShaderPropertyIDs.Color, waveColor);
+
+            float diameter = Mathf.Lerp(2.4f, healPulseMaxRadius * 2f, t);
+            Vector3 pos = drawLoc;
+            pos.y = AltitudeLayer.MoteLow.AltitudeFor();
+            var matrix = Matrix4x4.TRS(pos, Quaternion.identity, new Vector3(diameter, 1f, diameter));
+            GenDraw.DrawMeshNowOrLater(MeshPool.plane10, matrix, healWaveMat, drawNow: false, properties: healWavePropBlock);
         }
 
         /// <summary>

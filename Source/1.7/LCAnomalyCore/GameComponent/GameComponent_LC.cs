@@ -58,6 +58,9 @@ namespace LCAnomalyCore.GameComponent
 
         private HashSet<string> discoveredAbnormalities = new HashSet<string>();
 
+        private Dictionary<string, int> unlockedCodexIntel = new Dictionary<string, int>();
+        private Dictionary<string, int> ordealKillCounts = new Dictionary<string, int>();
+
         private Dictionary<int, float> blessedWeaponBonusDict = new Dictionary<int, float>();
 
         private HashSet<int> autoCastEgoWeaponIds = new HashSet<int>();
@@ -157,6 +160,16 @@ namespace LCAnomalyCore.GameComponent
             managerBulletRechargeCounter = 0;
         }
 
+        /// <summary>获取下一发主管战术子弹生效充能冷却间隔（结合 Binah 抑制与图鉴 75% 里程碑）。</summary>
+        public int GetEffectiveBulletRechargeIntervalTicks()
+        {
+            int interval = HasCoreSuppression(CoreSuppression_Binah)
+                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
+                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            float milestoneFactor = Util.CodexIntelUtility.GetManagerBulletRechargeFactor();
+            return Mathf.Max(1000, Mathf.RoundToInt(interval * milestoneFactor));
+        }
+
         /// <summary>返回下一发主管战术子弹充能进度（0~1，满充或未解锁返回 1）。</summary>
         public float GetManagerBulletRechargeProgress(Map map)
         {
@@ -167,9 +180,7 @@ namespace LCAnomalyCore.GameComponent
                 return 1f;
             }
 
-            int interval = HasCoreSuppression(CoreSuppression_Binah)
-                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
-                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            int interval = GetEffectiveBulletRechargeIntervalTicks();
             return interval > 0 ? Mathf.Clamp01((float)managerBulletRechargeCounter / interval) : 1f;
         }
 
@@ -183,9 +194,7 @@ namespace LCAnomalyCore.GameComponent
                 return 0f;
             }
 
-            int interval = HasCoreSuppression(CoreSuppression_Binah)
-                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
-                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            int interval = GetEffectiveBulletRechargeIntervalTicks();
             return Mathf.Max(0f, (interval - managerBulletRechargeCounter) / 60f);
         }
 
@@ -271,8 +280,16 @@ namespace LCAnomalyCore.GameComponent
         {
             if (thingDef == null) return;
             foreach (var entry in DefDatabase<Defs.AbnormalityCodexEntryDef>.AllDefsListForReading)
-                if (entry.defName == thingDef.defName || entry.linkedThings.Contains(thingDef))
+            {
+                if (entry.defName == thingDef.defName || (entry.linkedThings != null && entry.linkedThings.Contains(thingDef)))
+                {
                     discoveredAbnormalities.Add(entry.defName);
+                    if (entry.ResolvedEntryKind == Defs.CodexEntryKind.Ordeal)
+                    {
+                        UnlockCodexIntelFree(entry, Defs.CodexIntelSection.BasicInfo);
+                    }
+                }
+            }
         }
 
         public bool IsAbnormalityDiscovered(Defs.AbnormalityCodexEntryDef entry)
@@ -283,8 +300,160 @@ namespace LCAnomalyCore.GameComponent
         public void SetAbnormalityDiscovered(Defs.AbnormalityCodexEntryDef entry, bool discovered)
         {
             if (entry == null) return;
-            if (discovered) discoveredAbnormalities.Add(entry.defName);
-            else discoveredAbnormalities.Remove(entry.defName);
+            if (discovered)
+            {
+                discoveredAbnormalities.Add(entry.defName);
+                if (entry.ResolvedEntryKind == Defs.CodexEntryKind.Ordeal)
+                {
+                    UnlockCodexIntelFree(entry, Defs.CodexIntelSection.BasicInfo);
+                }
+            }
+            else
+            {
+                discoveredAbnormalities.Remove(entry.defName);
+                unlockedCodexIntel?.Remove(entry.defName);
+            }
+        }
+
+        /// <summary>获取指定图鉴条目已解锁的情报模块掩码（合并已购买与研究/击杀自动解锁）。</summary>
+        public Defs.CodexIntelSection GetUnlockedCodexIntel(Defs.AbnormalityCodexEntryDef entry)
+        {
+            if (entry == null)
+            {
+                return Defs.CodexIntelSection.None;
+            }
+
+            int stored = 0;
+            if (unlockedCodexIntel != null && unlockedCodexIntel.TryGetValue(entry.defName, out int val))
+            {
+                stored = val;
+            }
+
+            Defs.CodexIntelSection combined = (Defs.CodexIntelSection)stored
+                | Util.CodexIntelUtility.ComputeAutoUnlockedIntel(entry, this);
+            return combined & entry.ApplicableIntelSections;
+        }
+
+        /// <summary>判断指定图鉴条目的某一情报模块是否已解锁。</summary>
+        public bool HasCodexIntel(Defs.AbnormalityCodexEntryDef entry, Defs.CodexIntelSection section)
+        {
+            if (entry == null || section == Defs.CodexIntelSection.None)
+            {
+                return false;
+            }
+
+            return (GetUnlockedCodexIntel(entry) & section) == section;
+        }
+
+        /// <summary>免费解锁指定条目的若干情报模块并确保条目标记为已发现。</summary>
+        public void UnlockCodexIntelFree(Defs.AbnormalityCodexEntryDef entry, Defs.CodexIntelSection sections)
+        {
+            if (entry == null)
+            {
+                return;
+            }
+
+            discoveredAbnormalities ??= new HashSet<string>();
+            unlockedCodexIntel ??= new Dictionary<string, int>();
+            discoveredAbnormalities.Add(entry.defName);
+
+            int filtered = (int)(sections & entry.ApplicableIntelSections);
+            if (filtered == 0)
+            {
+                return;
+            }
+
+            unlockedCodexIntel.TryGetValue(entry.defName, out int existing);
+            unlockedCodexIntel[entry.defName] = existing | filtered;
+        }
+
+        /// <summary>消耗该异想体的独立 PE-Box 解锁指定情报模块。</summary>
+        public bool TryUnlockCodexIntelWithPeBox(Defs.AbnormalityCodexEntryDef entry, Defs.CodexIntelSection section, out string failReason)
+        {
+            failReason = string.Empty;
+            if (entry == null)
+            {
+                failReason = "LC_Codex_UnlockInvalid".Translate().ToString();
+                return false;
+            }
+
+            if (!IsAbnormalityDiscovered(entry))
+            {
+                discoveredAbnormalities.Add(entry.defName);
+            }
+
+            if ((entry.ApplicableIntelSections & section) != section)
+            {
+                failReason = "LC_Codex_UnlockNotApplicable".Translate().ToString();
+                return false;
+            }
+
+            if (HasCodexIntel(entry, section))
+            {
+                return true;
+            }
+
+            int cost = entry.IntelUnlockCost;
+            int available = Util.CodexIntelUtility.GetTotalIndiPeBox(entry, this);
+            if (!DebugSettings.godMode && available < cost)
+            {
+                failReason = "LC_Codex_InsufficientPeBox".Translate(cost, available).ToString();
+                return false;
+            }
+
+            if (!DebugSettings.godMode && !Util.CodexIntelUtility.TryConsumeIndiPeBox(entry, this, cost))
+            {
+                failReason = "LC_Codex_InsufficientPeBox".Translate(cost, available).ToString();
+                return false;
+            }
+
+            UnlockCodexIntelFree(entry, section);
+            return true;
+        }
+
+        /// <summary>记录考验实体的镇压/击杀次数，并自动解锁其基础信息与四色战斗抗性档案。</summary>
+        public void RecordOrdealKill(ThingDef raceDef)
+        {
+            if (raceDef == null)
+            {
+                return;
+            }
+
+            Defs.AbnormalityCodexEntryDef entry = Util.AbnormalityUtility.ResolveCodexEntry(raceDef);
+            if (entry == null)
+            {
+                return;
+            }
+
+            discoveredAbnormalities ??= new HashSet<string>();
+            ordealKillCounts ??= new Dictionary<string, int>();
+            discoveredAbnormalities.Add(entry.defName);
+            ordealKillCounts.TryGetValue(entry.defName, out int prev);
+            ordealKillCounts[entry.defName] = prev + 1;
+            UnlockCodexIntelFree(entry, Defs.CodexIntelSection.BasicInfo | Defs.CodexIntelSection.EscapeCombat);
+        }
+
+        /// <summary>获取指定考验图鉴条目的累计镇压/击杀次数。</summary>
+        public int GetOrdealKillCount(Defs.AbnormalityCodexEntryDef entry)
+        {
+            if (entry == null || ordealKillCounts == null)
+            {
+                return 0;
+            }
+
+            return ordealKillCounts.TryGetValue(entry.defName, out int count) ? count : 0;
+        }
+
+        /// <summary>开发者模式：一键发现全部可见图鉴条目并解锁全部情报模块。</summary>
+        public void UnlockAllCodexIntel()
+        {
+            foreach (Defs.AbnormalityCodexEntryDef entry in DefDatabase<Defs.AbnormalityCodexEntryDef>.AllDefsListForReading)
+            {
+                if (entry != null && entry.Visible)
+                {
+                    UnlockCodexIntelFree(entry, entry.ApplicableIntelSections);
+                }
+            }
         }
 
         /// <summary>表示 <c>LCGameComponentTickEvent</c>。</summary>
@@ -364,6 +533,8 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Values.Look(ref waringPointsCounter, "waringPointsCounter", 0);
             Scribe_Collections.Look(ref anomalyStatusSavedDict, "anomalyStatusSavedDict", LookMode.Def, LookMode.Deep);
             Scribe_Collections.Look(ref discoveredAbnormalities, "lcDiscoveredAbnormalities", LookMode.Value);
+            Scribe_Collections.Look(ref unlockedCodexIntel, "lcUnlockedCodexIntel", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref ordealKillCounts, "lcOrdealKillCounts", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref blessedWeaponBonusDict, "lcBlessedWeaponBonusDict", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref autoCastEgoWeaponIds, "lcAutoCastEgoWeaponIds", LookMode.Value);
             Scribe_Collections.Look(ref completedCoreSuppressions, "lcCompletedCoreSuppressions", LookMode.Value);
@@ -372,6 +543,8 @@ namespace LCAnomalyCore.GameComponent
             Scribe_Values.Look(ref managerBulletRechargeCounter, "lcManagerBulletRechargeCounter", 0);
             Scribe_Values.Look(ref managerBulletsInitialized, "lcManagerBulletsInitialized", false);
             discoveredAbnormalities ??= new HashSet<string>();
+            unlockedCodexIntel ??= new Dictionary<string, int>();
+            ordealKillCounts ??= new Dictionary<string, int>();
             blessedWeaponBonusDict ??= new Dictionary<int, float>();
             autoCastEgoWeaponIds ??= new HashSet<int>();
             completedCoreSuppressions ??= new HashSet<string>();
@@ -413,9 +586,7 @@ namespace LCAnomalyCore.GameComponent
                 return;
             }
 
-            int rechargeInterval = HasCoreSuppression(CoreSuppression_Binah)
-                ? Util.ManagerBulletUtility.BinahBulletRechargeIntervalTicks
-                : Util.ManagerBulletUtility.BulletRechargeIntervalTicks;
+            int rechargeInterval = GetEffectiveBulletRechargeIntervalTicks();
             managerBulletRechargeCounter++;
             if (managerBulletRechargeCounter >= rechargeInterval)
             {

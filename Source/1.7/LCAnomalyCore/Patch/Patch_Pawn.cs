@@ -1,12 +1,63 @@
 ﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
+using LCAnomalyCore.Hediffs;
 using LCAnomalyCore.Settings;
 using LCAnomalyCore.Util;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace LCAnomalyCore.Patch
 {
+    /// <summary>
+    /// 绘制单位身上激活的主管四色战术护盾光膜特效
+    /// </summary>
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.DynamicDrawPhaseAt))]
+    public static class Patch_PawnDynamicDrawPhaseAt_BulletShield
+    {
+        private static void Postfix(Pawn __instance, DrawPhase phase, Vector3 drawLoc)
+        {
+            if (phase != DrawPhase.Draw || __instance == null || __instance.Dead || !__instance.Spawned)
+            {
+                return;
+            }
+
+            List<Hediff> hediffs = __instance.health?.hediffSet?.hediffs;
+            if (hediffs == null || hediffs.Count == 0)
+            {
+                return;
+            }
+
+            int total = 0;
+            for (int i = 0; i < hediffs.Count; i++)
+            {
+                if (hediffs[i] is HediffWithComps hwc && hwc.TryGetComp<HediffComp_BulletShield>() != null)
+                {
+                    total++;
+                }
+            }
+
+            if (total == 0)
+            {
+                return;
+            }
+
+            int stackIndex = 0;
+            for (int i = 0; i < hediffs.Count; i++)
+            {
+                if (hediffs[i] is HediffWithComps hwc)
+                {
+                    HediffComp_BulletShield comp = hwc.TryGetComp<HediffComp_BulletShield>();
+                    if (comp != null)
+                    {
+                        comp.DrawShieldEffect(drawLoc, stackIndex, total);
+                        stackIndex++;
+                    }
+                }
+            }
+        }
+    }
     /// <summary>
     /// 关于Pawn的补丁（为了提供死亡警报点数）
     /// </summary>

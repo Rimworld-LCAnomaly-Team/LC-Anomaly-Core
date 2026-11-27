@@ -157,6 +157,12 @@ namespace LCAnomalyCore.Util
             {
                 max += 2;
             }
+
+            if (max > 0)
+            {
+                max += CodexIntelUtility.GetBonusMaxManagerBullets();
+            }
+
             return max;
         }
 
@@ -432,10 +438,11 @@ namespace LCAnomalyCore.Util
             }
 
             PlayBulletSound(map, victim.Position, "LC_Sound_BulletExecution");
+            FleckMaker.Static(victim.DrawPos, map, FleckDefOf.ExplosionFlash, 2.2f);
             FleckMaker.ThrowMicroSparks(victim.DrawPos, map);
             MoteMaker.ThrowText(victim.DrawPos, map, "LC_Bullet_ExecutedTag".Translate(), new Color(0.95f, 0.20f, 0.25f));
-            // 原作处决弹：直接抹除目标（不留尸体、不触发殖民者死亡士气惩罚）
-            victim.Destroy(DestroyMode.Vanish);
+            DamageDef execDef = RimWorld.DamageDefOf.ExecutionCut ?? RimWorld.DamageDefOf.Bullet;
+            victim.Kill(new DamageInfo(execDef, 99999f, 999f, instigator: null));
             return true;
         }
 

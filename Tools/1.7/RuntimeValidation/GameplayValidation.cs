@@ -410,9 +410,109 @@ public static class GameplayValidation
                 throw new InvalidOperationException($"Missing or unresolvable HoldingPlatform name graphic for {name}.");
         }
 
+        ValidateCodexIntelSystem();
+
         Log.Message("[LC17 Validation] GAMEPLAY PASS; P0/P1; codex/eligibility/fourcolor/infocard/feedback");
 
         ValidateP2BatchA(map, monster);
+    }
+
+    private static void ValidateCodexIntelSystem()
+    {
+        List<AbnormalityCodexEntryDef> entries = DefDatabase<AbnormalityCodexEntryDef>.AllDefsListForReading;
+        if (entries.Count < 50)
+            throw new InvalidOperationException($"Expected >= 50 codex entries with Ordeals loaded, found {entries.Count}.");
+
+        foreach (AbnormalityCodexEntryDef entry in entries)
+        {
+            if (entry.icon == null || entry.icon == BaseContent.BadTex)
+                throw new InvalidOperationException($"Codex entry {entry.defName} failed to load valid icon texture.");
+            if (string.IsNullOrEmpty(entry.ResolvedContainmentCode))
+                throw new InvalidOperationException($"Codex entry {entry.defName} has empty ResolvedContainmentCode.");
+        }
+
+        foreach (string uiTexName in new[]
+        {
+            "UI/Codex/Codex_WindowBg", "UI/Codex/Codex_HeaderBanner", "UI/Codex/Codex_DossierBanner",
+            "UI/Codex/Codex_PortraitFrame", "UI/Codex/Codex_PanelFrame", "UI/Codex/Codex_SectionBar",
+            "UI/Codex/Codex_TabNormal", "UI/Codex/Codex_TabActive", "UI/Codex/Codex_TileFrame",
+            "UI/Codex/Codex_TileSelected", "UI/Codex/Codex_LockedCard", "UI/Codex/Codex_LockIcon",
+            "UI/Codex/Codex_PeBoxIcon", "UI/Codex/Codex_HazardDivider"
+        })
+        {
+            UnityEngine.Texture2D tex = ContentFinder<UnityEngine.Texture2D>.Get(uiTexName, false);
+            if (tex == null || tex == BaseContent.BadTex)
+                throw new InvalidOperationException($"Missing or unresolvable Codex UI texture: {uiTexName}");
+        }
+
+        // Work preference matrix live resolution checks
+        ThingDef oneSinDef = DefDatabase<ThingDef>.GetNamed("OneSin", true);
+        if (!CodexIntelUtility.TryGetWorkMatrix(oneSinDef, out var oneSinMatrix)
+            || Math.Abs(oneSinMatrix[EAnomalyWorkType.Instinct][0] - 0.50f) > 0.001f
+            || Math.Abs(oneSinMatrix[EAnomalyWorkType.Insight][0] - 0.70f) > 0.001f)
+        {
+            throw new InvalidOperationException("OneSin work preference matrix mismatch.");
+        }
+
+        ThingDef nothingThereDef = DefDatabase<ThingDef>.GetNamed("NothingThere", true);
+        if (!CodexIntelUtility.TryGetWorkMatrix(nothingThereDef, out var ntMatrix)
+            || ntMatrix[EAnomalyWorkType.Instinct][0] > 0.001f
+            || Math.Abs(ntMatrix[EAnomalyWorkType.Instinct][2] - 0.35f) > 0.001f
+            || ntMatrix[EAnomalyWorkType.Insight][0] > 0.001f
+            || Math.Abs(ntMatrix[EAnomalyWorkType.Attachment][0] - 0.50f) > 0.001f
+            || ntMatrix[EAnomalyWorkType.Repression][0] > 0.001f)
+        {
+            throw new InvalidOperationException("NothingThere work preference matrix mismatch.");
+        }
+
+        ThingDef fdbDef = DefDatabase<ThingDef>.GetNamed("FuneralOfDeadButterflies", true);
+        if (!CodexIntelUtility.TryGetWorkMatrix(fdbDef, out var fdbMatrix) || fdbMatrix.Count != 4)
+        {
+            throw new InvalidOperationException("FuneralOfDeadButterflies work preference matrix missing.");
+        }
+
+        GameComponent_LC lc = Components.LC ?? throw new InvalidOperationException("GameComponent_LC missing during Codex validation.");
+
+        // PE-Box intel unlock & observation auto-unlock checks (use LittleRed so OneSin test state is untouched)
+        AbnormalityCodexEntryDef lrEntry = AbnormalityUtility.ResolveCodexEntry(DefDatabase<ThingDef>.GetNamed("LittleRedRidingHoodedMercenary", true));
+        if (lrEntry == null || lrEntry.ResolvedEntryKind != CodexEntryKind.Abnormality)
+            throw new InvalidOperationException("LittleRedRidingHoodedMercenary codex entry resolution failed.");
+
+        AbnormalityUtility.Discover(lrEntry.PrimaryEntityDef);
+        lc.TryGetAnomalyStatusSaved(lrEntry.PrimaryEntityDef, out AnomalyStatusSaved saved);
+        int peBefore = saved.IndiPeBoxAmount;
+        saved.IndiPeBoxAmount += 30;
+        lc.AnomalyStatusSavedDict[lrEntry.PrimaryEntityDef] = saved;
+
+        bool unlockedBasic = lc.TryUnlockCodexIntelWithPeBox(lrEntry, CodexIntelSection.BasicInfo, out string failReason);
+        if (!unlockedBasic)
+            throw new InvalidOperationException($"Expected PE-Box BasicInfo unlock to succeed: {failReason}");
+
+        lc.TryGetAnomalyStatusSaved(lrEntry.PrimaryEntityDef, out saved);
+        if (saved.IndiPeBoxAmount != peBefore + 30 - lrEntry.IntelUnlockCost)
+            throw new InvalidOperationException($"Unexpected remaining PE-Boxes after Codex unlock: got {saved.IndiPeBoxAmount}, expected {peBefore + 30 - lrEntry.IntelUnlockCost}.");
+        if (!lc.HasCodexIntel(lrEntry, CodexIntelSection.BasicInfo))
+            throw new InvalidOperationException("LittleRed BasicInfo flag not active after PE-Box purchase.");
+
+        // Ordeal discovery + kill tracking + EscapeCombat unlock
+        ThingDef amberDawnRace = DefDatabase<ThingDef>.GetNamed("LCOrdeal_Race_AmberDawn", true);
+        AbnormalityCodexEntryDef amberEntry = AbnormalityUtility.ResolveCodexEntry(amberDawnRace);
+        if (amberEntry == null || amberEntry.ResolvedEntryKind != CodexEntryKind.Ordeal)
+            throw new InvalidOperationException("AmberDawn Ordeal codex entry resolution failed.");
+
+        lc.RecordOrdealKill(amberDawnRace);
+        if (!lc.IsAbnormalityDiscovered(amberEntry)
+            || lc.GetOrdealKillCount(amberEntry) < 1
+            || !lc.HasCodexIntel(amberEntry, CodexIntelSection.EscapeCombat))
+        {
+            throw new InvalidOperationException("Ordeal kill failed to record kill count and unlock EscapeCombat intel.");
+        }
+
+        CodexCompletionSnapshot snap = CodexIntelUtility.GetCompletionSnapshot();
+        if (snap.totalEntries < 50 || snap.totalSlots <= 0 || snap.unlockedSlots <= 0)
+            throw new InvalidOperationException($"Invalid Codex completion snapshot: total={snap.totalEntries}, slots={snap.unlockedSlots}/{snap.totalSlots}.");
+
+        Log.Message($"[LC17 Validation] CODEX INTEL PASS; entries={snap.totalEntries}; unlocked={snap.unlockedSlots}/{snap.totalSlots}; milestone={snap.milestoneTier}/4");
     }
 
     private static (Building_AbnormalityContainmentTerminal platform, Pawn held, CompAbnormalityTool tool) ContainToolOnPlatform(
@@ -4125,13 +4225,14 @@ public static class GameplayValidation
             Building_DepartmentCore welfare = SpawnCore("LC_DepartmentCore_WelfareTeam");
             Building_DepartmentCore disc = SpawnCore("LC_DepartmentCore_DisciplinaryTeam");
 
-            if (ManagerBulletUtility.GetMaxBulletCharges(map) != 10)
-                throw new InvalidOperationException($"Expected 10 max bullet charges with Central+Welfare+Disciplinary, got {ManagerBulletUtility.GetMaxBulletCharges(map)}.");
+            int expectedMaxBullets = 10 + CodexIntelUtility.GetBonusMaxManagerBullets();
+            if (ManagerBulletUtility.GetMaxBulletCharges(map) != expectedMaxBullets)
+                throw new InvalidOperationException($"Expected {expectedMaxBullets} max bullet charges with Central+Welfare+Disciplinary (+Codex milestone bonus), got {ManagerBulletUtility.GetMaxBulletCharges(map)}.");
 
             GameComponent_LC lc = GameComponent_LC.Instance ?? throw new InvalidOperationException("GameComponent_LC.Instance is null.");
             lc.RefillManagerBullets(map);
-            if (lc.GetManagerBulletCharges(map) != 10)
-                throw new InvalidOperationException("RefillManagerBullets failed to restore charges to 10.");
+            if (lc.GetManagerBulletCharges(map) != expectedMaxBullets)
+                throw new InvalidOperationException($"RefillManagerBullets failed to restore charges to {expectedMaxBullets}.");
 
             if (central.GetGizmos().Count() < 6 || !welfare.GetGizmos().Any() || !disc.GetGizmos().Any())
                 throw new InvalidOperationException("Department cores failed to expose Manager Bullet gizmos.");
@@ -4204,7 +4305,12 @@ public static class GameplayValidation
                 throw new InvalidOperationException("Slow Bullet failed to halve hostile MoveSpeed.");
             }
 
-            // Execution Bullet (despawn friendly first so execTarget is the sole humanlike target at execCell)
+            // Verify Red Shield visual draw & core heal pulse invocation are exception-free
+            shieldComp.DrawShieldEffect(friendly.DrawPos, 0, 1);
+            central.TryHeal();
+            central.DrawExtraSelectionOverlays();
+
+            // Execution Bullet (kills target and leaves a corpse rather than vanishing)
             if (friendly.Spawned) friendly.DeSpawn();
             execTarget = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
                 PawnKindDefOf.Colonist, Faction.OfPlayer, forceGenerateNewPawn: true,
@@ -4213,11 +4319,11 @@ public static class GameplayValidation
             GenSpawn.Spawn(execTarget, execCell, map);
             if (!ManagerBulletUtility.FireBulletAt(map, execTarget.Position, EManagerBulletType.Execution))
                 throw new InvalidOperationException("Execution Bullet failed to fire.");
-            if (!execTarget.Destroyed || execCell.GetThingList(map).Any(t => t is Corpse))
-                throw new InvalidOperationException("Execution Bullet did not cleanly erase target without leaving a corpse.");
+            if (!execTarget.Dead || !execCell.GetThingList(map).Any(t => t is Corpse c && c.InnerPawn == execTarget))
+                throw new InvalidOperationException("Execution Bullet did not kill target with a corpse.");
 
-            if (lc.GetManagerBulletCharges(map) != 5)
-                throw new InvalidOperationException($"Expected 5 remaining bullet charges after 5 shots, got {lc.GetManagerBulletCharges(map)}.");
+            if (lc.GetManagerBulletCharges(map) != expectedMaxBullets - 5)
+                throw new InvalidOperationException($"Expected {expectedMaxBullets - 5} remaining bullet charges after 5 shots, got {lc.GetManagerBulletCharges(map)}.");
             lc.RefillManagerBullets(map);
         }
         finally
@@ -4228,6 +4334,11 @@ public static class GameplayValidation
             }
             foreach (Pawn p in new[] { friendly, slowTarget, execTarget })
             {
+                if (p?.Corpse != null && !p.Corpse.Destroyed)
+                {
+                    if (p.Corpse.Spawned) p.Corpse.DeSpawn();
+                    p.Corpse.Destroy();
+                }
                 if (p != null && !p.Destroyed) { if (p.Spawned) p.DeSpawn(); p.Destroy(); }
             }
         }

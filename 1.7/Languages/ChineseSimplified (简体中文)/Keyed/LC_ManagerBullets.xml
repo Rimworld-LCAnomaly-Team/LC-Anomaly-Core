@@ -22,7 +22,7 @@
   <LC_Bullet_Slow_Desc>向目标区域（半径 4.0 格）发射福利部减速弹，使范围内敌对目标、出逃异想体与考验实体移动速度减半。\n\n当前剩余充能：{0}/{1}</LC_Bullet_Slow_Desc>
 
   <LC_Bullet_Execution_Label>处决弹</LC_Bullet_Execution_Label>
-  <LC_Bullet_Execution_Desc>发射惩戒部处决弹，直接抹除选定目标处的非异想体类人单位（不遗留尸体、不触发死亡士气惩罚）。\n\n当前剩余充能：{0}/{1}</LC_Bullet_Execution_Desc>
+  <LC_Bullet_Execution_Desc>发射惩戒部处决弹，直接击杀选定目标处的非异想体类人单位。\n\n当前剩余充能：{0}/{1}</LC_Bullet_Execution_Desc>
 
   <LC_Bullet_NoCharges>主管战术子弹充能已耗尽，将随时间自动补充。</LC_Bullet_NoCharges>
   <LC_Bullet_ExecutionInvalidTarget>目标位置附近没有可处决的非异想体类人目标。</LC_Bullet_ExecutionInvalidTarget>
